@@ -1,0 +1,595 @@
+{
+  "manifest": {
+    "id": "winter-shelter",
+    "title": "День открытого приюта",
+    "description": "Зимний день открытых дверей помогает городскому приюту найти животныхам заботливые дома и собрать полезные вещи без суеты.",
+    "setting": "Приют проводит спокойный день знакомства с животными; важно обеспечить комфорт и уважать их привычки.",
+    "categoryRu": "Помощь животным",
+    "background": "/assets/winter-shelter.jpg",
+    "version": "1.0.0",
+    "schemaVersion": "2",
+    "isNew": true,
+    "durationMinutes": [
+      15,
+      25
+    ],
+    "season": "Зима"
+  },
+  "state": {
+    "initial": {
+      "comfort": 64,
+      "visits": 32,
+      "supplies": 46,
+      "day": 1,
+      "location": "lounge",
+      "goalStatus": "active"
+    }
+  },
+  "actions": {
+    "free_text": {
+      "label": "Свободное действие",
+      "input": true,
+      "icon": "✍️"
+    },
+    "action1": {
+      "label": "Познакомить с животными",
+      "icon": "🐾"
+    },
+    "action2": {
+      "label": "Проверить запасы",
+      "icon": "🧺"
+    },
+    "action3": {
+      "label": "Подготовить тихую зону",
+      "icon": "🛋️"
+    }
+  },
+  "ui": {
+    "accent": "#f39b52",
+    "stateLabels": {
+      "comfort": "Комфорт животных",
+      "visits": "Знакомства",
+      "supplies": "Запасы",
+      "day": "День",
+      "location": "Место",
+      "goalStatus": "Цель"
+    }
+  },
+  "i18n": {
+    "ru": {
+      "states": {
+        "comfort": "Комфорт животных",
+        "visits": "Знакомства",
+        "supplies": "Запасы",
+        "day": "День",
+        "location": "Место",
+        "goalStatus": "Цель"
+      },
+      "actions": {
+        "free_text": "Свободное действие",
+        "action1": "Познакомить с животными",
+        "action2": "Проверить запасы",
+        "action3": "Подготовить тихую зону"
+      },
+      "manifest": {
+        "title": "День открытого приюта",
+        "description": "Зимний день открытых дверей помогает городскому приюту найти животныхам заботливые дома и собрать полезные вещи без суеты.",
+        "category": "Помощь животным"
+      },
+      "values": {
+        "active": "В процессе",
+        "completed": "Цель выполнена",
+        "failed": "Цель не выполнена"
+      }
+    },
+    "en": {
+      "states": {
+        "comfort": "Animal comfort",
+        "visits": "Visits",
+        "supplies": "Supplies",
+        "day": "Day",
+        "location": "Location",
+        "goalStatus": "Objective"
+      },
+      "actions": {
+        "free_text": "Free action",
+        "action1": "Introduce the animals",
+        "action2": "Check supplies",
+        "action3": "Prepare a quiet area"
+      },
+      "manifest": {
+        "title": "Shelter Open Day",
+        "description": "A winter shelter open day helps animals meet caring adopters and gathers useful supplies at a calm pace.",
+        "category": "Animal care"
+      },
+      "values": {
+        "active": "In progress",
+        "completed": "Objective achieved",
+        "failed": "Objective not achieved"
+      }
+    }
+  },
+  "goal": {
+    "description": {
+      "ru": "Организовать спокойный день знакомства и пополнить запасы приюта, сохраняя комфорт животных.",
+      "en": "Host calm introductions and replenish shelter supplies while keeping animals comfortable."
+    },
+    "completion": {
+      "path": "goalStatus",
+      "value": "completed",
+      "terminalValues": [
+        "completed",
+        "failed"
+      ]
+    }
+  },
+  "map": {
+    "start": "lounge",
+    "locations": {
+      "lounge": {
+        "ru": "Комната знакомства",
+        "en": "Meet-and-greet room"
+      },
+      "care": {
+        "ru": "Зона ухода",
+        "en": "Care area"
+      },
+      "store": {
+        "ru": "Кладовая",
+        "en": "Supply room"
+      }
+    }
+  },
+  "world": {
+    "constants": {
+      "setting": "Приют проводит спокойный день знакомства с животными; важно обеспечить комфорт и уважать их привычки.",
+      "physicalRules": [
+        "У каждого животного свой характер, режим отдыха и подходящий тип общения.",
+        "События развиваются в течение короткого сезонного мероприятия; участники и ресурсы ограничены.",
+        "Решения игрока меняют состояние постепенно; обратимые решения можно пересмотреть, если хватает времени."
+      ],
+      "continuity": "Учитывай подтверждённую историю, связи между фактами и причинность. AI-сценарист сам развивает ситуацию в границах пакета; не навязывай фиксированный порядок действий.",
+      "tone": "A light, warm, colorful adult story about a shared community project; no threats, artificial failure, or rigid linearity. Season: Winter.",
+      "storyArc": {
+        "revealPolicy": {
+          "ru": "Раскрывай повороты после проверяемых улик; показывай причинную связь и меняй дальнейшие сцены по решениям игрока.",
+          "en": "Reveal turns after verifiable clues; show their causal link and let player choices alter later scenes."
+        },
+        "beats": {
+          "ru": [
+            "Приют приглашает гостей познакомиться с животными; нужно дать им выбор контакта и спокойное место для отдыха.",
+            "Один пёс избегает шумной комнаты и возвращается к переноске у двери; волонтёры принимают это за тревогу, хотя это его привычная безопасная точка.",
+            "Команда перестраивает встречу так, чтобы интерес посетителей не отменял сигналы животных."
+          ],
+          "en": [
+            "The shelter invites guests to meet animals while preserving choice and quiet places to rest.",
+            "A dog avoids the busy room and returns to a carrier by the door; volunteers read anxiety where the dog finds safety.",
+            "The team reshapes the visit so guest interest does not override animal signals."
+          ]
+        },
+        "twists": {
+          "ru": [
+            "Пёс не ждёт прежнего хозяина: переноска пахнет знакомой тканью из тихой комнаты и помогает ему успокоиться.",
+            "Всплеск беспокойства у кроликов совпадает с вибрацией стиральной машины в соседнем помещении, не с посетителями."
+          ],
+          "en": [
+            "The dog is not waiting for a former owner; familiar fabric in the carrier helps it settle.",
+            "Rabbits become restless with a washer vibration in the next room, not because of visitors."
+          ]
+        },
+        "paths": {
+          "ru": [
+            "Провести встречи короткими группами: животные отдыхают, ожидание гостей растёт.",
+            "Переместить шумную активность и сохранить тихую зону: комфорт выше, волонтёры нужны в двух местах.",
+            "Отменить контакт с животными, оставив наблюдение: стресс минимален, формат знакомства меняется."
+          ],
+          "en": [
+            "Use short visiting groups: animals rest, guests wait longer.",
+            "Move noisy activity and keep a quiet zone: comfort improves, volunteers split across rooms.",
+            "Cancel contact and allow observation only: stress is lowest, the visit format changes."
+          ]
+        }
+      }
+    },
+    "knowledgeGraph": {
+      "facts": [
+        {
+          "id": "winter_shelter_premise",
+          "text": "Приют проводит спокойный день знакомства с животными; важно обеспечить комфорт и уважать их привычки."
+        },
+        {
+          "id": "winter_shelter_constraint",
+          "text": "У каждого животного свой характер, режим отдыха и подходящий тип общения."
+        },
+        {
+          "id": "winter_shelter_goal",
+          "text": "Организовать спокойный день знакомства и пополнить запасы приюта, сохраняя комфорт животных."
+        }
+      ]
+    }
+  },
+  "boundaries": {
+    "mutationPaths": [
+      "comfort",
+      "visits",
+      "supplies",
+      "day",
+      "location",
+      "goalStatus"
+    ],
+    "numericBounds": {
+      "comfort": {
+        "min": 0,
+        "max": 100
+      },
+      "visits": {
+        "min": 0,
+        "max": 100
+      },
+      "supplies": {
+        "min": 0,
+        "max": 100
+      },
+      "day": {
+        "min": 1,
+        "max": 3
+      }
+    },
+    "allowedValues": {
+      "location": [
+        "lounge",
+        "care",
+        "store"
+      ],
+      "goalStatus": [
+        "active",
+        "completed",
+        "failed"
+      ]
+    },
+    "maxArrayItems": {},
+    "maxStringLengths": {},
+    "stateChangeRules": [],
+    "instructions": [
+      "Встречи проходят добровольно и без принуждения; животные могут отдыхать.",
+      "Не задавай игроку обязательную цепочку действий; предложенные варианты — лишь идеи, свободный замысел игрока равноправен.",
+      "Сезон: Зима. Сохраняй его атмосферу, яркие цвета и конкретные детали места.",
+      "Meetings are voluntary and animals can always rest."
+    ]
+  },
+  "opening": {
+    "ru": "Утром приют открывает двери для соседей: одни пришли познакомиться с животными, другие принесли корм и пледы. Вы — координатор дня открытых дверей; нужно устроить спокойные встречи и помочь каждой стороне понять, что животному подойдёт заботливый дом\n\nСемья приходит в промокшей одежде, а запас вещей почти исчерпан. Место для сушки можно разделить сейчас, но поздним гостям останется меньше сухих одеял.\n\nЗдесь важно помнить, что к моменту вашего появления история уже началась. Приют проводит спокойный день знакомства с животными; важно обеспечить комфорт и уважать их привычки. Это не отвлечённый фон и не задача, которую можно решить одним эффектным жестом: исходные условия складывались раньше, а люди, объекты и процессы успели приспособиться к ним. Поэтому любое изменение затронет не только то, что видно сейчас, но и привычный порядок, на котором держатся остальные части ситуации. Вы входите в неё с правом действовать, однако сначала нужно понять, что именно считается нормой и кто подтвердил эту норму.\n\nПервое наблюдение относится к конкретному месту: Комната знакомства, Зона ухода, Кладовая. В нём есть заметная деталь, которую легко принять за готовый ответ, но пока это только отправная точка. Сведения получены не одновременно и не одним способом; между тем, что зафиксировано, и тем, что уже успели предположить, остаётся промежуток. Если немедленно закрыть его догадкой, следующие данные будут подгоняться под выбранную версию. Если же точно обозначить, что известно, а что пока лишь кажется вероятным, у вас сохранится возможность увидеть несоответствие, не переписывая задним числом всю картину.\n\nВаша задача сформулирована шире, чем устранить ближайшую помеху: Организовать спокойный день знакомства и пополнить запасы приюта, сохраняя комфорт животных. На практике это означает одновременно следить за непосредственным результатом и за тем, что этот результат позволит узнать. Быстрый шаг может принести видимое улучшение, но ухудшить сравнимость, доступность или доверие; осторожный — сохранить качество проверки, но оставить проблему без немедленного ответа. Эти соображения не равны по весу во всех обстоятельствах. Их порядок зависит от того, какие сведения вы подтвердите и какой ущерб действительно обратим.\n\nВ материалах есть три слоя: исходное состояние, первое наблюдение и объяснение, которое кто-то успел к нему приложить. Не смешивайте их. Провести встречи короткими группами: животные отдыхают, ожидание гостей растёт. Если цифры или свидетельства расходятся, полезно установить, когда и где именно началось расхождение, кто наблюдал явление напрямую и какие условия могли поменяться между проверками. Иногда спорный показатель оказывается не ложным, а неполным: он честно описывает ту точку, где был получен, но не ту, о которой спрашивает команда.\n\nВам не требуется заранее выбирать единственную стратегию на весь эпизод. В текущем пакете доступны разные типы действий: Познакомить с животными, Проверить запасы, Подготовить тихую зону. Они дают разные виды контроля: одно может уточнить картину, другое — изменить условия, третье — выиграть время или проверить связь между двумя событиями. Выбирая, задайте себе практический вопрос: что должно стать заметно после этого шага, если ваша версия верна? И что вы увидите, если она неверна? Такой критерий превращает действие в проверку, а не просто в жест, после которого приходится надеяться на удачу.\n\nПуть вперёд может разветвиться, и у каждого направления будет собственная цена. Одно решение способно защитить непосредственную цель, но оставить неопределённость; другое — укрепить доказательства, но сузить окно для вмешательства; третье — уменьшить воздействие на окружающую систему, одновременно потребовав новой проверки. Эти различия не делают какой-либо путь правильным заранее. Важнее видеть, какую ценность вы защищаете сейчас, чем рискуете ради неё и какие признаки заставят пересмотреть план. Смена курса допустима, если вы можете объяснить, какая новая информация изменила расчёт.\n\nОглянитесь на Комната знакомства, Зона ухода, Кладовая. Каждая точка открывает свою часть происходящего и скрывает другую; переход между ними сам по себе может менять условия наблюдения. Не считайте схему исчерпывающей: она описывает доступные места, но не гарантирует, что все важные процессы заметны с одной позиции. Сверяйте время, источник и обстоятельства каждого сообщения. Если кто-то говорит «это было так всегда», спросите, за какой период он отвечает; если прибор показывает отклонение, уточните его рабочий диапазон и место установки. Так вы отделите стабильную закономерность от удобного, но слишком широкого обобщения.\n\nЕсть вопросы, на которые пока нельзя честно ответить. Что здесь причина, а что следствие? Действительно ли наблюдаемое изменение требует немедленного вмешательства? Кто или что понесёт последствия, если вы ошибётесь? Неопределённость не означает, что все версии одинаково вероятны; она означает, что следующая сцена должна дать материал для различения. Не превращайте каждую странность в тайный замысел и не отбрасывайте неудобную улику лишь потому, что она мешает плану. Самый убедительный поворот будет иметь смысл только тогда, когда ранние подробности позволят узнать его, а не просто удивиться ему.\n\nНачните с масштаба, который можно проверить. Запишите исходные условия, выберите один важный показатель и не меняйте сразу несколько факторов, если хотите понять, что повлияло на результат. Если вмешательство необходимо прямо сейчас, обозначьте его как временное и сохраните контрольную точку для сравнения. Если можно подождать, определите, какое именно наблюдение оправдает ожидание и сколько времени оно занимает. Это не бюрократическая осторожность: так вы не потеряете возможность отличить настоящую перемену от эффекта собственных действий.\n\nПостепенно прояснится и человеческая сторона задачи: чьи объяснения опираются на наблюдения, кто отвечает за последствия и кому придётся жить с выбранным порядком после того, как срочность спадёт. Доверие здесь не заменяет измерения, но влияет на то, какие сведения вам сообщат и какие шаги команда сможет выполнить вместе. Объясняйте, что проверяете, не обещайте результата раньше проверки и отмечайте, что именно изменило ваше мнение. Иногда это позволит сохранить сотрудничество даже при разногласии; иногда станет ясно, что разные участники защищают несовместимые интересы.\n\nОтдельно рассмотрите направление 3: Отменить контакт с животными, оставив наблюдение: стресс минимален, формат знакомства меняется. Оно не отменяет остальные возможности и не требует принимать весь план сразу. Спросите, какое подтверждение сделает этот шаг уместным, что останется измеримым после него и кто заметит его побочный эффект первым. Если ответ пока неизвестен, это не повод скрывать пробел: его можно превратить в условие остановки или повторной оценки.",
+    "en": "The shelter opens its doors this morning: some neighbors have come to meet the animals, others have brought food and blankets. As the open day coordinator, you must create calm introductions and help each person find an animal suited to a caring home\n\nA family arrives with wet coats while the supply shelf is nearly empty. Drying space can be shared now, though fewer blankets will be ready for late arrivals.\n\nRemember that the story had already begun before you arrived. The shelter invites guests to meet animals while preserving choice and quiet places to rest. This is not a backdrop or a problem that can be solved with one dramatic gesture: the conditions formed earlier, and people, objects, and processes have adapted to them. Any change will affect more than what is visible now; it may alter the routine that holds other parts of the situation together. You have authority to act, but first you need to understand what counts as normal here and who has actually verified that baseline.\n\nThe first observation belongs to a specific place: Meet-and-greet room, Care area, Supply room. It contains a detail that may look like an answer, but for now it is only a starting point. The information was gathered at different times and by different means; a gap remains between what was recorded and the explanation someone has attached to it. If you fill that gap with a guess, later evidence may be forced to fit your theory. If you mark what is known and what only seems likely, you can notice a mismatch without rewriting the whole account afterward.\n\nYour objective is broader than removing the nearest obstacle: Host calm introductions and replenish shelter supplies while keeping animals comfortable. In practice, you must watch both the immediate result and what that result lets you learn. A quick intervention may produce visible improvement while weakening comparison, access, or trust; a cautious one may preserve the quality of the evidence while leaving the problem unresolved. Those concerns do not carry the same weight in every situation. Their order depends on what you confirm and on which harm can actually be reversed.\n\nThe available material has three layers: the initial conditions, the first observation, and the explanation someone has already attached to it. Keep them separate. Use short visiting groups: animals rest, guests wait longer. If figures or accounts disagree, establish when and where the mismatch began, who witnessed the event directly, and what could have changed between checks. A disputed reading is sometimes incomplete rather than false: it may accurately describe the point where it was taken, but not the wider area the team is asking about.\n\nYou do not have to choose one strategy for the whole episode in advance. The package offers different kinds of action: Introduce the animals, Check supplies, Prepare a quiet area. Each gives you a different kind of control: one may clarify the picture, another may change the conditions, and another may buy time or test a connection between events. Before choosing, ask a practical question: what should become visible if your theory is right? What would you see if it is wrong? That turns an action into a test, rather than a gesture followed by a hope for good luck.\n\nThe way forward can branch, and each direction has its own cost. One choice may protect the immediate objective while leaving uncertainty; another may strengthen the evidence while narrowing the window to intervene; a third may reduce impact on the surrounding system while requiring a fresh check. None is automatically correct. What matters is seeing which value you are protecting, what you risk for it, and what signs would make you reconsider. A change of course is sound when you can explain what new information changed the calculation.\n\nLook at Meet-and-greet room, Care area, Supply room. Each point reveals one part of the situation and hides another; moving between them can itself change the conditions of observation. Do not treat the map as complete: it lists available places but cannot guarantee that every important process is visible from one position. Compare the time, source, and circumstances of each report. If someone says “it has always been this way,” ask what period they mean; if an instrument shows a deviation, check its operating range and location. This helps separate a stable pattern from a convenient but overly broad conclusion.\n\nSome questions cannot yet be answered honestly. What is a cause, and what is an effect? Does the observed change truly require immediate intervention? Who or what bears the cost if you are wrong? Uncertainty does not mean every theory is equally likely; it means the next scene must give you a way to distinguish them. Do not turn every oddity into a hidden scheme, and do not discard inconvenient evidence because it disrupts a plan. A convincing turn will make sense only if earlier details let you recognize it, not merely be surprised by it.\n\nStart at a scale you can check. Record the baseline, choose one important measure, and avoid changing several factors at once if you need to know what caused the result. If action is necessary now, mark it as temporary and preserve a control point for comparison. If waiting is possible, specify what observation would justify the delay and how long it will take. This is not caution for its own sake: it preserves your ability to distinguish a real change from the effect of your own intervention.\n\nThe human side of the task will become clearer too: whose account rests on observation, who is responsible for the consequences, and who must live with the chosen arrangement after the emergency passes. Trust does not replace measurement, but it affects what people tell you and what the team can do together. Explain what you are checking, do not promise a result before it is verified, and note what changed your mind. That may preserve cooperation through disagreement; it may also show that different participants are protecting interests that cannot be reconciled.\n\nConsider approach 3 separately: Cancel contact and allow observation only: stress is lowest, the visit format changes. It does not erase the other options or require you to commit to the whole plan at once. Ask what evidence would make this step appropriate, what will remain measurable afterward, and who will notice its side effect first. If the answer is not yet known, do not hide the gap; turn it into a condition for pausing or reassessing."
+  },
+  "preparedBranches": [
+    {
+      "id": "turning_point",
+      "actions": [
+        "action1",
+        "action2",
+        "action3",
+        "free_text"
+      ],
+      "narrative": {
+        "ru": "Семья приходит в промокшей одежде, а запас вещей почти исчерпан. Место для сушки можно разделить сейчас, но поздним гостям останется меньше сухих одеял.",
+        "en": "A family arrives with wet coats while the supply shelf is nearly empty. Drying space can be shared now, though fewer blankets will be ready for late arrivals."
+      },
+      "mutations": [],
+      "suggestions": [
+        {
+          "text": {
+            "ru": "Сверить обстановку и выбрать приоритет",
+            "en": "Recheck the situation and choose a priority"
+          }
+        },
+        {
+          "text": {
+            "ru": "Сохранить план и подготовить запасной вариант",
+            "en": "Keep the plan and prepare a backup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "turning_point_comfort",
+      "when": {
+        "comfort": {
+          "gte": 65
+        }
+      },
+      "actions": [
+        "action1",
+        "action2",
+        "action3",
+        "free_text"
+      ],
+      "narrative": {
+        "ru": "A family arrives with wet coats while the supply shelf is nearly empty. Drying space can be shared now, though fewer blankets will be ready for late arrivals. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
+        "en": "An alternate route opens as circumstances shift. Continue the current approach or change priorities before events make the consequences harder to reverse."
+      },
+      "mutations": [],
+      "suggestions": [
+        {
+          "text": {
+            "ru": "Сверить обстановку и выбрать приоритет",
+            "en": "Recheck the situation and choose a priority"
+          }
+        },
+        {
+          "text": {
+            "ru": "Сохранить план и подготовить запасной вариант",
+            "en": "Keep the plan and prepare a backup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "authored_turn_1",
+      "minTurns": 2,
+      "actions": [
+        "action1",
+        "action2",
+        "action3",
+        "free_text"
+      ],
+      "narrative": {
+        "ru": "Пёс не ждёт прежнего хозяина: переноска пахнет знакомой тканью из тихой комнаты и помогает ему успокоиться.",
+        "en": "The dog is not waiting for a former owner; familiar fabric in the carrier helps it settle."
+      },
+      "mutations": [],
+      "suggestions": [],
+      "responses": {
+        "action1": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Познакомить с животными». Команда продолжает по пути: Провести встречи короткими группами: животные отдыхают, ожидание гостей растёт. Улика раскрывает поворот: Пёс не ждёт прежнего хозяина: переноска пахнет знакомой тканью из тихой комнаты и помогает ему успокоиться.",
+            "en": "You choose “Introduce the animals.” The team continues along this path: Use short visiting groups: animals rest, guests wait longer. The evidence reveals the turn: The dog is not waiting for a former owner; familiar fabric in the carrier helps it settle."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Провести встречи короткими группами: животные отдыхают, ожидание гостей растёт.",
+                "en": "Use short visiting groups: animals rest, guests wait longer."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Переместить шумную активность и сохранить тихую зону: комфорт выше, волонтёры нужны в двух местах.",
+                "en": "Move noisy activity and keep a quiet zone: comfort improves, volunteers split across rooms."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Отменить контакт с животными, оставив наблюдение: стресс минимален, формат знакомства меняется.",
+                "en": "Cancel contact and allow observation only: stress is lowest, the visit format changes."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "action2": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Проверить запасы». Команда продолжает по пути: Переместить шумную активность и сохранить тихую зону: комфорт выше, волонтёры нужны в двух местах. Улика раскрывает поворот: Пёс не ждёт прежнего хозяина: переноска пахнет знакомой тканью из тихой комнаты и помогает ему успокоиться.",
+            "en": "You choose “Check supplies.” The team continues along this path: Move noisy activity and keep a quiet zone: comfort improves, volunteers split across rooms. The evidence reveals the turn: The dog is not waiting for a former owner; familiar fabric in the carrier helps it settle."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Провести встречи короткими группами: животные отдыхают, ожидание гостей растёт.",
+                "en": "Use short visiting groups: animals rest, guests wait longer."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Переместить шумную активность и сохранить тихую зону: комфорт выше, волонтёры нужны в двух местах.",
+                "en": "Move noisy activity and keep a quiet zone: comfort improves, volunteers split across rooms."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Отменить контакт с животными, оставив наблюдение: стресс минимален, формат знакомства меняется.",
+                "en": "Cancel contact and allow observation only: stress is lowest, the visit format changes."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "action3": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Подготовить тихую зону». Команда продолжает по пути: Отменить контакт с животными, оставив наблюдение: стресс минимален, формат знакомства меняется. Улика раскрывает поворот: Пёс не ждёт прежнего хозяина: переноска пахнет знакомой тканью из тихой комнаты и помогает ему успокоиться.",
+            "en": "You choose “Prepare a quiet area.” The team continues along this path: Cancel contact and allow observation only: stress is lowest, the visit format changes. The evidence reveals the turn: The dog is not waiting for a former owner; familiar fabric in the carrier helps it settle."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Провести встречи короткими группами: животные отдыхают, ожидание гостей растёт.",
+                "en": "Use short visiting groups: animals rest, guests wait longer."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Переместить шумную активность и сохранить тихую зону: комфорт выше, волонтёры нужны в двух местах.",
+                "en": "Move noisy activity and keep a quiet zone: comfort improves, volunteers split across rooms."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Отменить контакт с животными, оставив наблюдение: стресс минимален, формат знакомства меняется.",
+                "en": "Cancel contact and allow observation only: stress is lowest, the visit format changes."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "free_text": {
+          "narrative": {
+            "ru": "Ваш свободный план меняет способ проверки. Команда раскрывает поворот по найденной улике: Пёс не ждёт прежнего хозяина: переноска пахнет знакомой тканью из тихой комнаты и помогает ему успокоиться.",
+            "en": "Your free-form plan changes how the team checks the clue. The turn is revealed by the evidence: The dog is not waiting for a former owner; familiar fabric in the carrier helps it settle."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Провести встречи короткими группами: животные отдыхают, ожидание гостей растёт.",
+                "en": "Use short visiting groups: animals rest, guests wait longer."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Переместить шумную активность и сохранить тихую зону: комфорт выше, волонтёры нужны в двух местах.",
+                "en": "Move noisy activity and keep a quiet zone: comfort improves, volunteers split across rooms."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Отменить контакт с животными, оставив наблюдение: стресс минимален, формат знакомства меняется.",
+                "en": "Cancel contact and allow observation only: stress is lowest, the visit format changes."
+              },
+              "icon": "↗️"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "authored_turn_2",
+      "minTurns": 4,
+      "actions": [
+        "action1",
+        "action2",
+        "action3",
+        "free_text"
+      ],
+      "narrative": {
+        "ru": "Всплеск беспокойства у кроликов совпадает с вибрацией стиральной машины в соседнем помещении, не с посетителями.",
+        "en": "Rabbits become restless with a washer vibration in the next room, not because of visitors."
+      },
+      "mutations": [],
+      "suggestions": [],
+      "responses": {
+        "action1": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Познакомить с животными». Команда продолжает по пути: Провести встречи короткими группами: животные отдыхают, ожидание гостей растёт. Улика раскрывает поворот: Всплеск беспокойства у кроликов совпадает с вибрацией стиральной машины в соседнем помещении, не с посетителями.",
+            "en": "You choose “Introduce the animals.” The team continues along this path: Use short visiting groups: animals rest, guests wait longer. The evidence reveals the turn: Rabbits become restless with a washer vibration in the next room, not because of visitors."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Провести встречи короткими группами: животные отдыхают, ожидание гостей растёт.",
+                "en": "Use short visiting groups: animals rest, guests wait longer."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Переместить шумную активность и сохранить тихую зону: комфорт выше, волонтёры нужны в двух местах.",
+                "en": "Move noisy activity and keep a quiet zone: comfort improves, volunteers split across rooms."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Отменить контакт с животными, оставив наблюдение: стресс минимален, формат знакомства меняется.",
+                "en": "Cancel contact and allow observation only: stress is lowest, the visit format changes."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "action2": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Проверить запасы». Команда продолжает по пути: Переместить шумную активность и сохранить тихую зону: комфорт выше, волонтёры нужны в двух местах. Улика раскрывает поворот: Всплеск беспокойства у кроликов совпадает с вибрацией стиральной машины в соседнем помещении, не с посетителями.",
+            "en": "You choose “Check supplies.” The team continues along this path: Move noisy activity and keep a quiet zone: comfort improves, volunteers split across rooms. The evidence reveals the turn: Rabbits become restless with a washer vibration in the next room, not because of visitors."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Провести встречи короткими группами: животные отдыхают, ожидание гостей растёт.",
+                "en": "Use short visiting groups: animals rest, guests wait longer."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Переместить шумную активность и сохранить тихую зону: комфорт выше, волонтёры нужны в двух местах.",
+                "en": "Move noisy activity and keep a quiet zone: comfort improves, volunteers split across rooms."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Отменить контакт с животными, оставив наблюдение: стресс минимален, формат знакомства меняется.",
+                "en": "Cancel contact and allow observation only: stress is lowest, the visit format changes."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "action3": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Подготовить тихую зону». Команда продолжает по пути: Отменить контакт с животными, оставив наблюдение: стресс минимален, формат знакомства меняется. Улика раскрывает поворот: Всплеск беспокойства у кроликов совпадает с вибрацией стиральной машины в соседнем помещении, не с посетителями.",
+            "en": "You choose “Prepare a quiet area.” The team continues along this path: Cancel contact and allow observation only: stress is lowest, the visit format changes. The evidence reveals the turn: Rabbits become restless with a washer vibration in the next room, not because of visitors."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Провести встречи короткими группами: животные отдыхают, ожидание гостей растёт.",
+                "en": "Use short visiting groups: animals rest, guests wait longer."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Переместить шумную активность и сохранить тихую зону: комфорт выше, волонтёры нужны в двух местах.",
+                "en": "Move noisy activity and keep a quiet zone: comfort improves, volunteers split across rooms."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Отменить контакт с животными, оставив наблюдение: стресс минимален, формат знакомства меняется.",
+                "en": "Cancel contact and allow observation only: stress is lowest, the visit format changes."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "free_text": {
+          "narrative": {
+            "ru": "Ваш свободный план меняет способ проверки. Команда раскрывает поворот по найденной улике: Всплеск беспокойства у кроликов совпадает с вибрацией стиральной машины в соседнем помещении, не с посетителями.",
+            "en": "Your free-form plan changes how the team checks the clue. The turn is revealed by the evidence: Rabbits become restless with a washer vibration in the next room, not because of visitors."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Провести встречи короткими группами: животные отдыхают, ожидание гостей растёт.",
+                "en": "Use short visiting groups: animals rest, guests wait longer."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Переместить шумную активность и сохранить тихую зону: комфорт выше, волонтёры нужны в двух местах.",
+                "en": "Move noisy activity and keep a quiet zone: comfort improves, volunteers split across rooms."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Отменить контакт с животными, оставив наблюдение: стресс минимален, формат знакомства меняется.",
+                "en": "Cancel contact and allow observation only: stress is lowest, the visit format changes."
+              },
+              "icon": "↗️"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,614 @@
+{
+  "manifest": {
+    "id": "space-colony",
+    "title": "Орбитальная станция",
+    "description": "На орбитальной станции заканчиваются запасы, а связь с Землёй нестабильна. Балансируйте кислород, энергию и настроение экипажа, чтобы дождаться спасательного корабля.",
+    "setting": "Орбитальная станция, реактор, запасы кислорода, антенна и экипаж в ожидании спасения.",
+    "categoryRu": "Космос",
+    "background": "/assets/space-colony.png",
+    "version": "1.2.0",
+    "schemaVersion": "2",
+    "isNew": true,
+    "durationMinutes": [
+      15,
+      30
+    ]
+  },
+  "state": {
+    "initial": {
+      "cycle": 1,
+      "energy": 70,
+      "oxygen": 85,
+      "morale": 55,
+      "signal": "Слабый сигнал спасательного корабля пойман на дальней антенне.",
+      "ended": false,
+      "location": "command",
+      "goalStatus": "active"
+    }
+  },
+  "actions": {
+    "free_text": {
+      "label": "Свободное действие",
+      "input": true,
+      "icon": "✍️"
+    },
+    "repair": {
+      "label": "Починить реактор",
+      "icon": "🔧"
+    },
+    "broadcast": {
+      "label": "Усилить сигнал",
+      "icon": "📡"
+    },
+    "ration": {
+      "label": "Перераспределить ресурсы",
+      "icon": "💧"
+    }
+  },
+  "ui": {
+    "accent": "#a78bfa",
+    "stateLabels": {
+      "cycle": "Цикл",
+      "energy": "Энергия",
+      "oxygen": "Кислород",
+      "morale": "Мораль",
+      "signal": "Сигнал",
+      "location": "Место",
+      "goalStatus": "Цель"
+    }
+  },
+  "i18n": {
+    "ru": {
+      "states": {
+        "cycle": "Цикл",
+        "energy": "Энергия",
+        "oxygen": "Кислород",
+        "morale": "Мораль",
+        "signal": "Сигнал",
+        "location": "Место",
+        "goalStatus": "Цель"
+      },
+      "actions": {
+        "free_text": "Свободное действие",
+        "repair": "Починить реактор",
+        "broadcast": "Усилить сигнал",
+        "ration": "Перераспределить ресурсы"
+      },
+      "manifest": {
+        "title": "Орбитальная станция",
+        "description": "На орбитальной станции заканчиваются запасы, а связь с Землёй нестабильна. Балансируйте кислород, энергию и настроение экипажа, чтобы дождаться спасательного корабля.",
+        "category": "Космос"
+      },
+      "values": {
+        "Слабый сигнал спасательного корабля пойман на дальней антенне.": "Слабый сигнал спасательного корабля пойман на дальней антенне.",
+        "Ответ стал громче: спасатели получили координаты.": "Ответ стал громче: спасатели получили координаты.",
+        "active": "В процессе",
+        "completed": "Выполнена",
+        "failed": "Провалена"
+      }
+    },
+    "en": {
+      "states": {
+        "cycle": "Cycle",
+        "energy": "Energy",
+        "oxygen": "Oxygen",
+        "morale": "Morale",
+        "signal": "Signal",
+        "location": "Location",
+        "goalStatus": "Objective"
+      },
+      "actions": {
+        "free_text": "Free action",
+        "repair": "Repair reactor",
+        "broadcast": "Boost signal",
+        "ration": "Ration resources"
+      },
+      "manifest": {
+        "title": "Orbital Station",
+        "description": "Supplies are running low aboard an orbital station, and contact with Earth is unstable. Balance oxygen, power, and crew morale until the rescue ship arrives.",
+        "category": "Space"
+      },
+      "values": {
+        "Слабый сигнал спасательного корабля пойман на дальней антенне.": "The distant antenna picked up a faint signal from a rescue ship.",
+        "Ответ стал громче: спасатели получили координаты.": "The reply is clearer: the rescuers received the coordinates.",
+        "active": "In progress",
+        "completed": "Completed",
+        "failed": "Failed"
+      }
+    }
+  },
+  "goal": {
+    "description": {
+      "ru": "Восстановить питание, обеспечить воздух и передать координаты спасателям.",
+      "en": "Restore power, secure oxygen and transmit coordinates to rescuers."
+    },
+    "completion": {
+      "path": "goalStatus",
+      "value": "completed",
+      "terminalValues": [
+        "completed",
+        "failed"
+      ]
+    }
+  },
+  "map": {
+    "start": "command",
+    "locations": {
+      "command": {
+        "ru": "Командный отсек",
+        "en": "Command module"
+      },
+      "reactor": {
+        "ru": "Реактор",
+        "en": "Reactor"
+      },
+      "antenna": {
+        "ru": "Антенна",
+        "en": "Antenna"
+      }
+    }
+  },
+  "world": {
+    "constants": {
+      "setting": "Орбитальная станция, реактор, запасы кислорода, антенна и экипаж в ожидании спасения.",
+      "physicalRules": [
+        "Станция находится на орбите: перемещение между модулями требует перехода по соединённым герметичным секциям.",
+        "Кислород и энергия расходуются; утечка или перегрузка не исчезают без ремонта.",
+        "Слабый сигнал не означает, что спасательный корабль уже рядом или способен немедленно состыковаться."
+      ],
+      "continuity": "Соблюдай известное состояние персонажа и мира, расположение, ресурсы и причинность всех предыдущих ходов.",
+      "tone": "Взрослая реалистичная история: свобода действий игрока сочетается с правдоподобными последствиями и ограничениями мира.",
+      "storyArc": {
+        "revealPolicy": {
+          "ru": "Раскрывай повороты после проверяемых улик; показывай причинную связь и меняй дальнейшие сцены по решениям игрока.",
+          "en": "Reveal turns after verifiable clues; show their causal link and let player choices alter later scenes."
+        },
+        "beats": {
+          "ru": [
+            "Орбитальная станция ждёт спасательный корабль; реактор, кислород, антенна и усталость экипажа ограничивают варианты.",
+            "Отчёт о воде считает пригодным объём до завершения фильтрации, а радиомолчание совпадает с поворотом антенны для коррекции орбиты.",
+            "Экипаж выбирает, какие системы держать активными и когда передавать координаты, не расходуя резерв на неподтверждённую угрозу."
+          ],
+          "en": [
+            "The orbital station awaits rescue; reactor, oxygen, antenna, and crew fatigue constrain options.",
+            "The water report counts volume before filtration, while radio silence coincides with an antenna turn for orbit correction.",
+            "The crew chooses which systems stay active and when to send coordinates without spending reserves on an unverified threat."
+          ]
+        },
+        "twists": {
+          "ru": [
+            "Кислородный датчик занижает показатель после перепада температуры; ручная проба подтверждает запас, но фильтр воды действительно близок к пределу.",
+            "Окно связи короткое из-за ориентации станции для коррекции орбиты; спасатели слышат только пакет с координатами и одним подтверждённым риском."
+          ],
+          "en": [
+            "An oxygen sensor reads low after a temperature swing; a manual sample confirms reserve, but the water filter is near its limit.",
+            "The communications window is short because the station is oriented for orbit correction; rescuers can receive coordinates and one verified hazard."
+          ]
+        },
+        "paths": {
+          "ru": [
+            "Сохранить ориентацию и экономить энергию: безопаснее для станции, окно связи может пройти.",
+            "Развернуть антенну сейчас: шанс контакта выше, но коррекция орбиты отложится.",
+            "Распределить работу между экипажем и автоматикой: ресурс сохраняется, ошибки уставших операторов вероятнее."
+          ],
+          "en": [
+            "Keep orientation and conserve energy: safer for the station, but the contact window may pass.",
+            "Turn the antenna now: contact odds improve, orbit correction is delayed.",
+            "Split tasks between crew and automation: resources last longer, but tired operators are more error-prone."
+          ]
+        }
+      }
+    },
+    "knowledgeGraph": {
+      "facts": [
+        {
+          "id": "weak_rescue_signal",
+          "text": "На дальней антенне пойман слабый сигнал спасательного корабля."
+        },
+        {
+          "id": "station_power",
+          "text": "Энергия станции ограничена и распределяется между системами."
+        },
+        {
+          "id": "oxygen_supply",
+          "text": "Кислород поддерживается системой жизнеобеспечения; герметичность критична."
+        },
+        {
+          "id": "reactor_room",
+          "text": "Реактор питает станцию, но его состояние требует проверки."
+        },
+        {
+          "id": "crew_morale",
+          "text": "Экипаж ожидает спасения; напряжение влияет на взаимодействие, но не меняет технические факты."
+        }
+      ]
+    }
+  },
+  "boundaries": {
+    "mutationPaths": [
+      "location",
+      "cycle",
+      "energy",
+      "oxygen",
+      "morale",
+      "signal",
+      "goalStatus"
+    ],
+    "numericBounds": {
+      "cycle": {
+        "min": 1,
+        "max": 1000
+      },
+      "energy": {
+        "min": 0,
+        "max": 100
+      },
+      "oxygen": {
+        "min": 0,
+        "max": 100
+      },
+      "morale": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "allowedValues": {
+      "location": [
+        "command",
+        "reactor",
+        "antenna"
+      ],
+      "goalStatus": [
+        "active",
+        "completed",
+        "failed"
+      ]
+    },
+    "maxArrayItems": {},
+    "maxStringLengths": {
+      "signal": 800,
+      "location": 800
+    },
+    "instructions": [
+      "Действия игрока не ограничены списком кнопок или таблицей переходов; предложенные варианты служат лишь подсказками.",
+      "Не перемещай персонажа и не меняй место действия без описанной причины и непрерывного пути.",
+      "Изменяй состояние только в пределах физических законов, подтверждённых фактов и ограничений пакета.",
+      "Не завершай цель по одному заявлению или догадке; для финала нужны описанные и подтверждённые условия."
+    ]
+  },
+  "opening": {
+    "ru": "На орбитальной станции гаснет часть освещения, и из динамиков звучит сообщение о сбое энергосети. Вы — командир экипажа; запас кислорода сокращается, связь с Землёй нестабильна, а спасательный корабль ещё не вышел на связь\n\nОткрывается короткое окно связи. Резервная батарея усилит сигнал, но может понадобиться системам жизнеобеспечения в следующем тёмном цикле.\n\nЗдесь важно помнить, что к моменту вашего появления история уже началась. Орбитальная станция, реактор, запасы кислорода, антенна и экипаж в ожидании спасения. Это не отвлечённый фон и не задача, которую можно решить одним эффектным жестом: исходные условия складывались раньше, а люди, объекты и процессы успели приспособиться к ним. Поэтому любое изменение затронет не только то, что видно сейчас, но и привычный порядок, на котором держатся остальные части ситуации. Вы входите в неё с правом действовать, однако сначала нужно понять, что именно считается нормой и кто подтвердил эту норму.\n\nПервое наблюдение относится к конкретному месту: Командный отсек, Реактор, Антенна. В нём есть заметная деталь, которую легко принять за готовый ответ, но пока это только отправная точка. Сведения получены не одновременно и не одним способом; между тем, что зафиксировано, и тем, что уже успели предположить, остаётся промежуток. Если немедленно закрыть его догадкой, следующие данные будут подгоняться под выбранную версию. Если же точно обозначить, что известно, а что пока лишь кажется вероятным, у вас сохранится возможность увидеть несоответствие, не переписывая задним числом всю картину.\n\nВаша задача сформулирована шире, чем устранить ближайшую помеху: Восстановить питание, обеспечить воздух и передать координаты спасателям. На практике это означает одновременно следить за непосредственным результатом и за тем, что этот результат позволит узнать. Быстрый шаг может принести видимое улучшение, но ухудшить сравнимость, доступность или доверие; осторожный — сохранить качество проверки, но оставить проблему без немедленного ответа. Эти соображения не равны по весу во всех обстоятельствах. Их порядок зависит от того, какие сведения вы подтвердите и какой ущерб действительно обратим.\n\nВ материалах есть три слоя: исходное состояние, первое наблюдение и объяснение, которое кто-то успел к нему приложить. Не смешивайте их. Сохранить ориентацию и экономить энергию: безопаснее для станции, окно связи может пройти. Если цифры или свидетельства расходятся, полезно установить, когда и где именно началось расхождение, кто наблюдал явление напрямую и какие условия могли поменяться между проверками. Иногда спорный показатель оказывается не ложным, а неполным: он честно описывает ту точку, где был получен, но не ту, о которой спрашивает команда.\n\nВам не требуется заранее выбирать единственную стратегию на весь эпизод. В текущем пакете доступны разные типы действий: Починить реактор, Усилить сигнал, Перераспределить ресурсы. Они дают разные виды контроля: одно может уточнить картину, другое — изменить условия, третье — выиграть время или проверить связь между двумя событиями. Выбирая, задайте себе практический вопрос: что должно стать заметно после этого шага, если ваша версия верна? И что вы увидите, если она неверна? Такой критерий превращает действие в проверку, а не просто в жест, после которого приходится надеяться на удачу.\n\nПуть вперёд может разветвиться, и у каждого направления будет собственная цена. Одно решение способно защитить непосредственную цель, но оставить неопределённость; другое — укрепить доказательства, но сузить окно для вмешательства; третье — уменьшить воздействие на окружающую систему, одновременно потребовав новой проверки. Эти различия не делают какой-либо путь правильным заранее. Важнее видеть, какую ценность вы защищаете сейчас, чем рискуете ради неё и какие признаки заставят пересмотреть план. Смена курса допустима, если вы можете объяснить, какая новая информация изменила расчёт.\n\nОглянитесь на Командный отсек, Реактор, Антенна. Каждая точка открывает свою часть происходящего и скрывает другую; переход между ними сам по себе может менять условия наблюдения. Не считайте схему исчерпывающей: она описывает доступные места, но не гарантирует, что все важные процессы заметны с одной позиции. Сверяйте время, источник и обстоятельства каждого сообщения. Если кто-то говорит «это было так всегда», спросите, за какой период он отвечает; если прибор показывает отклонение, уточните его рабочий диапазон и место установки. Так вы отделите стабильную закономерность от удобного, но слишком широкого обобщения.\n\nЕсть вопросы, на которые пока нельзя честно ответить. Что здесь причина, а что следствие? Действительно ли наблюдаемое изменение требует немедленного вмешательства? Кто или что понесёт последствия, если вы ошибётесь? Неопределённость не означает, что все версии одинаково вероятны; она означает, что следующая сцена должна дать материал для различения. Не превращайте каждую странность в тайный замысел и не отбрасывайте неудобную улику лишь потому, что она мешает плану. Самый убедительный поворот будет иметь смысл только тогда, когда ранние подробности позволят узнать его, а не просто удивиться ему.\n\nНачните с масштаба, который можно проверить. Запишите исходные условия, выберите один важный показатель и не меняйте сразу несколько факторов, если хотите понять, что повлияло на результат. Если вмешательство необходимо прямо сейчас, обозначьте его как временное и сохраните контрольную точку для сравнения. Если можно подождать, определите, какое именно наблюдение оправдает ожидание и сколько времени оно занимает. Это не бюрократическая осторожность: так вы не потеряете возможность отличить настоящую перемену от эффекта собственных действий.\n\nПостепенно прояснится и человеческая сторона задачи: чьи объяснения опираются на наблюдения, кто отвечает за последствия и кому придётся жить с выбранным порядком после того, как срочность спадёт. Доверие здесь не заменяет измерения, но влияет на то, какие сведения вам сообщат и какие шаги команда сможет выполнить вместе. Объясняйте, что проверяете, не обещайте результата раньше проверки и отмечайте, что именно изменило ваше мнение. Иногда это позволит сохранить сотрудничество даже при разногласии; иногда станет ясно, что разные участники защищают несовместимые интересы.\n\nОтдельно рассмотрите направление 3: Распределить работу между экипажем и автоматикой: ресурс сохраняется, ошибки уставших операторов вероятнее. Оно не отменяет остальные возможности и не требует принимать весь план сразу. Спросите, какое подтверждение сделает этот шаг уместным, что останется измеримым после него и кто заметит его побочный эффект первым. Если ответ пока неизвестен, это не повод скрывать пробел: его можно превратить в условие остановки или повторной оценки.",
+    "en": "Part of the orbital station goes dark, followed by an alert about a power grid failure. You are crew commander: oxygen reserves are falling, Earth contact is unstable, and the rescue ship has not checked in\n\nA narrow signal window opens as the colony beacon clears the ridge. The reserve battery can amplify the call, or remain available for life support through the next dark cycle.\n\nRemember that the story had already begun before you arrived. The orbital station awaits rescue; reactor, oxygen, antenna, and crew fatigue constrain options. This is not a backdrop or a problem that can be solved with one dramatic gesture: the conditions formed earlier, and people, objects, and processes have adapted to them. Any change will affect more than what is visible now; it may alter the routine that holds other parts of the situation together. You have authority to act, but first you need to understand what counts as normal here and who has actually verified that baseline.\n\nThe first observation belongs to a specific place: Command module, Reactor, Antenna. It contains a detail that may look like an answer, but for now it is only a starting point. The information was gathered at different times and by different means; a gap remains between what was recorded and the explanation someone has attached to it. If you fill that gap with a guess, later evidence may be forced to fit your theory. If you mark what is known and what only seems likely, you can notice a mismatch without rewriting the whole account afterward.\n\nYour objective is broader than removing the nearest obstacle: Restore power, secure oxygen and transmit coordinates to rescuers. In practice, you must watch both the immediate result and what that result lets you learn. A quick intervention may produce visible improvement while weakening comparison, access, or trust; a cautious one may preserve the quality of the evidence while leaving the problem unresolved. Those concerns do not carry the same weight in every situation. Their order depends on what you confirm and on which harm can actually be reversed.\n\nThe available material has three layers: the initial conditions, the first observation, and the explanation someone has already attached to it. Keep them separate. Keep orientation and conserve energy: safer for the station, but the contact window may pass. If figures or accounts disagree, establish when and where the mismatch began, who witnessed the event directly, and what could have changed between checks. A disputed reading is sometimes incomplete rather than false: it may accurately describe the point where it was taken, but not the wider area the team is asking about.\n\nYou do not have to choose one strategy for the whole episode in advance. The package offers different kinds of action: Repair reactor, Boost signal, Ration resources. Each gives you a different kind of control: one may clarify the picture, another may change the conditions, and another may buy time or test a connection between events. Before choosing, ask a practical question: what should become visible if your theory is right? What would you see if it is wrong? That turns an action into a test, rather than a gesture followed by a hope for good luck.\n\nThe way forward can branch, and each direction has its own cost. One choice may protect the immediate objective while leaving uncertainty; another may strengthen the evidence while narrowing the window to intervene; a third may reduce impact on the surrounding system while requiring a fresh check. None is automatically correct. What matters is seeing which value you are protecting, what you risk for it, and what signs would make you reconsider. A change of course is sound when you can explain what new information changed the calculation.\n\nLook at Command module, Reactor, Antenna. Each point reveals one part of the situation and hides another; moving between them can itself change the conditions of observation. Do not treat the map as complete: it lists available places but cannot guarantee that every important process is visible from one position. Compare the time, source, and circumstances of each report. If someone says “it has always been this way,” ask what period they mean; if an instrument shows a deviation, check its operating range and location. This helps separate a stable pattern from a convenient but overly broad conclusion.\n\nSome questions cannot yet be answered honestly. What is a cause, and what is an effect? Does the observed change truly require immediate intervention? Who or what bears the cost if you are wrong? Uncertainty does not mean every theory is equally likely; it means the next scene must give you a way to distinguish them. Do not turn every oddity into a hidden scheme, and do not discard inconvenient evidence because it disrupts a plan. A convincing turn will make sense only if earlier details let you recognize it, not merely be surprised by it.\n\nStart at a scale you can check. Record the baseline, choose one important measure, and avoid changing several factors at once if you need to know what caused the result. If action is necessary now, mark it as temporary and preserve a control point for comparison. If waiting is possible, specify what observation would justify the delay and how long it will take. This is not caution for its own sake: it preserves your ability to distinguish a real change from the effect of your own intervention.\n\nThe human side of the task will become clearer too: whose account rests on observation, who is responsible for the consequences, and who must live with the chosen arrangement after the emergency passes. Trust does not replace measurement, but it affects what people tell you and what the team can do together. Explain what you are checking, do not promise a result before it is verified, and note what changed your mind. That may preserve cooperation through disagreement; it may also show that different participants are protecting interests that cannot be reconciled.\n\nConsider approach 3 separately: Split tasks between crew and automation: resources last longer, but tired operators are more error-prone. It does not erase the other options or require you to commit to the whole plan at once. Ask what evidence would make this step appropriate, what will remain measurable afterward, and who will notice its side effect first. If the answer is not yet known, do not hide the gap; turn it into a condition for pausing or reassessing."
+  },
+  "preparedBranches": [
+    {
+      "id": "signal_pressure",
+      "actions": [
+        "repair",
+        "broadcast",
+        "ration",
+        "free_text"
+      ],
+      "narrative": {
+        "ru": "Открывается короткое окно связи. Резервная батарея усилит сигнал, но может понадобиться системам жизнеобеспечения в следующем тёмном цикле.",
+        "en": "A narrow signal window opens as the colony beacon clears the ridge. The reserve battery can amplify the call, or remain available for life support through the next dark cycle."
+      },
+      "mutations": [],
+      "suggestions": [
+        {
+          "text": {
+            "ru": "Сверить обстановку и выбрать безопасный приоритет",
+            "en": "Recheck the situation and choose a safe priority"
+          }
+        },
+        {
+          "text": {
+            "ru": "Сохранить текущий план и подготовить запасной",
+            "en": "Keep the current plan and prepare a backup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "turning_point_cycle",
+      "when": {
+        "cycle": {
+          "gte": 650
+        }
+      },
+      "actions": [
+        "repair",
+        "broadcast",
+        "ration",
+        "free_text"
+      ],
+      "narrative": {
+        "ru": "A narrow signal window opens as the colony beacon clears the ridge. The reserve battery can amplify the call, or remain available for life support through the next dark cycle. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
+        "en": "An alternate route opens as circumstances shift. Continue the current approach or change priorities before events make the consequences harder to reverse."
+      },
+      "mutations": [],
+      "suggestions": [
+        {
+          "text": {
+            "ru": "Сверить обстановку и выбрать безопасный приоритет",
+            "en": "Recheck the situation and choose a safe priority"
+          }
+        },
+        {
+          "text": {
+            "ru": "Сохранить текущий план и подготовить запасной",
+            "en": "Keep the current plan and prepare a backup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "authored_turn_1",
+      "minTurns": 2,
+      "actions": [
+        "repair",
+        "broadcast",
+        "ration",
+        "free_text"
+      ],
+      "narrative": {
+        "ru": "Кислородный датчик занижает показатель после перепада температуры; ручная проба подтверждает запас, но фильтр воды действительно близок к пределу.",
+        "en": "An oxygen sensor reads low after a temperature swing; a manual sample confirms reserve, but the water filter is near its limit."
+      },
+      "mutations": [],
+      "suggestions": [],
+      "responses": {
+        "repair": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Починить реактор». Команда продолжает по пути: Сохранить ориентацию и экономить энергию: безопаснее для станции, окно связи может пройти. Улика раскрывает поворот: Кислородный датчик занижает показатель после перепада температуры; ручная проба подтверждает запас, но фильтр воды действительно близок к пределу.",
+            "en": "You choose “Repair reactor.” The team continues along this path: Keep orientation and conserve energy: safer for the station, but the contact window may pass. The evidence reveals the turn: An oxygen sensor reads low after a temperature swing; a manual sample confirms reserve, but the water filter is near its limit."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Сохранить ориентацию и экономить энергию: безопаснее для станции, окно связи может пройти.",
+                "en": "Keep orientation and conserve energy: safer for the station, but the contact window may pass."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Развернуть антенну сейчас: шанс контакта выше, но коррекция орбиты отложится.",
+                "en": "Turn the antenna now: contact odds improve, orbit correction is delayed."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Распределить работу между экипажем и автоматикой: ресурс сохраняется, ошибки уставших операторов вероятнее.",
+                "en": "Split tasks between crew and automation: resources last longer, but tired operators are more error-prone."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "broadcast": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Усилить сигнал». Команда продолжает по пути: Развернуть антенну сейчас: шанс контакта выше, но коррекция орбиты отложится. Улика раскрывает поворот: Кислородный датчик занижает показатель после перепада температуры; ручная проба подтверждает запас, но фильтр воды действительно близок к пределу.",
+            "en": "You choose “Boost signal.” The team continues along this path: Turn the antenna now: contact odds improve, orbit correction is delayed. The evidence reveals the turn: An oxygen sensor reads low after a temperature swing; a manual sample confirms reserve, but the water filter is near its limit."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Сохранить ориентацию и экономить энергию: безопаснее для станции, окно связи может пройти.",
+                "en": "Keep orientation and conserve energy: safer for the station, but the contact window may pass."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Развернуть антенну сейчас: шанс контакта выше, но коррекция орбиты отложится.",
+                "en": "Turn the antenna now: contact odds improve, orbit correction is delayed."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Распределить работу между экипажем и автоматикой: ресурс сохраняется, ошибки уставших операторов вероятнее.",
+                "en": "Split tasks between crew and automation: resources last longer, but tired operators are more error-prone."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "ration": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Перераспределить ресурсы». Команда продолжает по пути: Распределить работу между экипажем и автоматикой: ресурс сохраняется, ошибки уставших операторов вероятнее. Улика раскрывает поворот: Кислородный датчик занижает показатель после перепада температуры; ручная проба подтверждает запас, но фильтр воды действительно близок к пределу.",
+            "en": "You choose “Ration resources.” The team continues along this path: Split tasks between crew and automation: resources last longer, but tired operators are more error-prone. The evidence reveals the turn: An oxygen sensor reads low after a temperature swing; a manual sample confirms reserve, but the water filter is near its limit."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Сохранить ориентацию и экономить энергию: безопаснее для станции, окно связи может пройти.",
+                "en": "Keep orientation and conserve energy: safer for the station, but the contact window may pass."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Развернуть антенну сейчас: шанс контакта выше, но коррекция орбиты отложится.",
+                "en": "Turn the antenna now: contact odds improve, orbit correction is delayed."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Распределить работу между экипажем и автоматикой: ресурс сохраняется, ошибки уставших операторов вероятнее.",
+                "en": "Split tasks between crew and automation: resources last longer, but tired operators are more error-prone."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "free_text": {
+          "narrative": {
+            "ru": "Ваш свободный план меняет способ проверки. Команда раскрывает поворот по найденной улике: Кислородный датчик занижает показатель после перепада температуры; ручная проба подтверждает запас, но фильтр воды действительно близок к пределу.",
+            "en": "Your free-form plan changes how the team checks the clue. The turn is revealed by the evidence: An oxygen sensor reads low after a temperature swing; a manual sample confirms reserve, but the water filter is near its limit."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Сохранить ориентацию и экономить энергию: безопаснее для станции, окно связи может пройти.",
+                "en": "Keep orientation and conserve energy: safer for the station, but the contact window may pass."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Развернуть антенну сейчас: шанс контакта выше, но коррекция орбиты отложится.",
+                "en": "Turn the antenna now: contact odds improve, orbit correction is delayed."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Распределить работу между экипажем и автоматикой: ресурс сохраняется, ошибки уставших операторов вероятнее.",
+                "en": "Split tasks between crew and automation: resources last longer, but tired operators are more error-prone."
+              },
+              "icon": "↗️"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "authored_turn_2",
+      "minTurns": 4,
+      "actions": [
+        "repair",
+        "broadcast",
+        "ration",
+        "free_text"
+      ],
+      "narrative": {
+        "ru": "Окно связи короткое из-за ориентации станции для коррекции орбиты; спасатели слышат только пакет с координатами и одним подтверждённым риском.",
+        "en": "The communications window is short because the station is oriented for orbit correction; rescuers can receive coordinates and one verified hazard."
+      },
+      "mutations": [],
+      "suggestions": [],
+      "responses": {
+        "repair": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Починить реактор». Команда продолжает по пути: Сохранить ориентацию и экономить энергию: безопаснее для станции, окно связи может пройти. Улика раскрывает поворот: Окно связи короткое из-за ориентации станции для коррекции орбиты; спасатели слышат только пакет с координатами и одним подтверждённым риском.",
+            "en": "You choose “Repair reactor.” The team continues along this path: Keep orientation and conserve energy: safer for the station, but the contact window may pass. The evidence reveals the turn: The communications window is short because the station is oriented for orbit correction; rescuers can receive coordinates and one verified hazard."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Сохранить ориентацию и экономить энергию: безопаснее для станции, окно связи может пройти.",
+                "en": "Keep orientation and conserve energy: safer for the station, but the contact window may pass."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Развернуть антенну сейчас: шанс контакта выше, но коррекция орбиты отложится.",
+                "en": "Turn the antenna now: contact odds improve, orbit correction is delayed."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Распределить работу между экипажем и автоматикой: ресурс сохраняется, ошибки уставших операторов вероятнее.",
+                "en": "Split tasks between crew and automation: resources last longer, but tired operators are more error-prone."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "broadcast": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Усилить сигнал». Команда продолжает по пути: Развернуть антенну сейчас: шанс контакта выше, но коррекция орбиты отложится. Улика раскрывает поворот: Окно связи короткое из-за ориентации станции для коррекции орбиты; спасатели слышат только пакет с координатами и одним подтверждённым риском.",
+            "en": "You choose “Boost signal.” The team continues along this path: Turn the antenna now: contact odds improve, orbit correction is delayed. The evidence reveals the turn: The communications window is short because the station is oriented for orbit correction; rescuers can receive coordinates and one verified hazard."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Сохранить ориентацию и экономить энергию: безопаснее для станции, окно связи может пройти.",
+                "en": "Keep orientation and conserve energy: safer for the station, but the contact window may pass."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Развернуть антенну сейчас: шанс контакта выше, но коррекция орбиты отложится.",
+                "en": "Turn the antenna now: contact odds improve, orbit correction is delayed."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Распределить работу между экипажем и автоматикой: ресурс сохраняется, ошибки уставших операторов вероятнее.",
+                "en": "Split tasks between crew and automation: resources last longer, but tired operators are more error-prone."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "ration": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Перераспределить ресурсы». Команда продолжает по пути: Распределить работу между экипажем и автоматикой: ресурс сохраняется, ошибки уставших операторов вероятнее. Улика раскрывает поворот: Окно связи короткое из-за ориентации станции для коррекции орбиты; спасатели слышат только пакет с координатами и одним подтверждённым риском.",
+            "en": "You choose “Ration resources.” The team continues along this path: Split tasks between crew and automation: resources last longer, but tired operators are more error-prone. The evidence reveals the turn: The communications window is short because the station is oriented for orbit correction; rescuers can receive coordinates and one verified hazard."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Сохранить ориентацию и экономить энергию: безопаснее для станции, окно связи может пройти.",
+                "en": "Keep orientation and conserve energy: safer for the station, but the contact window may pass."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Развернуть антенну сейчас: шанс контакта выше, но коррекция орбиты отложится.",
+                "en": "Turn the antenna now: contact odds improve, orbit correction is delayed."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Распределить работу между экипажем и автоматикой: ресурс сохраняется, ошибки уставших операторов вероятнее.",
+                "en": "Split tasks between crew and automation: resources last longer, but tired operators are more error-prone."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "free_text": {
+          "narrative": {
+            "ru": "Ваш свободный план меняет способ проверки. Команда раскрывает поворот по найденной улике: Окно связи короткое из-за ориентации станции для коррекции орбиты; спасатели слышат только пакет с координатами и одним подтверждённым риском.",
+            "en": "Your free-form plan changes how the team checks the clue. The turn is revealed by the evidence: The communications window is short because the station is oriented for orbit correction; rescuers can receive coordinates and one verified hazard."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Сохранить ориентацию и экономить энергию: безопаснее для станции, окно связи может пройти.",
+                "en": "Keep orientation and conserve energy: safer for the station, but the contact window may pass."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Развернуть антенну сейчас: шанс контакта выше, но коррекция орбиты отложится.",
+                "en": "Turn the antenna now: contact odds improve, orbit correction is delayed."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Распределить работу между экипажем и автоматикой: ресурс сохраняется, ошибки уставших операторов вероятнее.",
+                "en": "Split tasks between crew and automation: resources last longer, but tired operators are more error-prone."
+              },
+              "icon": "↗️"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

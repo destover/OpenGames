@@ -1,0 +1,601 @@
+{
+  "manifest": {
+    "id": "clockwork-city",
+    "title": "Город шестерёнок",
+    "description": "Механизм городских часов сбился, и привычный ход времени нарушен. Исследуйте мастерские и башню, находите связи между шестернями и помогите жителям восстановить ритм города.",
+    "setting": "Викторианский город, башенные часы, механические мастерские, пружины и туманная площадь.",
+    "categoryRu": "Механика",
+    "background": "/assets/clockwork-city.png",
+    "version": "1.2.0",
+    "schemaVersion": "2",
+    "isNew": true,
+    "durationMinutes": [
+      15,
+      30
+    ]
+  },
+  "state": {
+    "initial": {
+      "hour": 6,
+      "gears": 2,
+      "trust": 35,
+      "clue": "На площади замерли часы, но внутри слышен неровный ход.",
+      "ended": false,
+      "location": "square",
+      "goalStatus": "active"
+    }
+  },
+  "actions": {
+    "free_text": {
+      "label": "Свободное действие",
+      "input": true,
+      "icon": "✍️"
+    },
+    "inspect": {
+      "label": "Осмотреть механизм",
+      "icon": "🔎"
+    },
+    "trade": {
+      "label": "Договориться с мастером",
+      "icon": "🤝"
+    },
+    "wind": {
+      "label": "Завести башенные часы",
+      "icon": "⚙️"
+    }
+  },
+  "ui": {
+    "accent": "#facc15",
+    "stateLabels": {
+      "hour": "Время",
+      "gears": "Шестерёнки",
+      "trust": "Доверие",
+      "clue": "Зацепка",
+      "location": "Место",
+      "goalStatus": "Цель"
+    }
+  },
+  "goal": {
+    "description": {
+      "ru": "Выяснить причину поломки, получить помощь мастера и запустить часы.",
+      "en": "Identify the fault, enlist the mechanic and restart the clock."
+    },
+    "completion": {
+      "path": "goalStatus",
+      "value": "completed",
+      "terminalValues": [
+        "completed",
+        "failed"
+      ]
+    }
+  },
+  "map": {
+    "start": "square",
+    "locations": {
+      "square": {
+        "ru": "Площадь",
+        "en": "Square"
+      },
+      "tower": {
+        "ru": "Часовая башня",
+        "en": "Clock tower"
+      },
+      "workshop": {
+        "ru": "Мастерская",
+        "en": "Workshop"
+      }
+    }
+  },
+  "i18n": {
+    "ru": {
+      "manifest": {
+        "title": "Город шестерёнок",
+        "description": "Механизм городских часов сбился, и привычный ход времени нарушен. Исследуйте мастерские и башню, находите связи между шестернями и помогите жителям восстановить ритм города.",
+        "category": "Механика"
+      },
+      "states": {
+        "hour": "Время",
+        "gears": "Шестерёнки",
+        "trust": "Доверие",
+        "clue": "Зацепка",
+        "location": "Место",
+        "goalStatus": "Цель"
+      },
+      "actions": {
+        "free_text": "Свободное действие",
+        "inspect": "Осмотреть механизм",
+        "trade": "Договориться с мастером",
+        "wind": "Завести башенные часы"
+      },
+      "values": {
+        "На площади замерли часы, но внутри слышен неровный ход.": "На площади замерли часы, но внутри слышен неровный ход.",
+        "В главной шестерне застрял кусок синей ленты.": "В главной шестерне застрял кусок синей ленты.",
+        "active": "В процессе",
+        "completed": "Выполнена",
+        "failed": "Провалена"
+      }
+    },
+    "en": {
+      "manifest": {
+        "title": "Clockwork City",
+        "description": "The city clockwork has fallen out of sync, disrupting the rhythm of everyday life. Explore workshops and the tower, trace the gears’ connections, and help the residents set the city right.",
+        "category": "Clockwork"
+      },
+      "states": {
+        "hour": "Hour",
+        "gears": "Gears",
+        "trust": "Trust",
+        "clue": "World memory",
+        "location": "Location",
+        "goalStatus": "Objective"
+      },
+      "actions": {
+        "free_text": "Free action",
+        "inspect": "Inspect",
+        "trade": "Talk to the mechanic",
+        "wind": "Wind the tower clock"
+      },
+      "values": {
+        "На площади замерли часы, но внутри слышен неровный ход.": "The clock above the square has stopped, but an uneven ticking comes from inside.",
+        "В главной шестерне застрял кусок синей ленты.": "A piece of blue ribbon is caught in the main gear.",
+        "active": "In progress",
+        "completed": "Completed",
+        "failed": "Failed"
+      }
+    }
+  },
+  "world": {
+    "constants": {
+      "setting": "Викторианский город, башенные часы, механические мастерские, пружины и туманная площадь.",
+      "physicalRules": [
+        "Механизмы передают движение только через физически связанные детали; сломанная шестерня не чинится одним фактом её осмотра.",
+        "Остановка башенных часов замедляет городские механизмы, но не останавливает время для персонажа.",
+        "Туман ухудшает видимость и не создаёт новые сведения о механизме."
+      ],
+      "continuity": "Соблюдай известное состояние персонажа и мира, расположение, ресурсы и причинность всех предыдущих ходов.",
+      "tone": "Взрослая реалистичная история: свобода действий игрока сочетается с правдоподобными последствиями и ограничениями мира.",
+      "storyArc": {
+        "revealPolicy": {
+          "ru": "Раскрывай повороты только после улик и связывай их с прежними деталями; действия должны менять продолжение и итог.",
+          "en": "Reveal turns only after their clues appear, tie them to earlier details, and let choices change later scenes and outcomes."
+        },
+        "beats": {
+          "ru": [
+            "Часы на туманной площади расходятся на минуты; мастерские ждут общего сигнала к открытию.",
+            "Маятники точны, но новый навес изменил тягу, а закрытые арки приглушают звон.",
+            "Город решает сохранить единый сигнал или временно доверить районам собственные регуляторы."
+          ],
+          "en": [
+            "Clocks on the foggy square differ by minutes; workshops await a shared opening signal.",
+            "Pendulums are accurate, but a new awning shifted the linkage and closed arcades muffle the chime.",
+            "The city must keep one signal or temporarily trust local regulators."
+          ]
+        },
+        "twists": {
+          "ru": [
+            "След смазки показывает смещение нагрузки после установки навеса, не износ пружины.",
+            "Соседние мастерские используют звон для смен; перевод стрелок без объявления нарушит их расписание."
+          ],
+          "en": [
+            "Grease marks show the load shifted after the awning was installed; the spring is not worn.",
+            "Nearby workshops schedule shifts by the chime; resetting it silently disrupts their day."
+          ]
+        },
+        "paths": {
+          "ru": [
+            "Остановить башню для калибровки: точнее, но площадь теряет ориентир на время ремонта.",
+            "Раздать синхронные карманные часы: общий ритм сохранится, редкие детали уйдут.",
+            "Оставить башню и добавить сигнал у площади: церемония состоится, дальние районы услышат её иначе."
+          ],
+          "en": [
+            "Stop the tower for calibration: precision returns, but the square loses its time cue.",
+            "Issue synchronized pocket regulators: the shared rhythm survives, but rare parts are spent.",
+            "Keep the tower and add a square signal: the ceremony proceeds, distant districts hear it differently."
+          ]
+        }
+      }
+    },
+    "knowledgeGraph": {
+      "facts": [
+        {
+          "id": "clock_mechanism",
+          "text": "Башенные часы остановились; изнутри доносится неровный ход."
+        },
+        {
+          "id": "gear_supply",
+          "text": "У костяка часового механизма есть две исправные шестерни; неизвестно, подходят ли они."
+        },
+        {
+          "id": "city_condition",
+          "text": "Городские часы остановились, но мастерские и площадь остаются доступны."
+        },
+        {
+          "id": "clockmaker",
+          "text": "Причина остановки и местонахождение часовщика пока неизвестны."
+        }
+      ]
+    }
+  },
+  "boundaries": {
+    "mutationPaths": [
+      "location",
+      "hour",
+      "gears",
+      "trust",
+      "clue",
+      "goalStatus"
+    ],
+    "numericBounds": {
+      "hour": {
+        "min": 0,
+        "max": 24
+      },
+      "gears": {
+        "min": 0,
+        "max": 20
+      },
+      "trust": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "allowedValues": {
+      "location": [
+        "square",
+        "tower",
+        "workshop"
+      ],
+      "goalStatus": [
+        "active",
+        "completed",
+        "failed"
+      ]
+    },
+    "maxArrayItems": {},
+    "maxStringLengths": {
+      "clue": 800,
+      "location": 800
+    },
+    "instructions": [
+      "Действия игрока не ограничены списком кнопок или таблицей переходов; предложенные варианты служат лишь подсказками.",
+      "Не перемещай персонажа и не меняй место действия без описанной причины и непрерывного пути.",
+      "Изменяй состояние только в пределах физических законов, подтверждённых фактов и ограничений пакета.",
+      "Не завершай цель по одному заявлению или догадке; для финала нужны описанные и подтверждённые условия."
+    ]
+  },
+  "opening": {
+    "ru": "На рассвете городские часы пробили тринадцать раз — и остановились. Вы — ученик часовщика, которого срочно позвали на главную площадь: жители сбились с распорядка, башня закрыта, а мастерская хранит детали, происхождение которых никто не помнит\n\nЗа циферблатом срывается шестерня, и каждый удар уходит на долю такта. Мастер предлагает запасной зубец за журнал, а люди на площади уже сравнивают часы.\n\nЗдесь важно помнить, что к моменту вашего появления история уже началась. Викторианский город, башенные часы, механические мастерские, пружины и туманная площадь. Это не отвлечённый фон и не задача, которую можно решить одним эффектным жестом: исходные условия складывались раньше, а люди, объекты и процессы успели приспособиться к ним. Поэтому любое изменение затронет не только то, что видно сейчас, но и привычный порядок, на котором держатся остальные части ситуации. Вы входите в неё с правом действовать, однако сначала нужно понять, что именно считается нормой и кто подтвердил эту норму.\n\nПервое наблюдение относится к конкретному месту: Площадь, Часовая башня, Мастерская. В нём есть заметная деталь, которую легко принять за готовый ответ, но пока это только отправная точка. Сведения получены не одновременно и не одним способом; между тем, что зафиксировано, и тем, что уже успели предположить, остаётся промежуток. Если немедленно закрыть его догадкой, следующие данные будут подгоняться под выбранную версию. Если же точно обозначить, что известно, а что пока лишь кажется вероятным, у вас сохранится возможность увидеть несоответствие, не переписывая задним числом всю картину.\n\nВаша задача сформулирована шире, чем устранить ближайшую помеху: Выяснить причину поломки, получить помощь мастера и запустить часы. На практике это означает одновременно следить за непосредственным результатом и за тем, что этот результат позволит узнать. Быстрый шаг может принести видимое улучшение, но ухудшить сравнимость, доступность или доверие; осторожный — сохранить качество проверки, но оставить проблему без немедленного ответа. Эти соображения не равны по весу во всех обстоятельствах. Их порядок зависит от того, какие сведения вы подтвердите и какой ущерб действительно обратим.\n\nВ материалах есть три слоя: исходное состояние, первое наблюдение и объяснение, которое кто-то успел к нему приложить. Не смешивайте их. Остановить башню для калибровки: точнее, но площадь теряет ориентир на время ремонта. Если цифры или свидетельства расходятся, полезно установить, когда и где именно началось расхождение, кто наблюдал явление напрямую и какие условия могли поменяться между проверками. Иногда спорный показатель оказывается не ложным, а неполным: он честно описывает ту точку, где был получен, но не ту, о которой спрашивает команда.\n\nВам не требуется заранее выбирать единственную стратегию на весь эпизод. В текущем пакете доступны разные типы действий: Осмотреть механизм, Договориться с мастером, Завести башенные часы. Они дают разные виды контроля: одно может уточнить картину, другое — изменить условия, третье — выиграть время или проверить связь между двумя событиями. Выбирая, задайте себе практический вопрос: что должно стать заметно после этого шага, если ваша версия верна? И что вы увидите, если она неверна? Такой критерий превращает действие в проверку, а не просто в жест, после которого приходится надеяться на удачу.\n\nПуть вперёд может разветвиться, и у каждого направления будет собственная цена. Одно решение способно защитить непосредственную цель, но оставить неопределённость; другое — укрепить доказательства, но сузить окно для вмешательства; третье — уменьшить воздействие на окружающую систему, одновременно потребовав новой проверки. Эти различия не делают какой-либо путь правильным заранее. Важнее видеть, какую ценность вы защищаете сейчас, чем рискуете ради неё и какие признаки заставят пересмотреть план. Смена курса допустима, если вы можете объяснить, какая новая информация изменила расчёт.\n\nОглянитесь на Площадь, Часовая башня, Мастерская. Каждая точка открывает свою часть происходящего и скрывает другую; переход между ними сам по себе может менять условия наблюдения. Не считайте схему исчерпывающей: она описывает доступные места, но не гарантирует, что все важные процессы заметны с одной позиции. Сверяйте время, источник и обстоятельства каждого сообщения. Если кто-то говорит «это было так всегда», спросите, за какой период он отвечает; если прибор показывает отклонение, уточните его рабочий диапазон и место установки. Так вы отделите стабильную закономерность от удобного, но слишком широкого обобщения.\n\nЕсть вопросы, на которые пока нельзя честно ответить. Что здесь причина, а что следствие? Действительно ли наблюдаемое изменение требует немедленного вмешательства? Кто или что понесёт последствия, если вы ошибётесь? Неопределённость не означает, что все версии одинаково вероятны; она означает, что следующая сцена должна дать материал для различения. Не превращайте каждую странность в тайный замысел и не отбрасывайте неудобную улику лишь потому, что она мешает плану. Самый убедительный поворот будет иметь смысл только тогда, когда ранние подробности позволят узнать его, а не просто удивиться ему.\n\nНачните с масштаба, который можно проверить. Запишите исходные условия, выберите один важный показатель и не меняйте сразу несколько факторов, если хотите понять, что повлияло на результат. Если вмешательство необходимо прямо сейчас, обозначьте его как временное и сохраните контрольную точку для сравнения. Если можно подождать, определите, какое именно наблюдение оправдает ожидание и сколько времени оно занимает. Это не бюрократическая осторожность: так вы не потеряете возможность отличить настоящую перемену от эффекта собственных действий.\n\nПостепенно прояснится и человеческая сторона задачи: чьи объяснения опираются на наблюдения, кто отвечает за последствия и кому придётся жить с выбранным порядком после того, как срочность спадёт. Доверие здесь не заменяет измерения, но влияет на то, какие сведения вам сообщат и какие шаги команда сможет выполнить вместе. Объясняйте, что проверяете, не обещайте результата раньше проверки и отмечайте, что именно изменило ваше мнение. Иногда это позволит сохранить сотрудничество даже при разногласии; иногда станет ясно, что разные участники защищают несовместимые интересы.\n\nОтдельно рассмотрите направление 3: Оставить башню и добавить сигнал у площади: церемония состоится, дальние районы услышат её иначе. Оно не отменяет остальные возможности и не требует принимать весь план сразу. Спросите, какое подтверждение сделает этот шаг уместным, что останется измеримым после него и кто заметит его побочный эффект первым. Если ответ пока неизвестен, это не повод скрывать пробел: его можно превратить в условие остановки или повторной оценки.",
+    "en": "At dawn, the city clock strikes thirteen times—and stops. You are an apprentice clockmaker called to the main square: daily life is thrown off, the tower is sealed, and the workshop holds parts no one remembers making\n\nA gear slips behind the clock face, shifting every chime by a fraction. The mechanic offers a replacement tooth in exchange for the ledger as the square crowd starts comparing clocks.\n\nRemember that the story had already begun before you arrived. Clocks on the foggy square differ by minutes; workshops await a shared opening signal. This is not a backdrop or a problem that can be solved with one dramatic gesture: the conditions formed earlier, and people, objects, and processes have adapted to them. Any change will affect more than what is visible now; it may alter the routine that holds other parts of the situation together. You have authority to act, but first you need to understand what counts as normal here and who has actually verified that baseline.\n\nThe first observation belongs to a specific place: Square, Clock tower, Workshop. It contains a detail that may look like an answer, but for now it is only a starting point. The information was gathered at different times and by different means; a gap remains between what was recorded and the explanation someone has attached to it. If you fill that gap with a guess, later evidence may be forced to fit your theory. If you mark what is known and what only seems likely, you can notice a mismatch without rewriting the whole account afterward.\n\nYour objective is broader than removing the nearest obstacle: Identify the fault, enlist the mechanic and restart the clock. In practice, you must watch both the immediate result and what that result lets you learn. A quick intervention may produce visible improvement while weakening comparison, access, or trust; a cautious one may preserve the quality of the evidence while leaving the problem unresolved. Those concerns do not carry the same weight in every situation. Their order depends on what you confirm and on which harm can actually be reversed.\n\nThe available material has three layers: the initial conditions, the first observation, and the explanation someone has already attached to it. Keep them separate. Stop the tower for calibration: precision returns, but the square loses its time cue. If figures or accounts disagree, establish when and where the mismatch began, who witnessed the event directly, and what could have changed between checks. A disputed reading is sometimes incomplete rather than false: it may accurately describe the point where it was taken, but not the wider area the team is asking about.\n\nYou do not have to choose one strategy for the whole episode in advance. The package offers different kinds of action: Inspect, Talk to the mechanic, Wind the tower clock. Each gives you a different kind of control: one may clarify the picture, another may change the conditions, and another may buy time or test a connection between events. Before choosing, ask a practical question: what should become visible if your theory is right? What would you see if it is wrong? That turns an action into a test, rather than a gesture followed by a hope for good luck.\n\nThe way forward can branch, and each direction has its own cost. One choice may protect the immediate objective while leaving uncertainty; another may strengthen the evidence while narrowing the window to intervene; a third may reduce impact on the surrounding system while requiring a fresh check. None is automatically correct. What matters is seeing which value you are protecting, what you risk for it, and what signs would make you reconsider. A change of course is sound when you can explain what new information changed the calculation.\n\nLook at Square, Clock tower, Workshop. Each point reveals one part of the situation and hides another; moving between them can itself change the conditions of observation. Do not treat the map as complete: it lists available places but cannot guarantee that every important process is visible from one position. Compare the time, source, and circumstances of each report. If someone says “it has always been this way,” ask what period they mean; if an instrument shows a deviation, check its operating range and location. This helps separate a stable pattern from a convenient but overly broad conclusion.\n\nSome questions cannot yet be answered honestly. What is a cause, and what is an effect? Does the observed change truly require immediate intervention? Who or what bears the cost if you are wrong? Uncertainty does not mean every theory is equally likely; it means the next scene must give you a way to distinguish them. Do not turn every oddity into a hidden scheme, and do not discard inconvenient evidence because it disrupts a plan. A convincing turn will make sense only if earlier details let you recognize it, not merely be surprised by it.\n\nStart at a scale you can check. Record the baseline, choose one important measure, and avoid changing several factors at once if you need to know what caused the result. If action is necessary now, mark it as temporary and preserve a control point for comparison. If waiting is possible, specify what observation would justify the delay and how long it will take. This is not caution for its own sake: it preserves your ability to distinguish a real change from the effect of your own intervention.\n\nThe human side of the task will become clearer too: whose account rests on observation, who is responsible for the consequences, and who must live with the chosen arrangement after the emergency passes. Trust does not replace measurement, but it affects what people tell you and what the team can do together. Explain what you are checking, do not promise a result before it is verified, and note what changed your mind. That may preserve cooperation through disagreement; it may also show that different participants are protecting interests that cannot be reconciled.\n\nConsider approach 3 separately: Keep the tower and add a square signal: the ceremony proceeds, distant districts hear it differently. It does not erase the other options or require you to commit to the whole plan at once. Ask what evidence would make this step appropriate, what will remain measurable afterward, and who will notice its side effect first. If the answer is not yet known, do not hide the gap; turn it into a condition for pausing or reassessing."
+  },
+  "preparedBranches": [
+    {
+      "id": "gears_pressure",
+      "actions": [
+        "inspect",
+        "trade",
+        "wind",
+        "free_text"
+      ],
+      "narrative": {
+        "ru": "За циферблатом срывается шестерня, и каждый удар уходит на долю такта. Мастер предлагает запасной зубец за журнал, а люди на площади уже сравнивают часы.",
+        "en": "A gear slips behind the clock face, shifting every chime by a fraction. The mechanic offers a replacement tooth in exchange for the ledger as the square crowd starts comparing clocks."
+      },
+      "mutations": [],
+      "suggestions": [
+        {
+          "text": {
+            "ru": "Сверить обстановку и выбрать безопасный приоритет",
+            "en": "Recheck the situation and choose a safe priority"
+          }
+        },
+        {
+          "text": {
+            "ru": "Сохранить текущий план и подготовить запасной",
+            "en": "Keep the current plan and prepare a backup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "turning_point_hour",
+      "when": {
+        "hour": {
+          "gte": 15
+        }
+      },
+      "actions": [
+        "inspect",
+        "trade",
+        "wind",
+        "free_text"
+      ],
+      "narrative": {
+        "ru": "A gear slips behind the clock face, shifting every chime by a fraction. The mechanic offers a replacement tooth in exchange for the ledger as the square crowd starts comparing clocks. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
+        "en": "An alternate route opens as circumstances shift. Continue the current approach or change priorities before events make the consequences harder to reverse."
+      },
+      "mutations": [],
+      "suggestions": [
+        {
+          "text": {
+            "ru": "Сверить обстановку и выбрать безопасный приоритет",
+            "en": "Recheck the situation and choose a safe priority"
+          }
+        },
+        {
+          "text": {
+            "ru": "Сохранить текущий план и подготовить запасной",
+            "en": "Keep the current plan and prepare a backup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "authored_turn_1",
+      "minTurns": 2,
+      "actions": [
+        "inspect",
+        "trade",
+        "wind",
+        "free_text"
+      ],
+      "narrative": {
+        "ru": "След смазки показывает смещение нагрузки после установки навеса, не износ пружины.",
+        "en": "Grease marks show the load shifted after the awning was installed; the spring is not worn."
+      },
+      "mutations": [],
+      "suggestions": [],
+      "responses": {
+        "inspect": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Осмотреть механизм». Команда продолжает по пути: Остановить башню для калибровки: точнее, но площадь теряет ориентир на время ремонта. Улика раскрывает поворот: След смазки показывает смещение нагрузки после установки навеса, не износ пружины.",
+            "en": "You choose “Inspect.” The team continues along this path: Stop the tower for calibration: precision returns, but the square loses its time cue. The evidence reveals the turn: Grease marks show the load shifted after the awning was installed; the spring is not worn."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Остановить башню для калибровки: точнее, но площадь теряет ориентир на время ремонта.",
+                "en": "Stop the tower for calibration: precision returns, but the square loses its time cue."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Раздать синхронные карманные часы: общий ритм сохранится, редкие детали уйдут.",
+                "en": "Issue synchronized pocket regulators: the shared rhythm survives, but rare parts are spent."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Оставить башню и добавить сигнал у площади: церемония состоится, дальние районы услышат её иначе.",
+                "en": "Keep the tower and add a square signal: the ceremony proceeds, distant districts hear it differently."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "trade": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Договориться с мастером». Команда продолжает по пути: Раздать синхронные карманные часы: общий ритм сохранится, редкие детали уйдут. Улика раскрывает поворот: След смазки показывает смещение нагрузки после установки навеса, не износ пружины.",
+            "en": "You choose “Talk to the mechanic.” The team continues along this path: Issue synchronized pocket regulators: the shared rhythm survives, but rare parts are spent. The evidence reveals the turn: Grease marks show the load shifted after the awning was installed; the spring is not worn."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Остановить башню для калибровки: точнее, но площадь теряет ориентир на время ремонта.",
+                "en": "Stop the tower for calibration: precision returns, but the square loses its time cue."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Раздать синхронные карманные часы: общий ритм сохранится, редкие детали уйдут.",
+                "en": "Issue synchronized pocket regulators: the shared rhythm survives, but rare parts are spent."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Оставить башню и добавить сигнал у площади: церемония состоится, дальние районы услышат её иначе.",
+                "en": "Keep the tower and add a square signal: the ceremony proceeds, distant districts hear it differently."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "wind": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Завести башенные часы». Команда продолжает по пути: Оставить башню и добавить сигнал у площади: церемония состоится, дальние районы услышат её иначе. Улика раскрывает поворот: След смазки показывает смещение нагрузки после установки навеса, не износ пружины.",
+            "en": "You choose “Wind the tower clock.” The team continues along this path: Keep the tower and add a square signal: the ceremony proceeds, distant districts hear it differently. The evidence reveals the turn: Grease marks show the load shifted after the awning was installed; the spring is not worn."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Остановить башню для калибровки: точнее, но площадь теряет ориентир на время ремонта.",
+                "en": "Stop the tower for calibration: precision returns, but the square loses its time cue."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Раздать синхронные карманные часы: общий ритм сохранится, редкие детали уйдут.",
+                "en": "Issue synchronized pocket regulators: the shared rhythm survives, but rare parts are spent."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Оставить башню и добавить сигнал у площади: церемония состоится, дальние районы услышат её иначе.",
+                "en": "Keep the tower and add a square signal: the ceremony proceeds, distant districts hear it differently."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "free_text": {
+          "narrative": {
+            "ru": "Ваш свободный план меняет способ проверки. Команда раскрывает поворот по найденной улике: След смазки показывает смещение нагрузки после установки навеса, не износ пружины.",
+            "en": "Your free-form plan changes how the team checks the clue. The turn is revealed by the evidence: Grease marks show the load shifted after the awning was installed; the spring is not worn."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Остановить башню для калибровки: точнее, но площадь теряет ориентир на время ремонта.",
+                "en": "Stop the tower for calibration: precision returns, but the square loses its time cue."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Раздать синхронные карманные часы: общий ритм сохранится, редкие детали уйдут.",
+                "en": "Issue synchronized pocket regulators: the shared rhythm survives, but rare parts are spent."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Оставить башню и добавить сигнал у площади: церемония состоится, дальние районы услышат её иначе.",
+                "en": "Keep the tower and add a square signal: the ceremony proceeds, distant districts hear it differently."
+              },
+              "icon": "↗️"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "authored_turn_2",
+      "minTurns": 4,
+      "actions": [
+        "inspect",
+        "trade",
+        "wind",
+        "free_text"
+      ],
+      "narrative": {
+        "ru": "Соседние мастерские используют звон для смен; перевод стрелок без объявления нарушит их расписание.",
+        "en": "Nearby workshops schedule shifts by the chime; resetting it silently disrupts their day."
+      },
+      "mutations": [],
+      "suggestions": [],
+      "responses": {
+        "inspect": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Осмотреть механизм». Команда продолжает по пути: Остановить башню для калибровки: точнее, но площадь теряет ориентир на время ремонта. Улика раскрывает поворот: Соседние мастерские используют звон для смен; перевод стрелок без объявления нарушит их расписание.",
+            "en": "You choose “Inspect.” The team continues along this path: Stop the tower for calibration: precision returns, but the square loses its time cue. The evidence reveals the turn: Nearby workshops schedule shifts by the chime; resetting it silently disrupts their day."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Остановить башню для калибровки: точнее, но площадь теряет ориентир на время ремонта.",
+                "en": "Stop the tower for calibration: precision returns, but the square loses its time cue."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Раздать синхронные карманные часы: общий ритм сохранится, редкие детали уйдут.",
+                "en": "Issue synchronized pocket regulators: the shared rhythm survives, but rare parts are spent."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Оставить башню и добавить сигнал у площади: церемония состоится, дальние районы услышат её иначе.",
+                "en": "Keep the tower and add a square signal: the ceremony proceeds, distant districts hear it differently."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "trade": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Договориться с мастером». Команда продолжает по пути: Раздать синхронные карманные часы: общий ритм сохранится, редкие детали уйдут. Улика раскрывает поворот: Соседние мастерские используют звон для смен; перевод стрелок без объявления нарушит их расписание.",
+            "en": "You choose “Talk to the mechanic.” The team continues along this path: Issue synchronized pocket regulators: the shared rhythm survives, but rare parts are spent. The evidence reveals the turn: Nearby workshops schedule shifts by the chime; resetting it silently disrupts their day."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Остановить башню для калибровки: точнее, но площадь теряет ориентир на время ремонта.",
+                "en": "Stop the tower for calibration: precision returns, but the square loses its time cue."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Раздать синхронные карманные часы: общий ритм сохранится, редкие детали уйдут.",
+                "en": "Issue synchronized pocket regulators: the shared rhythm survives, but rare parts are spent."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Оставить башню и добавить сигнал у площади: церемония состоится, дальние районы услышат её иначе.",
+                "en": "Keep the tower and add a square signal: the ceremony proceeds, distant districts hear it differently."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "wind": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Завести башенные часы». Команда продолжает по пути: Оставить башню и добавить сигнал у площади: церемония состоится, дальние районы услышат её иначе. Улика раскрывает поворот: Соседние мастерские используют звон для смен; перевод стрелок без объявления нарушит их расписание.",
+            "en": "You choose “Wind the tower clock.” The team continues along this path: Keep the tower and add a square signal: the ceremony proceeds, distant districts hear it differently. The evidence reveals the turn: Nearby workshops schedule shifts by the chime; resetting it silently disrupts their day."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Остановить башню для калибровки: точнее, но площадь теряет ориентир на время ремонта.",
+                "en": "Stop the tower for calibration: precision returns, but the square loses its time cue."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Раздать синхронные карманные часы: общий ритм сохранится, редкие детали уйдут.",
+                "en": "Issue synchronized pocket regulators: the shared rhythm survives, but rare parts are spent."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Оставить башню и добавить сигнал у площади: церемония состоится, дальние районы услышат её иначе.",
+                "en": "Keep the tower and add a square signal: the ceremony proceeds, distant districts hear it differently."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "free_text": {
+          "narrative": {
+            "ru": "Ваш свободный план меняет способ проверки. Команда раскрывает поворот по найденной улике: Соседние мастерские используют звон для смен; перевод стрелок без объявления нарушит их расписание.",
+            "en": "Your free-form plan changes how the team checks the clue. The turn is revealed by the evidence: Nearby workshops schedule shifts by the chime; resetting it silently disrupts their day."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Остановить башню для калибровки: точнее, но площадь теряет ориентир на время ремонта.",
+                "en": "Stop the tower for calibration: precision returns, but the square loses its time cue."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Раздать синхронные карманные часы: общий ритм сохранится, редкие детали уйдут.",
+                "en": "Issue synchronized pocket regulators: the shared rhythm survives, but rare parts are spent."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Оставить башню и добавить сигнал у площади: церемония состоится, дальние районы услышат её иначе.",
+                "en": "Keep the tower and add a square signal: the ceremony proceeds, distant districts hear it differently."
+              },
+              "icon": "↗️"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

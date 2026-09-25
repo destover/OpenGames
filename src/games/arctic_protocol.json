@@ -1,0 +1,626 @@
+{
+  "manifest": {
+    "id": "arctic-protocol",
+    "title": "Протокол нулевого часа",
+    "description": "Удержите хрупкое перемирие на арктическом саммите, согласовав проверяемые гарантии и гуманитарный коридор.",
+    "setting": "Нейтральная арктическая резиденция во время кризиса между двумя безымянными делегациями; переговоры о прекращении опасного морского инцидента и эвакуации гражданских.",
+    "categoryRu": "Дипломатия",
+    "background": "/assets/diplomatic-crisis.jpg",
+    "version": "1.0.0",
+    "schemaVersion": "2",
+    "isNew": true,
+    "durationMinutes": [
+      25,
+      40
+    ]
+  },
+  "state": {
+    "initial": {
+      "round": 1,
+      "trust": 42,
+      "escalation": 48,
+      "mandate": 64,
+      "access": 28,
+      "deadline": 10,
+      "location": "briefing",
+      "goalStatus": "active"
+    }
+  },
+  "actions": {
+    "free_text": {
+      "label": "Свободное действие",
+      "input": true,
+      "icon": "✍️"
+    },
+    "read": {
+      "label": "Сверить условия перемирия",
+      "icon": "⚖️"
+    },
+    "talk": {
+      "label": "Провести закрытый раунд",
+      "icon": "🗣️"
+    },
+    "guarantee": {
+      "label": "Предложить проверяемую гарантию",
+      "icon": "🛡️"
+    }
+  },
+  "ui": {
+    "accent": "#48b9bd",
+    "stateLabels": {
+      "round": "Раунд",
+      "trust": "Доверие сторон",
+      "escalation": "Эскалация",
+      "mandate": "Мандат делегации",
+      "access": "Гуманитарный доступ",
+      "deadline": "Часы до срыва",
+      "location": "Место",
+      "goalStatus": "Цель"
+    }
+  },
+  "i18n": {
+    "ru": {
+      "states": {
+        "round": "Раунд",
+        "trust": "Доверие сторон",
+        "escalation": "Эскалация",
+        "mandate": "Мандат делегации",
+        "access": "Гуманитарный доступ",
+        "deadline": "Часы до срыва",
+        "location": "Место",
+        "goalStatus": "Цель"
+      },
+      "actions": {
+        "free_text": "Свободное действие",
+        "read": "Сверить условия перемирия",
+        "talk": "Провести закрытый раунд",
+        "guarantee": "Предложить проверяемую гарантию"
+      },
+      "manifest": {
+        "title": "Протокол нулевого часа",
+        "description": "Удержите хрупкое перемирие на арктическом саммите, согласовав проверяемые гарантии и гуманитарный коридор.",
+        "category": "Дипломатия"
+      },
+      "values": {
+        "active": "В процессе",
+        "completed": "Цель выполнена",
+        "failed": "Цель провалена"
+      }
+    },
+    "en": {
+      "states": {
+        "round": "Round",
+        "trust": "Mutual trust",
+        "escalation": "Escalation",
+        "mandate": "Delegation mandate",
+        "access": "Humanitarian access",
+        "deadline": "Hours to breakdown",
+        "location": "Location",
+        "goalStatus": "Objective"
+      },
+      "actions": {
+        "free_text": "Free action",
+        "read": "Reconcile ceasefire terms",
+        "talk": "Hold a closed session",
+        "guarantee": "Propose a verifiable guarantee"
+      },
+      "manifest": {
+        "title": "Protocol Zero Hour",
+        "description": "Hold a fragile Arctic summit ceasefire together with verifiable guarantees and a humanitarian corridor.",
+        "category": "Diplomacy"
+      },
+      "values": {
+        "active": "In progress",
+        "completed": "Objective achieved",
+        "failed": "Objective failed"
+      }
+    }
+  },
+  "goal": {
+    "description": {
+      "ru": "Добиться взаимно подтверждённого снижения эскалации, безопасного гражданского коридора и соглашения в пределах мандата до закрытия переговорного окна.",
+      "en": "Secure a mutually verified de-escalation, a safe civilian corridor, and an agreement within the mandate before the talks window closes."
+    },
+    "completion": {
+      "path": "goalStatus",
+      "value": "completed",
+      "terminalValues": [
+        "completed",
+        "failed"
+      ]
+    }
+  },
+  "map": {
+    "start": "briefing",
+    "locations": {
+      "briefing": {
+        "ru": "Зал переговоров",
+        "en": "Negotiation chamber"
+      },
+      "secure": {
+        "ru": "Защищённая комната связи",
+        "en": "Secure communications room"
+      },
+      "pier": {
+        "ru": "Арктический причал",
+        "en": "Arctic pier"
+      },
+      "neutral": {
+        "ru": "Нейтральный павильон",
+        "en": "Neutral pavilion"
+      }
+    }
+  },
+  "world": {
+    "constants": {
+      "setting": "Нейтральная арктическая резиденция во время кризиса между двумя безымянными делегациями; переговоры о прекращении опасного морского инцидента и эвакуации гражданских.",
+      "physicalRules": [
+        "Обе делегации имеют собственные ограничения и не могут быть принуждены одним заявлением игрока.",
+        "Снижение эскалации требует проверяемого действия обеих сторон; обещания сами по себе не равны выполнению.",
+        "Гуманитарный коридор должен иметь маршрут, сроки, ответственных и механизм наблюдения.",
+        "Уступки за пределами мандата создают политические последствия, а окно переговоров ограничено."
+      ],
+      "continuity": "Учитывай всю подтверждённую историю и причинность мира. Не превращай вероятность в факт; последствия должны соответствовать затраченному времени и ресурсам.",
+      "tone": "Взрослая реалистичная история с системными компромиссами, неоднозначной информацией и последствиями решений.",
+      "storyArc": {
+        "revealPolicy": {
+          "ru": "Не раскрывай поворот до сигнала или документа, который его подтверждает; не подменяй переговоры внезапным злодеем.",
+          "en": "Do not reveal a turn before a signal or document supports it; do not replace diplomacy with a sudden villain."
+        },
+        "beats": {
+          "ru": [
+            "Нейтральная резиденция принимает две делегации после опасного морского инцидента; эвакуационные коридоры остаются общим приоритетом.",
+            "Расхождение в картах льда заставляет стороны спорить о виновнике и о том, кто должен первым открыть навигационные данные.",
+            "Игрок собирает проверяемый временный протокол, где спасение гражданских не зависит от признания ответственности."
+          ],
+          "en": [
+            "A neutral Arctic residence hosts two delegations after a dangerous maritime incident; civilian evacuation remains the shared priority.",
+            "Conflicting ice charts turn into a dispute over blame and who must share navigation data first.",
+            "The player builds a verifiable interim protocol that does not make civilian rescue depend on admitting fault."
+          ]
+        },
+        "twists": {
+          "ru": [
+            "Обе карты составлены верно для разного времени: дрейф льда ускорился после смены ветра, но одна делегация использует устаревший временной штамп.",
+            "Неподписанный сигнал бедствия пришёл через гражданский ретранслятор, который автоматически повторил старое сообщение; свежая проверка покажет реальную ситуацию."
+          ],
+          "en": [
+            "Both charts were accurate at different times: ice drift accelerated after a wind shift, but one delegation used an obsolete timestamp.",
+            "An unsigned distress call was repeated by a civilian relay from an old buffer; a fresh check will establish the current situation."
+          ]
+        },
+        "paths": {
+          "ru": [
+            "Сначала совместно проверить координаты: меньше риска для эвакуации, но переговоры о виновнике откладываются.",
+            "Обменяться только временными маршрутными данными: коридор открывается быстро, зато полная прозрачность остаётся спорной.",
+            "Зафиксировать взаимный мораторий на опасный участок: напряжение снижается, но часть гражданских эвакуируется длинным путём."
+          ],
+          "en": [
+            "Verify coordinates together first: evacuation risk falls, while the blame discussion is deferred.",
+            "Exchange only temporary route data: a corridor opens quickly, but full transparency remains contested.",
+            "Agree on a mutual pause in the hazardous area: tension eases, though some civilians take a longer route."
+          ]
+        }
+      }
+    },
+    "knowledgeGraph": {
+      "facts": [
+        {
+          "id": "incident",
+          "text": "У причала произошёл опасный морской инцидент; намерения сторон независимо не подтверждены."
+        },
+        {
+          "id": "delegations",
+          "text": "Две делегации участвуют в переговорах и обе подотчётны своим руководителям."
+        },
+        {
+          "id": "civilians",
+          "text": "В прибрежном секторе остаются гражданские, которым может потребоваться эвакуация."
+        },
+        {
+          "id": "verification",
+          "text": "Нейтральные наблюдатели доступны, но их присутствие ещё не согласовано."
+        },
+        {
+          "id": "deadline",
+          "text": "До закрытия текущего переговорного окна остаётся десять часов."
+        }
+      ]
+    }
+  },
+  "boundaries": {
+    "mutationPaths": [
+      "round",
+      "trust",
+      "escalation",
+      "mandate",
+      "access",
+      "deadline",
+      "location",
+      "goalStatus"
+    ],
+    "numericBounds": {
+      "round": {
+        "min": 1,
+        "max": 20
+      },
+      "trust": {
+        "min": 0,
+        "max": 100
+      },
+      "escalation": {
+        "min": 0,
+        "max": 100
+      },
+      "mandate": {
+        "min": 0,
+        "max": 100
+      },
+      "access": {
+        "min": 0,
+        "max": 100
+      },
+      "deadline": {
+        "min": 0,
+        "max": 24
+      }
+    },
+    "allowedValues": {
+      "location": [
+        "briefing",
+        "secure",
+        "pier",
+        "neutral"
+      ],
+      "goalStatus": [
+        "active",
+        "completed",
+        "failed"
+      ]
+    },
+    "maxArrayItems": {},
+    "maxStringLengths": {},
+    "stateChangeRules": [],
+    "instructions": [
+      "Не назначай реальные страны, организации или виновника без оснований пакета.",
+      "Не считай одностороннее заявление согласием второй стороны.",
+      "Соглашение должно содержать проверяемые сроки, ответственность и безопасный способ исполнения.",
+      "Не повышай мандат делегации; необратимые уступки требуют явного согласования."
+    ]
+  },
+  "opening": {
+    "ru": "Саммит на удалённой арктической станции начался с взаимных обвинений: ночью пропал груз гуманитарной помощи, а стороны уже готовят заявления. Вы — независимый посредник, которому поручили не дать переговорам сорваться и превратить слова в проверяемые гарантии\n\nДо срока осталось два раунда; проект гарантии уже у обеих делегаций. Одна спрашивает о проверяющем, другая подпишет только при взаимном доступе.\n\nЗдесь важно помнить, что к моменту вашего появления история уже началась. Нейтральная арктическая резиденция во время кризиса между двумя безымянными делегациями; переговоры о прекращении опасного морского инцидента и эвакуации гражданских. Это не отвлечённый фон и не задача, которую можно решить одним эффектным жестом: исходные условия складывались раньше, а люди, объекты и процессы успели приспособиться к ним. Поэтому любое изменение затронет не только то, что видно сейчас, но и привычный порядок, на котором держатся остальные части ситуации. Вы входите в неё с правом действовать, однако сначала нужно понять, что именно считается нормой и кто подтвердил эту норму.\n\nПервое наблюдение относится к конкретному месту: Зал переговоров, Защищённая комната связи, Арктический причал, Нейтральный павильон. В нём есть заметная деталь, которую легко принять за готовый ответ, но пока это только отправная точка. Сведения получены не одновременно и не одним способом; между тем, что зафиксировано, и тем, что уже успели предположить, остаётся промежуток. Если немедленно закрыть его догадкой, следующие данные будут подгоняться под выбранную версию. Если же точно обозначить, что известно, а что пока лишь кажется вероятным, у вас сохранится возможность увидеть несоответствие, не переписывая задним числом всю картину.\n\nВаша задача сформулирована шире, чем устранить ближайшую помеху: Добиться взаимно подтверждённого снижения эскалации, безопасного гражданского коридора и соглашения в пределах мандата до закрытия переговорного окна. На практике это означает одновременно следить за непосредственным результатом и за тем, что этот результат позволит узнать. Быстрый шаг может принести видимое улучшение, но ухудшить сравнимость, доступность или доверие; осторожный — сохранить качество проверки, но оставить проблему без немедленного ответа. Эти соображения не равны по весу во всех обстоятельствах. Их порядок зависит от того, какие сведения вы подтвердите и какой ущерб действительно обратим.\n\nВ материалах есть три слоя: исходное состояние, первое наблюдение и объяснение, которое кто-то успел к нему приложить. Не смешивайте их. Сначала совместно проверить координаты: меньше риска для эвакуации, но переговоры о виновнике откладываются. Если цифры или свидетельства расходятся, полезно установить, когда и где именно началось расхождение, кто наблюдал явление напрямую и какие условия могли поменяться между проверками. Иногда спорный показатель оказывается не ложным, а неполным: он честно описывает ту точку, где был получен, но не ту, о которой спрашивает команда.\n\nВам не требуется заранее выбирать единственную стратегию на весь эпизод. В текущем пакете доступны разные типы действий: Сверить условия перемирия, Провести закрытый раунд, Предложить проверяемую гарантию. Они дают разные виды контроля: одно может уточнить картину, другое — изменить условия, третье — выиграть время или проверить связь между двумя событиями. Выбирая, задайте себе практический вопрос: что должно стать заметно после этого шага, если ваша версия верна? И что вы увидите, если она неверна? Такой критерий превращает действие в проверку, а не просто в жест, после которого приходится надеяться на удачу.\n\nПуть вперёд может разветвиться, и у каждого направления будет собственная цена. Одно решение способно защитить непосредственную цель, но оставить неопределённость; другое — укрепить доказательства, но сузить окно для вмешательства; третье — уменьшить воздействие на окружающую систему, одновременно потребовав новой проверки. Эти различия не делают какой-либо путь правильным заранее. Важнее видеть, какую ценность вы защищаете сейчас, чем рискуете ради неё и какие признаки заставят пересмотреть план. Смена курса допустима, если вы можете объяснить, какая новая информация изменила расчёт.\n\nОглянитесь на Зал переговоров, Защищённая комната связи, Арктический причал, Нейтральный павильон. Каждая точка открывает свою часть происходящего и скрывает другую; переход между ними сам по себе может менять условия наблюдения. Не считайте схему исчерпывающей: она описывает доступные места, но не гарантирует, что все важные процессы заметны с одной позиции. Сверяйте время, источник и обстоятельства каждого сообщения. Если кто-то говорит «это было так всегда», спросите, за какой период он отвечает; если прибор показывает отклонение, уточните его рабочий диапазон и место установки. Так вы отделите стабильную закономерность от удобного, но слишком широкого обобщения.\n\nЕсть вопросы, на которые пока нельзя честно ответить. Что здесь причина, а что следствие? Действительно ли наблюдаемое изменение требует немедленного вмешательства? Кто или что понесёт последствия, если вы ошибётесь? Неопределённость не означает, что все версии одинаково вероятны; она означает, что следующая сцена должна дать материал для различения. Не превращайте каждую странность в тайный замысел и не отбрасывайте неудобную улику лишь потому, что она мешает плану. Самый убедительный поворот будет иметь смысл только тогда, когда ранние подробности позволят узнать его, а не просто удивиться ему.\n\nНачните с масштаба, который можно проверить. Запишите исходные условия, выберите один важный показатель и не меняйте сразу несколько факторов, если хотите понять, что повлияло на результат. Если вмешательство необходимо прямо сейчас, обозначьте его как временное и сохраните контрольную точку для сравнения. Если можно подождать, определите, какое именно наблюдение оправдает ожидание и сколько времени оно занимает. Это не бюрократическая осторожность: так вы не потеряете возможность отличить настоящую перемену от эффекта собственных действий.\n\nОтдельно рассмотрите направление 3: Зафиксировать взаимный мораторий на опасный участок: напряжение снижается, но часть гражданских эвакуируется длинным путём. Оно не отменяет остальные возможности и не требует принимать весь план сразу. Спросите, какое подтверждение сделает этот шаг уместным, что останется измеримым после него и кто заметит его побочный эффект первым. Если ответ пока неизвестен, это не повод скрывать пробел: его можно превратить в условие остановки или повторной оценки.",
+    "en": "The summit at a remote Arctic station opened with accusations: a humanitarian shipment vanished overnight, and delegations are preparing public statements. As the independent mediator, you must keep talks alive and turn promises into verifiable guarantees\n\nThe deadline is two rounds away, and a draft guarantee has reached both delegations. One side asks who verifies it; the other will sign only if access is reciprocal.\n\nRemember that the story had already begun before you arrived. A neutral Arctic residence hosts two delegations after a dangerous maritime incident; civilian evacuation remains the shared priority. This is not a backdrop or a problem that can be solved with one dramatic gesture: the conditions formed earlier, and people, objects, and processes have adapted to them. Any change will affect more than what is visible now; it may alter the routine that holds other parts of the situation together. You have authority to act, but first you need to understand what counts as normal here and who has actually verified that baseline.\n\nThe first observation belongs to a specific place: Negotiation chamber, Secure communications room, Arctic pier, Neutral pavilion. It contains a detail that may look like an answer, but for now it is only a starting point. The information was gathered at different times and by different means; a gap remains between what was recorded and the explanation someone has attached to it. If you fill that gap with a guess, later evidence may be forced to fit your theory. If you mark what is known and what only seems likely, you can notice a mismatch without rewriting the whole account afterward.\n\nYour objective is broader than removing the nearest obstacle: Secure a mutually verified de-escalation, a safe civilian corridor, and an agreement within the mandate before the talks window closes. In practice, you must watch both the immediate result and what that result lets you learn. A quick intervention may produce visible improvement while weakening comparison, access, or trust; a cautious one may preserve the quality of the evidence while leaving the problem unresolved. Those concerns do not carry the same weight in every situation. Their order depends on what you confirm and on which harm can actually be reversed.\n\nThe available material has three layers: the initial conditions, the first observation, and the explanation someone has already attached to it. Keep them separate. Verify coordinates together first: evacuation risk falls, while the blame discussion is deferred. If figures or accounts disagree, establish when and where the mismatch began, who witnessed the event directly, and what could have changed between checks. A disputed reading is sometimes incomplete rather than false: it may accurately describe the point where it was taken, but not the wider area the team is asking about.\n\nYou do not have to choose one strategy for the whole episode in advance. The package offers different kinds of action: Reconcile ceasefire terms, Hold a closed session, Propose a verifiable guarantee. Each gives you a different kind of control: one may clarify the picture, another may change the conditions, and another may buy time or test a connection between events. Before choosing, ask a practical question: what should become visible if your theory is right? What would you see if it is wrong? That turns an action into a test, rather than a gesture followed by a hope for good luck.\n\nThe way forward can branch, and each direction has its own cost. One choice may protect the immediate objective while leaving uncertainty; another may strengthen the evidence while narrowing the window to intervene; a third may reduce impact on the surrounding system while requiring a fresh check. None is automatically correct. What matters is seeing which value you are protecting, what you risk for it, and what signs would make you reconsider. A change of course is sound when you can explain what new information changed the calculation.\n\nLook at Negotiation chamber, Secure communications room, Arctic pier, Neutral pavilion. Each point reveals one part of the situation and hides another; moving between them can itself change the conditions of observation. Do not treat the map as complete: it lists available places but cannot guarantee that every important process is visible from one position. Compare the time, source, and circumstances of each report. If someone says “it has always been this way,” ask what period they mean; if an instrument shows a deviation, check its operating range and location. This helps separate a stable pattern from a convenient but overly broad conclusion.\n\nSome questions cannot yet be answered honestly. What is a cause, and what is an effect? Does the observed change truly require immediate intervention? Who or what bears the cost if you are wrong? Uncertainty does not mean every theory is equally likely; it means the next scene must give you a way to distinguish them. Do not turn every oddity into a hidden scheme, and do not discard inconvenient evidence because it disrupts a plan. A convincing turn will make sense only if earlier details let you recognize it, not merely be surprised by it.\n\nStart at a scale you can check. Record the baseline, choose one important measure, and avoid changing several factors at once if you need to know what caused the result. If action is necessary now, mark it as temporary and preserve a control point for comparison. If waiting is possible, specify what observation would justify the delay and how long it will take. This is not caution for its own sake: it preserves your ability to distinguish a real change from the effect of your own intervention.\n\nThe human side of the task will become clearer too: whose account rests on observation, who is responsible for the consequences, and who must live with the chosen arrangement after the emergency passes. Trust does not replace measurement, but it affects what people tell you and what the team can do together. Explain what you are checking, do not promise a result before it is verified, and note what changed your mind. That may preserve cooperation through disagreement; it may also show that different participants are protecting interests that cannot be reconciled.\n\nConsider approach 3 separately: Agree on a mutual pause in the hazardous area: tension eases, though some civilians take a longer route. It does not erase the other options or require you to commit to the whole plan at once. Ask what evidence would make this step appropriate, what will remain measurable afterward, and who will notice its side effect first. If the answer is not yet known, do not hide the gap; turn it into a condition for pausing or reassessing."
+  },
+  "preparedBranches": [
+    {
+      "id": "turning_point",
+      "actions": [
+        "read",
+        "talk",
+        "guarantee",
+        "free_text"
+      ],
+      "narrative": {
+        "ru": "До срока осталось два раунда; проект гарантии уже у обеих делегаций. Одна спрашивает о проверяющем, другая подпишет только при взаимном доступе.",
+        "en": "The deadline is two rounds away, and a draft guarantee has reached both delegations. One side asks who verifies it; the other will sign only if access is reciprocal."
+      },
+      "mutations": [],
+      "suggestions": [
+        {
+          "text": {
+            "ru": "Сверить обстановку и выбрать приоритет",
+            "en": "Recheck the situation and choose a priority"
+          }
+        },
+        {
+          "text": {
+            "ru": "Сохранить план и подготовить запасной вариант",
+            "en": "Keep the plan and prepare a backup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "turning_point_round",
+      "when": {
+        "round": {
+          "gte": 13
+        }
+      },
+      "actions": [
+        "read",
+        "talk",
+        "guarantee",
+        "free_text"
+      ],
+      "narrative": {
+        "ru": "The deadline is two rounds away, and a draft guarantee has reached both delegations. One side asks who verifies it; the other will sign only if access is reciprocal. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
+        "en": "An alternate route opens as circumstances shift. Continue the current approach or change priorities before events make the consequences harder to reverse."
+      },
+      "mutations": [],
+      "suggestions": [
+        {
+          "text": {
+            "ru": "Сверить обстановку и выбрать приоритет",
+            "en": "Recheck the situation and choose a priority"
+          }
+        },
+        {
+          "text": {
+            "ru": "Сохранить план и подготовить запасной вариант",
+            "en": "Keep the plan and prepare a backup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "authored_turn_1",
+      "minTurns": 2,
+      "actions": [
+        "read",
+        "talk",
+        "guarantee",
+        "free_text"
+      ],
+      "narrative": {
+        "ru": "Обе карты составлены верно для разного времени: дрейф льда ускорился после смены ветра, но одна делегация использует устаревший временной штамп.",
+        "en": "Both charts were accurate at different times: ice drift accelerated after a wind shift, but one delegation used an obsolete timestamp."
+      },
+      "mutations": [],
+      "suggestions": [],
+      "responses": {
+        "read": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Сверить условия перемирия». Команда продолжает по пути: Сначала совместно проверить координаты: меньше риска для эвакуации, но переговоры о виновнике откладываются. Улика раскрывает поворот: Обе карты составлены верно для разного времени: дрейф льда ускорился после смены ветра, но одна делегация использует устаревший временной штамп.",
+            "en": "You choose “Reconcile ceasefire terms.” The team continues along this path: Verify coordinates together first: evacuation risk falls, while the blame discussion is deferred. The evidence reveals the turn: Both charts were accurate at different times: ice drift accelerated after a wind shift, but one delegation used an obsolete timestamp."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Сначала совместно проверить координаты: меньше риска для эвакуации, но переговоры о виновнике откладываются.",
+                "en": "Verify coordinates together first: evacuation risk falls, while the blame discussion is deferred."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Обменяться только временными маршрутными данными: коридор открывается быстро, зато полная прозрачность остаётся спорной.",
+                "en": "Exchange only temporary route data: a corridor opens quickly, but full transparency remains contested."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Зафиксировать взаимный мораторий на опасный участок: напряжение снижается, но часть гражданских эвакуируется длинным путём.",
+                "en": "Agree on a mutual pause in the hazardous area: tension eases, though some civilians take a longer route."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "talk": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Провести закрытый раунд». Команда продолжает по пути: Обменяться только временными маршрутными данными: коридор открывается быстро, зато полная прозрачность остаётся спорной. Улика раскрывает поворот: Обе карты составлены верно для разного времени: дрейф льда ускорился после смены ветра, но одна делегация использует устаревший временной штамп.",
+            "en": "You choose “Hold a closed session.” The team continues along this path: Exchange only temporary route data: a corridor opens quickly, but full transparency remains contested. The evidence reveals the turn: Both charts were accurate at different times: ice drift accelerated after a wind shift, but one delegation used an obsolete timestamp."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Сначала совместно проверить координаты: меньше риска для эвакуации, но переговоры о виновнике откладываются.",
+                "en": "Verify coordinates together first: evacuation risk falls, while the blame discussion is deferred."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Обменяться только временными маршрутными данными: коридор открывается быстро, зато полная прозрачность остаётся спорной.",
+                "en": "Exchange only temporary route data: a corridor opens quickly, but full transparency remains contested."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Зафиксировать взаимный мораторий на опасный участок: напряжение снижается, но часть гражданских эвакуируется длинным путём.",
+                "en": "Agree on a mutual pause in the hazardous area: tension eases, though some civilians take a longer route."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "guarantee": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Предложить проверяемую гарантию». Команда продолжает по пути: Зафиксировать взаимный мораторий на опасный участок: напряжение снижается, но часть гражданских эвакуируется длинным путём. Улика раскрывает поворот: Обе карты составлены верно для разного времени: дрейф льда ускорился после смены ветра, но одна делегация использует устаревший временной штамп.",
+            "en": "You choose “Propose a verifiable guarantee.” The team continues along this path: Agree on a mutual pause in the hazardous area: tension eases, though some civilians take a longer route. The evidence reveals the turn: Both charts were accurate at different times: ice drift accelerated after a wind shift, but one delegation used an obsolete timestamp."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Сначала совместно проверить координаты: меньше риска для эвакуации, но переговоры о виновнике откладываются.",
+                "en": "Verify coordinates together first: evacuation risk falls, while the blame discussion is deferred."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Обменяться только временными маршрутными данными: коридор открывается быстро, зато полная прозрачность остаётся спорной.",
+                "en": "Exchange only temporary route data: a corridor opens quickly, but full transparency remains contested."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Зафиксировать взаимный мораторий на опасный участок: напряжение снижается, но часть гражданских эвакуируется длинным путём.",
+                "en": "Agree on a mutual pause in the hazardous area: tension eases, though some civilians take a longer route."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "free_text": {
+          "narrative": {
+            "ru": "Ваш свободный план меняет способ проверки. Команда раскрывает поворот по найденной улике: Обе карты составлены верно для разного времени: дрейф льда ускорился после смены ветра, но одна делегация использует устаревший временной штамп.",
+            "en": "Your free-form plan changes how the team checks the clue. The turn is revealed by the evidence: Both charts were accurate at different times: ice drift accelerated after a wind shift, but one delegation used an obsolete timestamp."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Сначала совместно проверить координаты: меньше риска для эвакуации, но переговоры о виновнике откладываются.",
+                "en": "Verify coordinates together first: evacuation risk falls, while the blame discussion is deferred."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Обменяться только временными маршрутными данными: коридор открывается быстро, зато полная прозрачность остаётся спорной.",
+                "en": "Exchange only temporary route data: a corridor opens quickly, but full transparency remains contested."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Зафиксировать взаимный мораторий на опасный участок: напряжение снижается, но часть гражданских эвакуируется длинным путём.",
+                "en": "Agree on a mutual pause in the hazardous area: tension eases, though some civilians take a longer route."
+              },
+              "icon": "↗️"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "authored_turn_2",
+      "minTurns": 4,
+      "actions": [
+        "read",
+        "talk",
+        "guarantee",
+        "free_text"
+      ],
+      "narrative": {
+        "ru": "Неподписанный сигнал бедствия пришёл через гражданский ретранслятор, который автоматически повторил старое сообщение; свежая проверка покажет реальную ситуацию.",
+        "en": "An unsigned distress call was repeated by a civilian relay from an old buffer; a fresh check will establish the current situation."
+      },
+      "mutations": [],
+      "suggestions": [],
+      "responses": {
+        "read": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Сверить условия перемирия». Команда продолжает по пути: Сначала совместно проверить координаты: меньше риска для эвакуации, но переговоры о виновнике откладываются. Улика раскрывает поворот: Неподписанный сигнал бедствия пришёл через гражданский ретранслятор, который автоматически повторил старое сообщение; свежая проверка покажет реальную ситуацию.",
+            "en": "You choose “Reconcile ceasefire terms.” The team continues along this path: Verify coordinates together first: evacuation risk falls, while the blame discussion is deferred. The evidence reveals the turn: An unsigned distress call was repeated by a civilian relay from an old buffer; a fresh check will establish the current situation."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Сначала совместно проверить координаты: меньше риска для эвакуации, но переговоры о виновнике откладываются.",
+                "en": "Verify coordinates together first: evacuation risk falls, while the blame discussion is deferred."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Обменяться только временными маршрутными данными: коридор открывается быстро, зато полная прозрачность остаётся спорной.",
+                "en": "Exchange only temporary route data: a corridor opens quickly, but full transparency remains contested."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Зафиксировать взаимный мораторий на опасный участок: напряжение снижается, но часть гражданских эвакуируется длинным путём.",
+                "en": "Agree on a mutual pause in the hazardous area: tension eases, though some civilians take a longer route."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "talk": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Провести закрытый раунд». Команда продолжает по пути: Обменяться только временными маршрутными данными: коридор открывается быстро, зато полная прозрачность остаётся спорной. Улика раскрывает поворот: Неподписанный сигнал бедствия пришёл через гражданский ретранслятор, который автоматически повторил старое сообщение; свежая проверка покажет реальную ситуацию.",
+            "en": "You choose “Hold a closed session.” The team continues along this path: Exchange only temporary route data: a corridor opens quickly, but full transparency remains contested. The evidence reveals the turn: An unsigned distress call was repeated by a civilian relay from an old buffer; a fresh check will establish the current situation."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Сначала совместно проверить координаты: меньше риска для эвакуации, но переговоры о виновнике откладываются.",
+                "en": "Verify coordinates together first: evacuation risk falls, while the blame discussion is deferred."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Обменяться только временными маршрутными данными: коридор открывается быстро, зато полная прозрачность остаётся спорной.",
+                "en": "Exchange only temporary route data: a corridor opens quickly, but full transparency remains contested."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Зафиксировать взаимный мораторий на опасный участок: напряжение снижается, но часть гражданских эвакуируется длинным путём.",
+                "en": "Agree on a mutual pause in the hazardous area: tension eases, though some civilians take a longer route."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "guarantee": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Предложить проверяемую гарантию». Команда продолжает по пути: Зафиксировать взаимный мораторий на опасный участок: напряжение снижается, но часть гражданских эвакуируется длинным путём. Улика раскрывает поворот: Неподписанный сигнал бедствия пришёл через гражданский ретранслятор, который автоматически повторил старое сообщение; свежая проверка покажет реальную ситуацию.",
+            "en": "You choose “Propose a verifiable guarantee.” The team continues along this path: Agree on a mutual pause in the hazardous area: tension eases, though some civilians take a longer route. The evidence reveals the turn: An unsigned distress call was repeated by a civilian relay from an old buffer; a fresh check will establish the current situation."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Сначала совместно проверить координаты: меньше риска для эвакуации, но переговоры о виновнике откладываются.",
+                "en": "Verify coordinates together first: evacuation risk falls, while the blame discussion is deferred."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Обменяться только временными маршрутными данными: коридор открывается быстро, зато полная прозрачность остаётся спорной.",
+                "en": "Exchange only temporary route data: a corridor opens quickly, but full transparency remains contested."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Зафиксировать взаимный мораторий на опасный участок: напряжение снижается, но часть гражданских эвакуируется длинным путём.",
+                "en": "Agree on a mutual pause in the hazardous area: tension eases, though some civilians take a longer route."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "free_text": {
+          "narrative": {
+            "ru": "Ваш свободный план меняет способ проверки. Команда раскрывает поворот по найденной улике: Неподписанный сигнал бедствия пришёл через гражданский ретранслятор, который автоматически повторил старое сообщение; свежая проверка покажет реальную ситуацию.",
+            "en": "Your free-form plan changes how the team checks the clue. The turn is revealed by the evidence: An unsigned distress call was repeated by a civilian relay from an old buffer; a fresh check will establish the current situation."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Сначала совместно проверить координаты: меньше риска для эвакуации, но переговоры о виновнике откладываются.",
+                "en": "Verify coordinates together first: evacuation risk falls, while the blame discussion is deferred."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Обменяться только временными маршрутными данными: коридор открывается быстро, зато полная прозрачность остаётся спорной.",
+                "en": "Exchange only temporary route data: a corridor opens quickly, but full transparency remains contested."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Зафиксировать взаимный мораторий на опасный участок: напряжение снижается, но часть гражданских эвакуируется длинным путём.",
+                "en": "Agree on a mutual pause in the hazardous area: tension eases, though some civilians take a longer route."
+              },
+              "icon": "↗️"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

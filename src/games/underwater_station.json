@@ -1,0 +1,605 @@
+{
+  "manifest": {
+    "id": "underwater-station",
+    "title": "Глубина",
+    "description": "На глубоководной станции гаснут системы жизнеобеспечения. Проверяйте сигналы и оборудование, распределяйте кислород и решайте, какие модули восстановить в первую очередь.",
+    "setting": "Глубоководная станция, сонар, внешний модуль и подводный аппарат.",
+    "categoryRu": "Океан",
+    "background": "/assets/underwater-station.png",
+    "version": "1.2.0",
+    "schemaVersion": "2",
+    "isNew": true,
+    "durationMinutes": [
+      15,
+      30
+    ]
+  },
+  "state": {
+    "initial": {
+      "depth": 2400,
+      "power": 38,
+      "oxygen": 72,
+      "signal": "Станция молчит, сонар фиксирует движение у корпуса.",
+      "ended": false,
+      "location": "station",
+      "goalStatus": "active"
+    }
+  },
+  "actions": {
+    "free_text": {
+      "label": "Свободное действие",
+      "input": true,
+      "icon": "✍️"
+    },
+    "sonar": {
+      "label": "Проверить сонар",
+      "icon": "📡"
+    },
+    "repair": {
+      "label": "Починить реактор",
+      "icon": "🔧"
+    },
+    "dive": {
+      "label": "Спуститься к обломкам",
+      "icon": "🤿"
+    }
+  },
+  "ui": {
+    "accent": "#38bdf8",
+    "stateLabels": {
+      "depth": "Глубина",
+      "power": "Энергия",
+      "oxygen": "Кислород",
+      "signal": "Сигнал",
+      "location": "Место",
+      "goalStatus": "Цель"
+    }
+  },
+  "goal": {
+    "description": {
+      "ru": "Найти безопасный маршрут, извлечь журнал и восстановить реактор.",
+      "en": "Find a safe route, recover the log and restore the reactor."
+    },
+    "completion": {
+      "path": "goalStatus",
+      "value": "completed",
+      "terminalValues": [
+        "completed",
+        "failed"
+      ]
+    }
+  },
+  "map": {
+    "start": "station",
+    "locations": {
+      "station": {
+        "ru": "Станция",
+        "en": "Station"
+      },
+      "wreck": {
+        "ru": "Обломки",
+        "en": "Wreck"
+      }
+    }
+  },
+  "i18n": {
+    "ru": {
+      "manifest": {
+        "title": "Глубина",
+        "description": "На глубоководной станции гаснут системы жизнеобеспечения. Проверяйте сигналы и оборудование, распределяйте кислород и решайте, какие модули восстановить в первую очередь.",
+        "category": "Океан"
+      },
+      "states": {
+        "depth": "Глубина",
+        "power": "Энергия",
+        "oxygen": "Кислород",
+        "signal": "Сигнал",
+        "location": "Место",
+        "goalStatus": "Цель"
+      },
+      "actions": {
+        "free_text": "Свободное действие",
+        "sonar": "Проверить сонар",
+        "repair": "Починить реактор",
+        "dive": "Спуститься к обломкам"
+      },
+      "values": {
+        "Станция молчит, сонар фиксирует движение у корпуса.": "Станция молчит, сонар фиксирует движение у корпуса.",
+        "Команда изучает показания приборов.": "Команда изучает показания приборов.",
+        "Сонар отмечает безопасный коридор к внешнему модулю.": "Сонар отмечает безопасный коридор к внешнему модулю.",
+        "В обломках найден контейнер с журналом станции.": "В обломках найден контейнер с журналом станции.",
+        "active": "В процессе",
+        "completed": "Выполнена",
+        "failed": "Провалена"
+      }
+    },
+    "en": {
+      "manifest": {
+        "title": "The Depths",
+        "description": "Life-support systems are failing at a deep-sea station. Check signals and equipment, manage oxygen, and decide which modules to restore first.",
+        "category": "Ocean"
+      },
+      "states": {
+        "depth": "Depth",
+        "power": "Power",
+        "oxygen": "Oxygen",
+        "signal": "Signal",
+        "location": "Location",
+        "goalStatus": "Objective"
+      },
+      "actions": {
+        "free_text": "Free action",
+        "sonar": "Check sonar",
+        "repair": "Repair reactor",
+        "dive": "Dive to the wreck"
+      },
+      "values": {
+        "Станция молчит, сонар фиксирует движение у корпуса.": "The station is silent; sonar detects movement near the hull.",
+        "Команда изучает показания приборов.": "The crew is studying the instrument readings.",
+        "Сонар отмечает безопасный коридор к внешнему модулю.": "Sonar marks a safe passage to the external module.",
+        "В обломках найден контейнер с журналом станции.": "A container with the station log was found in the wreck.",
+        "active": "In progress",
+        "completed": "Completed",
+        "failed": "Failed"
+      }
+    }
+  },
+  "world": {
+    "constants": {
+      "setting": "Глубоководная станция, сонар, внешний модуль и подводный аппарат.",
+      "physicalRules": [
+        "На глубине 2400 метров корпус испытывает высокое давление; выход наружу возможен только в исправном защитном аппарате.",
+        "Кислород и энергия ограничены; перемещение и ремонт тратят время и ресурсы.",
+        "Сонар фиксирует движение у корпуса, но не определяет его природу без дополнительного наблюдения.",
+        "Повреждения реактора и станции требуют подходящих инструментов и физического доступа."
+      ],
+      "continuity": "Соблюдай известное состояние персонажа и мира, расположение, ресурсы и причинность всех предыдущих ходов.",
+      "tone": "Взрослая реалистичная история: свобода действий игрока сочетается с правдоподобными последствиями и ограничениями мира.",
+      "storyArc": {
+        "revealPolicy": {
+          "ru": "Раскрывай повороты после проверяемых улик; показывай причинную связь и меняй дальнейшие сцены по решениям игрока.",
+          "en": "Reveal turns after verifiable clues; show their causal link and let player choices alter later scenes."
+        },
+        "beats": {
+          "ru": [
+            "Глубоководная станция получает сонарный сигнал у внешнего модуля; аппарат и команда имеют ограниченный запас времени.",
+            "Эхо появляется с той же задержкой, что и раскачивание подвесного кабеля; независимый угол обзора отличит его от объекта.",
+            "Команда решает, запускать ли аппарат, ремонтировать кабель или наблюдать цикл ещё раз."
+          ],
+          "en": [
+            "The deep-sea station receives a sonar return near its exterior module; crew and submersible have limited time.",
+            "The echo repeats at the cable’s swing interval; a second viewing angle can distinguish it from an object.",
+            "The team chooses a visual sortie, cable repair, or another observation cycle."
+          ]
+        },
+        "twists": {
+          "ru": [
+            "Неизвестный объект — не аппарат: сигнал отражает кабельный груз, который впервые попал в луч после смены течения.",
+            "Сбой внешнего модуля не электрический; датчик давления загрязнён осадком, а ручной индикатор остаётся стабильным."
+          ],
+          "en": [
+            "The unknown object is not a submersible: a cable weight entered the beam after the current shifted.",
+            "The module issue is not electrical; sediment fouled the pressure sensor while its manual indicator stays steady."
+          ]
+        },
+        "paths": {
+          "ru": [
+            "Отправить аппарат на визуальный осмотр: неопределённость падает, ресурс миссии расходуется.",
+            "Сначала стабилизировать кабель: повторное эхо уйдёт, но часть данных станции будет недоступна.",
+            "Подождать один цикл сонара: безопаснее для экипажа, важное окно наблюдений сокращается."
+          ],
+          "en": [
+            "Send the submersible to inspect: uncertainty falls, mission reserve is spent.",
+            "Stabilize the cable first: the echo disappears, but some station data go offline.",
+            "Wait one sonar cycle: crew risk falls, the observation window narrows."
+          ]
+        }
+      }
+    },
+    "knowledgeGraph": {
+      "facts": [
+        {
+          "id": "station_depth",
+          "text": "Станция находится на глубине 2400 метров."
+        },
+        {
+          "id": "sonar_contact",
+          "text": "Сонар фиксирует движение у корпуса; источник сигнала неизвестен."
+        },
+        {
+          "id": "reactor_status",
+          "text": "Энергия станции снижена; состояние реактора пока не установлено."
+        },
+        {
+          "id": "oxygen_reserve",
+          "text": "Кислорода хватает на ограниченное время работы."
+        },
+        {
+          "id": "external_module",
+          "text": "Внешний модуль и обломки доступны только через подготовленный выход или аппарат."
+        }
+      ]
+    }
+  },
+  "boundaries": {
+    "mutationPaths": [
+      "location",
+      "depth",
+      "power",
+      "oxygen",
+      "signal",
+      "goalStatus"
+    ],
+    "numericBounds": {
+      "depth": {
+        "min": 0,
+        "max": 6000
+      },
+      "power": {
+        "min": 0,
+        "max": 100
+      },
+      "oxygen": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "allowedValues": {
+      "location": [
+        "station",
+        "wreck"
+      ],
+      "goalStatus": [
+        "active",
+        "completed",
+        "failed"
+      ]
+    },
+    "maxArrayItems": {},
+    "maxStringLengths": {
+      "signal": 800,
+      "location": 800
+    },
+    "instructions": [
+      "Действия игрока не ограничены списком кнопок или таблицей переходов; предложенные варианты служат лишь подсказками.",
+      "Не перемещай персонажа и не меняй место действия без описанной причины и непрерывного пути.",
+      "Изменяй состояние только в пределах физических законов, подтверждённых фактов и ограничений пакета.",
+      "Не завершай цель по одному заявлению или догадке; для финала нужны описанные и подтверждённые условия."
+    ]
+  },
+  "opening": {
+    "ru": "Глухой удар проходит по корпусу станции, и аварийное освещение окрашивает коридор в красный. Вы — инженер дежурной смены на глубине: несколько систем жизнеобеспечения отказали, кислорода мало, а источник повреждения ещё не найден\n\nПод станцией появляется сонарная отметка, а показания давления расходятся. Эхо можно check изнутри или отправить водолаза к внешнему маркеру.\n\nЗдесь важно помнить, что к моменту вашего появления история уже началась. Глубоководная станция, сонар, внешний модуль и подводный аппарат. Это не отвлечённый фон и не задача, которую можно решить одним эффектным жестом: исходные условия складывались раньше, а люди, объекты и процессы успели приспособиться к ним. Поэтому любое изменение затронет не только то, что видно сейчас, но и привычный порядок, на котором держатся остальные части ситуации. Вы входите в неё с правом действовать, однако сначала нужно понять, что именно считается нормой и кто подтвердил эту норму.\n\nПервое наблюдение относится к конкретному месту: Станция, Обломки. В нём есть заметная деталь, которую легко принять за готовый ответ, но пока это только отправная точка. Сведения получены не одновременно и не одним способом; между тем, что зафиксировано, и тем, что уже успели предположить, остаётся промежуток. Если немедленно закрыть его догадкой, следующие данные будут подгоняться под выбранную версию. Если же точно обозначить, что известно, а что пока лишь кажется вероятным, у вас сохранится возможность увидеть несоответствие, не переписывая задним числом всю картину.\n\nВаша задача сформулирована шире, чем устранить ближайшую помеху: Найти безопасный маршрут, извлечь журнал и восстановить реактор. На практике это означает одновременно следить за непосредственным результатом и за тем, что этот результат позволит узнать. Быстрый шаг может принести видимое улучшение, но ухудшить сравнимость, доступность или доверие; осторожный — сохранить качество проверки, но оставить проблему без немедленного ответа. Эти соображения не равны по весу во всех обстоятельствах. Их порядок зависит от того, какие сведения вы подтвердите и какой ущерб действительно обратим.\n\nВ материалах есть три слоя: исходное состояние, первое наблюдение и объяснение, которое кто-то успел к нему приложить. Не смешивайте их. Отправить аппарат на визуальный осмотр: неопределённость падает, ресурс миссии расходуется. Если цифры или свидетельства расходятся, полезно установить, когда и где именно началось расхождение, кто наблюдал явление напрямую и какие условия могли поменяться между проверками. Иногда спорный показатель оказывается не ложным, а неполным: он честно описывает ту точку, где был получен, но не ту, о которой спрашивает команда.\n\nВам не требуется заранее выбирать единственную стратегию на весь эпизод. В текущем пакете доступны разные типы действий: Проверить сонар, Починить реактор, Спуститься к обломкам. Они дают разные виды контроля: одно может уточнить картину, другое — изменить условия, третье — выиграть время или проверить связь между двумя событиями. Выбирая, задайте себе практический вопрос: что должно стать заметно после этого шага, если ваша версия верна? И что вы увидите, если она неверна? Такой критерий превращает действие в проверку, а не просто в жест, после которого приходится надеяться на удачу.\n\nПуть вперёд может разветвиться, и у каждого направления будет собственная цена. Одно решение способно защитить непосредственную цель, но оставить неопределённость; другое — укрепить доказательства, но сузить окно для вмешательства; третье — уменьшить воздействие на окружающую систему, одновременно потребовав новой проверки. Эти различия не делают какой-либо путь правильным заранее. Важнее видеть, какую ценность вы защищаете сейчас, чем рискуете ради неё и какие признаки заставят пересмотреть план. Смена курса допустима, если вы можете объяснить, какая новая информация изменила расчёт.\n\nОглянитесь на Станция, Обломки. Каждая точка открывает свою часть происходящего и скрывает другую; переход между ними сам по себе может менять условия наблюдения. Не считайте схему исчерпывающей: она описывает доступные места, но не гарантирует, что все важные процессы заметны с одной позиции. Сверяйте время, источник и обстоятельства каждого сообщения. Если кто-то говорит «это было так всегда», спросите, за какой период он отвечает; если прибор показывает отклонение, уточните его рабочий диапазон и место установки. Так вы отделите стабильную закономерность от удобного, но слишком широкого обобщения.\n\nЕсть вопросы, на которые пока нельзя честно ответить. Что здесь причина, а что следствие? Действительно ли наблюдаемое изменение требует немедленного вмешательства? Кто или что понесёт последствия, если вы ошибётесь? Неопределённость не означает, что все версии одинаково вероятны; она означает, что следующая сцена должна дать материал для различения. Не превращайте каждую странность в тайный замысел и не отбрасывайте неудобную улику лишь потому, что она мешает плану. Самый убедительный поворот будет иметь смысл только тогда, когда ранние подробности позволят узнать его, а не просто удивиться ему.\n\nНачните с масштаба, который можно проверить. Запишите исходные условия, выберите один важный показатель и не меняйте сразу несколько факторов, если хотите понять, что повлияло на результат. Если вмешательство необходимо прямо сейчас, обозначьте его как временное и сохраните контрольную точку для сравнения. Если можно подождать, определите, какое именно наблюдение оправдает ожидание и сколько времени оно занимает. Это не бюрократическая осторожность: так вы не потеряете возможность отличить настоящую перемену от эффекта собственных действий.\n\nПостепенно прояснится и человеческая сторона задачи: чьи объяснения опираются на наблюдения, кто отвечает за последствия и кому придётся жить с выбранным порядком после того, как срочность спадёт. Доверие здесь не заменяет измерения, но влияет на то, какие сведения вам сообщат и какие шаги команда сможет выполнить вместе. Объясняйте, что проверяете, не обещайте результата раньше проверки и отмечайте, что именно изменило ваше мнение. Иногда это позволит сохранить сотрудничество даже при разногласии; иногда станет ясно, что разные участники защищают несовместимые интересы.\n\nОтдельно рассмотрите направление 3: Подождать один цикл сонара: безопаснее для экипажа, важное окно наблюдений сокращается. Оно не отменяет остальные возможности и не требует принимать весь план сразу. Спросите, какое подтверждение сделает этот шаг уместным, что останется измеримым после него и кто заметит его побочный эффект первым. Если ответ пока неизвестен, это не повод скрывать пробел: его можно превратить в условие остановки или повторной оценки.",
+    "en": "A dull impact rolls through the station hull, and emergency lights turn the corridor red. You are the duty engineer at depth: several life-support systems have failed, oxygen is limited, and the source of the damage is still unknown\n\nA sonar return appears beneath the station while pressure readings drift. The crew can verify the echo from inside or send a diver to inspect the exterior marker.\n\nRemember that the story had already begun before you arrived. The deep-sea station receives a sonar return near its exterior module; crew and submersible have limited time. This is not a backdrop or a problem that can be solved with one dramatic gesture: the conditions formed earlier, and people, objects, and processes have adapted to them. Any change will affect more than what is visible now; it may alter the routine that holds other parts of the situation together. You have authority to act, but first you need to understand what counts as normal here and who has actually verified that baseline.\n\nThe first observation belongs to a specific place: Station, Wreck. It contains a detail that may look like an answer, but for now it is only a starting point. The information was gathered at different times and by different means; a gap remains between what was recorded and the explanation someone has attached to it. If you fill that gap with a guess, later evidence may be forced to fit your theory. If you mark what is known and what only seems likely, you can notice a mismatch without rewriting the whole account afterward.\n\nYour objective is broader than removing the nearest obstacle: Find a safe route, recover the log and restore the reactor. In practice, you must watch both the immediate result and what that result lets you learn. A quick intervention may produce visible improvement while weakening comparison, access, or trust; a cautious one may preserve the quality of the evidence while leaving the problem unresolved. Those concerns do not carry the same weight in every situation. Their order depends on what you confirm and on which harm can actually be reversed.\n\nThe available material has three layers: the initial conditions, the first observation, and the explanation someone has already attached to it. Keep them separate. Send the submersible to inspect: uncertainty falls, mission reserve is spent. If figures or accounts disagree, establish when and where the mismatch began, who witnessed the event directly, and what could have changed between checks. A disputed reading is sometimes incomplete rather than false: it may accurately describe the point where it was taken, but not the wider area the team is asking about.\n\nYou do not have to choose one strategy for the whole episode in advance. The package offers different kinds of action: Check sonar, Repair reactor, Dive to the wreck. Each gives you a different kind of control: one may clarify the picture, another may change the conditions, and another may buy time or test a connection between events. Before choosing, ask a practical question: what should become visible if your theory is right? What would you see if it is wrong? That turns an action into a test, rather than a gesture followed by a hope for good luck.\n\nThe way forward can branch, and each direction has its own cost. One choice may protect the immediate objective while leaving uncertainty; another may strengthen the evidence while narrowing the window to intervene; a third may reduce impact on the surrounding system while requiring a fresh check. None is automatically correct. What matters is seeing which value you are protecting, what you risk for it, and what signs would make you reconsider. A change of course is sound when you can explain what new information changed the calculation.\n\nLook at Station, Wreck. Each point reveals one part of the situation and hides another; moving between them can itself change the conditions of observation. Do not treat the map as complete: it lists available places but cannot guarantee that every important process is visible from one position. Compare the time, source, and circumstances of each report. If someone says “it has always been this way,” ask what period they mean; if an instrument shows a deviation, check its operating range and location. This helps separate a stable pattern from a convenient but overly broad conclusion.\n\nSome questions cannot yet be answered honestly. What is a cause, and what is an effect? Does the observed change truly require immediate intervention? Who or what bears the cost if you are wrong? Uncertainty does not mean every theory is equally likely; it means the next scene must give you a way to distinguish them. Do not turn every oddity into a hidden scheme, and do not discard inconvenient evidence because it disrupts a plan. A convincing turn will make sense only if earlier details let you recognize it, not merely be surprised by it.\n\nStart at a scale you can check. Record the baseline, choose one important measure, and avoid changing several factors at once if you need to know what caused the result. If action is necessary now, mark it as temporary and preserve a control point for comparison. If waiting is possible, specify what observation would justify the delay and how long it will take. This is not caution for its own sake: it preserves your ability to distinguish a real change from the effect of your own intervention.\n\nThe human side of the task will become clearer too: whose account rests on observation, who is responsible for the consequences, and who must live with the chosen arrangement after the emergency passes. Trust does not replace measurement, but it affects what people tell you and what the team can do together. Explain what you are checking, do not promise a result before it is verified, and note what changed your mind. That may preserve cooperation through disagreement; it may also show that different participants are protecting interests that cannot be reconciled.\n\nAt the start of the scene, you can see only the edge of a longer chain. What happens next may confirm a familiar explanation, narrow the limits of the problem, or show that the original framing was incomplete. Do not wait for someone to tell you the “real story” all at once: understanding will come from the checks you choose, the system's response, and the consequences you consider acceptable. Keep several theories in mind, but act concretely. Each move should improve the situation, reduce an important uncertainty, or explain honestly why neither is possible yet.\n\nConsider approach 3 separately: Wait one sonar cycle: crew risk falls, the observation window narrows. It does not erase the other options or require you to commit to the whole plan at once. Ask what evidence would make this step appropriate, what will remain measurable afterward, and who will notice its side effect first. If the answer is not yet known, do not hide the gap; turn it into a condition for pausing or reassessing."
+  },
+  "preparedBranches": [
+    {
+      "id": "depth_pressure",
+      "actions": [
+        "sonar",
+        "repair",
+        "dive",
+        "free_text"
+      ],
+      "narrative": {
+        "ru": "Под станцией появляется сонарная отметка, а показания давления расходятся. Эхо можно check изнутри или отправить водолаза к внешнему маркеру.",
+        "en": "A sonar return appears beneath the station while pressure readings drift. The crew can verify the echo from inside or send a diver to inspect the exterior marker."
+      },
+      "mutations": [],
+      "suggestions": [
+        {
+          "text": {
+            "ru": "Сверить обстановку и выбрать безопасный приоритет",
+            "en": "Recheck the situation and choose a safe priority"
+          }
+        },
+        {
+          "text": {
+            "ru": "Сохранить текущий план и подготовить запасной",
+            "en": "Keep the current plan and prepare a backup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "turning_point_depth",
+      "when": {
+        "depth": {
+          "gte": 3900
+        }
+      },
+      "actions": [
+        "sonar",
+        "repair",
+        "dive",
+        "free_text"
+      ],
+      "narrative": {
+        "ru": "A sonar return appears beneath the station while pressure readings drift. The crew can verify the echo from inside or send a diver to inspect the exterior marker. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
+        "en": "An alternate route opens as circumstances shift. Continue the current approach or change priorities before events make the consequences harder to reverse."
+      },
+      "mutations": [],
+      "suggestions": [
+        {
+          "text": {
+            "ru": "Сверить обстановку и выбрать безопасный приоритет",
+            "en": "Recheck the situation and choose a safe priority"
+          }
+        },
+        {
+          "text": {
+            "ru": "Сохранить текущий план и подготовить запасной",
+            "en": "Keep the current plan and prepare a backup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "authored_turn_1",
+      "minTurns": 2,
+      "actions": [
+        "sonar",
+        "repair",
+        "dive",
+        "free_text"
+      ],
+      "narrative": {
+        "ru": "Неизвестный объект — не аппарат: сигнал отражает кабельный груз, который впервые попал в луч после смены течения.",
+        "en": "The unknown object is not a submersible: a cable weight entered the beam after the current shifted."
+      },
+      "mutations": [],
+      "suggestions": [],
+      "responses": {
+        "sonar": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Проверить сонар». Команда продолжает по пути: Отправить аппарат на визуальный осмотр: неопределённость падает, ресурс миссии расходуется. Улика раскрывает поворот: Неизвестный объект — не аппарат: сигнал отражает кабельный груз, который впервые попал в луч после смены течения.",
+            "en": "You choose “Check sonar.” The team continues along this path: Send the submersible to inspect: uncertainty falls, mission reserve is spent. The evidence reveals the turn: The unknown object is not a submersible: a cable weight entered the beam after the current shifted."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Отправить аппарат на визуальный осмотр: неопределённость падает, ресурс миссии расходуется.",
+                "en": "Send the submersible to inspect: uncertainty falls, mission reserve is spent."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Сначала стабилизировать кабель: повторное эхо уйдёт, но часть данных станции будет недоступна.",
+                "en": "Stabilize the cable first: the echo disappears, but some station data go offline."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Подождать один цикл сонара: безопаснее для экипажа, важное окно наблюдений сокращается.",
+                "en": "Wait one sonar cycle: crew risk falls, the observation window narrows."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "repair": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Починить реактор». Команда продолжает по пути: Сначала стабилизировать кабель: повторное эхо уйдёт, но часть данных станции будет недоступна. Улика раскрывает поворот: Неизвестный объект — не аппарат: сигнал отражает кабельный груз, который впервые попал в луч после смены течения.",
+            "en": "You choose “Repair reactor.” The team continues along this path: Stabilize the cable first: the echo disappears, but some station data go offline. The evidence reveals the turn: The unknown object is not a submersible: a cable weight entered the beam after the current shifted."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Отправить аппарат на визуальный осмотр: неопределённость падает, ресурс миссии расходуется.",
+                "en": "Send the submersible to inspect: uncertainty falls, mission reserve is spent."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Сначала стабилизировать кабель: повторное эхо уйдёт, но часть данных станции будет недоступна.",
+                "en": "Stabilize the cable first: the echo disappears, but some station data go offline."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Подождать один цикл сонара: безопаснее для экипажа, важное окно наблюдений сокращается.",
+                "en": "Wait one sonar cycle: crew risk falls, the observation window narrows."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "dive": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Спуститься к обломкам». Команда продолжает по пути: Подождать один цикл сонара: безопаснее для экипажа, важное окно наблюдений сокращается. Улика раскрывает поворот: Неизвестный объект — не аппарат: сигнал отражает кабельный груз, который впервые попал в луч после смены течения.",
+            "en": "You choose “Dive to the wreck.” The team continues along this path: Wait one sonar cycle: crew risk falls, the observation window narrows. The evidence reveals the turn: The unknown object is not a submersible: a cable weight entered the beam after the current shifted."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Отправить аппарат на визуальный осмотр: неопределённость падает, ресурс миссии расходуется.",
+                "en": "Send the submersible to inspect: uncertainty falls, mission reserve is spent."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Сначала стабилизировать кабель: повторное эхо уйдёт, но часть данных станции будет недоступна.",
+                "en": "Stabilize the cable first: the echo disappears, but some station data go offline."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Подождать один цикл сонара: безопаснее для экипажа, важное окно наблюдений сокращается.",
+                "en": "Wait one sonar cycle: crew risk falls, the observation window narrows."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "free_text": {
+          "narrative": {
+            "ru": "Ваш свободный план меняет способ проверки. Команда раскрывает поворот по найденной улике: Неизвестный объект — не аппарат: сигнал отражает кабельный груз, который впервые попал в луч после смены течения.",
+            "en": "Your free-form plan changes how the team checks the clue. The turn is revealed by the evidence: The unknown object is not a submersible: a cable weight entered the beam after the current shifted."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Отправить аппарат на визуальный осмотр: неопределённость падает, ресурс миссии расходуется.",
+                "en": "Send the submersible to inspect: uncertainty falls, mission reserve is spent."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Сначала стабилизировать кабель: повторное эхо уйдёт, но часть данных станции будет недоступна.",
+                "en": "Stabilize the cable first: the echo disappears, but some station data go offline."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Подождать один цикл сонара: безопаснее для экипажа, важное окно наблюдений сокращается.",
+                "en": "Wait one sonar cycle: crew risk falls, the observation window narrows."
+              },
+              "icon": "↗️"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "authored_turn_2",
+      "minTurns": 4,
+      "actions": [
+        "sonar",
+        "repair",
+        "dive",
+        "free_text"
+      ],
+      "narrative": {
+        "ru": "Сбой внешнего модуля не электрический; датчик давления загрязнён осадком, а ручной индикатор остаётся стабильным.",
+        "en": "The module issue is not electrical; sediment fouled the pressure sensor while its manual indicator stays steady."
+      },
+      "mutations": [],
+      "suggestions": [],
+      "responses": {
+        "sonar": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Проверить сонар». Команда продолжает по пути: Отправить аппарат на визуальный осмотр: неопределённость падает, ресурс миссии расходуется. Улика раскрывает поворот: Сбой внешнего модуля не электрический; датчик давления загрязнён осадком, а ручной индикатор остаётся стабильным.",
+            "en": "You choose “Check sonar.” The team continues along this path: Send the submersible to inspect: uncertainty falls, mission reserve is spent. The evidence reveals the turn: The module issue is not electrical; sediment fouled the pressure sensor while its manual indicator stays steady."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Отправить аппарат на визуальный осмотр: неопределённость падает, ресурс миссии расходуется.",
+                "en": "Send the submersible to inspect: uncertainty falls, mission reserve is spent."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Сначала стабилизировать кабель: повторное эхо уйдёт, но часть данных станции будет недоступна.",
+                "en": "Stabilize the cable first: the echo disappears, but some station data go offline."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Подождать один цикл сонара: безопаснее для экипажа, важное окно наблюдений сокращается.",
+                "en": "Wait one sonar cycle: crew risk falls, the observation window narrows."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "repair": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Починить реактор». Команда продолжает по пути: Сначала стабилизировать кабель: повторное эхо уйдёт, но часть данных станции будет недоступна. Улика раскрывает поворот: Сбой внешнего модуля не электрический; датчик давления загрязнён осадком, а ручной индикатор остаётся стабильным.",
+            "en": "You choose “Repair reactor.” The team continues along this path: Stabilize the cable first: the echo disappears, but some station data go offline. The evidence reveals the turn: The module issue is not electrical; sediment fouled the pressure sensor while its manual indicator stays steady."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Отправить аппарат на визуальный осмотр: неопределённость падает, ресурс миссии расходуется.",
+                "en": "Send the submersible to inspect: uncertainty falls, mission reserve is spent."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Сначала стабилизировать кабель: повторное эхо уйдёт, но часть данных станции будет недоступна.",
+                "en": "Stabilize the cable first: the echo disappears, but some station data go offline."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Подождать один цикл сонара: безопаснее для экипажа, важное окно наблюдений сокращается.",
+                "en": "Wait one sonar cycle: crew risk falls, the observation window narrows."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "dive": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Спуститься к обломкам». Команда продолжает по пути: Подождать один цикл сонара: безопаснее для экипажа, важное окно наблюдений сокращается. Улика раскрывает поворот: Сбой внешнего модуля не электрический; датчик давления загрязнён осадком, а ручной индикатор остаётся стабильным.",
+            "en": "You choose “Dive to the wreck.” The team continues along this path: Wait one sonar cycle: crew risk falls, the observation window narrows. The evidence reveals the turn: The module issue is not electrical; sediment fouled the pressure sensor while its manual indicator stays steady."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Отправить аппарат на визуальный осмотр: неопределённость падает, ресурс миссии расходуется.",
+                "en": "Send the submersible to inspect: uncertainty falls, mission reserve is spent."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Сначала стабилизировать кабель: повторное эхо уйдёт, но часть данных станции будет недоступна.",
+                "en": "Stabilize the cable first: the echo disappears, but some station data go offline."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Подождать один цикл сонара: безопаснее для экипажа, важное окно наблюдений сокращается.",
+                "en": "Wait one sonar cycle: crew risk falls, the observation window narrows."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "free_text": {
+          "narrative": {
+            "ru": "Ваш свободный план меняет способ проверки. Команда раскрывает поворот по найденной улике: Сбой внешнего модуля не электрический; датчик давления загрязнён осадком, а ручной индикатор остаётся стабильным.",
+            "en": "Your free-form plan changes how the team checks the clue. The turn is revealed by the evidence: The module issue is not electrical; sediment fouled the pressure sensor while its manual indicator stays steady."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Отправить аппарат на визуальный осмотр: неопределённость падает, ресурс миссии расходуется.",
+                "en": "Send the submersible to inspect: uncertainty falls, mission reserve is spent."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Сначала стабилизировать кабель: повторное эхо уйдёт, но часть данных станции будет недоступна.",
+                "en": "Stabilize the cable first: the echo disappears, but some station data go offline."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Подождать один цикл сонара: безопаснее для экипажа, важное окно наблюдений сокращается.",
+                "en": "Wait one sonar cycle: crew risk falls, the observation window narrows."
+              },
+              "icon": "↗️"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

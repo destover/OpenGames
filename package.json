@@ -1,0 +1,19 @@
+{
+  "name": "opengames",
+  "version": "0.0.8",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --experimental-strip-types src/server.ts",
+    "start": "node --experimental-strip-types src/server.ts"
+  },
+  "dependencies": {
+    "nodemailer": "^10.0.10",
+    "ws": "^8.21.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.4",
+    "@types/ws": "^8.18.1",
+    "typescript": "^5.9.3"
+  }
+}

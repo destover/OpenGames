@@ -1,0 +1,136 @@
+{
+  "openrouter": {
+    "name": "OpenRouter",
+    "baseUrl": "https://openrouter.ai/api/v1",
+    "defaultModel": "openrouter/free",
+    "keyUrl": "https://openrouter.ai/settings/keys",
+    "models": [
+      {
+        "id": "openrouter/free",
+        "name": "OpenRouter Auto Free",
+        "tier": "free"
+      },
+      {
+        "id": "openai/gpt-4o-mini",
+        "name": "GPT-4o mini",
+        "tier": "paid"
+      }
+    ]
+  },
+  "openai": {
+    "name": "OpenAI",
+    "baseUrl": "https://api.openai.com/v1",
+    "defaultModel": "gpt-4o-mini",
+    "keyUrl": "https://platform.openai.com/api-keys",
+    "models": [
+      {
+        "id": "gpt-4o-mini",
+        "name": "GPT-4o mini",
+        "tier": "paid"
+      },
+      {
+        "id": "gpt-4.1-mini",
+        "name": "GPT-4.1 mini",
+        "tier": "paid"
+      }
+    ]
+  },
+  "anthropic": {
+    "name": "Anthropic",
+    "baseUrl": "https://api.anthropic.com/v1",
+    "defaultModel": "claude-haiku-4-5",
+    "keyUrl": "https://platform.claude.com/settings/keys",
+    "models": [
+      {
+        "id": "claude-haiku-4-5",
+        "name": "Claude Haiku 4.5",
+        "tier": "paid"
+      }
+    ]
+  },
+  "deepseek": {
+    "name": "DeepSeek",
+    "baseUrl": "https://api.deepseek.com/v1",
+    "defaultModel": "deepseek-flash",
+    "keyUrl": "https://platform.deepseek.com/api_keys",
+    "models": [
+      {
+        "id": "deepseek-flash",
+        "name": "DeepSeek Flash",
+        "tier": "paid"
+      }
+    ]
+  },
+  "groq": {
+    "name": "Groq",
+    "baseUrl": "https://api.groq.com/openai/v1",
+    "defaultModel": "openai/gpt-oss-120b",
+    "keyUrl": "https://console.groq.com/keys",
+    "models": [
+      {
+        "id": "openai/gpt-oss-120b",
+        "name": "GPT-OSS 120B",
+        "tier": "quota"
+      },
+      {
+        "id": "openai/gpt-oss-20b",
+        "name": "GPT-OSS 20B",
+        "tier": "quota"
+      },
+      {
+        "id": "qwen/qwen3.8-27b",
+        "name": "Qwen 3.8 27B",
+        "tier": "quota"
+      }
+    ]
+  },
+  "gemini": {
+    "name": "Google Gemini",
+    "baseUrl": "https://generativelanguage.googleapis.com/v1beta/openai",
+    "defaultModel": "gemini-2.5-flash",
+    "keyUrl": "https://aistudio.google.com/api-keys",
+    "models": [
+      {
+        "id": "gemini-2.5-flash",
+        "name": "Gemini 2.5 Flash",
+        "tier": "quota"
+      }
+    ]
+  },
+  "mistral": {
+    "name": "Mistral",
+    "baseUrl": "https://api.mistral.ai/v1",
+    "defaultModel": "mistral-small-latest",
+    "keyUrl": "https://console.mistral.ai/api-keys",
+    "models": [
+      {
+        "id": "mistral-small-latest",
+        "name": "Mistral Small",
+        "tier": "quota"
+      },
+      {
+        "id": "mistral-large-latest",
+        "name": "Mistral Large",
+        "tier": "paid"
+      }
+    ]
+  },
+  "qwen": {
+    "name": "Qwen · Alibaba Cloud (Singapore)",
+    "baseUrl": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    "defaultModel": "qwen-plus",
+    "keyUrl": "https://www.alibabacloud.com/help/en/model-studio/get-api-key",
+    "models": [
+      {
+        "id": "qwen-plus",
+        "name": "Qwen Plus",
+        "tier": "paid"
+      },
+      {
+        "id": "qwen-turbo",
+        "name": "Qwen Turbo",
+        "tier": "paid"
+      }
+    ]
+  }
+}

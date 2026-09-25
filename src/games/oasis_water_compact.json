@@ -1,0 +1,627 @@
+{
+  "manifest": {
+    "id": "oasis-water-compact",
+    "title": "Доля воды",
+    "description": "В засушливом оазисе земледельцы, мастерские и караванный двор делят ограниченный поток воды; новые замеры ставят под вопрос старую очередь.",
+    "setting": "Вы посредник совета оазиса накануне жаркой недели. Канал обмелел, однако причины различаются по участкам, а у каждого двора есть собственные данные и обязательства.",
+    "categoryRu": "Переговоры",
+    "background": "/assets/oasis-water-compact.jpg",
+    "version": "1.0.0",
+    "schemaVersion": "2",
+    "isNew": true,
+    "durationMinutes": [
+      15,
+      25
+    ]
+  },
+  "state": {
+    "initial": {
+      "trust": 43,
+      "evidence": 48,
+      "balance": 40,
+      "location": "well",
+      "goalStatus": "active"
+    }
+  },
+  "actions": {
+    "free_text": {
+      "label": "Свободное действие",
+      "input": true,
+      "icon": "✍️"
+    },
+    "measure": {
+      "label": "Сверить замеры",
+      "icon": "💧"
+    },
+    "negotiate": {
+      "label": "Собрать стороны",
+      "icon": "🤝"
+    },
+    "trial": {
+      "label": "Предложить пробный график",
+      "icon": "🗓️"
+    }
+  },
+  "ui": {
+    "accent": "#63a5d9",
+    "stateLabels": {
+      "trust": "Доверие сторон",
+      "evidence": "Надёжность замеров",
+      "balance": "Справедливость графика",
+      "location": "Место",
+      "goalStatus": "Цель"
+    }
+  },
+  "i18n": {
+    "ru": {
+      "states": {
+        "trust": "Доверие сторон",
+        "evidence": "Надёжность замеров",
+        "balance": "Справедливость графика",
+        "location": "Место",
+        "goalStatus": "Цель"
+      },
+      "actions": {
+        "free_text": "Свободное действие",
+        "measure": "Сверить замеры",
+        "negotiate": "Собрать стороны",
+        "trial": "Предложить пробный график"
+      },
+      "manifest": {
+        "title": "Доля воды",
+        "description": "В засушливом оазисе земледельцы, мастерские и караванный двор делят ограниченный поток воды; новые замеры ставят под вопрос старую очередь.",
+        "category": "Переговоры"
+      }
+    },
+    "en": {
+      "states": {
+        "trust": "Stakeholder trust",
+        "evidence": "Evidence quality",
+        "balance": "Schedule balance",
+        "location": "Location",
+        "goalStatus": "Objective"
+      },
+      "actions": {
+        "free_text": "Free action",
+        "measure": "Compare measurements",
+        "negotiate": "Bring parties together",
+        "trial": "Propose a trial schedule"
+      },
+      "manifest": {
+        "title": "A Share of Water",
+        "description": "В засушливом оазисе земледельцы, мастерские и караванный двор делят ограниченный поток воды; новые замеры ставят под вопрос старую очередь.",
+        "category": "Negotiation"
+      }
+    }
+  },
+  "goal": {
+    "description": {
+      "ru": "Согласовать проверяемое и справедливое распределение воды, которое переживёт жаркую неделю без разрушения доверия между общинами.",
+      "en": "Agree on a fair, verifiable water schedule that lasts through the hot week and preserves trust."
+    },
+    "completion": {
+      "path": "goalStatus",
+      "value": "completed",
+      "terminalValues": [
+        "completed",
+        "failed"
+      ]
+    }
+  },
+  "map": {
+    "start": "well",
+    "locations": {
+      "well": {
+        "ru": "Общий колодец",
+        "en": "Council square"
+      },
+      "channel": {
+        "ru": "Канал",
+        "en": "Canal gate"
+      },
+      "council": {
+        "ru": "Площадь совета",
+        "en": "Shared well"
+      }
+    }
+  },
+  "world": {
+    "constants": {
+      "setting": "Вы посредник совета оазиса накануне жаркой недели. Канал обмелел, однако причины различаются по участкам, а у каждого двора есть собственные данные и обязательства.",
+      "physicalRules": [
+        "Последствия должны соответствовать причинности и ограниченным ресурсам.",
+        "Не вводи новых локаций за пределами пакета.",
+        "Сохраняй самостоятельность игрока: предложенные действия не обязательны."
+      ],
+      "continuity": "Учитывай подтверждённую историю; изменения накапливаются постепенно.",
+      "tone": "Взрослая реалистичная история с содержательными компромиссами; без искусственного провала.",
+      "storyArc": {
+        "revealPolicy": {
+          "ru": "Раскрывай повороты после проверяемых улик; показывай причинную связь и меняй дальнейшие сцены по решениям игрока.",
+          "en": "Reveal turns after verifiable clues; show their causal link and let player choices alter later scenes."
+        },
+        "beats": {
+          "ru": [
+            "Канал обмелел перед жаркой неделей, а дворы предъявляют несовпадающие измерения и обязательства.",
+            "Ночные отметки показывают утечку в старом участке облицовки, но соседний сад получает эту воду через корни.",
+            "Совет решает, как разделить поток, не выдавая скрытое пользование за злой умысел."
+          ],
+          "en": [
+            "The canal falls before a hot week, and households bring conflicting measurements and obligations.",
+            "Night marks reveal a leak in old lining, though a neighboring garden receives that water through its roots.",
+            "The council must share flow without framing hidden use as malice."
+          ]
+        },
+        "twists": {
+          "ru": [
+            "Падение уровня связано с трещиной канала у общего сада, а не с незаконным забором; это подтверждают влажные камни.",
+            "Сад удерживает часть воды в тени и снижает испарение, поэтому его отключение ускорит потери для всех."
+          ],
+          "en": [
+            "The drop comes from a canal crack by the shared garden, not illegal tapping; damp stones confirm it.",
+            "The garden holds water in shade and reduces evaporation, so shutting it off increases losses for everyone."
+          ]
+        },
+        "paths": {
+          "ru": [
+            "Временно сократить всем подачу: правило равно, урожай малых дворов пострадает первым.",
+            "Отремонтировать трещину и сохранить очередь: потери уменьшаются, но часть работ задержится.",
+            "Согласовать ротацию по потребности и замерам: гибкость выше, доверие зависит от открытых записей."
+          ],
+          "en": [
+            "Cut every allocation equally: rules are simple, but small plots lose crops first.",
+            "Repair the crack and preserve the queue: losses fall, while some work is delayed.",
+            "Rotate by need and measurement: flexibility rises, trust depends on open records."
+          ]
+        }
+      }
+    },
+    "knowledgeGraph": {
+      "facts": [
+        {
+          "id": "oasis-water-compact_premise",
+          "text": "Вы посредник совета оазиса накануне жаркой недели. Канал обмелел, однако причины различаются по участкам, а у каждого двора есть собственные данные и обязательства."
+        },
+        {
+          "id": "oasis-water-compact_goal",
+          "text": "Согласовать проверяемое и справедливое распределение воды, которое переживёт жаркую неделю без разрушения доверия между общинами."
+        },
+        {
+          "id": "oasis-water-compact_turning_point",
+          "text": "Переговорная ветка балансирует прозрачность, доверие и эффективность общего ресурса."
+        }
+      ]
+    }
+  },
+  "boundaries": {
+    "mutationPaths": [
+      "trust",
+      "evidence",
+      "balance",
+      "location",
+      "goalStatus"
+    ],
+    "numericBounds": {
+      "trust": {
+        "min": 0,
+        "max": 100
+      },
+      "evidence": {
+        "min": 0,
+        "max": 100
+      },
+      "balance": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "allowedValues": {
+      "location": [
+        "well",
+        "channel",
+        "council"
+      ],
+      "goalStatus": [
+        "active",
+        "completed",
+        "failed"
+      ]
+    },
+    "maxArrayItems": {},
+    "maxStringLengths": {},
+    "stateChangeRules": [],
+    "instructions": [
+      "Описывай последствия по фактам подтверждённым в истории.",
+      "Предлагай несколько возможных направлений без обязательного порядка.",
+      "Не завершай игру числовым порогом: завершение только после достижения цели."
+    ]
+  },
+  "opening": {
+    "ru": "На каменной стене совета сохранилась очередь поливов, высеченная много лет назад. Сегодня на её полях появились свежие отметки: мастерская измерила утечку, а садоводы считают, что замер сделали не в тот час\n\nКараванный двор предлагает оплатить ремонт затвора в обмен на ранний доступ к воде. Сделка даст быстрый результат, но небольшие хозяйства опасаются, что временная уступка станет постоянным правилом.\n\nЗдесь важно помнить, что к моменту вашего появления история уже началась. Вы посредник совета оазиса накануне жаркой недели. Канал обмелел, однако причины различаются по участкам, а у каждого двора есть собственные данные и обязательства. Это не отвлечённый фон и не задача, которую можно решить одним эффектным жестом: исходные условия складывались раньше, а люди, объекты и процессы успели приспособиться к ним. Поэтому любое изменение затронет не только то, что видно сейчас, но и привычный порядок, на котором держатся остальные части ситуации. Вы входите в неё с правом действовать, однако сначала нужно понять, что именно считается нормой и кто подтвердил эту норму.\n\nПервое наблюдение относится к конкретному месту: Общий колодец, Канал, Площадь совета. В нём есть заметная деталь, которую легко принять за готовый ответ, но пока это только отправная точка. Сведения получены не одновременно и не одним способом; между тем, что зафиксировано, и тем, что уже успели предположить, остаётся промежуток. Если немедленно закрыть его догадкой, следующие данные будут подгоняться под выбранную версию. Если же точно обозначить, что известно, а что пока лишь кажется вероятным, у вас сохранится возможность увидеть несоответствие, не переписывая задним числом всю картину.\n\nВаша задача сформулирована шире, чем устранить ближайшую помеху: Согласовать проверяемое и справедливое распределение воды, которое переживёт жаркую неделю без разрушения доверия между общинами. На практике это означает одновременно следить за непосредственным результатом и за тем, что этот результат позволит узнать. Быстрый шаг может принести видимое улучшение, но ухудшить сравнимость, доступность или доверие; осторожный — сохранить качество проверки, но оставить проблему без немедленного ответа. Эти соображения не равны по весу во всех обстоятельствах. Их порядок зависит от того, какие сведения вы подтвердите и какой ущерб действительно обратим.\n\nВ материалах есть три слоя: исходное состояние, первое наблюдение и объяснение, которое кто-то успел к нему приложить. Не смешивайте их. Временно сократить всем подачу: правило равно, урожай малых дворов пострадает первым. Если цифры или свидетельства расходятся, полезно установить, когда и где именно началось расхождение, кто наблюдал явление напрямую и какие условия могли поменяться между проверками. Иногда спорный показатель оказывается не ложным, а неполным: он честно описывает ту точку, где был получен, но не ту, о которой спрашивает команда.\n\nВам не требуется заранее выбирать единственную стратегию на весь эпизод. В текущем пакете доступны разные типы действий: Сверить замеры, Собрать стороны, Предложить пробный график. Они дают разные виды контроля: одно может уточнить картину, другое — изменить условия, третье — выиграть время или проверить связь между двумя событиями. Выбирая, задайте себе практический вопрос: что должно стать заметно после этого шага, если ваша версия верна? И что вы увидите, если она неверна? Такой критерий превращает действие в проверку, а не просто в жест, после которого приходится надеяться на удачу.\n\nПуть вперёд может разветвиться, и у каждого направления будет собственная цена. Одно решение способно защитить непосредственную цель, но оставить неопределённость; другое — укрепить доказательства, но сузить окно для вмешательства; третье — уменьшить воздействие на окружающую систему, одновременно потребовав новой проверки. Эти различия не делают какой-либо путь правильным заранее. Важнее видеть, какую ценность вы защищаете сейчас, чем рискуете ради неё и какие признаки заставят пересмотреть план. Смена курса допустима, если вы можете объяснить, какая новая информация изменила расчёт.\n\nОглянитесь на Общий колодец, Канал, Площадь совета. Каждая точка открывает свою часть происходящего и скрывает другую; переход между ними сам по себе может менять условия наблюдения. Не считайте схему исчерпывающей: она описывает доступные места, но не гарантирует, что все важные процессы заметны с одной позиции. Сверяйте время, источник и обстоятельства каждого сообщения. Если кто-то говорит «это было так всегда», спросите, за какой период он отвечает; если прибор показывает отклонение, уточните его рабочий диапазон и место установки. Так вы отделите стабильную закономерность от удобного, но слишком широкого обобщения.\n\nЕсть вопросы, на которые пока нельзя честно ответить. Что здесь причина, а что следствие? Действительно ли наблюдаемое изменение требует немедленного вмешательства? Кто или что понесёт последствия, если вы ошибётесь? Неопределённость не означает, что все версии одинаково вероятны; она означает, что следующая сцена должна дать материал для различения. Не превращайте каждую странность в тайный замысел и не отбрасывайте неудобную улику лишь потому, что она мешает плану. Самый убедительный поворот будет иметь смысл только тогда, когда ранние подробности позволят узнать его, а не просто удивиться ему.\n\nНачните с масштаба, который можно проверить. Запишите исходные условия, выберите один важный показатель и не меняйте сразу несколько факторов, если хотите понять, что повлияло на результат. Если вмешательство необходимо прямо сейчас, обозначьте его как временное и сохраните контрольную точку для сравнения. Если можно подождать, определите, какое именно наблюдение оправдает ожидание и сколько времени оно занимает. Это не бюрократическая осторожность: так вы не потеряете возможность отличить настоящую перемену от эффекта собственных действий.\n\nПостепенно прояснится и человеческая сторона задачи: чьи объяснения опираются на наблюдения, кто отвечает за последствия и кому придётся жить с выбранным порядком после того, как срочность спадёт. Доверие здесь не заменяет измерения, но влияет на то, какие сведения вам сообщат и какие шаги команда сможет выполнить вместе. Объясняйте, что проверяете, не обещайте результата раньше проверки и отмечайте, что именно изменило ваше мнение. Иногда это позволит сохранить сотрудничество даже при разногласии; иногда станет ясно, что разные участники защищают несовместимые интересы.\n\nОтдельно рассмотрите направление 3: Согласовать ротацию по потребности и замерам: гибкость выше, доверие зависит от открытых записей. Оно не отменяет остальные возможности и не требует принимать весь план сразу. Спросите, какое подтверждение сделает этот шаг уместным, что останется измеримым после него и кто заметит его побочный эффект первым. Если ответ пока неизвестен, это не повод скрывать пробел: его можно превратить в условие остановки или повторной оценки.",
+    "en": "An old irrigation order is carved into the council wall. Fresh marks have appeared beside it: the workshop measured a leak, while growers say the reading was taken at the wrong hour\n\nThe caravan yard offers to pay for a gate repair in exchange for early water access. The deal could help quickly, but smaller growers fear a temporary concession will become permanent.\n\nRemember that the story had already begun before you arrived. The canal falls before a hot week, and households bring conflicting measurements and obligations. This is not a backdrop or a problem that can be solved with one dramatic gesture: the conditions formed earlier, and people, objects, and processes have adapted to them. Any change will affect more than what is visible now; it may alter the routine that holds other parts of the situation together. You have authority to act, but first you need to understand what counts as normal here and who has actually verified that baseline.\n\nThe first observation belongs to a specific place: Council square, Canal gate, Shared well. It contains a detail that may look like an answer, but for now it is only a starting point. The information was gathered at different times and by different means; a gap remains between what was recorded and the explanation someone has attached to it. If you fill that gap with a guess, later evidence may be forced to fit your theory. If you mark what is known and what only seems likely, you can notice a mismatch without rewriting the whole account afterward.\n\nYour objective is broader than removing the nearest obstacle: Agree on a fair, verifiable water schedule that lasts through the hot week and preserves trust. In practice, you must watch both the immediate result and what that result lets you learn. A quick intervention may produce visible improvement while weakening comparison, access, or trust; a cautious one may preserve the quality of the evidence while leaving the problem unresolved. Those concerns do not carry the same weight in every situation. Their order depends on what you confirm and on which harm can actually be reversed.\n\nThe available material has three layers: the initial conditions, the first observation, and the explanation someone has already attached to it. Keep them separate. Cut every allocation equally: rules are simple, but small plots lose crops first. If figures or accounts disagree, establish when and where the mismatch began, who witnessed the event directly, and what could have changed between checks. A disputed reading is sometimes incomplete rather than false: it may accurately describe the point where it was taken, but not the wider area the team is asking about.\n\nYou do not have to choose one strategy for the whole episode in advance. The package offers different kinds of action: Compare measurements, Bring parties together, Propose a trial schedule. Each gives you a different kind of control: one may clarify the picture, another may change the conditions, and another may buy time or test a connection between events. Before choosing, ask a practical question: what should become visible if your theory is right? What would you see if it is wrong? That turns an action into a test, rather than a gesture followed by a hope for good luck.\n\nThe way forward can branch, and each direction has its own cost. One choice may protect the immediate objective while leaving uncertainty; another may strengthen the evidence while narrowing the window to intervene; a third may reduce impact on the surrounding system while requiring a fresh check. None is automatically correct. What matters is seeing which value you are protecting, what you risk for it, and what signs would make you reconsider. A change of course is sound when you can explain what new information changed the calculation.\n\nLook at Council square, Canal gate, Shared well. Each point reveals one part of the situation and hides another; moving between them can itself change the conditions of observation. Do not treat the map as complete: it lists available places but cannot guarantee that every important process is visible from one position. Compare the time, source, and circumstances of each report. If someone says “it has always been this way,” ask what period they mean; if an instrument shows a deviation, check its operating range and location. This helps separate a stable pattern from a convenient but overly broad conclusion.\n\nSome questions cannot yet be answered honestly. What is a cause, and what is an effect? Does the observed change truly require immediate intervention? Who or what bears the cost if you are wrong? Uncertainty does not mean every theory is equally likely; it means the next scene must give you a way to distinguish them. Do not turn every oddity into a hidden scheme, and do not discard inconvenient evidence because it disrupts a plan. A convincing turn will make sense only if earlier details let you recognize it, not merely be surprised by it.\n\nStart at a scale you can check. Record the baseline, choose one important measure, and avoid changing several factors at once if you need to know what caused the result. If action is necessary now, mark it as temporary and preserve a control point for comparison. If waiting is possible, specify what observation would justify the delay and how long it will take. This is not caution for its own sake: it preserves your ability to distinguish a real change from the effect of your own intervention.\n\nThe human side of the task will become clearer too: whose account rests on observation, who is responsible for the consequences, and who must live with the chosen arrangement after the emergency passes. Trust does not replace measurement, but it affects what people tell you and what the team can do together. Explain what you are checking, do not promise a result before it is verified, and note what changed your mind. That may preserve cooperation through disagreement; it may also show that different participants are protecting interests that cannot be reconciled.\n\nConsider approach 3 separately: Rotate by need and measurement: flexibility rises, trust depends on open records. It does not erase the other options or require you to commit to the whole plan at once. Ask what evidence would make this step appropriate, what will remain measurable afterward, and who will notice its side effect first. If the answer is not yet known, do not hide the gap; turn it into a condition for pausing or reassessing."
+  },
+  "preparedBranches": [
+    {
+      "id": "first_complication",
+      "actions": [
+        "measure",
+        "negotiate",
+        "trial",
+        "free_text"
+      ],
+      "narrative": {
+        "ru": "Караванный двор предлагает оплатить ремонт затвора в обмен на ранний доступ к воде. Сделка даст быстрый результат, но небольшие хозяйства опасаются, что временная уступка станет постоянным правилом.",
+        "en": "The caravan yard offers to pay for a gate repair in exchange for early water access. The deal could help quickly, but smaller growers fear a temporary concession will become permanent."
+      },
+      "mutations": [],
+      "suggestions": [
+        {
+          "text": {
+            "ru": "Сверить обстановку и выбрать приоритет",
+            "en": "Recheck conditions and choose a priority"
+          },
+          "icon": "🧭"
+        },
+        {
+          "text": {
+            "ru": "Подготовить запасной план",
+            "en": "Prepare a fallback plan"
+          },
+          "icon": "🗺️"
+        }
+      ],
+      "minTurns": 0,
+      "responses": {
+        "measure": {
+          "narrative": {
+            "ru": "Вы повторяете замер в одно и то же время у трёх затворов. Разница показывает, что потери сосредоточены на одном участке, а не вызваны чрезмерным забором всего посёлка.",
+            "en": "You repeat measurements at three gates at the same time of day. The difference points to one leak rather than excessive withdrawals across the oasis."
+          }
+        },
+        "negotiate": {
+          "narrative": {
+            "ru": "Вы собираете малые хозяйства, караванный двор и мастера вокруг общей схемы канала. Стороны впервые согласуют, какие показания будут считать независимой проверкой.",
+            "en": "You bring growers, the caravan yard, and the repairer around a shared canal map. For the first time, they agree on which readings count as independent evidence."
+          }
+        },
+        "trial": {
+          "narrative": {
+            "ru": "Вы предлагаете график на два дня с открытыми показаниями у каждого затвора. Уступка временна и проверяема; спорные часы останутся предметом следующего совета.",
+            "en": "You propose a two-day schedule with readings posted at every gate. The concession is temporary and verifiable; disputed time slots return to the next council."
+          }
+        },
+        "free_text": {
+          "narrative": {
+            "ru": "Переговорная ветка балансирует прозрачность, доверие и эффективность общего ресурса. Опишите, какое нестандартное решение вы пробуете, и команда оценит его по текущим условиям.",
+            "en": "Your proposed approach becomes the next working possibility. The team checks it against the current constraints and reports the practical trade-off."
+          }
+        }
+      }
+    },
+    {
+      "id": "alternate_route",
+      "actions": [
+        "measure",
+        "negotiate",
+        "trial",
+        "free_text"
+      ],
+      "narrative": {
+        "ru": "Переговорная ветка балансирует прозрачность, доверие и эффективность общего ресурса. Можно продолжить исходный план или изменить приоритет, пока последствия обратимы.",
+        "en": "A household proposes publishing daily flow readings on the council wall. Transparency may ease suspicion, though it will expose which users draw water outside the agreed schedule."
+      },
+      "mutations": [],
+      "suggestions": [
+        {
+          "text": {
+            "ru": "Проверить последствия альтернативы",
+            "en": "Check the alternate route’s consequences"
+          },
+          "icon": "🔎"
+        },
+        {
+          "text": {
+            "ru": "Сохранить текущий план с резервом",
+            "en": "Keep the current plan with a reserve"
+          },
+          "icon": "⚖️"
+        }
+      ],
+      "minTurns": 1,
+      "responses": {
+        "measure": {
+          "narrative": {
+            "ru": "Вы назначаете независимый повтор замеров на рассвете и отмечаете места доступа к каналу. До проверки стороны соглашаются не менять расписание.",
+            "en": "You schedule an independent dawn measurement and mark access points along the canal. The parties agree not to change allocations before the results."
+          }
+        },
+        "negotiate": {
+          "narrative": {
+            "ru": "Посредник предлагает выслушать малые хозяйства отдельно от владельцев затвора. Появляется конкретное требование: публиковать расход, а не только часы подачи.",
+            "en": "The mediator hears smaller growers separately from gate owners. A concrete request emerges: publish volumes, not just delivery hours."
+          }
+        },
+        "trial": {
+          "narrative": {
+            "ru": "Пробный график запускается лишь на одном рукаве канала с ежедневной сверкой. Если показатели ухудшатся, его можно остановить без пересмотра всего соглашения.",
+            "en": "The trial schedule begins on one branch with a daily review. If the readings worsen, it can stop without reopening the full agreement."
+          }
+        },
+        "free_text": {
+          "narrative": {
+            "ru": "Переговорная ветка балансирует прозрачность, доверие и эффективность общего ресурса. Опишите, какое нестандартное решение вы пробуете, и команда оценит его по текущим условиям.",
+            "en": "Your proposed approach becomes the next working possibility. The team checks it against the current constraints and reports the practical trade-off."
+          }
+        }
+      }
+    },
+    {
+      "id": "authored_turn_1",
+      "minTurns": 2,
+      "actions": [
+        "measure",
+        "negotiate",
+        "trial",
+        "free_text"
+      ],
+      "narrative": {
+        "ru": "Падение уровня связано с трещиной канала у общего сада, а не с незаконным забором; это подтверждают влажные камни.",
+        "en": "The drop comes from a canal crack by the shared garden, not illegal tapping; damp stones confirm it."
+      },
+      "mutations": [],
+      "suggestions": [],
+      "responses": {
+        "measure": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Сверить замеры». Команда продолжает по пути: Временно сократить всем подачу: правило равно, урожай малых дворов пострадает первым. Улика раскрывает поворот: Падение уровня связано с трещиной канала у общего сада, а не с незаконным забором; это подтверждают влажные камни.",
+            "en": "You choose “Compare measurements.” The team continues along this path: Cut every allocation equally: rules are simple, but small plots lose crops first. The evidence reveals the turn: The drop comes from a canal crack by the shared garden, not illegal tapping; damp stones confirm it."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Временно сократить всем подачу: правило равно, урожай малых дворов пострадает первым.",
+                "en": "Cut every allocation equally: rules are simple, but small plots lose crops first."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Отремонтировать трещину и сохранить очередь: потери уменьшаются, но часть работ задержится.",
+                "en": "Repair the crack and preserve the queue: losses fall, while some work is delayed."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Согласовать ротацию по потребности и замерам: гибкость выше, доверие зависит от открытых записей.",
+                "en": "Rotate by need and measurement: flexibility rises, trust depends on open records."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "negotiate": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Собрать стороны». Команда продолжает по пути: Отремонтировать трещину и сохранить очередь: потери уменьшаются, но часть работ задержится. Улика раскрывает поворот: Падение уровня связано с трещиной канала у общего сада, а не с незаконным забором; это подтверждают влажные камни.",
+            "en": "You choose “Bring parties together.” The team continues along this path: Repair the crack and preserve the queue: losses fall, while some work is delayed. The evidence reveals the turn: The drop comes from a canal crack by the shared garden, not illegal tapping; damp stones confirm it."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Временно сократить всем подачу: правило равно, урожай малых дворов пострадает первым.",
+                "en": "Cut every allocation equally: rules are simple, but small plots lose crops first."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Отремонтировать трещину и сохранить очередь: потери уменьшаются, но часть работ задержится.",
+                "en": "Repair the crack and preserve the queue: losses fall, while some work is delayed."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Согласовать ротацию по потребности и замерам: гибкость выше, доверие зависит от открытых записей.",
+                "en": "Rotate by need and measurement: flexibility rises, trust depends on open records."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "trial": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Предложить пробный график». Команда продолжает по пути: Согласовать ротацию по потребности и замерам: гибкость выше, доверие зависит от открытых записей. Улика раскрывает поворот: Падение уровня связано с трещиной канала у общего сада, а не с незаконным забором; это подтверждают влажные камни.",
+            "en": "You choose “Propose a trial schedule.” The team continues along this path: Rotate by need and measurement: flexibility rises, trust depends on open records. The evidence reveals the turn: The drop comes from a canal crack by the shared garden, not illegal tapping; damp stones confirm it."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Временно сократить всем подачу: правило равно, урожай малых дворов пострадает первым.",
+                "en": "Cut every allocation equally: rules are simple, but small plots lose crops first."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Отремонтировать трещину и сохранить очередь: потери уменьшаются, но часть работ задержится.",
+                "en": "Repair the crack and preserve the queue: losses fall, while some work is delayed."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Согласовать ротацию по потребности и замерам: гибкость выше, доверие зависит от открытых записей.",
+                "en": "Rotate by need and measurement: flexibility rises, trust depends on open records."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "free_text": {
+          "narrative": {
+            "ru": "Ваш свободный план меняет способ проверки. Команда раскрывает поворот по найденной улике: Падение уровня связано с трещиной канала у общего сада, а не с незаконным забором; это подтверждают влажные камни.",
+            "en": "Your free-form plan changes how the team checks the clue. The turn is revealed by the evidence: The drop comes from a canal crack by the shared garden, not illegal tapping; damp stones confirm it."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Временно сократить всем подачу: правило равно, урожай малых дворов пострадает первым.",
+                "en": "Cut every allocation equally: rules are simple, but small plots lose crops first."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Отремонтировать трещину и сохранить очередь: потери уменьшаются, но часть работ задержится.",
+                "en": "Repair the crack and preserve the queue: losses fall, while some work is delayed."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Согласовать ротацию по потребности и замерам: гибкость выше, доверие зависит от открытых записей.",
+                "en": "Rotate by need and measurement: flexibility rises, trust depends on open records."
+              },
+              "icon": "↗️"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "authored_turn_2",
+      "minTurns": 4,
+      "actions": [
+        "measure",
+        "negotiate",
+        "trial",
+        "free_text"
+      ],
+      "narrative": {
+        "ru": "Сад удерживает часть воды в тени и снижает испарение, поэтому его отключение ускорит потери для всех.",
+        "en": "The garden holds water in shade and reduces evaporation, so shutting it off increases losses for everyone."
+      },
+      "mutations": [],
+      "suggestions": [],
+      "responses": {
+        "measure": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Сверить замеры». Команда продолжает по пути: Временно сократить всем подачу: правило равно, урожай малых дворов пострадает первым. Улика раскрывает поворот: Сад удерживает часть воды в тени и снижает испарение, поэтому его отключение ускорит потери для всех.",
+            "en": "You choose “Compare measurements.” The team continues along this path: Cut every allocation equally: rules are simple, but small plots lose crops first. The evidence reveals the turn: The garden holds water in shade and reduces evaporation, so shutting it off increases losses for everyone."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Временно сократить всем подачу: правило равно, урожай малых дворов пострадает первым.",
+                "en": "Cut every allocation equally: rules are simple, but small plots lose crops first."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Отремонтировать трещину и сохранить очередь: потери уменьшаются, но часть работ задержится.",
+                "en": "Repair the crack and preserve the queue: losses fall, while some work is delayed."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Согласовать ротацию по потребности и замерам: гибкость выше, доверие зависит от открытых записей.",
+                "en": "Rotate by need and measurement: flexibility rises, trust depends on open records."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "negotiate": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Собрать стороны». Команда продолжает по пути: Отремонтировать трещину и сохранить очередь: потери уменьшаются, но часть работ задержится. Улика раскрывает поворот: Сад удерживает часть воды в тени и снижает испарение, поэтому его отключение ускорит потери для всех.",
+            "en": "You choose “Bring parties together.” The team continues along this path: Repair the crack and preserve the queue: losses fall, while some work is delayed. The evidence reveals the turn: The garden holds water in shade and reduces evaporation, so shutting it off increases losses for everyone."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Временно сократить всем подачу: правило равно, урожай малых дворов пострадает первым.",
+                "en": "Cut every allocation equally: rules are simple, but small plots lose crops first."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Отремонтировать трещину и сохранить очередь: потери уменьшаются, но часть работ задержится.",
+                "en": "Repair the crack and preserve the queue: losses fall, while some work is delayed."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Согласовать ротацию по потребности и замерам: гибкость выше, доверие зависит от открытых записей.",
+                "en": "Rotate by need and measurement: flexibility rises, trust depends on open records."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "trial": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Предложить пробный график». Команда продолжает по пути: Согласовать ротацию по потребности и замерам: гибкость выше, доверие зависит от открытых записей. Улика раскрывает поворот: Сад удерживает часть воды в тени и снижает испарение, поэтому его отключение ускорит потери для всех.",
+            "en": "You choose “Propose a trial schedule.” The team continues along this path: Rotate by need and measurement: flexibility rises, trust depends on open records. The evidence reveals the turn: The garden holds water in shade and reduces evaporation, so shutting it off increases losses for everyone."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Временно сократить всем подачу: правило равно, урожай малых дворов пострадает первым.",
+                "en": "Cut every allocation equally: rules are simple, but small plots lose crops first."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Отремонтировать трещину и сохранить очередь: потери уменьшаются, но часть работ задержится.",
+                "en": "Repair the crack and preserve the queue: losses fall, while some work is delayed."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Согласовать ротацию по потребности и замерам: гибкость выше, доверие зависит от открытых записей.",
+                "en": "Rotate by need and measurement: flexibility rises, trust depends on open records."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "free_text": {
+          "narrative": {
+            "ru": "Ваш свободный план меняет способ проверки. Команда раскрывает поворот по найденной улике: Сад удерживает часть воды в тени и снижает испарение, поэтому его отключение ускорит потери для всех.",
+            "en": "Your free-form plan changes how the team checks the clue. The turn is revealed by the evidence: The garden holds water in shade and reduces evaporation, so shutting it off increases losses for everyone."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Временно сократить всем подачу: правило равно, урожай малых дворов пострадает первым.",
+                "en": "Cut every allocation equally: rules are simple, but small plots lose crops first."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Отремонтировать трещину и сохранить очередь: потери уменьшаются, но часть работ задержится.",
+                "en": "Repair the crack and preserve the queue: losses fall, while some work is delayed."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Согласовать ротацию по потребности и замерам: гибкость выше, доверие зависит от открытых записей.",
+                "en": "Rotate by need and measurement: flexibility rises, trust depends on open records."
+              },
+              "icon": "↗️"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

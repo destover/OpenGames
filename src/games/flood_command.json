@@ -1,0 +1,626 @@
+{
+  "manifest": {
+    "id": "flood-command",
+    "title": "Высокая вода",
+    "description": "Руководите городским штабом во время рекордного паводка: защита районов зависит от насосов, барьеров и сложной эвакуации.",
+    "setting": "Большой речной город во время экстремального паводка; одновременно растут давление на дамбу, риск отказа электросети, потребность в эвакуации и нагрузка на убежища.",
+    "categoryRu": "Кризисный штаб",
+    "background": "/assets/flood-command.jpg",
+    "version": "1.0.0",
+    "schemaVersion": "2",
+    "isNew": true,
+    "durationMinutes": [
+      25,
+      40
+    ]
+  },
+  "state": {
+    "initial": {
+      "evacuated": 22,
+      "levee": 61,
+      "pressure": 78,
+      "grid": 63,
+      "shelter": 44,
+      "hours": 6,
+      "location": "command",
+      "goalStatus": "active"
+    }
+  },
+  "actions": {
+    "free_text": {
+      "label": "Свободное действие",
+      "input": true,
+      "icon": "✍️"
+    },
+    "prioritize": {
+      "label": "Определить приоритетный район",
+      "icon": "🗺️"
+    },
+    "reinforce": {
+      "label": "Усилить дамбу или насосный узел",
+      "icon": "🧰"
+    },
+    "evacuate": {
+      "label": "Организовать маршрут эвакуации",
+      "icon": "🚌"
+    }
+  },
+  "ui": {
+    "accent": "#50a8c2",
+    "stateLabels": {
+      "evacuated": "Эвакуировано жителей",
+      "levee": "Целостность дамбы",
+      "pressure": "Давление воды",
+      "grid": "Устойчивость сети",
+      "shelter": "Резерв мест в убежищах",
+      "hours": "Часов до пика",
+      "location": "Место",
+      "goalStatus": "Цель"
+    }
+  },
+  "i18n": {
+    "ru": {
+      "states": {
+        "evacuated": "Эвакуировано жителей",
+        "levee": "Целостность дамбы",
+        "pressure": "Давление воды",
+        "grid": "Устойчивость сети",
+        "shelter": "Резерв мест в убежищах",
+        "hours": "Часов до пика",
+        "location": "Место",
+        "goalStatus": "Цель"
+      },
+      "actions": {
+        "free_text": "Свободное действие",
+        "prioritize": "Определить приоритетный район",
+        "reinforce": "Усилить дамбу или насосный узел",
+        "evacuate": "Организовать маршрут эвакуации"
+      },
+      "manifest": {
+        "title": "Высокая вода",
+        "description": "Руководите городским штабом во время рекордного паводка: защита районов зависит от насосов, барьеров и сложной эвакуации.",
+        "category": "Кризисный штаб"
+      },
+      "values": {
+        "active": "В процессе",
+        "completed": "Цель выполнена",
+        "failed": "Цель провалена"
+      }
+    },
+    "en": {
+      "states": {
+        "evacuated": "Residents evacuated",
+        "levee": "Levee integrity",
+        "pressure": "Water pressure",
+        "grid": "Grid stability",
+        "shelter": "Shelter capacity",
+        "hours": "Hours to peak",
+        "location": "Location",
+        "goalStatus": "Objective"
+      },
+      "actions": {
+        "free_text": "Free action",
+        "prioritize": "Prioritize a district",
+        "reinforce": "Reinforce a levee or pump station",
+        "evacuate": "Organize an evacuation route"
+      },
+      "manifest": {
+        "title": "High Water",
+        "description": "Lead a city emergency team through record flooding where neighborhood safety depends on pumps, barriers, and a difficult evacuation.",
+        "category": "Crisis response"
+      },
+      "values": {
+        "active": "In progress",
+        "completed": "Objective achieved",
+        "failed": "Objective failed"
+      }
+    }
+  },
+  "goal": {
+    "description": {
+      "ru": "Снизить угрозу для жителей нескольких районов, сохранить критическую инфраструктуру и обеспечить размещение эвакуированных до прохождения пика воды.",
+      "en": "Reduce risk to residents across several districts, preserve critical infrastructure, and shelter evacuees until the flood peak passes."
+    },
+    "completion": {
+      "path": "goalStatus",
+      "value": "completed",
+      "terminalValues": [
+        "completed",
+        "failed"
+      ]
+    }
+  },
+  "map": {
+    "start": "command",
+    "locations": {
+      "command": {
+        "ru": "Городской штаб",
+        "en": "City command"
+      },
+      "levee": {
+        "ru": "Участок дамбы",
+        "en": "Levee sector"
+      },
+      "grid": {
+        "ru": "Энергетический узел",
+        "en": "Power hub"
+      },
+      "shelter": {
+        "ru": "Пункт размещения",
+        "en": "Shelter center"
+      }
+    }
+  },
+  "world": {
+    "constants": {
+      "setting": "Большой речной город во время экстремального паводка; одновременно растут давление на дамбу, риск отказа электросети, потребность в эвакуации и нагрузка на убежища.",
+      "physicalRules": [
+        "Укрепление одного участка может лишить ресурсов другой район; вода перераспределяется, а не исчезает.",
+        "Эвакуация требует доступного транспорта, безопасного маршрута, предупреждения и мест размещения.",
+        "Отказ электросети влияет на насосы, связь и больницы; восстановление имеет задержку.",
+        "Прогноз вероятностный: штаб должен сохранять варианты для нескольких сценариев пика."
+      ],
+      "continuity": "Учитывай всю подтверждённую историю и причинность мира. Не превращай вероятность в факт; последствия должны соответствовать затраченному времени и ресурсам.",
+      "tone": "Взрослая реалистичная история с системными компромиссами, неоднозначной информацией и последствиями решений.",
+      "storyArc": {
+        "revealPolicy": {
+          "ru": "Раскрывай повороты после проверяемых улик; показывай причинную связь и меняй дальнейшие сцены по решениям игрока.",
+          "en": "Reveal turns after verifiable clues; show their causal link and let player choices alter later scenes."
+        },
+        "beats": {
+          "ru": [
+            "Река поднимается одновременно с нагрузкой на дамбу, сетью, эвакуацией и убежищами.",
+            "Два поста показывают разный уровень из-за ветрового подпора; гидрограф выше по течению даёт точное время пика.",
+            "Командование выбирает район эвакуации и порог остановки, не принимая шумный датчик за единственный прогноз."
+          ],
+          "en": [
+            "The river rises as the levee, power grid, evacuation, and shelters come under pressure.",
+            "Two gauges differ because of wind setup; an upstream hydrograph gives a better crest time.",
+            "Command chooses evacuation zones and stop thresholds without treating one noisy sensor as the forecast."
+          ]
+        },
+        "twists": {
+          "ru": [
+            "Пик придёт позже, но выше: ошибочная ранняя оценка возникла из-за подпора ветром у городского поста.",
+            "Насосная станция убежища зависит от той же линии, что и шлюз; её изоляция имеет побочный эффект."
+          ],
+          "en": [
+            "The crest will arrive later but higher; wind setup distorted the city gauge.",
+            "The shelter pump shares a feeder with a floodgate, so isolating it has a side effect."
+          ]
+        },
+        "paths": {
+          "ru": [
+            "Эвакуировать низкий берег заранее: экспозиция снижается, но убежища быстро заполняются.",
+            "Укрепить дамбу и сохранить частичную подачу энергии: защита выше, эвакуация идёт медленнее.",
+            "Перевести насосы и часть кварталов на локальное питание: резерв растёт, но требуется контроль топлива и тепла."
+          ],
+          "en": [
+            "Evacuate the low bank early: exposure falls, shelters fill quickly.",
+            "Reinforce the levee and keep partial power: protection improves, evacuation slows.",
+            "Move pumps and some blocks to local supply: reserve grows, but fuel and heat need monitoring."
+          ]
+        }
+      }
+    },
+    "knowledgeGraph": {
+      "facts": [
+        {
+          "id": "flood_peak",
+          "text": "Пик паводка ожидается через шесть часов; уровень может измениться с обновлением прогноза."
+        },
+        {
+          "id": "levee_stress",
+          "text": "Восточная дамба испытывает высокое давление и пока не имеет независимого укрепления."
+        },
+        {
+          "id": "power_dependencies",
+          "text": "Насосные станции и городская больница зависят от одного нестабильного узла электросети."
+        },
+        {
+          "id": "shelter_capacity",
+          "text": "Часть убежищ заполнена; дополнительные места требуют воды, питания и персонала."
+        },
+        {
+          "id": "evacuation_routes",
+          "text": "Два низких моста могут быть закрыты при дальнейшем подъёме реки."
+        }
+      ]
+    }
+  },
+  "boundaries": {
+    "mutationPaths": [
+      "evacuated",
+      "levee",
+      "pressure",
+      "grid",
+      "shelter",
+      "hours",
+      "location",
+      "goalStatus"
+    ],
+    "numericBounds": {
+      "evacuated": {
+        "min": 0,
+        "max": 100
+      },
+      "levee": {
+        "min": 0,
+        "max": 100
+      },
+      "pressure": {
+        "min": 0,
+        "max": 100
+      },
+      "grid": {
+        "min": 0,
+        "max": 100
+      },
+      "shelter": {
+        "min": 0,
+        "max": 100
+      },
+      "hours": {
+        "min": 0,
+        "max": 48
+      }
+    },
+    "allowedValues": {
+      "location": [
+        "command",
+        "levee",
+        "grid",
+        "shelter"
+      ],
+      "goalStatus": [
+        "active",
+        "completed",
+        "failed"
+      ]
+    },
+    "maxArrayItems": {},
+    "maxStringLengths": {},
+    "stateChangeRules": [],
+    "instructions": [
+      "Не обещай точный исход вероятностного прогноза.",
+      "Не повышай одновременно целостность барьеров, устойчивость сети и вместимость убежищ без затрат и действий.",
+      "Эвакуация считается выполненной только при подтверждённом прибытии людей в безопасное место.",
+      "Победа требует управляемого пика паводка, работающей критической инфраструктуры и безопасного размещения уязвимых жителей."
+    ]
+  },
+  "opening": {
+    "ru": "Уровень реки превысил отметку, которой не было в городских журналах наблюдений. В оперативном штабе уже собрались спасатели, инженеры и главы районов; вы принимаете руководство, пока вода подходит к первым жилым кварталам\n\nУ служебной дороги ниже дамбы появляется вода. Бригада может укрепить слабый участок или оставить дорогу свободной для жителей нижних кварталов.\n\nЗдесь важно помнить, что к моменту вашего появления история уже началась. Большой речной город во время экстремального паводка; одновременно растут давление на дамбу, риск отказа электросети, потребность в эвакуации и нагрузка на убежища. Это не отвлечённый фон и не задача, которую можно решить одним эффектным жестом: исходные условия складывались раньше, а люди, объекты и процессы успели приспособиться к ним. Поэтому любое изменение затронет не только то, что видно сейчас, но и привычный порядок, на котором держатся остальные части ситуации. Вы входите в неё с правом действовать, однако сначала нужно понять, что именно считается нормой и кто подтвердил эту норму.\n\nПервое наблюдение относится к конкретному месту: Городской штаб, Участок дамбы, Энергетический узел, Пункт размещения. В нём есть заметная деталь, которую легко принять за готовый ответ, но пока это только отправная точка. Сведения получены не одновременно и не одним способом; между тем, что зафиксировано, и тем, что уже успели предположить, остаётся промежуток. Если немедленно закрыть его догадкой, следующие данные будут подгоняться под выбранную версию. Если же точно обозначить, что известно, а что пока лишь кажется вероятным, у вас сохранится возможность увидеть несоответствие, не переписывая задним числом всю картину.\n\nВаша задача сформулирована шире, чем устранить ближайшую помеху: Снизить угрозу для жителей нескольких районов, сохранить критическую инфраструктуру и обеспечить размещение эвакуированных до прохождения пика воды. На практике это означает одновременно следить за непосредственным результатом и за тем, что этот результат позволит узнать. Быстрый шаг может принести видимое улучшение, но ухудшить сравнимость, доступность или доверие; осторожный — сохранить качество проверки, но оставить проблему без немедленного ответа. Эти соображения не равны по весу во всех обстоятельствах. Их порядок зависит от того, какие сведения вы подтвердите и какой ущерб действительно обратим.\n\nВ материалах есть три слоя: исходное состояние, первое наблюдение и объяснение, которое кто-то успел к нему приложить. Не смешивайте их. Эвакуировать низкий берег заранее: экспозиция снижается, но убежища быстро заполняются. Если цифры или свидетельства расходятся, полезно установить, когда и где именно началось расхождение, кто наблюдал явление напрямую и какие условия могли поменяться между проверками. Иногда спорный показатель оказывается не ложным, а неполным: он честно описывает ту точку, где был получен, но не ту, о которой спрашивает команда.\n\nВам не требуется заранее выбирать единственную стратегию на весь эпизод. В текущем пакете доступны разные типы действий: Определить приоритетный район, Усилить дамбу или насосный узел, Организовать маршрут эвакуации. Они дают разные виды контроля: одно может уточнить картину, другое — изменить условия, третье — выиграть время или проверить связь между двумя событиями. Выбирая, задайте себе практический вопрос: что должно стать заметно после этого шага, если ваша версия верна? И что вы увидите, если она неверна? Такой критерий превращает действие в проверку, а не просто в жест, после которого приходится надеяться на удачу.\n\nПуть вперёд может разветвиться, и у каждого направления будет собственная цена. Одно решение способно защитить непосредственную цель, но оставить неопределённость; другое — укрепить доказательства, но сузить окно для вмешательства; третье — уменьшить воздействие на окружающую систему, одновременно потребовав новой проверки. Эти различия не делают какой-либо путь правильным заранее. Важнее видеть, какую ценность вы защищаете сейчас, чем рискуете ради неё и какие признаки заставят пересмотреть план. Смена курса допустима, если вы можете объяснить, какая новая информация изменила расчёт.\n\nОглянитесь на Городской штаб, Участок дамбы, Энергетический узел, Пункт размещения. Каждая точка открывает свою часть происходящего и скрывает другую; переход между ними сам по себе может менять условия наблюдения. Не считайте схему исчерпывающей: она описывает доступные места, но не гарантирует, что все важные процессы заметны с одной позиции. Сверяйте время, источник и обстоятельства каждого сообщения. Если кто-то говорит «это было так всегда», спросите, за какой период он отвечает; если прибор показывает отклонение, уточните его рабочий диапазон и место установки. Так вы отделите стабильную закономерность от удобного, но слишком широкого обобщения.\n\nЕсть вопросы, на которые пока нельзя честно ответить. Что здесь причина, а что следствие? Действительно ли наблюдаемое изменение требует немедленного вмешательства? Кто или что понесёт последствия, если вы ошибётесь? Неопределённость не означает, что все версии одинаково вероятны; она означает, что следующая сцена должна дать материал для различения. Не превращайте каждую странность в тайный замысел и не отбрасывайте неудобную улику лишь потому, что она мешает плану. Самый убедительный поворот будет иметь смысл только тогда, когда ранние подробности позволят узнать его, а не просто удивиться ему.\n\nНачните с масштаба, который можно проверить. Запишите исходные условия, выберите один важный показатель и не меняйте сразу несколько факторов, если хотите понять, что повлияло на результат. Если вмешательство необходимо прямо сейчас, обозначьте его как временное и сохраните контрольную точку для сравнения. Если можно подождать, определите, какое именно наблюдение оправдает ожидание и сколько времени оно занимает. Это не бюрократическая осторожность: так вы не потеряете возможность отличить настоящую перемену от эффекта собственных действий.\n\nОтдельно рассмотрите направление 3: Перевести насосы и часть кварталов на локальное питание: резерв растёт, но требуется контроль топлива и тепла. Оно не отменяет остальные возможности и не требует принимать весь план сразу. Спросите, какое подтверждение сделает этот шаг уместным, что останется измеримым после него и кто заметит его побочный эффект первым. Если ответ пока неизвестен, это не повод скрывать пробел: его можно превратить в условие остановки или повторной оценки.",
+    "en": "The river has passed a level absent from the city’s records. Rescuers, engineers, and district leaders are gathered in the operations center. You take command as floodwater approaches the first neighborhoods\n\nWater appears along the service road below the embankment. Crews can shore up the weak point or keep that route clear for residents leaving the lowest blocks.\n\nRemember that the story had already begun before you arrived. The river rises as the levee, power grid, evacuation, and shelters come under pressure. This is not a backdrop or a problem that can be solved with one dramatic gesture: the conditions formed earlier, and people, objects, and processes have adapted to them. Any change will affect more than what is visible now; it may alter the routine that holds other parts of the situation together. You have authority to act, but first you need to understand what counts as normal here and who has actually verified that baseline.\n\nThe first observation belongs to a specific place: City command, Levee sector, Power hub, Shelter center. It contains a detail that may look like an answer, but for now it is only a starting point. The information was gathered at different times and by different means; a gap remains between what was recorded and the explanation someone has attached to it. If you fill that gap with a guess, later evidence may be forced to fit your theory. If you mark what is known and what only seems likely, you can notice a mismatch without rewriting the whole account afterward.\n\nYour objective is broader than removing the nearest obstacle: Reduce risk to residents across several districts, preserve critical infrastructure, and shelter evacuees until the flood peak passes. In practice, you must watch both the immediate result and what that result lets you learn. A quick intervention may produce visible improvement while weakening comparison, access, or trust; a cautious one may preserve the quality of the evidence while leaving the problem unresolved. Those concerns do not carry the same weight in every situation. Their order depends on what you confirm and on which harm can actually be reversed.\n\nThe available material has three layers: the initial conditions, the first observation, and the explanation someone has already attached to it. Keep them separate. Evacuate the low bank early: exposure falls, shelters fill quickly. If figures or accounts disagree, establish when and where the mismatch began, who witnessed the event directly, and what could have changed between checks. A disputed reading is sometimes incomplete rather than false: it may accurately describe the point where it was taken, but not the wider area the team is asking about.\n\nYou do not have to choose one strategy for the whole episode in advance. The package offers different kinds of action: Prioritize a district, Reinforce a levee or pump station, Organize an evacuation route. Each gives you a different kind of control: one may clarify the picture, another may change the conditions, and another may buy time or test a connection between events. Before choosing, ask a practical question: what should become visible if your theory is right? What would you see if it is wrong? That turns an action into a test, rather than a gesture followed by a hope for good luck.\n\nThe way forward can branch, and each direction has its own cost. One choice may protect the immediate objective while leaving uncertainty; another may strengthen the evidence while narrowing the window to intervene; a third may reduce impact on the surrounding system while requiring a fresh check. None is automatically correct. What matters is seeing which value you are protecting, what you risk for it, and what signs would make you reconsider. A change of course is sound when you can explain what new information changed the calculation.\n\nLook at City command, Levee sector, Power hub, Shelter center. Each point reveals one part of the situation and hides another; moving between them can itself change the conditions of observation. Do not treat the map as complete: it lists available places but cannot guarantee that every important process is visible from one position. Compare the time, source, and circumstances of each report. If someone says “it has always been this way,” ask what period they mean; if an instrument shows a deviation, check its operating range and location. This helps separate a stable pattern from a convenient but overly broad conclusion.\n\nSome questions cannot yet be answered honestly. What is a cause, and what is an effect? Does the observed change truly require immediate intervention? Who or what bears the cost if you are wrong? Uncertainty does not mean every theory is equally likely; it means the next scene must give you a way to distinguish them. Do not turn every oddity into a hidden scheme, and do not discard inconvenient evidence because it disrupts a plan. A convincing turn will make sense only if earlier details let you recognize it, not merely be surprised by it.\n\nStart at a scale you can check. Record the baseline, choose one important measure, and avoid changing several factors at once if you need to know what caused the result. If action is necessary now, mark it as temporary and preserve a control point for comparison. If waiting is possible, specify what observation would justify the delay and how long it will take. This is not caution for its own sake: it preserves your ability to distinguish a real change from the effect of your own intervention.\n\nThe human side of the task will become clearer too: whose account rests on observation, who is responsible for the consequences, and who must live with the chosen arrangement after the emergency passes. Trust does not replace measurement, but it affects what people tell you and what the team can do together. Explain what you are checking, do not promise a result before it is verified, and note what changed your mind. That may preserve cooperation through disagreement; it may also show that different participants are protecting interests that cannot be reconciled.\n\nConsider approach 3 separately: Move pumps and some blocks to local supply: reserve grows, but fuel and heat need monitoring. It does not erase the other options or require you to commit to the whole plan at once. Ask what evidence would make this step appropriate, what will remain measurable afterward, and who will notice its side effect first. If the answer is not yet known, do not hide the gap; turn it into a condition for pausing or reassessing."
+  },
+  "preparedBranches": [
+    {
+      "id": "pressure_pressure",
+      "actions": [
+        "prioritize",
+        "reinforce",
+        "evacuate",
+        "free_text"
+      ],
+      "narrative": {
+        "ru": "У служебной дороги ниже дамбы появляется вода. Бригада может укрепить слабый участок или оставить дорогу свободной для жителей нижних кварталов.",
+        "en": "Water appears along the service road below the embankment. Crews can shore up the weak point or keep that route clear for residents leaving the lowest blocks."
+      },
+      "mutations": [],
+      "suggestions": [
+        {
+          "text": {
+            "ru": "Сверить обстановку и выбрать безопасный приоритет",
+            "en": "Recheck the situation and choose a safe priority"
+          }
+        },
+        {
+          "text": {
+            "ru": "Сохранить текущий план и подготовить запасной",
+            "en": "Keep the current plan and prepare a backup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "turning_point_evacuated",
+      "when": {
+        "evacuated": {
+          "gte": 65
+        }
+      },
+      "actions": [
+        "prioritize",
+        "reinforce",
+        "evacuate",
+        "free_text"
+      ],
+      "narrative": {
+        "ru": "Water appears along the service road below the embankment. Crews can shore up the weak point or keep that route clear for residents leaving the lowest blocks. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
+        "en": "An alternate route opens as circumstances shift. Continue the current approach or change priorities before events make the consequences harder to reverse."
+      },
+      "mutations": [],
+      "suggestions": [
+        {
+          "text": {
+            "ru": "Сверить обстановку и выбрать безопасный приоритет",
+            "en": "Recheck the situation and choose a safe priority"
+          }
+        },
+        {
+          "text": {
+            "ru": "Сохранить текущий план и подготовить запасной",
+            "en": "Keep the current plan and prepare a backup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "authored_turn_1",
+      "minTurns": 2,
+      "actions": [
+        "prioritize",
+        "reinforce",
+        "evacuate",
+        "free_text"
+      ],
+      "narrative": {
+        "ru": "Пик придёт позже, но выше: ошибочная ранняя оценка возникла из-за подпора ветром у городского поста.",
+        "en": "The crest will arrive later but higher; wind setup distorted the city gauge."
+      },
+      "mutations": [],
+      "suggestions": [],
+      "responses": {
+        "prioritize": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Определить приоритетный район». Команда продолжает по пути: Эвакуировать низкий берег заранее: экспозиция снижается, но убежища быстро заполняются. Улика раскрывает поворот: Пик придёт позже, но выше: ошибочная ранняя оценка возникла из-за подпора ветром у городского поста.",
+            "en": "You choose “Prioritize a district.” The team continues along this path: Evacuate the low bank early: exposure falls, shelters fill quickly. The evidence reveals the turn: The crest will arrive later but higher; wind setup distorted the city gauge."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Эвакуировать низкий берег заранее: экспозиция снижается, но убежища быстро заполняются.",
+                "en": "Evacuate the low bank early: exposure falls, shelters fill quickly."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Укрепить дамбу и сохранить частичную подачу энергии: защита выше, эвакуация идёт медленнее.",
+                "en": "Reinforce the levee and keep partial power: protection improves, evacuation slows."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Перевести насосы и часть кварталов на локальное питание: резерв растёт, но требуется контроль топлива и тепла.",
+                "en": "Move pumps and some blocks to local supply: reserve grows, but fuel and heat need monitoring."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "reinforce": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Усилить дамбу или насосный узел». Команда продолжает по пути: Укрепить дамбу и сохранить частичную подачу энергии: защита выше, эвакуация идёт медленнее. Улика раскрывает поворот: Пик придёт позже, но выше: ошибочная ранняя оценка возникла из-за подпора ветром у городского поста.",
+            "en": "You choose “Reinforce a levee or pump station.” The team continues along this path: Reinforce the levee and keep partial power: protection improves, evacuation slows. The evidence reveals the turn: The crest will arrive later but higher; wind setup distorted the city gauge."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Эвакуировать низкий берег заранее: экспозиция снижается, но убежища быстро заполняются.",
+                "en": "Evacuate the low bank early: exposure falls, shelters fill quickly."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Укрепить дамбу и сохранить частичную подачу энергии: защита выше, эвакуация идёт медленнее.",
+                "en": "Reinforce the levee and keep partial power: protection improves, evacuation slows."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Перевести насосы и часть кварталов на локальное питание: резерв растёт, но требуется контроль топлива и тепла.",
+                "en": "Move pumps and some blocks to local supply: reserve grows, but fuel and heat need monitoring."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "evacuate": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Организовать маршрут эвакуации». Команда продолжает по пути: Перевести насосы и часть кварталов на локальное питание: резерв растёт, но требуется контроль топлива и тепла. Улика раскрывает поворот: Пик придёт позже, но выше: ошибочная ранняя оценка возникла из-за подпора ветром у городского поста.",
+            "en": "You choose “Organize an evacuation route.” The team continues along this path: Move pumps and some blocks to local supply: reserve grows, but fuel and heat need monitoring. The evidence reveals the turn: The crest will arrive later but higher; wind setup distorted the city gauge."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Эвакуировать низкий берег заранее: экспозиция снижается, но убежища быстро заполняются.",
+                "en": "Evacuate the low bank early: exposure falls, shelters fill quickly."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Укрепить дамбу и сохранить частичную подачу энергии: защита выше, эвакуация идёт медленнее.",
+                "en": "Reinforce the levee and keep partial power: protection improves, evacuation slows."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Перевести насосы и часть кварталов на локальное питание: резерв растёт, но требуется контроль топлива и тепла.",
+                "en": "Move pumps and some blocks to local supply: reserve grows, but fuel and heat need monitoring."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "free_text": {
+          "narrative": {
+            "ru": "Ваш свободный план меняет способ проверки. Команда раскрывает поворот по найденной улике: Пик придёт позже, но выше: ошибочная ранняя оценка возникла из-за подпора ветром у городского поста.",
+            "en": "Your free-form plan changes how the team checks the clue. The turn is revealed by the evidence: The crest will arrive later but higher; wind setup distorted the city gauge."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Эвакуировать низкий берег заранее: экспозиция снижается, но убежища быстро заполняются.",
+                "en": "Evacuate the low bank early: exposure falls, shelters fill quickly."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Укрепить дамбу и сохранить частичную подачу энергии: защита выше, эвакуация идёт медленнее.",
+                "en": "Reinforce the levee and keep partial power: protection improves, evacuation slows."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Перевести насосы и часть кварталов на локальное питание: резерв растёт, но требуется контроль топлива и тепла.",
+                "en": "Move pumps and some blocks to local supply: reserve grows, but fuel and heat need monitoring."
+              },
+              "icon": "↗️"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "authored_turn_2",
+      "minTurns": 4,
+      "actions": [
+        "prioritize",
+        "reinforce",
+        "evacuate",
+        "free_text"
+      ],
+      "narrative": {
+        "ru": "Насосная станция убежища зависит от той же линии, что и шлюз; её изоляция имеет побочный эффект.",
+        "en": "The shelter pump shares a feeder with a floodgate, so isolating it has a side effect."
+      },
+      "mutations": [],
+      "suggestions": [],
+      "responses": {
+        "prioritize": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Определить приоритетный район». Команда продолжает по пути: Эвакуировать низкий берег заранее: экспозиция снижается, но убежища быстро заполняются. Улика раскрывает поворот: Насосная станция убежища зависит от той же линии, что и шлюз; её изоляция имеет побочный эффект.",
+            "en": "You choose “Prioritize a district.” The team continues along this path: Evacuate the low bank early: exposure falls, shelters fill quickly. The evidence reveals the turn: The shelter pump shares a feeder with a floodgate, so isolating it has a side effect."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Эвакуировать низкий берег заранее: экспозиция снижается, но убежища быстро заполняются.",
+                "en": "Evacuate the low bank early: exposure falls, shelters fill quickly."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Укрепить дамбу и сохранить частичную подачу энергии: защита выше, эвакуация идёт медленнее.",
+                "en": "Reinforce the levee and keep partial power: protection improves, evacuation slows."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Перевести насосы и часть кварталов на локальное питание: резерв растёт, но требуется контроль топлива и тепла.",
+                "en": "Move pumps and some blocks to local supply: reserve grows, but fuel and heat need monitoring."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "reinforce": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Усилить дамбу или насосный узел». Команда продолжает по пути: Укрепить дамбу и сохранить частичную подачу энергии: защита выше, эвакуация идёт медленнее. Улика раскрывает поворот: Насосная станция убежища зависит от той же линии, что и шлюз; её изоляция имеет побочный эффект.",
+            "en": "You choose “Reinforce a levee or pump station.” The team continues along this path: Reinforce the levee and keep partial power: protection improves, evacuation slows. The evidence reveals the turn: The shelter pump shares a feeder with a floodgate, so isolating it has a side effect."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Эвакуировать низкий берег заранее: экспозиция снижается, но убежища быстро заполняются.",
+                "en": "Evacuate the low bank early: exposure falls, shelters fill quickly."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Укрепить дамбу и сохранить частичную подачу энергии: защита выше, эвакуация идёт медленнее.",
+                "en": "Reinforce the levee and keep partial power: protection improves, evacuation slows."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Перевести насосы и часть кварталов на локальное питание: резерв растёт, но требуется контроль топлива и тепла.",
+                "en": "Move pumps and some blocks to local supply: reserve grows, but fuel and heat need monitoring."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "evacuate": {
+          "narrative": {
+            "ru": "Вы выбираете действие «Организовать маршрут эвакуации». Команда продолжает по пути: Перевести насосы и часть кварталов на локальное питание: резерв растёт, но требуется контроль топлива и тепла. Улика раскрывает поворот: Насосная станция убежища зависит от той же линии, что и шлюз; её изоляция имеет побочный эффект.",
+            "en": "You choose “Organize an evacuation route.” The team continues along this path: Move pumps and some blocks to local supply: reserve grows, but fuel and heat need monitoring. The evidence reveals the turn: The shelter pump shares a feeder with a floodgate, so isolating it has a side effect."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Эвакуировать низкий берег заранее: экспозиция снижается, но убежища быстро заполняются.",
+                "en": "Evacuate the low bank early: exposure falls, shelters fill quickly."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Укрепить дамбу и сохранить частичную подачу энергии: защита выше, эвакуация идёт медленнее.",
+                "en": "Reinforce the levee and keep partial power: protection improves, evacuation slows."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Перевести насосы и часть кварталов на локальное питание: резерв растёт, но требуется контроль топлива и тепла.",
+                "en": "Move pumps and some blocks to local supply: reserve grows, but fuel and heat need monitoring."
+              },
+              "icon": "↗️"
+            }
+          ]
+        },
+        "free_text": {
+          "narrative": {
+            "ru": "Ваш свободный план меняет способ проверки. Команда раскрывает поворот по найденной улике: Насосная станция убежища зависит от той же линии, что и шлюз; её изоляция имеет побочный эффект.",
+            "en": "Your free-form plan changes how the team checks the clue. The turn is revealed by the evidence: The shelter pump shares a feeder with a floodgate, so isolating it has a side effect."
+          },
+          "suggestions": [
+            {
+              "text": {
+                "ru": "Эвакуировать низкий берег заранее: экспозиция снижается, но убежища быстро заполняются.",
+                "en": "Evacuate the low bank early: exposure falls, shelters fill quickly."
+              },
+              "icon": "🧭"
+            },
+            {
+              "text": {
+                "ru": "Укрепить дамбу и сохранить частичную подачу энергии: защита выше, эвакуация идёт медленнее.",
+                "en": "Reinforce the levee and keep partial power: protection improves, evacuation slows."
+              },
+              "icon": "⚖️"
+            },
+            {
+              "text": {
+                "ru": "Перевести насосы и часть кварталов на локальное питание: резерв растёт, но требуется контроль топлива и тепла.",
+                "en": "Move pumps and some blocks to local supply: reserve grows, but fuel and heat need monitoring."
+              },
+              "icon": "↗️"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

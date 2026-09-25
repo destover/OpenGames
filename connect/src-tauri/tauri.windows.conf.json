@@ -1,0 +1,9 @@
+{
+  "bundle": {
+    "resources": {
+      "binaries/LLAMA_LICENSE": "LLAMA_LICENSE",
+      "binaries/QWEN_LICENSE": "QWEN_LICENSE",
+      "binaries/windows-runtime/*.dll": ""
+    }
+  }
+}

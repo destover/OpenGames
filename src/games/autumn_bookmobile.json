@@ -249,7 +249,24 @@
     },
     "maxArrayItems": {},
     "maxStringLengths": {},
-    "stateChangeRules": [],
+    "stateChangeRules": [
+      {
+        "path": "books",
+        "maxIncrease": 20
+      },
+      {
+        "path": "reach",
+        "maxIncrease": 20
+      },
+      {
+        "path": "time",
+        "maxIncrease": 20
+      },
+      {
+        "path": "day",
+        "maxIncrease": 1
+      }
+    ],
     "instructions": [
       "Маршрут и время поездки ограничены; нельзя посетить все точки одновременно.",
       "Не задавай игроку обязательную цепочку действий; предложенные варианты — лишь идеи, свободный замысел игрока равноправен.",
@@ -304,7 +321,7 @@
         "free_text"
       ],
       "narrative": {
-        "ru": "A school bus detour moves the crowd toward the far end of the route. The bookmobile can follow them or keep its planned stop for readers expecting it there. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
+        "ru": "Из-за объезда школьного автобуса толпа перемещается к дальнему концу маршрута. Передвижная библиотека может последовать за людьми или остаться на запланированной остановке, где её уже ждут читатели. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
         "en": "An alternate route opens as circumstances shift. Continue the current approach or change priorities before events make the consequences harder to reverse."
       },
       "mutations": [],

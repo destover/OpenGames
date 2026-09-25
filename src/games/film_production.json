@@ -280,7 +280,32 @@
     },
     "maxArrayItems": {},
     "maxStringLengths": {},
-    "stateChangeRules": [],
+    "stateChangeRules": [
+      {
+        "path": "hours",
+        "maxIncrease": 24
+      },
+      {
+        "path": "budget",
+        "maxIncrease": 20
+      },
+      {
+        "path": "footage",
+        "maxIncrease": 20
+      },
+      {
+        "path": "safety",
+        "maxIncrease": 20
+      },
+      {
+        "path": "crew",
+        "maxIncrease": 20
+      },
+      {
+        "path": "edit",
+        "maxIncrease": 20
+      }
+    ],
     "instructions": [
       "Не вознаграждай обход техники безопасности дополнительным бюджетом или материалом.",
       "Не увеличивай пригодный материал, готовность монтажа и уровень безопасности без конкретных завершённых работ.",
@@ -325,7 +350,7 @@
       "id": "turning_point_hours",
       "when": {
         "hours": {
-          "gte": 156
+          "lte": 24
         }
       },
       "actions": [
@@ -335,7 +360,7 @@
         "free_text"
       ],
       "narrative": {
-        "ru": "The location permit expires soon, and the lead actor offers one last take. The shot is ready, but the wet platform makes the planned camera move unsafe without resetting the rig. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
+        "ru": "Разрешение на съёмку скоро истекает, а исполнитель главной роли предлагает снять последний дубль. Кадр готов, но после дождя перемещение камеры по площадке небезопасно, пока не перенастроят крепление. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
         "en": "An alternate route opens as circumstances shift. Continue the current approach or change priorities before events make the consequences harder to reverse."
       },
       "mutations": [],

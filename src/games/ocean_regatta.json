@@ -353,7 +353,7 @@
         "free_text"
       ],
       "narrative": {
-        "ru": "A crosswind catches the sail during a crew change. The boat holds its line, but a fast adjustment strains tired hands; slowing down may let the rival reach calmer water first. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
+        "ru": "Порыв бокового ветра наполняет парус во время смены экипажа. Лодка держит курс, но резкая поправка нагрузит уставшие руки; если замедлиться, соперник может первым выйти в более спокойные воды. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
         "en": "An alternate route opens as circumstances shift. Continue the current approach or change priorities before events make the consequences harder to reverse."
       },
       "mutations": [],

@@ -265,6 +265,20 @@
       "Не перемещай персонажа и не меняй место действия без описанной причины и непрерывного пути.",
       "Изменяй состояние только в пределах физических законов, подтверждённых фактов и ограничений пакета.",
       "Не завершай цель по одному заявлению или догадке; для финала нужны описанные и подтверждённые условия."
+    ],
+    "stateChangeRules": [
+      {
+        "path": "day",
+        "maxIncrease": 1
+      },
+      {
+        "path": "supplies",
+        "maxIncrease": 20
+      },
+      {
+        "path": "team",
+        "maxIncrease": 20
+      }
     ]
   },
   "opening": {
@@ -314,7 +328,7 @@
         "free_text"
       ],
       "narrative": {
-        "ru": "The river rises over the marked ford and washes away the light trail signs. A ridge still leads across, but moving in the rain risks separating whoever carries the map case. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
+        "ru": "Река поднялась над отмеченным бродом и смыла лёгкие указатели тропы. Через хребет всё ещё можно пройти, но движение под дождём грозит разлучить того, кто несёт папку с картой. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
         "en": "An alternate route opens as circumstances shift. Continue the current approach or change priorities before events make the consequences harder to reverse."
       },
       "mutations": [],

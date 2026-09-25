@@ -261,6 +261,20 @@
       "Не перемещай персонажа и не меняй место действия без описанной причины и непрерывного пути.",
       "Изменяй состояние только в пределах физических законов, подтверждённых фактов и ограничений пакета.",
       "Не завершай цель по одному заявлению или догадке; для финала нужны описанные и подтверждённые условия."
+    ],
+    "stateChangeRules": [
+      {
+        "path": "hour",
+        "maxIncrease": 1
+      },
+      {
+        "path": "gears",
+        "maxIncrease": 4
+      },
+      {
+        "path": "trust",
+        "maxIncrease": 20
+      }
     ]
   },
   "opening": {
@@ -310,7 +324,7 @@
         "free_text"
       ],
       "narrative": {
-        "ru": "A gear slips behind the clock face, shifting every chime by a fraction. The mechanic offers a replacement tooth in exchange for the ledger as the square crowd starts comparing clocks. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
+        "ru": "За циферблатом проскальзывает шестерня, и каждый удар часов сбивается на долю секунды. Механик предлагает заменить зубец в обмен на журнал, пока люди на площади начинают сравнивать часы. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
         "en": "An alternate route opens as circumstances shift. Continue the current approach or change priorities before events make the consequences harder to reverse."
       },
       "mutations": [],

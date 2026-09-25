@@ -274,6 +274,24 @@
       "Не перемещай персонажа и не меняй место действия без описанной причины и непрерывного пути.",
       "Изменяй состояние только в пределах физических законов, подтверждённых фактов и ограничений пакета.",
       "Не завершай цель по одному заявлению или догадке; для финала нужны описанные и подтверждённые условия."
+    ],
+    "stateChangeRules": [
+      {
+        "path": "cycle",
+        "maxIncrease": 1
+      },
+      {
+        "path": "energy",
+        "maxIncrease": 20
+      },
+      {
+        "path": "oxygen",
+        "maxIncrease": 20
+      },
+      {
+        "path": "morale",
+        "maxIncrease": 20
+      }
     ]
   },
   "opening": {
@@ -323,7 +341,7 @@
         "free_text"
       ],
       "narrative": {
-        "ru": "A narrow signal window opens as the colony beacon clears the ridge. The reserve battery can amplify the call, or remain available for life support through the next dark cycle. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
+        "ru": "Маяк колонии выходит из-за гряды, открывая короткое окно связи. Резервная батарея может усилить сигнал или остаться для систем жизнеобеспечения на следующий тёмный цикл. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
         "en": "An alternate route opens as circumstances shift. Continue the current approach or change priorities before events make the consequences harder to reverse."
       },
       "mutations": [],

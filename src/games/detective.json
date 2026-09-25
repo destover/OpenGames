@@ -262,6 +262,20 @@
       "Не перемещай персонажа и не меняй место действия без описанной причины и непрерывного пути.",
       "Изменяй состояние только в пределах физических законов, подтверждённых фактов и ограничений пакета.",
       "Не завершай цель по одному заявлению или догадке; для финала нужны описанные и подтверждённые условия."
+    ],
+    "stateChangeRules": [
+      {
+        "path": "chapter",
+        "maxIncrease": 1
+      },
+      {
+        "path": "trust",
+        "maxIncrease": 20
+      },
+      {
+        "path": "clues",
+        "maxIncrease": 20
+      }
     ]
   },
   "opening": {
@@ -311,7 +325,7 @@
         "free_text"
       ],
       "narrative": {
-        "ru": "The witness notices the recorder and stops mid-sentence. A detail in the earlier statement contradicts the room ledger; pressing now may close the conversation, while showing the discrepancy could earn another minute. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
+        "ru": "Свидетель замечает диктофон и замолкает на полуслове. Деталь из прежних показаний не совпадает с журналом комнаты: если настаивать, разговор может оборваться, а предъявленное расхождение, возможно, даст ещё минуту. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
         "en": "An alternate route opens as circumstances shift. Continue the current approach or change priorities before events make the consequences harder to reverse."
       },
       "mutations": [],

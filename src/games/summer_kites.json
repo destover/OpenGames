@@ -249,7 +249,24 @@
     },
     "maxArrayItems": {},
     "maxStringLengths": {},
-    "stateChangeRules": [],
+    "stateChangeRules": [
+      {
+        "path": "kites",
+        "maxIncrease": 20
+      },
+      {
+        "path": "wind",
+        "maxIncrease": 20
+      },
+      {
+        "path": "safety",
+        "maxIncrease": 20
+      },
+      {
+        "path": "day",
+        "maxIncrease": 1
+      }
+    ],
     "instructions": [
       "🪁 Большие змеи требуют больше свободного пространства.",
       "Не задавай игроку обязательную цепочку действий; предложенные варианты — лишь идеи, свободный замысел игрока равноправен.",
@@ -304,7 +321,7 @@
         "free_text"
       ],
       "narrative": {
-        "ru": "The wind shifts toward the path where families are gathering. Moving the launch line preserves the flight window; pausing gives volunteers time to clear the area. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
+        "ru": "Ветер меняется и дует в сторону дорожки, где собираются семьи. Перенос места запуска позволит не упустить погоду, а пауза даст волонтёрам время освободить площадку. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
         "en": "An alternate route opens as circumstances shift. Continue the current approach or change priorities before events make the consequences harder to reverse."
       },
       "mutations": [],

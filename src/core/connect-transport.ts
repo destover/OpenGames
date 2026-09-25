@@ -65,6 +65,7 @@ export class ConnectTransport {
     peer.pending.clear();peer.socket.terminate();
   }
   connected(id:string){const peer=this.peers.get(id);return Boolean(peer?.active&&peer.socket.readyState===WebSocket.OPEN)}
+  close(){for(const id of [...this.peers.keys()])this.disconnect(id)}
   private sweep(){for(const [id,peer] of this.peers)if(Date.now()-peer.lastSeen>DONOR_HEARTBEAT_MS*3)this.disconnect(id)}
   request(id:string,requestId:string,attempt:number,request:ReturnType<typeof donorRequest>,deadline:number,signal?:AbortSignal){
     const peer=this.peers.get(id);if(!peer||!peer.active||peer.socket.readyState!==WebSocket.OPEN)throw new DonorUnavailableError('Соавтор не подключён');

@@ -71,6 +71,11 @@
         "title": "Архив на верхнем этаже",
         "description": "В старом городском архиве прорвало водопровод: команде предстоит спасать документы, поддерживать цепочку учёта и выбрать, что оцифровать первым.",
         "category": "Архивное дело"
+      },
+      "values": {
+        "active": "В процессе",
+        "completed": "Цель выполнена",
+        "failed": "Цель провалена"
       }
     },
     "en": {
@@ -89,8 +94,13 @@
       },
       "manifest": {
         "title": "The Upper Floor Archive",
-        "description": "В старом городском архиве прорвало водопровод: команде предстоит спасать документы, поддерживать цепочку учёта и выбрать, что оцифровать первым.",
+        "description": "A burst pipe floods an old city archive; the team must rescue records, preserve chain of custody, and choose what to digitize first.",
         "category": "Archives"
+      },
+      "values": {
+        "active": "In progress",
+        "completed": "Objective achieved",
+        "failed": "Objective failed"
       }
     }
   },
@@ -236,7 +246,20 @@
     },
     "maxArrayItems": {},
     "maxStringLengths": {},
-    "stateChangeRules": [],
+    "stateChangeRules": [
+      {
+        "path": "safety",
+        "maxIncrease": 20
+      },
+      {
+        "path": "records",
+        "maxIncrease": 20
+      },
+      {
+        "path": "capacity",
+        "maxIncrease": 20
+      }
+    ],
     "instructions": [
       "Описывай последствия по фактам подтверждённым в истории.",
       "Предлагай несколько возможных направлений без обязательного порядка.",

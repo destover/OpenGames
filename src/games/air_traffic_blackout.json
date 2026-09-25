@@ -280,7 +280,32 @@
     },
     "maxArrayItems": {},
     "maxStringLengths": {},
-    "stateChangeRules": [],
+    "stateChangeRules": [
+      {
+        "path": "flights",
+        "maxIncrease": 8
+      },
+      {
+        "path": "radar",
+        "maxIncrease": 20
+      },
+      {
+        "path": "radio",
+        "maxIncrease": 20
+      },
+      {
+        "path": "separation",
+        "maxIncrease": 12
+      },
+      {
+        "path": "weather",
+        "maxIncrease": 20
+      },
+      {
+        "path": "fatigue",
+        "maxIncrease": 20
+      }
+    ],
     "instructions": [
       "Не перемещай самолёт мгновенно и не объявляй посадку без подтверждения.",
       "Учитывай погрешность и давность наблюдений; не сокращай установленную безопасную дистанцию ради эффективности.",
@@ -335,7 +360,7 @@
         "free_text"
       ],
       "narrative": {
-        "ru": "Two aircraft reports overlap at the edge of the radar gap. Increasing separation gives controllers time to reconcile positions, but reduces the arrival rate during the handoff. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
+        "ru": "У края зоны без радиолокационного покрытия совпадают доклады о двух самолётах. Увеличение интервала даст диспетчерам время сверить их позиции, но снизит темп прибывающих рейсов во время передачи управления. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
         "en": "An alternate route opens as circumstances shift. Continue the current approach or change priorities before events make the consequences harder to reverse."
       },
       "mutations": [],

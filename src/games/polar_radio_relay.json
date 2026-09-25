@@ -71,6 +71,11 @@
         "title": "Голос сквозь пургу",
         "description": "Полярная станция ретранслирует сообщения между метеопостами; наледь на антеннах портит приём, а окно связи с удалённой экспедицией короткое.",
         "category": "Радиосвязь"
+      },
+      "values": {
+        "active": "В процессе",
+        "completed": "Цель выполнена",
+        "failed": "Цель провалена"
       }
     },
     "en": {
@@ -89,8 +94,13 @@
       },
       "manifest": {
         "title": "A Voice Through the Whiteout",
-        "description": "Полярная станция ретранслирует сообщения между метеопостами; наледь на антеннах портит приём, а окно связи с удалённой экспедицией короткое.",
+        "description": "A polar station relays messages between weather posts; ice on the antennas disrupts reception, and the window to contact a remote expedition is short.",
         "category": "Radio communications"
+      },
+      "values": {
+        "active": "In progress",
+        "completed": "Objective achieved",
+        "failed": "Objective failed"
       }
     }
   },
@@ -229,7 +239,20 @@
     },
     "maxArrayItems": {},
     "maxStringLengths": {},
-    "stateChangeRules": [],
+    "stateChangeRules": [
+      {
+        "path": "signal",
+        "maxIncrease": 20
+      },
+      {
+        "path": "battery",
+        "maxIncrease": 20
+      },
+      {
+        "path": "queue",
+        "maxIncrease": 20
+      }
+    ],
     "instructions": [
       "Описывай последствия по фактам подтверждённым в истории.",
       "Предлагай несколько возможных направлений без обязательного порядка.",

@@ -268,6 +268,16 @@
       "Не перемещай персонажа и не меняй место действия без описанной причины и непрерывного пути.",
       "Изменяй состояние только в пределах физических законов, подтверждённых фактов и ограничений пакета.",
       "Не завершай цель по одному заявлению или догадке; для финала нужны описанные и подтверждённые условия."
+    ],
+    "stateChangeRules": [
+      {
+        "path": "hour",
+        "maxIncrease": 1
+      },
+      {
+        "path": "evidence",
+        "maxIncrease": 20
+      }
     ]
   },
   "opening": {
@@ -317,7 +327,7 @@
         "free_text"
       ],
       "narrative": {
-        "ru": "A motion sensor blinks in the east gallery, then goes dark. The display case is sealed, but the overnight guard is already heading toward that corridor. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
+        "ru": "Датчик движения в восточной галерее мигает и гаснет. Витрина заперта, но ночной охранник уже направляется в этот коридор. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
         "en": "An alternate route opens as circumstances shift. Continue the current approach or change priorities before events make the consequences harder to reverse."
       },
       "mutations": [],

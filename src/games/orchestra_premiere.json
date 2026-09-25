@@ -280,7 +280,32 @@
     },
     "maxArrayItems": {},
     "maxStringLengths": {},
-    "stateChangeRules": [],
+    "stateChangeRules": [
+      {
+        "path": "minutes",
+        "maxIncrease": 30
+      },
+      {
+        "path": "intonation",
+        "maxIncrease": 20
+      },
+      {
+        "path": "cohesion",
+        "maxIncrease": 20
+      },
+      {
+        "path": "acoustics",
+        "maxIncrease": 20
+      },
+      {
+        "path": "soloist",
+        "maxIncrease": 20
+      },
+      {
+        "path": "expectation",
+        "maxIncrease": 20
+      }
+    ],
     "instructions": [
       "Не подменяй художественные разногласия простым повышением общей оценки ансамбля.",
       "Потраченное время репетиции не восстанавливается без реалистичной паузы и условий.",
@@ -335,7 +360,7 @@
         "free_text"
       ],
       "narrative": {
-        "ru": "The soloist enters a beat early, and the section answers in two tempos. A short sectional rehearsal would use the remaining tuning break, while a quiet cue from the conductor might preserve it. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
+        "ru": "Солист вступает на долю такта раньше, и секция отвечает в двух темпах. Короткая репетиция секции займёт оставшийся перерыв на настройку; тихая подсказка дирижёра может сохранить это время. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
         "en": "An alternate route opens as circumstances shift. Continue the current approach or change priorities before events make the consequences harder to reverse."
       },
       "mutations": [],

@@ -12,7 +12,8 @@ use tauri_plugin_shell::{process::CommandChild, ShellExt};
 use tokio::{io::AsyncWriteExt, sync::mpsc, task::{AbortHandle, JoinHandle}};
 use tokio_tungstenite::{connect_async, tungstenite::{client::IntoClientRequest, http::header::AUTHORIZATION, Message}};
 
-const PORTAL:&str="https://opengames.duckdns.org";
+const PORTAL:&str=match option_env!("OPENGAMES_PORTAL"){Some(url)=>url,None=>"https://opengames.duckdns.org"};
+fn portal_ws()->String{if let Some(host)=PORTAL.strip_prefix("https://"){format!("wss://{host}")}else if let Some(host)=PORTAL.strip_prefix("http://"){format!("ws://{host}")}else{format!("wss://{PORTAL}")}}
 const MODEL_NAME:&str="opengames-qwen3-8b";
 const MODEL_SHA:&str="d98cdcbd03e17ce47681435b5150e34c1417f50b5c0019dd560e4882c5745785";
 const MODEL_URL:&str="https://huggingface.co/Qwen/Qwen3-8B-GGUF/resolve/6a56986/Qwen3-8B-Q4_K_M.gguf";
@@ -24,9 +25,9 @@ struct Config { device_id:Option<String>, device_name:Option<String>, consent:bo
 
 #[derive(Serialize)]
 #[serde(rename_all="camelCase")]
-struct Status { linked:bool, device_name:Option<String>, computer_name:String, model_ready:bool, donating:bool, starting:bool, busy:bool, model_size_gb:f32, model_license:&'static str, model_source:&'static str }
+struct Status { linked:bool, device_name:Option<String>, computer_name:String, model_ready:bool, downloading:bool, donating:bool, starting:bool, busy:bool, model_size_gb:f32, model_license:&'static str, model_source:&'static str }
 
-struct State { config:Mutex<Config>, pairing:Mutex<Option<String>>, verification_url:Mutex<Option<String>>, computer_name:String, worker:Mutex<Option<JoinHandle<()>>>, job:Arc<Mutex<Option<(String,String,AbortHandle)>>>, child:Mutex<Option<CommandChild>>, process_lock:Mutex<Option<File>>, busy:Arc<AtomicBool>, starting:AtomicBool, cancel_start:AtomicBool, port:Mutex<Option<u16>>, local_key:Mutex<Option<String>>, data_dir:PathBuf }
+struct State { config:Mutex<Config>, pairing:Mutex<Option<String>>, verification_url:Mutex<Option<String>>, computer_name:String, worker:Mutex<Option<JoinHandle<()>>>, job:Arc<Mutex<Option<(String,String,AbortHandle)>>>, child:Mutex<Option<CommandChild>>, process_lock:Mutex<Option<File>>, busy:Arc<AtomicBool>, model_ready:AtomicBool, downloading:AtomicBool, starting:AtomicBool, cancel_start:AtomicBool, port:Mutex<Option<u16>>, local_key:Mutex<Option<String>>, data_dir:PathBuf }
 struct StartGuard<'a>(&'a AtomicBool);
 impl Drop for StartGuard<'_>{fn drop(&mut self){self.0.store(false,Ordering::SeqCst)}}
 
@@ -49,7 +50,7 @@ fn computer_name()->String{
 }
 
 #[tauri::command]
-fn status(state:tauri::State<State>)->Status{if state.worker.lock().unwrap().as_ref().is_some_and(|w|w.is_finished()){stop_inner(&state)}let config=state.config.lock().unwrap();Status{linked:config.device_id.is_some()&&token().is_ok(),device_name:config.device_name.clone(),computer_name:state.computer_name.clone(),model_ready:model_path(&state).is_file(),donating:state.worker.lock().unwrap().as_ref().is_some_and(|w|!w.is_finished()),starting:state.starting.load(Ordering::SeqCst),busy:state.busy.load(Ordering::Relaxed),model_size_gb:5.03,model_license:"Apache-2.0",model_source:"Qwen/Qwen3-8B-GGUF"}}
+fn status(state:tauri::State<State>)->Status{if state.worker.lock().unwrap().as_ref().is_some_and(|w|w.is_finished()){stop_inner(&state)}let config=state.config.lock().unwrap();Status{linked:config.device_id.is_some()&&token().is_ok(),device_name:config.device_name.clone(),computer_name:state.computer_name.clone(),model_ready:state.model_ready.load(Ordering::SeqCst),downloading:state.downloading.load(Ordering::SeqCst),donating:state.worker.lock().unwrap().as_ref().is_some_and(|w|!w.is_finished()),starting:state.starting.load(Ordering::SeqCst),busy:state.busy.load(Ordering::Relaxed),model_size_gb:5.03,model_license:"Apache-2.0",model_source:"Qwen/Qwen3-8B-GGUF"}}
 
 #[tauri::command]
 async fn begin_pairing(state:tauri::State<'_,State>)->Result<Value,String>{
@@ -93,8 +94,15 @@ async fn poll_pairing(state:tauri::State<'_,State>)->Result<String,String>{
 
 #[tauri::command]
 async fn download_model(app:tauri::AppHandle,state:tauri::State<'_,State>)->Result<(),String>{
+    if state.downloading.compare_exchange(false,true,Ordering::SeqCst,Ordering::SeqCst).is_err(){return Err("Загрузка модели уже выполняется".into())}
+    let result=download_model_inner(app,state.inner()).await;
+    state.downloading.store(false,Ordering::SeqCst);
+    result
+}
+async fn download_model_inner(app:tauri::AppHandle,state:&State)->Result<(),String>{
     if state.worker.lock().unwrap().is_some(){return Err("Остановите донорство перед обновлением модели".into())}
-    if verified_model(&state){return Ok(())}
+    if verified_model(&state){state.model_ready.store(true,Ordering::SeqCst);return Ok(())}
+    state.model_ready.store(false,Ordering::SeqCst);
     let path=model_path(&state);let dir=path.parent().ok_or("Каталог модели не найден")?;
     fs::create_dir_all(dir).map_err(|e|e.to_string())?;
     if fs2::available_space(dir).map_err(|e|e.to_string())?<MODEL_BYTES+1_000_000_000{return Err("Недостаточно свободного места для модели".into())}
@@ -104,7 +112,7 @@ async fn download_model(app:tauri::AppHandle,state:tauri::State<'_,State>)->Resu
     while let Some(chunk)=stream.next().await{let chunk=chunk.map_err(|e|e.to_string())?;size+=chunk.len() as u64;if size>6_000_000_000{return Err("Размер модели превышен".into())}hash.update(&chunk);output.write_all(&chunk).await.map_err(|e|e.to_string())?;if size%50_000_000<chunk.len() as u64{let _=app.emit("model-progress",size);}}
     output.flush().await.map_err(|e|e.to_string())?;drop(output);
     if hex::encode(hash.finalize())!=MODEL_SHA{let _=fs::remove_file(&part);return Err("SHA-256 модели не совпадает".into())}
-    fs::rename(part,path).map_err(|e|e.to_string())?;Ok(())
+    if path.exists(){fs::remove_file(&path).map_err(|e|e.to_string())?}fs::rename(part,path).map_err(|e|e.to_string())?;state.model_ready.store(true,Ordering::SeqCst);Ok(())
 }
 
 #[derive(Deserialize)]
@@ -127,7 +135,7 @@ async fn inference(port:u16,local_key:String,job:&Job)->Result<Value,String>{
 }
 
 async fn run_worker(device_token:String,port:u16,local_key:String,busy:Arc<AtomicBool>,active_job:Arc<Mutex<Option<(String,String,AbortHandle)>>>) ->Result<(),String>{
-    let mut request=format!("{}/api/donor/connect",PORTAL.replace("https://","wss://")).into_client_request().map_err(|e|e.to_string())?;
+    let mut request=format!("{}/api/donor/connect",portal_ws()).into_client_request().map_err(|e|e.to_string())?;
     request.headers_mut().insert(AUTHORIZATION,format!("Bearer {device_token}").parse().map_err(|_|"Неверный токен")?);
     let (socket,_)=connect_async(request).await.map_err(|e|match e{tokio_tungstenite::tungstenite::Error::Http(response) if response.status()==401=>"revoked".to_string(),other=>other.to_string()})?;
     let (mut writer,mut reader)=socket.split();let (tx,mut rx)=mpsc::channel::<Message>(16);
@@ -177,7 +185,7 @@ async fn start_donating(app:tauri::AppHandle,state:tauri::State<'_,State>,consen
         if !response.status().is_success(){return Err(format!("Не удалось обновить имя устройства: HTTP {}",response.status()))}
         state.config.lock().unwrap().device_name=Some(state.computer_name.clone());save_config(&state)?;
     }
-    if !verified_model(&state){return Err("Модель отсутствует или не прошла проверку SHA-256".into())}
+    if !verified_model(&state){state.model_ready.store(false,Ordering::SeqCst);return Err("Модель отсутствует или не прошла проверку SHA-256".into())}state.model_ready.store(true,Ordering::SeqCst);
     let listener=TcpListener::bind("127.0.0.1:0").map_err(|e|e.to_string())?;let port=listener.local_addr().map_err(|e|e.to_string())?.port();drop(listener);
     let lock=OpenOptions::new().create(true).write(true).open(state.data_dir.join("donor.lock")).map_err(|e|e.to_string())?;
     if lock.try_lock_exclusive().is_err(){return Err("Донорство уже запущено в другом процессе".into())}
@@ -199,16 +207,23 @@ fn stop_inner(state:&State){state.cancel_start.store(true,Ordering::SeqCst);if l
 #[tauri::command]
 fn pause(state:tauri::State<State>){stop_inner(&state)}
 #[tauri::command]
-async fn unlink(state:tauri::State<'_,State>)->Result<(),String>{stop_inner(&state);if let Ok(access)=token(){let _=http()?.post(format!("{PORTAL}/api/donor/revoke-self")).bearer_auth(access).send().await;}let _=entry()?.delete_credential();let mut config=state.config.lock().unwrap();config.device_id=None;config.device_name=None;config.consent=false;drop(config);save_config(&state)}
+async fn unlink(state:tauri::State<'_,State>)->Result<(),String>{
+    stop_inner(&state);
+    let access=token()?;
+    let response=http()?.post(format!("{PORTAL}/api/donor/revoke-self")).bearer_auth(access).send().await.map_err(|e|e.to_string())?;
+    if !response.status().is_success(){return Err(format!("Сервер не подтвердил отзыв доступа: HTTP {}",response.status()))}
+    entry()?.delete_credential().map_err(|e|e.to_string())?;
+    let mut config=state.config.lock().unwrap();config.device_id=None;config.device_name=None;config.consent=false;drop(config);save_config(&state)
+}
 #[tauri::command]
-fn delete_model(state:tauri::State<State>)->Result<(),String>{if state.worker.lock().unwrap().is_some(){return Err("Сначала остановите донорство".into())}let path=model_path(&state);if path.exists(){fs::remove_file(path).map_err(|e|e.to_string())?}Ok(())}
+fn delete_model(state:tauri::State<State>)->Result<(),String>{if state.worker.lock().unwrap().is_some(){return Err("Сначала остановите донорство".into())}let path=model_path(&state);if path.exists(){fs::remove_file(path).map_err(|e|e.to_string())?}state.model_ready.store(false,Ordering::SeqCst);Ok(())}
 
 fn main(){
     tauri::Builder::default().plugin(tauri_plugin_shell::init()).setup(|app|{
         let dir=app.path().app_data_dir()?;fs::create_dir_all(&dir)?;
         let config=fs::read(dir.join("connect.json")).ok().and_then(|x|serde_json::from_slice(&x).ok()).unwrap_or_default();
         if let Ok(lock)=OpenOptions::new().create(true).write(true).open(dir.join("donor.lock")){if lock.try_lock_exclusive().is_ok(){let _=fs::remove_file(dir.join("local-api-key"));let _=FileExt::unlock(&lock);}}
-        app.manage(State{config:Mutex::new(config),pairing:Mutex::new(None),verification_url:Mutex::new(None),computer_name:computer_name(),worker:Mutex::new(None),job:Arc::new(Mutex::new(None)),child:Mutex::new(None),process_lock:Mutex::new(None),busy:Arc::new(AtomicBool::new(false)),starting:AtomicBool::new(false),cancel_start:AtomicBool::new(false),port:Mutex::new(None),local_key:Mutex::new(None),data_dir:dir});Ok(())
+        app.manage(State{config:Mutex::new(config),pairing:Mutex::new(None),verification_url:Mutex::new(None),computer_name:computer_name(),worker:Mutex::new(None),job:Arc::new(Mutex::new(None)),child:Mutex::new(None),process_lock:Mutex::new(None),busy:Arc::new(AtomicBool::new(false)),model_ready:AtomicBool::new({let path=dir.join("models/Qwen3-8B-Q4_K_M.gguf");path.is_file()&&path.metadata().map(|m|m.len()>4_000_000_000).unwrap_or(false)&&digest(&path).map(|s|s==MODEL_SHA).unwrap_or(false)}),downloading:AtomicBool::new(false),starting:AtomicBool::new(false),cancel_start:AtomicBool::new(false),port:Mutex::new(None),local_key:Mutex::new(None),data_dir:dir});Ok(())
     }).on_window_event(|window,event|{if let tauri::WindowEvent::Destroyed=event{let state=window.state::<State>();stop_inner(&state)}})
       .invoke_handler(tauri::generate_handler![status,begin_pairing,open_verification,poll_pairing,download_model,start_donating,pause,unlink,delete_model])
       .run(tauri::generate_context!()).expect("OpenGames Connect failed");

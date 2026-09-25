@@ -71,6 +71,11 @@
         "title": "Раскоп до дождя",
         "description": "Археологическая экспедиция раскрыла редкий слой на склоне, где прогнозируют дождь; команде нужно сохранить контекст находок и безопасно подготовить участок.",
         "category": "Археология"
+      },
+      "values": {
+        "active": "В процессе",
+        "completed": "Цель выполнена",
+        "failed": "Цель провалена"
       }
     },
     "en": {
@@ -89,8 +94,13 @@
       },
       "manifest": {
         "title": "Excavate Before the Rain",
-        "description": "Археологическая экспедиция раскрыла редкий слой на склоне, где прогнозируют дождь; команде нужно сохранить контекст находок и безопасно подготовить участок.",
+        "description": "An archaeological team has uncovered a rare slope layer ahead of forecast rain; it must preserve the context of its finds and secure the site.",
         "category": "Archaeology"
+      },
+      "values": {
+        "active": "In progress",
+        "completed": "Objective achieved",
+        "failed": "Objective failed"
       }
     }
   },
@@ -229,7 +239,20 @@
     },
     "maxArrayItems": {},
     "maxStringLengths": {},
-    "stateChangeRules": [],
+    "stateChangeRules": [
+      {
+        "path": "context",
+        "maxIncrease": 20
+      },
+      {
+        "path": "safety",
+        "maxIncrease": 20
+      },
+      {
+        "path": "record",
+        "maxIncrease": 20
+      }
+    ],
     "instructions": [
       "Описывай последствия по фактам подтверждённым в истории.",
       "Предлагай несколько возможных направлений без обязательного порядка.",

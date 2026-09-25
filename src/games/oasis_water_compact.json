@@ -71,6 +71,11 @@
         "title": "Доля воды",
         "description": "В засушливом оазисе земледельцы, мастерские и караванный двор делят ограниченный поток воды; новые замеры ставят под вопрос старую очередь.",
         "category": "Переговоры"
+      },
+      "values": {
+        "active": "В процессе",
+        "completed": "Цель выполнена",
+        "failed": "Цель провалена"
       }
     },
     "en": {
@@ -89,8 +94,13 @@
       },
       "manifest": {
         "title": "A Share of Water",
-        "description": "В засушливом оазисе земледельцы, мастерские и караванный двор делят ограниченный поток воды; новые замеры ставят под вопрос старую очередь.",
+        "description": "Farmers, workshops, and a caravan yard share a limited water supply in a dry oasis; new measurements call the old allocation order into question.",
         "category": "Negotiation"
+      },
+      "values": {
+        "active": "In progress",
+        "completed": "Objective achieved",
+        "failed": "Objective failed"
       }
     }
   },
@@ -229,7 +239,20 @@
     },
     "maxArrayItems": {},
     "maxStringLengths": {},
-    "stateChangeRules": [],
+    "stateChangeRules": [
+      {
+        "path": "trust",
+        "maxIncrease": 20
+      },
+      {
+        "path": "evidence",
+        "maxIncrease": 20
+      },
+      {
+        "path": "balance",
+        "maxIncrease": 20
+      }
+    ],
     "instructions": [
       "Описывай последствия по фактам подтверждённым в истории.",
       "Предлагай несколько возможных направлений без обязательного порядка.",

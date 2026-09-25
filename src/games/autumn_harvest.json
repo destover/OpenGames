@@ -249,7 +249,24 @@
     },
     "maxArrayItems": {},
     "maxStringLengths": {},
-    "stateChangeRules": [],
+    "stateChangeRules": [
+      {
+        "path": "stalls",
+        "maxIncrease": 20
+      },
+      {
+        "path": "produce",
+        "maxIncrease": 20
+      },
+      {
+        "path": "flow",
+        "maxIncrease": 20
+      },
+      {
+        "path": "day",
+        "maxIncrease": 1
+      }
+    ],
     "instructions": [
       "Сначала уточняй происхождение и условия хранения продуктов.",
       "Не задавай игроку обязательную цепочку действий; предложенные варианты — лишь идеи, свободный замысел игрока равноправен.",
@@ -304,7 +321,7 @@
         "free_text"
       ],
       "narrative": {
-        "ru": "A crowd gathers at the produce table just as a nearby stall runs short of change. The team can open a second queue or move stock between stalls; each eases one bottleneck. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
+        "ru": "У прилавка с урожаем собирается очередь, а в соседней палатке заканчивается сдача. Команда может открыть вторую очередь или перераспределить товары между палатками; каждый вариант устранит только одно узкое место. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
         "en": "An alternate route opens as circumstances shift. Continue the current approach or change priorities before events make the consequences harder to reverse."
       },
       "mutations": [],

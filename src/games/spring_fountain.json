@@ -249,7 +249,24 @@
     },
     "maxArrayItems": {},
     "maxStringLengths": {},
-    "stateChangeRules": [],
+    "stateChangeRules": [
+      {
+        "path": "mosaic",
+        "maxIncrease": 20
+      },
+      {
+        "path": "water",
+        "maxIncrease": 20
+      },
+      {
+        "path": "care",
+        "maxIncrease": 20
+      },
+      {
+        "path": "day",
+        "maxIncrease": 1
+      }
+    ],
     "instructions": [
       "Не включай насос и не допускай посетителей к воде до разрешения специалистов.",
       "Не задавай игроку обязательную цепочку действий; предложенные варианты — лишь идеи, свободный замысел игрока равноправен.",
@@ -304,7 +321,7 @@
         "free_text"
       ],
       "narrative": {
-        "ru": "A thin film appears along one edge of the fountain basin as visitors arrive. The mosaic can be shown from the dry side while the team checks the water before reopening the full path. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
+        "ru": "У края чаши фонтана появляется тонкая плёнка, пока прибывают посетители. Мозаику можно показать с сухой стороны, пока команда проверяет воду и решает, открывать ли весь проход. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
         "en": "An alternate route opens as circumstances shift. Continue the current approach or change priorities before events make the consequences harder to reverse."
       },
       "mutations": [],

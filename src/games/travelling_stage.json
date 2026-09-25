@@ -71,6 +71,11 @@
         "title": "Сцена в одном фургоне",
         "description": "Небольшая труппа везёт спектакль по нескольким площадкам; внезапная замена сцены и неодинаковые условия требуют переосмыслить постановку на ходу.",
         "category": "Театр"
+      },
+      "values": {
+        "active": "В процессе",
+        "completed": "Цель выполнена",
+        "failed": "Цель провалена"
       }
     },
     "en": {
@@ -89,8 +94,13 @@
       },
       "manifest": {
         "title": "A Stage in One Van",
-        "description": "Небольшая труппа везёт спектакль по нескольким площадкам; внезапная замена сцены и неодинаковые условия требуют переосмыслить постановку на ходу.",
+        "description": "A small theatre troupe is touring several venues; a sudden stage change and uneven conditions force it to rethink the production on the move.",
         "category": "Theatre"
+      },
+      "values": {
+        "active": "In progress",
+        "completed": "Objective achieved",
+        "failed": "Objective failed"
       }
     }
   },
@@ -236,7 +246,20 @@
     },
     "maxArrayItems": {},
     "maxStringLengths": {},
-    "stateChangeRules": [],
+    "stateChangeRules": [
+      {
+        "path": "cohesion",
+        "maxIncrease": 20
+      },
+      {
+        "path": "access",
+        "maxIncrease": 20
+      },
+      {
+        "path": "energy",
+        "maxIncrease": 20
+      }
+    ],
     "instructions": [
       "Описывай последствия по фактам подтверждённым в истории.",
       "Предлагай несколько возможных направлений без обязательного порядка.",

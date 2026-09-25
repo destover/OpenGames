@@ -249,7 +249,24 @@
     },
     "maxArrayItems": {},
     "maxStringLengths": {},
-    "stateChangeRules": [],
+    "stateChangeRules": [
+      {
+        "path": "studios",
+        "maxIncrease": 20
+      },
+      {
+        "path": "visitors",
+        "maxIncrease": 20
+      },
+      {
+        "path": "supplies",
+        "maxIncrease": 20
+      },
+      {
+        "path": "day",
+        "maxIncrease": 1
+      }
+    ],
     "instructions": [
       "Переходы занимают время; в маленькую мастерскую нельзя направить всех сразу.",
       "Не задавай игроку обязательную цепочку действий; предложенные варианты — лишь идеи, свободный замысел игрока равноправен.",
@@ -304,7 +321,7 @@
         "free_text"
       ],
       "narrative": {
-        "ru": "A visitor asks to see the unfinished work behind the screen. Opening the studio invites a conversation, while keeping the boundary protects the artists’ focus. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
+        "ru": "Посетитель просит показать незавершённую работу за ширмой. Открытая студия позволит поговорить, а закрытая сохранит художникам сосредоточенность. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
         "en": "An alternate route opens as circumstances shift. Continue the current approach or change priorities before events make the consequences harder to reverse."
       },
       "mutations": [],

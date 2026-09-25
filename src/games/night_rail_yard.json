@@ -71,6 +71,11 @@
         "title": "Последний состав",
         "description": "Ночная сортировочная станция должна отправить критический груз до рассвета, пока ремонт пути и поздние поезда меняют доступные маршруты.",
         "category": "Железная дорога"
+      },
+      "values": {
+        "active": "В процессе",
+        "completed": "Цель выполнена",
+        "failed": "Цель провалена"
       }
     },
     "en": {
@@ -89,8 +94,13 @@
       },
       "manifest": {
         "title": "Last Train Before Dawn",
-        "description": "Ночная сортировочная станция должна отправить критический груз до рассвета, пока ремонт пути и поздние поезда меняют доступные маршруты.",
+        "description": "A night rail yard must dispatch critical cargo before dawn as track repairs and late trains reshape available routes.",
         "category": "Railways"
+      },
+      "values": {
+        "active": "In progress",
+        "completed": "Objective achieved",
+        "failed": "Objective failed"
       }
     }
   },
@@ -236,7 +246,20 @@
     },
     "maxArrayItems": {},
     "maxStringLengths": {},
-    "stateChangeRules": [],
+    "stateChangeRules": [
+      {
+        "path": "capacity",
+        "maxIncrease": 20
+      },
+      {
+        "path": "priority",
+        "maxIncrease": 20
+      },
+      {
+        "path": "clarity",
+        "maxIncrease": 20
+      }
+    ],
     "instructions": [
       "Описывай последствия по фактам подтверждённым в истории.",
       "Предлагай несколько возможных направлений без обязательного порядка.",

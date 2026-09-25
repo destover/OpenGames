@@ -71,6 +71,11 @@
         "title": "Риф под наблюдением",
         "description": "Исследовательская станция восстанавливает повреждённый коралловый участок; показания датчиков расходятся, а вмешательство может изменить условия сразу для нескольких видов.",
         "category": "Морская экология"
+      },
+      "values": {
+        "active": "В процессе",
+        "completed": "Цель выполнена",
+        "failed": "Цель провалена"
       }
     },
     "en": {
@@ -89,8 +94,13 @@
       },
       "manifest": {
         "title": "Reef Under Observation",
-        "description": "Исследовательская станция восстанавливает повреждённый коралловый участок; показания датчиков расходятся, а вмешательство может изменить условия сразу для нескольких видов.",
+        "description": "A research station is restoring a damaged coral site; sensor readings conflict, and intervention could change conditions for several species at once.",
         "category": "Marine ecology"
+      },
+      "values": {
+        "active": "In progress",
+        "completed": "Objective achieved",
+        "failed": "Objective failed"
       }
     }
   },
@@ -229,7 +239,20 @@
     },
     "maxArrayItems": {},
     "maxStringLengths": {},
-    "stateChangeRules": [],
+    "stateChangeRules": [
+      {
+        "path": "health",
+        "maxIncrease": 20
+      },
+      {
+        "path": "evidence",
+        "maxIncrease": 20
+      },
+      {
+        "path": "stability",
+        "maxIncrease": 20
+      }
+    ],
     "instructions": [
       "Описывай последствия по фактам подтверждённым в истории.",
       "Предлагай несколько возможных направлений без обязательного порядка.",

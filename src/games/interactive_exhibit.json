@@ -71,6 +71,11 @@
         "title": "Экспонат, который отвечает",
         "description": "Команда запускает интерактивную выставку, где посетители меняют движение механической инсталляции; первые прогоны выявляют неожиданный ритм очередей и доступности.",
         "category": "Научная выставка"
+      },
+      "values": {
+        "active": "В процессе",
+        "completed": "Цель выполнена",
+        "failed": "Цель провалена"
       }
     },
     "en": {
@@ -89,8 +94,13 @@
       },
       "manifest": {
         "title": "The Exhibit Answers Back",
-        "description": "Команда запускает интерактивную выставку, где посетители меняют движение механической инсталляции; первые прогоны выявляют неожиданный ритм очередей и доступности.",
+        "description": "A team is launching an interactive exhibit where visitors alter a mechanical installation; early runs reveal an unexpected rhythm in queues and accessibility.",
         "category": "Science exhibition"
+      },
+      "values": {
+        "active": "In progress",
+        "completed": "Objective achieved",
+        "failed": "Objective failed"
       }
     }
   },
@@ -229,7 +239,20 @@
     },
     "maxArrayItems": {},
     "maxStringLengths": {},
-    "stateChangeRules": [],
+    "stateChangeRules": [
+      {
+        "path": "access",
+        "maxIncrease": 20
+      },
+      {
+        "path": "clarity",
+        "maxIncrease": 20
+      },
+      {
+        "path": "safety",
+        "maxIncrease": 20
+      }
+    ],
     "instructions": [
       "Описывай последствия по фактам подтверждённым в истории.",
       "Предлагай несколько возможных направлений без обязательного порядка.",

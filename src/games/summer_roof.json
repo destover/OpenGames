@@ -249,7 +249,24 @@
     },
     "maxArrayItems": {},
     "maxStringLengths": {},
-    "stateChangeRules": [],
+    "stateChangeRules": [
+      {
+        "path": "plants",
+        "maxIncrease": 20
+      },
+      {
+        "path": "comfort",
+        "maxIncrease": 20
+      },
+      {
+        "path": "team",
+        "maxIncrease": 20
+      },
+      {
+        "path": "day",
+        "maxIncrease": 1
+      }
+    ],
     "instructions": [
       "🌱 Растения можно переставлять, но нужно оставлять свободный проход.",
       "Не задавай игроку обязательную цепочку действий; предложенные варианты — лишь идеи, свободный замысел игрока равноправен.",
@@ -304,7 +321,7 @@
         "free_text"
       ],
       "narrative": {
-        "ru": "The roof heats up faster than expected, and the newest seedlings begin to droop. Shade can move from the gathering area, or the team can water now and shorten the next work session. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
+        "ru": "Крыша нагревается быстрее ожидаемого, и новые саженцы начинают вянуть. Можно перенести тень с зоны отдыха или полить растения сейчас, сократив следующую рабочую сессию. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
         "en": "An alternate route opens as circumstances shift. Continue the current approach or change priorities before events make the consequences harder to reverse."
       },
       "mutations": [],

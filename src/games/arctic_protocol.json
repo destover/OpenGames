@@ -280,7 +280,32 @@
     },
     "maxArrayItems": {},
     "maxStringLengths": {},
-    "stateChangeRules": [],
+    "stateChangeRules": [
+      {
+        "path": "round",
+        "maxIncrease": 1
+      },
+      {
+        "path": "trust",
+        "maxIncrease": 20
+      },
+      {
+        "path": "escalation",
+        "maxIncrease": 20
+      },
+      {
+        "path": "mandate",
+        "maxIncrease": 20
+      },
+      {
+        "path": "access",
+        "maxIncrease": 20
+      },
+      {
+        "path": "deadline",
+        "maxIncrease": 1
+      }
+    ],
     "instructions": [
       "Не назначай реальные страны, организации или виновника без оснований пакета.",
       "Не считай одностороннее заявление согласием второй стороны.",
@@ -335,7 +360,7 @@
         "free_text"
       ],
       "narrative": {
-        "ru": "The deadline is two rounds away, and a draft guarantee has reached both delegations. One side asks who verifies it; the other will sign only if access is reciprocal. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
+        "ru": "До крайнего срока остаётся два раунда, и обе делегации получили проект гарантий. Одна сторона спрашивает, кто будет их проверять; другая согласится подписать документ только при взаимном доступе. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
         "en": "An alternate route opens as circumstances shift. Continue the current approach or change priorities before events make the consequences harder to reverse."
       },
       "mutations": [],

@@ -71,6 +71,11 @@
         "title": "Сеть после грозы",
         "description": "После грозового фронта несколько районов остались без электричества; диспетчерская направляет ремонтные бригады по сети с неполными данными о повреждениях.",
         "category": "Энергетика"
+      },
+      "values": {
+        "active": "В процессе",
+        "completed": "Цель выполнена",
+        "failed": "Цель провалена"
       }
     },
     "en": {
@@ -89,8 +94,13 @@
       },
       "manifest": {
         "title": "Grid After the Storm",
-        "description": "После грозового фронта несколько районов остались без электричества; диспетчерская направляет ремонтные бригады по сети с неполными данными о повреждениях.",
+        "description": "After a storm front, several districts are without power; dispatchers route repair crews through a network with incomplete damage reports.",
         "category": "Energy"
+      },
+      "values": {
+        "active": "In progress",
+        "completed": "Objective achieved",
+        "failed": "Objective failed"
       }
     }
   },
@@ -236,7 +246,20 @@
     },
     "maxArrayItems": {},
     "maxStringLengths": {},
-    "stateChangeRules": [],
+    "stateChangeRules": [
+      {
+        "path": "coverage",
+        "maxIncrease": 20
+      },
+      {
+        "path": "reserve",
+        "maxIncrease": 20
+      },
+      {
+        "path": "coordination",
+        "maxIncrease": 20
+      }
+    ],
     "instructions": [
       "Описывай последствия по фактам подтверждённым в истории.",
       "Предлагай несколько возможных направлений без обязательного порядка.",

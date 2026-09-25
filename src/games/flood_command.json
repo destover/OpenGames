@@ -280,7 +280,32 @@
     },
     "maxArrayItems": {},
     "maxStringLengths": {},
-    "stateChangeRules": [],
+    "stateChangeRules": [
+      {
+        "path": "evacuated",
+        "maxIncrease": 20
+      },
+      {
+        "path": "levee",
+        "maxIncrease": 20
+      },
+      {
+        "path": "pressure",
+        "maxIncrease": 20
+      },
+      {
+        "path": "grid",
+        "maxIncrease": 20
+      },
+      {
+        "path": "shelter",
+        "maxIncrease": 20
+      },
+      {
+        "path": "hours",
+        "maxIncrease": 24
+      }
+    ],
     "instructions": [
       "Не обещай точный исход вероятностного прогноза.",
       "Не повышай одновременно целостность барьеров, устойчивость сети и вместимость убежищ без затрат и действий.",
@@ -335,7 +360,7 @@
         "free_text"
       ],
       "narrative": {
-        "ru": "Water appears along the service road below the embankment. Crews can shore up the weak point or keep that route clear for residents leaving the lowest blocks. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
+        "ru": "На служебной дороге у насыпи появляется вода. Бригады могут укрепить слабое место или сохранить дорогу свободной для жителей, покидающих нижние кварталы. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
         "en": "An alternate route opens as circumstances shift. Continue the current approach or change priorities before events make the consequences harder to reverse."
       },
       "mutations": [],

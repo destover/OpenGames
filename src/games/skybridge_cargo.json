@@ -71,6 +71,11 @@
         "title": "Мост воздушных караванов",
         "description": "Горный мостовой коридор принимает грузовые дирижабли; ветер, пропускная способность причалов и срочный медицинский груз требуют согласованного расписания.",
         "category": "Воздушный транспорт"
+      },
+      "values": {
+        "active": "В процессе",
+        "completed": "Цель выполнена",
+        "failed": "Цель провалена"
       }
     },
     "en": {
@@ -89,8 +94,13 @@
       },
       "manifest": {
         "title": "The Air Caravan Bridge",
-        "description": "Горный мостовой коридор принимает грузовые дирижабли; ветер, пропускная способность причалов и срочный медицинский груз требуют согласованного расписания.",
+        "description": "A mountain bridge corridor serves cargo airships; wind, mooring capacity, and an urgent medical shipment demand a coordinated schedule.",
         "category": "Air transport"
+      },
+      "values": {
+        "active": "In progress",
+        "completed": "Objective achieved",
+        "failed": "Objective failed"
       }
     }
   },
@@ -229,7 +239,20 @@
     },
     "maxArrayItems": {},
     "maxStringLengths": {},
-    "stateChangeRules": [],
+    "stateChangeRules": [
+      {
+        "path": "safety",
+        "maxIncrease": 20
+      },
+      {
+        "path": "flow",
+        "maxIncrease": 20
+      },
+      {
+        "path": "reserve",
+        "maxIncrease": 20
+      }
+    ],
     "instructions": [
       "Описывай последствия по фактам подтверждённым в истории.",
       "Предлагай несколько возможных направлений без обязательного порядка.",

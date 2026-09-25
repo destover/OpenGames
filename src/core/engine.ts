@@ -108,7 +108,7 @@ export class StateEngine {
     let progress = Number(session.state.goalProgress || 0);
     const expected = sequence[progress];
     if (expected && events.some(event => event.type === this.game.rules?.transitions[expected]?.event)) progress++;
-    if (sequence.length) { nextState.goalProgress = progress; nextState.ended = progress === sequence.length; }
+    if (sequence.length) { nextState.goalProgress = progress; nextState.ended = progress === sequence.length; } else delete nextState.goalProgress;
     if (this.game.goal?.completion) {
       const { path, value, terminalValues = [value] } = this.game.goal.completion;
       nextState.ended = terminalValues.some(terminal => JSON.stringify(readPath(nextState, path)) === JSON.stringify(terminal));

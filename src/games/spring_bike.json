@@ -249,7 +249,24 @@
     },
     "maxArrayItems": {},
     "maxStringLengths": {},
-    "stateChangeRules": [],
+    "stateChangeRules": [
+      {
+        "path": "surface",
+        "maxIncrease": 20
+      },
+      {
+        "path": "signs",
+        "maxIncrease": 20
+      },
+      {
+        "path": "rest",
+        "maxIncrease": 20
+      },
+      {
+        "path": "day",
+        "maxIncrease": 1
+      }
+    ],
     "instructions": [
       "Не направляй группу на непроверенное покрытие или оживлённую проезжую часть.",
       "Не задавай игроку обязательную цепочку действий; предложенные варианты — лишь идеи, свободный замысел игрока равноправен.",
@@ -304,7 +321,7 @@
         "free_text"
       ],
       "narrative": {
-        "ru": "Loose gravel appears just before the bridge. Slowing down keeps the route welcoming for beginners; a short detour adds distance but avoids the unstable surface. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
+        "ru": "Прямо перед мостом начинается участок с рыхлым гравием. Снижение скорости сделает маршрут безопаснее для новичков; короткий объезд удлинит путь, зато позволит избежать нестабильного покрытия. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
         "en": "An alternate route opens as circumstances shift. Continue the current approach or change priorities before events make the consequences harder to reverse."
       },
       "mutations": [],

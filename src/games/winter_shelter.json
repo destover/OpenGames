@@ -249,7 +249,24 @@
     },
     "maxArrayItems": {},
     "maxStringLengths": {},
-    "stateChangeRules": [],
+    "stateChangeRules": [
+      {
+        "path": "comfort",
+        "maxIncrease": 20
+      },
+      {
+        "path": "visits",
+        "maxIncrease": 1
+      },
+      {
+        "path": "supplies",
+        "maxIncrease": 20
+      },
+      {
+        "path": "day",
+        "maxIncrease": 1
+      }
+    ],
     "instructions": [
       "Встречи проходят добровольно и без принуждения; животные могут отдыхать.",
       "Не задавай игроку обязательную цепочку действий; предложенные варианты — лишь идеи, свободный замысел игрока равноправен.",
@@ -304,7 +321,7 @@
         "free_text"
       ],
       "narrative": {
-        "ru": "A family arrives with wet coats while the supply shelf is nearly empty. Drying space can be shared now, though fewer blankets will be ready for late arrivals. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
+        "ru": "Приходит семья в промокшей одежде, а полка с запасами почти пуста. Сейчас можно дать им место для сушки вещей, но для тех, кто прибудет позже, останется меньше одеял. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
         "en": "An alternate route opens as circumstances shift. Continue the current approach or change priorities before events make the consequences harder to reverse."
       },
       "mutations": [],

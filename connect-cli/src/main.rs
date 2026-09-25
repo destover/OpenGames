@@ -8,7 +8,8 @@ use sha2::{Digest,Sha256};
 use tokio::{io::AsyncWriteExt,sync::mpsc};
 use tokio_tungstenite::{connect_async,tungstenite::{client::IntoClientRequest,http::header::AUTHORIZATION,Message}};
 
-const PORTAL:&str="https://opengames.duckdns.org";
+const PORTAL:&str=match option_env!("OPENGAMES_PORTAL"){Some(url)=>url,None=>"https://opengames.duckdns.org"};
+fn portal_ws()->String{if let Some(host)=PORTAL.strip_prefix("https://"){format!("wss://{host}")}else if let Some(host)=PORTAL.strip_prefix("http://"){format!("ws://{host}")}else{format!("wss://{PORTAL}")}}
 const MODEL:&str="opengames-qwen3-8b";
 const MODEL_URL:&str="https://huggingface.co/Qwen/Qwen3-8B-GGUF/resolve/6a56986/Qwen3-8B-Q4_K_M.gguf";
 const MODEL_SHA:&str="d98cdcbd03e17ce47681435b5150e34c1417f50b5c0019dd560e4882c5745785";
@@ -110,7 +111,7 @@ async fn inference(port:u16,key:String,job:&Job)->Result<Value,&'static str>{
     serde_json::from_str(value["choices"][0]["message"]["content"].as_str().ok_or("model")?).map_err(|_|"model")
 }
 async fn connection(access:&str,port:u16,key:&str,busy:Arc<AtomicBool>)->Result<(),String>{
-    let mut request=format!("{}/api/donor/connect",PORTAL.replace("https://","wss://")).into_client_request().map_err(|e|e.to_string())?;
+    let mut request=format!("{}/api/donor/connect",portal_ws()).into_client_request().map_err(|e|e.to_string())?;
     request.headers_mut().insert(AUTHORIZATION,format!("Bearer {access}").parse().map_err(|_|"Неверный токен")?);
     let (socket,_)=connect_async(request).await.map_err(|e|match e{tokio_tungstenite::tungstenite::Error::Http(response) if response.status()==401=>"Доступ устройства отозван".to_string(),other=>other.to_string()})?;
     println!("В сети");let (mut writer,mut reader)=socket.split();let (tx,mut rx)=mpsc::channel::<Message>(16);
@@ -174,7 +175,7 @@ async fn main(){
             Some("pair")=>pair(&dir).await,
             Some("download")=>download(&dir).await,
             Some("run") if args.get(1).map(String::as_str)==Some("--consent")=>run(&dir,args.get(2).map(String::as_str)).await,
-            Some("status")=>{let settings=config(&dir);println!("Устройство: {}\nПривязано: {}\nМодель: {}",settings.device_name.unwrap_or_else(computer_name),settings.device_id.is_some()&&token().is_ok(),model_path(&dir).is_file());Ok(())},
+            Some("status")=>{let settings=config(&dir);println!("Устройство: {}\nПривязано: {}\nМодель: {}",settings.device_name.unwrap_or_else(computer_name),settings.device_id.is_some()&&token().is_ok(),model_path(&dir).is_file()&&digest(&model_path(&dir)).map(|hash|hash==MODEL_SHA).unwrap_or(false));Ok(())},
             Some("unlink")=>unlink(&dir).await,
             _=>Err("Команды: pair | download | run --consent [путь-к-llama-server] | status | unlink".into()),
         }

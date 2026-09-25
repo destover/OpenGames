@@ -340,7 +340,7 @@
         "free_text"
       ],
       "narrative": {
-        "ru": "A new arrival needs oxygen just as the reserve gauge dips. The team can reassess both patients before allocation or commit the cylinder now and send another clinician to find backup supply. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
+        "ru": "Новому пациенту нужен кислород именно тогда, когда падает показание резервного баллона. Команда может заново оценить состояние обоих пациентов или сразу подключить баллон, отправив другого медика искать запас. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
         "en": "An alternate route opens as circumstances shift. Continue the current approach or change priorities before events make the consequences harder to reverse."
       },
       "mutations": [],

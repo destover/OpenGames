@@ -20,9 +20,9 @@
       "evidence": 0,
       "access": "Закрытый музей и три запертых зала.",
       "suspect": "На камере наблюдения виден силуэт в зале фарфора.",
-      "ended": false,
       "location": "entrance",
-      "goalStatus": "active"
+      "goalStatus": "active",
+      "tension": 40
     }
   },
   "actions": {
@@ -42,6 +42,26 @@
     "lock": {
       "label": "Перекрыть выходы",
       "icon": "🔒"
+    },
+    "replay_camera": {
+      "label": "Пересмотреть запись камер",
+      "icon": "📼"
+    },
+    "check_log": {
+      "label": "Сверить журнал перемещений",
+      "icon": "📋"
+    },
+    "seal_vitrine": {
+      "label": "Опечатать витрину и постамент",
+      "icon": "🔐"
+    },
+    "dust_trace": {
+      "label": "Снять отпечатки с рам и дверей",
+      "icon": "🧤"
+    },
+    "talk_curator": {
+      "label": "Поднять дежурного куратора",
+      "icon": "☎️"
     }
   },
   "ui": {
@@ -52,7 +72,8 @@
       "access": "Доступ",
       "suspect": "Подозрение",
       "location": "Место",
-      "goalStatus": "Цель"
+      "goalStatus": "Цель",
+      "tension": "Напряжение"
     }
   },
   "i18n": {
@@ -63,13 +84,19 @@
         "access": "Доступ",
         "suspect": "Подозрение",
         "location": "Место",
-        "goalStatus": "Цель"
+        "goalStatus": "Цель",
+        "tension": "Напряжение"
       },
       "actions": {
         "free_text": "Свободное действие",
         "inspect": "Осмотреть зал",
         "question": "Проверить сотрудника",
-        "lock": "Перекрыть выходы"
+        "lock": "Перекрыть выходы",
+        "replay_camera": "Пересмотреть запись камер",
+        "check_log": "Сверить журнал перемещений",
+        "seal_vitrine": "Опечатать витрину и постамент",
+        "dust_trace": "Снять отпечатки с рам и дверей",
+        "talk_curator": "Поднять дежурного куратора"
       },
       "manifest": {
         "title": "Ночной музей",
@@ -94,13 +121,19 @@
         "access": "Access",
         "suspect": "Suspicion",
         "location": "Location",
-        "goalStatus": "Objective"
+        "goalStatus": "Objective",
+        "tension": "Tension"
       },
       "actions": {
         "free_text": "Free action",
         "inspect": "Inspect hall",
         "question": "Check staff member",
-        "lock": "Lock exits"
+        "lock": "Lock exits",
+        "replay_camera": "Replay the camera footage",
+        "check_log": "Cross-check the transfer journal",
+        "seal_vitrine": "Seal the vitrine and pedestal",
+        "dust_trace": "Take prints from frames and doors",
+        "talk_curator": "Call the duty curator"
       },
       "manifest": {
         "title": "Night Museum",
@@ -147,6 +180,18 @@
       "security": {
         "ru": "Пост охраны",
         "en": "Security desk"
+      },
+      "restoration": {
+        "ru": "Реставрационная",
+        "en": "Restoration room"
+      },
+      "service": {
+        "ru": "Служебный коридор",
+        "en": "Service corridor"
+      },
+      "depot": {
+        "ru": "Склад упаковки",
+        "en": "Packing depot"
       }
     }
   },
@@ -167,36 +212,42 @@
         },
         "beats": {
           "ru": [
-            "Перед открытием пропадает небольшой экспонат; двери зала заперты, а у сотрудников разные последние наблюдения.",
-            "Временная перестановка картин изменила отражение в витрине, и камера фиксирует блик как силуэт.",
-            "Куратор проверяет цепочку передачи предмета, не превращая отсутствие записи в обвинение."
+            "Первая ночная смена: пустой постамент в зале фарфора, целая витрина и силуэт в записи камер, который все смотрят одинаково.",
+            "Тележка с картинами в соседнем зале меняет оптику: отражение пустого постамента в дверном стекле объясняет неподвижный силуэт лучше, чем присутствие человека в кадре.",
+            "Смотритель утверждает, что увёз экспонат в реставрационную из-за скола, но карточка осталась в черновиках, а время он называет по своему телефону.",
+            "Служебный коридор и склад упаковки дают второй след: отпечаток несущей рамы в пыли, ведущий в сторону упаковочных материалов, а не к выходу.",
+            "К рассвету часть смены перестаёт говорить свободно: решение о выходах и о вызове куратора становится таким же уликой, как следы и записи."
           ],
           "en": [
-            "An exhibit goes missing before opening; the room is locked, and staff disagree on when they last saw it.",
-            "A temporary painting move changed a reflection, and the camera records the glare as a figure.",
-            "The curator checks the item’s handoff chain without treating a missing entry as an accusation."
+            "The first hour of the night watch: an empty pedestal in the porcelain hall, an intact vitrine, and a silhouette in the footage that everyone reads the same way.",
+            "The picture trolley in the neighbouring hall changes the optics: a reflection of the empty pedestal in the door glass explains a motionless silhouette better than a person in frame.",
+            "The attendant claims he moved the piece to the restoration room over a chip, but the transfer card is still in drafts and he gives the time from his own phone.",
+            "The service corridor and the packing depot produce a second trace: a carrying frame print in the dust, pointing towards packing material rather than the exit.",
+            "By dawn part of the shift has stopped speaking freely, and the decision about exits and about calling the curator becomes evidence of the same kind as prints and footage."
           ]
         },
         "twists": {
           "ru": [
-            "Смотритель переместил экспонат в карантин после замеченного скола, но карточка осталась в черновиках.",
-            "Два свидетеля видели отражение одного и того же пустого постамента с разных точек; их хронологии не противоречат."
+            "Силуэт оказывается отражением того, кто стоял у постамента: тележка с картинами была развёрнута к витрине, поэтому в дверном стекле отразился пустой постамент, а не человек, который его нёс; косвенно на это указывает одиннадцатьминутная неподвижность фигуры в кадре.",
+            "Пропущенный номер в журнале перемещений объясняется черновиком карточки, а не кражей: смотритель действительно увозил предмет, но по подозрению на скол, и вернул его не на постамент, а в другое место, о котором в журнале не написано."
           ],
           "en": [
-            "The attendant moved the piece to quarantine after spotting a chip, but left the transfer card in draft.",
-            "Two witnesses saw the same empty pedestal reflected from different angles; their timelines do not conflict."
+            "The silhouette turns out to be a reflection of whoever stood by the pedestal: the picture trolley had been turned towards the case, so the door glass reflected the empty pedestal rather than a person carrying it, and the eleven minutes of stillness in frame point the same way.",
+            "The missing journal number is explained by a draft transfer card rather than a theft: the attendant did move the piece over a suspected chip, but returned it somewhere other than the pedestal, and that place is not written in the journal."
           ]
         },
         "paths": {
           "ru": [
-            "Сверить журнал перемещений и камеры: вывод надёжен, но открытие задерживается.",
-            "Попросить сотрудников воспроизвести маршрут: память уточняется, однако это усиливает давление на смену.",
-            "Открыть только проверенные залы: посетители входят, часть экспозиции остаётся закрытой."
+            "Путь документов: сверить журнал перемещений, карточку перемещения и запись сдачи ключа. Предпосылка — верить бумаге; новая информация — номер пропущен из-за черновика, а не из-за кражи; немедленное последствие — часть подозрений снимается точным документом; отложенное — к утру открытие задержится, и часть залов придётся закрыть; риск — бумага окажется слабее отпечатка на раме; точки пересечения — с путём вещественных улик, где бумага и след могут указывать в разные стороны.",
+            "Путь вещественных улик: снять отпечатки с постамента, тележки, дверей и пола в коридоре. Предпосылка — считать след надёжнее воспоминания; новая информация — рама шла от реставрационной к складу упаковки, а не к выходу; немедленное последствие — появляется маршрут предмета; отложенное — пыль и следы стираются, если с уборкой согласится кто-то из смены; риск — след отвечает на вопрос «как», а не «кто»; точки пересечения — с путём документов, где журнал может подтвердить или опровергнуть маршрут.",
+            "Путь камер: пересмотреть запись целиком, включая паузу на перемотку и соседние залы. Предпосылка — доверять плёнке; новая информация — момент сдвига кадра совпадает с движением тележки, а силуэт возникает из отражения; немедленное последствие — силуэт перестаёт быть главной уликой; отложенное — отрезок могут стереть при следующей перемотке архива; риск — на поверку придётся опираться на время с точностью до минуты; точки пересечения — с путём документов, где время из журнала можно сопоставить с записью.",
+            "Путь людей: перекрыть выходы, снять показания с ночной смены, поднять дежурного куратора. Предпосылка — считать, что человек объясняет себя хуже, чем молчит; новая информация — кто в смене был у постамента и когда; немедленное последствие — появляется версия со слов свидетелей; отложенное — напряжение растёт, смена работает поодиночке, а часть залов закрывается до утра; риск — отрезать себе возможность собрать следы в тишине; точки пересечения — с путём вещественных улик, где чужой человек у входа уже оставил след на пыли."
           ],
           "en": [
-            "Cross-check transfers and cameras: the conclusion is sound, but opening is delayed.",
-            "Ask staff to retrace their routes: memory improves, though pressure on the shift grows.",
-            "Open only verified rooms: visitors enter while part of the collection stays closed."
+            "The document path: cross-check the transfer journal, the transfer card and the key handover record. It rests on trusting paper; what it brings back is that the missing number comes from a draft, not from a theft; the immediate effect is that some suspicion is removed with an exact document; the deferred effect is that opening is delayed and some halls stay shut; the risk is that paper proves weaker than a print on a frame; it meets the physical evidence path where document and trace may point in different directions.",
+            "The physical evidence path: take prints from the pedestal, the trolley, the doors and the floor of the corridor. It rests on trusting a trace over a memory; what it brings back is that the frame travelled from the restoration room towards the packing depot, not towards the exit; the immediate effect is that the route of the piece appears; the deferred effect is that dust and prints are lost if anyone on the shift agrees to start cleaning; the risk is that a trace answers how, not who; it meets the document path, where the journal can confirm or contradict the route.",
+            "The camera path: watch the whole recording, including the rewind pause and the neighbouring halls. It rests on trusting the tape; what it brings back is that the frame shift coincides with the trolley moving and the silhouette arises from a reflection; the immediate effect is that the silhouette stops being the main evidence; the deferred effect is that the segment can be erased at the next archive rewind; the risk is that timing will have to be trusted to the minute; it meets the document path, where the journal time can be set against the footage.",
+            "The people path: lock the exits, take statements from the night shift, call the duty curator. It rests on believing that a person explains himself worse than he falls silent; what it brings back is who in the shift stood at the pedestal and when; the immediate effect is that a witness version appears; the deferred effect is that tension rises, the shift works singly, and some halls stay closed until morning; the risk is cutting off the chance to gather traces in quiet; it meets the physical evidence path, where another person at the door has already left a mark in the dust."
           ]
         }
       }
@@ -205,23 +256,35 @@
       "facts": [
         {
           "id": "missing_exhibit",
-          "text": "Из музейной коллекции исчез экспонат; его точное местонахождение неизвестно."
+          "text": "Из зала фарфора исчез небольшой экспонат: витрина цела, замок не тронут, постамент пуст."
         },
         {
           "id": "camera_figure",
-          "text": "Камера наблюдения зафиксировала силуэт в зале фарфора."
+          "text": "Камера наблюдения зафиксировала неподвижный силуэт с ровными плечами в зале фарфора."
+        },
+        {
+          "id": "reflective_panel",
+          "text": "Тележка с картинами стояла спиной к витрине у внутренней двери, и свет витрины отражался в её полированном борту и в дверном стекле."
         },
         {
           "id": "locked_halls",
           "text": "Часть залов закрыта и заперта после окончания приёма посетителей."
         },
         {
-          "id": "security_post",
-          "text": "Пост охраны хранит доступ к наблюдению и сведениям о ночной смене."
+          "id": "shift_log",
+          "text": "В сменном журнале за резервным ключом расписались без времени; ночью ключ никто не сдавал."
         },
         {
-          "id": "museum_staff",
-          "text": "В здании остаются сотрудники; их доступ и знания различаются."
+          "id": "transfer_card",
+          "text": "Карточка перемещения экспоната осталась в черновиках, а номер в журнале пропущен."
+        },
+        {
+          "id": "frame_tracks",
+          "text": "В пыли служебного коридора найден след от несущей рамы, ведущий к складу упаковки."
+        },
+        {
+          "id": "security_post",
+          "text": "Пост охраны хранит доступ к наблюдению, к сменному журналу и к записи о сдаче ключа."
         }
       ]
     }
@@ -231,6 +294,7 @@
       "location",
       "hour",
       "evidence",
+      "tension",
       "access",
       "suspect",
       "goalStatus"
@@ -243,13 +307,20 @@
       "evidence": {
         "min": 0,
         "max": 100
+      },
+      "tension": {
+        "min": 0,
+        "max": 100
       }
     },
     "allowedValues": {
       "location": [
         "entrance",
         "hall",
-        "security"
+        "security",
+        "restoration",
+        "service",
+        "depot"
       ],
       "goalStatus": [
         "active",
@@ -265,9 +336,12 @@
     },
     "instructions": [
       "Действия игрока не ограничены списком кнопок или таблицей переходов; предложенные варианты служат лишь подсказками.",
-      "Не перемещай персонажа и не меняй место действия без описанной причины и непрерывного пути.",
-      "Изменяй состояние только в пределах физических законов, подтверждённых фактов и ограничений пакета.",
-      "Не завершай цель по одному заявлению или догадке; для финала нужны описанные и подтверждённые условия."
+      "Сохраняй причинную непрерывность: каждое изменение состояния вызывается описанным действием и имеет названную причину, а следующий ход опирается на уже подтверждённый результат.",
+      "Не повторяй один и тот же ход как новый: осмотренное, опрошенное и уже опечатанное не становится новой находкой; после повтора меняй содержание хода или признавай отсутствие результата.",
+      "Числовые ресурсы меняются только в пределах пакета: улики растут от проверяемых следов, документов и записей, а не от пересказа, час ночи увеличивается не более чем на единицу за ход, напряжение падает при ясных ответах и объяснениях, но не обнуляется по желанию.",
+      "Не выдавай отвергнутую версию за совершившуюся: если сотрудник отказался, не вспомнил или дал другое время, это результат хода, и его нельзя за один ход превратить в признание.",
+      "Не выдавай догадку за улику: то, что не подтверждено записью, документом, следом или самим человеком, остаётся версией и не увеличивает число улик.",
+      "Не завершай цель по одному подозрению или одному показанию; финал требует подтверждённого хода предмета, проверенной записи и осознанного решения по выходам."
     ],
     "stateChangeRules": [
       {
@@ -277,342 +351,15 @@
       {
         "path": "evidence",
         "maxIncrease": 20
+      },
+      {
+        "path": "tension",
+        "maxIncrease": 25
       }
     ]
   },
   "opening": {
-    "ru": "За час до открытия ночной смотритель замечает пустой постамент в закрытой галерее. Вы — куратор дежурной смены; двери не вскрыты, камеры хранят пробел в записи, а до прихода посетителей нужно понять, что произошло и как сохранить место происшествия\n\nДатчик движения в восточной галерее мигает и гаснет. Витрина закрыта, но ночной охранник уже направляется туда.\n\nЗдесь важно помнить, что к моменту вашего появления история уже началась. Ночной музей, исчезнувший экспонат, камеры, сотрудники и запертые залы. Это не отвлечённый фон и не задача, которую можно решить одним эффектным жестом: исходные условия складывались раньше, а люди, объекты и процессы успели приспособиться к ним. Поэтому любое изменение затронет не только то, что видно сейчас, но и привычный порядок, на котором держатся остальные части ситуации. Вы входите в неё с правом действовать, однако сначала нужно понять, что именно считается нормой и кто подтвердил эту норму.\n\nПервое наблюдение относится к конкретному месту: Вход, Зал фарфора, Пост охраны. В нём есть заметная деталь, которую легко принять за готовый ответ, но пока это только отправная точка. Сведения получены не одновременно и не одним способом; между тем, что зафиксировано, и тем, что уже успели предположить, остаётся промежуток. Если немедленно закрыть его догадкой, следующие данные будут подгоняться под выбранную версию. Если же точно обозначить, что известно, а что пока лишь кажется вероятным, у вас сохранится возможность увидеть несоответствие, не переписывая задним числом всю картину.\n\nВаша задача сформулирована шире, чем устранить ближайшую помеху: Найти улику, проверить сотрудника и перекрыть выходы. На практике это означает одновременно следить за непосредственным результатом и за тем, что этот результат позволит узнать. Быстрый шаг может принести видимое улучшение, но ухудшить сравнимость, доступность или доверие; осторожный — сохранить качество проверки, но оставить проблему без немедленного ответа. Эти соображения не равны по весу во всех обстоятельствах. Их порядок зависит от того, какие сведения вы подтвердите и какой ущерб действительно обратим.\n\nВ материалах есть три слоя: исходное состояние, первое наблюдение и объяснение, которое кто-то успел к нему приложить. Не смешивайте их. Сверить журнал перемещений и камеры: вывод надёжен, но открытие задерживается. Если цифры или свидетельства расходятся, полезно установить, когда и где именно началось расхождение, кто наблюдал явление напрямую и какие условия могли поменяться между проверками. Иногда спорный показатель оказывается не ложным, а неполным: он честно описывает ту точку, где был получен, но не ту, о которой спрашивает команда.\n\nВам не требуется заранее выбирать единственную стратегию на весь эпизод. В текущем пакете доступны разные типы действий: Осмотреть зал, Проверить сотрудника, Перекрыть выходы. Они дают разные виды контроля: одно может уточнить картину, другое — изменить условия, третье — выиграть время или проверить связь между двумя событиями. Выбирая, задайте себе практический вопрос: что должно стать заметно после этого шага, если ваша версия верна? И что вы увидите, если она неверна? Такой критерий превращает действие в проверку, а не просто в жест, после которого приходится надеяться на удачу.\n\nПуть вперёд может разветвиться, и у каждого направления будет собственная цена. Одно решение способно защитить непосредственную цель, но оставить неопределённость; другое — укрепить доказательства, но сузить окно для вмешательства; третье — уменьшить воздействие на окружающую систему, одновременно потребовав новой проверки. Эти различия не делают какой-либо путь правильным заранее. Важнее видеть, какую ценность вы защищаете сейчас, чем рискуете ради неё и какие признаки заставят пересмотреть план. Смена курса допустима, если вы можете объяснить, какая новая информация изменила расчёт.\n\nОглянитесь на Вход, Зал фарфора, Пост охраны. Каждая точка открывает свою часть происходящего и скрывает другую; переход между ними сам по себе может менять условия наблюдения. Не считайте схему исчерпывающей: она описывает доступные места, но не гарантирует, что все важные процессы заметны с одной позиции. Сверяйте время, источник и обстоятельства каждого сообщения. Если кто-то говорит «это было так всегда», спросите, за какой период он отвечает; если прибор показывает отклонение, уточните его рабочий диапазон и место установки. Так вы отделите стабильную закономерность от удобного, но слишком широкого обобщения.\n\nЕсть вопросы, на которые пока нельзя честно ответить. Что здесь причина, а что следствие? Действительно ли наблюдаемое изменение требует немедленного вмешательства? Кто или что понесёт последствия, если вы ошибётесь? Неопределённость не означает, что все версии одинаково вероятны; она означает, что следующая сцена должна дать материал для различения. Не превращайте каждую странность в тайный замысел и не отбрасывайте неудобную улику лишь потому, что она мешает плану. Самый убедительный поворот будет иметь смысл только тогда, когда ранние подробности позволят узнать его, а не просто удивиться ему.\n\nНачните с масштаба, который можно проверить. Запишите исходные условия, выберите один важный показатель и не меняйте сразу несколько факторов, если хотите понять, что повлияло на результат. Если вмешательство необходимо прямо сейчас, обозначьте его как временное и сохраните контрольную точку для сравнения. Если можно подождать, определите, какое именно наблюдение оправдает ожидание и сколько времени оно занимает. Это не бюрократическая осторожность: так вы не потеряете возможность отличить настоящую перемену от эффекта собственных действий.\n\nПостепенно прояснится и человеческая сторона задачи: чьи объяснения опираются на наблюдения, кто отвечает за последствия и кому придётся жить с выбранным порядком после того, как срочность спадёт. Доверие здесь не заменяет измерения, но влияет на то, какие сведения вам сообщат и какие шаги команда сможет выполнить вместе. Объясняйте, что проверяете, не обещайте результата раньше проверки и отмечайте, что именно изменило ваше мнение. Иногда это позволит сохранить сотрудничество даже при разногласии; иногда станет ясно, что разные участники защищают несовместимые интересы.\n\nОтдельно рассмотрите направление 3: Открыть только проверенные залы: посетители входят, часть экспозиции остаётся закрытой. Оно не отменяет остальные возможности и не требует принимать весь план сразу. Спросите, какое подтверждение сделает этот шаг уместным, что останется измеримым после него и кто заметит его побочный эффект первым. Если ответ пока неизвестен, это не повод скрывать пробел: его можно превратить в условие остановки или повторной оценки.",
-    "en": "An hour before opening, the night guard finds an empty pedestal in the closed gallery. You are the duty curator: no doors are forced, camera footage has a gap, and you must understand what happened while preserving the scene before visitors arrive\n\nA motion sensor blinks in the east gallery, then goes dark. The display case is sealed, but the overnight guard is already heading toward that corridor.\n\nRemember that the story had already begun before you arrived. An exhibit goes missing before opening; the room is locked, and staff disagree on when they last saw it. This is not a backdrop or a problem that can be solved with one dramatic gesture: the conditions formed earlier, and people, objects, and processes have adapted to them. Any change will affect more than what is visible now; it may alter the routine that holds other parts of the situation together. You have authority to act, but first you need to understand what counts as normal here and who has actually verified that baseline.\n\nThe first observation belongs to a specific place: Entrance, Porcelain hall, Security desk. It contains a detail that may look like an answer, but for now it is only a starting point. The information was gathered at different times and by different means; a gap remains between what was recorded and the explanation someone has attached to it. If you fill that gap with a guess, later evidence may be forced to fit your theory. If you mark what is known and what only seems likely, you can notice a mismatch without rewriting the whole account afterward.\n\nYour objective is broader than removing the nearest obstacle: Find evidence, check the staff member and secure the exits. In practice, you must watch both the immediate result and what that result lets you learn. A quick intervention may produce visible improvement while weakening comparison, access, or trust; a cautious one may preserve the quality of the evidence while leaving the problem unresolved. Those concerns do not carry the same weight in every situation. Their order depends on what you confirm and on which harm can actually be reversed.\n\nThe available material has three layers: the initial conditions, the first observation, and the explanation someone has already attached to it. Keep them separate. Cross-check transfers and cameras: the conclusion is sound, but opening is delayed. If figures or accounts disagree, establish when and where the mismatch began, who witnessed the event directly, and what could have changed between checks. A disputed reading is sometimes incomplete rather than false: it may accurately describe the point where it was taken, but not the wider area the team is asking about.\n\nYou do not have to choose one strategy for the whole episode in advance. The package offers different kinds of action: Inspect hall, Check staff member, Lock exits. Each gives you a different kind of control: one may clarify the picture, another may change the conditions, and another may buy time or test a connection between events. Before choosing, ask a practical question: what should become visible if your theory is right? What would you see if it is wrong? That turns an action into a test, rather than a gesture followed by a hope for good luck.\n\nThe way forward can branch, and each direction has its own cost. One choice may protect the immediate objective while leaving uncertainty; another may strengthen the evidence while narrowing the window to intervene; a third may reduce impact on the surrounding system while requiring a fresh check. None is automatically correct. What matters is seeing which value you are protecting, what you risk for it, and what signs would make you reconsider. A change of course is sound when you can explain what new information changed the calculation.\n\nLook at Entrance, Porcelain hall, Security desk. Each point reveals one part of the situation and hides another; moving between them can itself change the conditions of observation. Do not treat the map as complete: it lists available places but cannot guarantee that every important process is visible from one position. Compare the time, source, and circumstances of each report. If someone says “it has always been this way,” ask what period they mean; if an instrument shows a deviation, check its operating range and location. This helps separate a stable pattern from a convenient but overly broad conclusion.\n\nSome questions cannot yet be answered honestly. What is a cause, and what is an effect? Does the observed change truly require immediate intervention? Who or what bears the cost if you are wrong? Uncertainty does not mean every theory is equally likely; it means the next scene must give you a way to distinguish them. Do not turn every oddity into a hidden scheme, and do not discard inconvenient evidence because it disrupts a plan. A convincing turn will make sense only if earlier details let you recognize it, not merely be surprised by it.\n\nStart at a scale you can check. Record the baseline, choose one important measure, and avoid changing several factors at once if you need to know what caused the result. If action is necessary now, mark it as temporary and preserve a control point for comparison. If waiting is possible, specify what observation would justify the delay and how long it will take. This is not caution for its own sake: it preserves your ability to distinguish a real change from the effect of your own intervention.\n\nThe human side of the task will become clearer too: whose account rests on observation, who is responsible for the consequences, and who must live with the chosen arrangement after the emergency passes. Trust does not replace measurement, but it affects what people tell you and what the team can do together. Explain what you are checking, do not promise a result before it is verified, and note what changed your mind. That may preserve cooperation through disagreement; it may also show that different participants are protecting interests that cannot be reconciled.\n\nConsider approach 3 separately: Open only verified rooms: visitors enter while part of the collection stays closed. It does not erase the other options or require you to commit to the whole plan at once. Ask what evidence would make this step appropriate, what will remain measurable afterward, and who will notice its side effect first. If the answer is not yet known, do not hide the gap; turn it into a condition for pausing or reassessing."
-  },
-  "preparedBranches": [
-    {
-      "id": "hour_pressure",
-      "actions": [
-        "inspect",
-        "question",
-        "lock",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "Датчик движения в восточной галерее мигает и гаснет. Витрина закрыта, но ночной охранник уже направляется туда.",
-        "en": "A motion sensor blinks in the east gallery, then goes dark. The display case is sealed, but the overnight guard is already heading toward that corridor."
-      },
-      "mutations": [],
-      "suggestions": [
-        {
-          "text": {
-            "ru": "Сверить обстановку и выбрать безопасный приоритет",
-            "en": "Recheck the situation and choose a safe priority"
-          }
-        },
-        {
-          "text": {
-            "ru": "Сохранить текущий план и подготовить запасной",
-            "en": "Keep the current plan and prepare a backup"
-          }
-        }
-      ]
-    },
-    {
-      "id": "turning_point_hour",
-      "when": {
-        "hour": {
-          "gte": 15
-        }
-      },
-      "actions": [
-        "inspect",
-        "question",
-        "lock",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "Датчик движения в восточной галерее мигает и гаснет. Витрина заперта, но ночной охранник уже направляется в этот коридор. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
-        "en": "An alternate route opens as circumstances shift. Continue the current approach or change priorities before events make the consequences harder to reverse."
-      },
-      "mutations": [],
-      "suggestions": [
-        {
-          "text": {
-            "ru": "Сверить обстановку и выбрать безопасный приоритет",
-            "en": "Recheck the situation and choose a safe priority"
-          }
-        },
-        {
-          "text": {
-            "ru": "Сохранить текущий план и подготовить запасной",
-            "en": "Keep the current plan and prepare a backup"
-          }
-        }
-      ]
-    },
-    {
-      "id": "authored_turn_1",
-      "minTurns": 2,
-      "actions": [
-        "inspect",
-        "question",
-        "lock",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "Смотритель переместил экспонат в карантин после замеченного скола, но карточка осталась в черновиках.",
-        "en": "The attendant moved the piece to quarantine after spotting a chip, but left the transfer card in draft."
-      },
-      "mutations": [],
-      "suggestions": [],
-      "responses": {
-        "inspect": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Осмотреть зал». Команда продолжает по пути: Сверить журнал перемещений и камеры: вывод надёжен, но открытие задерживается. Улика раскрывает поворот: Смотритель переместил экспонат в карантин после замеченного скола, но карточка осталась в черновиках.",
-            "en": "You choose “Inspect hall.” The team continues along this path: Cross-check transfers and cameras: the conclusion is sound, but opening is delayed. The evidence reveals the turn: The attendant moved the piece to quarantine after spotting a chip, but left the transfer card in draft."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Сверить журнал перемещений и камеры: вывод надёжен, но открытие задерживается.",
-                "en": "Cross-check transfers and cameras: the conclusion is sound, but opening is delayed."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Попросить сотрудников воспроизвести маршрут: память уточняется, однако это усиливает давление на смену.",
-                "en": "Ask staff to retrace their routes: memory improves, though pressure on the shift grows."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Открыть только проверенные залы: посетители входят, часть экспозиции остаётся закрытой.",
-                "en": "Open only verified rooms: visitors enter while part of the collection stays closed."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "question": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Проверить сотрудника». Команда продолжает по пути: Попросить сотрудников воспроизвести маршрут: память уточняется, однако это усиливает давление на смену. Улика раскрывает поворот: Смотритель переместил экспонат в карантин после замеченного скола, но карточка осталась в черновиках.",
-            "en": "You choose “Check staff member.” The team continues along this path: Ask staff to retrace their routes: memory improves, though pressure on the shift grows. The evidence reveals the turn: The attendant moved the piece to quarantine after spotting a chip, but left the transfer card in draft."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Сверить журнал перемещений и камеры: вывод надёжен, но открытие задерживается.",
-                "en": "Cross-check transfers and cameras: the conclusion is sound, but opening is delayed."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Попросить сотрудников воспроизвести маршрут: память уточняется, однако это усиливает давление на смену.",
-                "en": "Ask staff to retrace their routes: memory improves, though pressure on the shift grows."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Открыть только проверенные залы: посетители входят, часть экспозиции остаётся закрытой.",
-                "en": "Open only verified rooms: visitors enter while part of the collection stays closed."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "lock": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Перекрыть выходы». Команда продолжает по пути: Открыть только проверенные залы: посетители входят, часть экспозиции остаётся закрытой. Улика раскрывает поворот: Смотритель переместил экспонат в карантин после замеченного скола, но карточка осталась в черновиках.",
-            "en": "You choose “Lock exits.” The team continues along this path: Open only verified rooms: visitors enter while part of the collection stays closed. The evidence reveals the turn: The attendant moved the piece to quarantine after spotting a chip, but left the transfer card in draft."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Сверить журнал перемещений и камеры: вывод надёжен, но открытие задерживается.",
-                "en": "Cross-check transfers and cameras: the conclusion is sound, but opening is delayed."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Попросить сотрудников воспроизвести маршрут: память уточняется, однако это усиливает давление на смену.",
-                "en": "Ask staff to retrace their routes: memory improves, though pressure on the shift grows."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Открыть только проверенные залы: посетители входят, часть экспозиции остаётся закрытой.",
-                "en": "Open only verified rooms: visitors enter while part of the collection stays closed."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "free_text": {
-          "narrative": {
-            "ru": "Ваш свободный план меняет способ проверки. Команда раскрывает поворот по найденной улике: Смотритель переместил экспонат в карантин после замеченного скола, но карточка осталась в черновиках.",
-            "en": "Your free-form plan changes how the team checks the clue. The turn is revealed by the evidence: The attendant moved the piece to quarantine after spotting a chip, but left the transfer card in draft."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Сверить журнал перемещений и камеры: вывод надёжен, но открытие задерживается.",
-                "en": "Cross-check transfers and cameras: the conclusion is sound, but opening is delayed."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Попросить сотрудников воспроизвести маршрут: память уточняется, однако это усиливает давление на смену.",
-                "en": "Ask staff to retrace their routes: memory improves, though pressure on the shift grows."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Открыть только проверенные залы: посетители входят, часть экспозиции остаётся закрытой.",
-                "en": "Open only verified rooms: visitors enter while part of the collection stays closed."
-              },
-              "icon": "↗️"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "id": "authored_turn_2",
-      "minTurns": 4,
-      "actions": [
-        "inspect",
-        "question",
-        "lock",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "Два свидетеля видели отражение одного и того же пустого постамента с разных точек; их хронологии не противоречат.",
-        "en": "Two witnesses saw the same empty pedestal reflected from different angles; their timelines do not conflict."
-      },
-      "mutations": [],
-      "suggestions": [],
-      "responses": {
-        "inspect": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Осмотреть зал». Команда продолжает по пути: Сверить журнал перемещений и камеры: вывод надёжен, но открытие задерживается. Улика раскрывает поворот: Два свидетеля видели отражение одного и того же пустого постамента с разных точек; их хронологии не противоречат.",
-            "en": "You choose “Inspect hall.” The team continues along this path: Cross-check transfers and cameras: the conclusion is sound, but opening is delayed. The evidence reveals the turn: Two witnesses saw the same empty pedestal reflected from different angles; their timelines do not conflict."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Сверить журнал перемещений и камеры: вывод надёжен, но открытие задерживается.",
-                "en": "Cross-check transfers and cameras: the conclusion is sound, but opening is delayed."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Попросить сотрудников воспроизвести маршрут: память уточняется, однако это усиливает давление на смену.",
-                "en": "Ask staff to retrace their routes: memory improves, though pressure on the shift grows."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Открыть только проверенные залы: посетители входят, часть экспозиции остаётся закрытой.",
-                "en": "Open only verified rooms: visitors enter while part of the collection stays closed."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "question": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Проверить сотрудника». Команда продолжает по пути: Попросить сотрудников воспроизвести маршрут: память уточняется, однако это усиливает давление на смену. Улика раскрывает поворот: Два свидетеля видели отражение одного и того же пустого постамента с разных точек; их хронологии не противоречат.",
-            "en": "You choose “Check staff member.” The team continues along this path: Ask staff to retrace their routes: memory improves, though pressure on the shift grows. The evidence reveals the turn: Two witnesses saw the same empty pedestal reflected from different angles; their timelines do not conflict."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Сверить журнал перемещений и камеры: вывод надёжен, но открытие задерживается.",
-                "en": "Cross-check transfers and cameras: the conclusion is sound, but opening is delayed."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Попросить сотрудников воспроизвести маршрут: память уточняется, однако это усиливает давление на смену.",
-                "en": "Ask staff to retrace their routes: memory improves, though pressure on the shift grows."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Открыть только проверенные залы: посетители входят, часть экспозиции остаётся закрытой.",
-                "en": "Open only verified rooms: visitors enter while part of the collection stays closed."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "lock": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Перекрыть выходы». Команда продолжает по пути: Открыть только проверенные залы: посетители входят, часть экспозиции остаётся закрытой. Улика раскрывает поворот: Два свидетеля видели отражение одного и того же пустого постамента с разных точек; их хронологии не противоречат.",
-            "en": "You choose “Lock exits.” The team continues along this path: Open only verified rooms: visitors enter while part of the collection stays closed. The evidence reveals the turn: Two witnesses saw the same empty pedestal reflected from different angles; their timelines do not conflict."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Сверить журнал перемещений и камеры: вывод надёжен, но открытие задерживается.",
-                "en": "Cross-check transfers and cameras: the conclusion is sound, but opening is delayed."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Попросить сотрудников воспроизвести маршрут: память уточняется, однако это усиливает давление на смену.",
-                "en": "Ask staff to retrace their routes: memory improves, though pressure on the shift grows."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Открыть только проверенные залы: посетители входят, часть экспозиции остаётся закрытой.",
-                "en": "Open only verified rooms: visitors enter while part of the collection stays closed."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "free_text": {
-          "narrative": {
-            "ru": "Ваш свободный план меняет способ проверки. Команда раскрывает поворот по найденной улике: Два свидетеля видели отражение одного и того же пустого постамента с разных точек; их хронологии не противоречат.",
-            "en": "Your free-form plan changes how the team checks the clue. The turn is revealed by the evidence: Two witnesses saw the same empty pedestal reflected from different angles; their timelines do not conflict."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Сверить журнал перемещений и камеры: вывод надёжен, но открытие задерживается.",
-                "en": "Cross-check transfers and cameras: the conclusion is sound, but opening is delayed."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Попросить сотрудников воспроизвести маршрут: память уточняется, однако это усиливает давление на смену.",
-                "en": "Ask staff to retrace their routes: memory improves, though pressure on the shift grows."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Открыть только проверенные залы: посетители входят, часть экспозиции остаётся закрытой.",
-                "en": "Open only verified rooms: visitors enter while part of the collection stays closed."
-              },
-              "icon": "↗️"
-            }
-          ]
-        }
-      }
-    }
-  ]
+    "ru": "За час до открытия в зале фарфора горит свет, хотя он там не нужен. Он горит потому, что кто-то нажал кнопку у внутренней двери и не вернулся к ней, и смотритель, проходя мимо, увидел сначала пыльный прямоугольник на полу, а потом пустой постамент. Стекло витрины цело, замок не тронут, и это не похоже на ограбление. Похоже на то, что предмет вынесли, а потом вернули почти на место, только про постамент забыли. Под витриной лежит инвентарный ярлык с прошлогодней инвентаризации, ценник не тронут, и бумага под стеклом хранит номер, который завтра начнут сверять в первую очередь. В зале пахнет теплым камнем и остывшим воском: свет включили, чтобы работать, а выключили, когда ушли, не дождавшись конца.\n\nВы — куратор дежурной смены, и ночь вам досталась потому, что уезжавший коллега менялся с вами шесть недель назад и оставил не регламент, а ощущение, что всё решается звонком в соседний зал. Двадцать минут назад вы спросили дежурного, где резервный ключ, и он ответил уверенно, потом ответил иначе, а потом сказал, что не помнит, и навёл на сменный журнал, в котором за ключом кто-то расписался, но не проставил время. С тех пор у вас на руках пустой постамент, тёплый свет и человек, который умеет говорить в двух режимах сразу.\n\nПервое, что даёт время, — записи камер. Архив ведётся кольцом: одиннадцать минут записи на цикл, пауза на перемотку, и между ними нет отметок, потому что отметки добавляют вручную и в этом смене не добавлял никто. В зале фарфора на отрезке, который разбирают все, отчётливо видно силуэт: тёмный, с ровными плечами, в правой стороне кадра. Он стоит неподвижно одиннадцать минут, а потом пропадает в тот момент, когда картинка сдвигается, и это совпадает по времени с движением тележки с картинами в соседнем зале.\n\nСовпадает — и это первое подозрение, которое стоит проверить, а не принять. В зале накануне висела передвижная выставка, и для неё часть картин увезли в коридор, одну поставили на тележку, и тележку развернули от витрины фарфоровой мебелью. Свет от витрины бьёт в её полированный бок, и в дверном стекле отражается всё, что стоит в зале, включая пустой постамент и фигуру человека, который там никого не носил. Силуэт в кадре может быть отражением того, кто стоял у постамента на самом деле, и это объясняет ровные плечи и неподвижность лучше, чем человек, который одиннадцать минут не двигался.\n\nСмотритель, с которым вы говорили, вспоминает вечер иначе. Он уверяет, что забирал экспонат по подозрению на скол, увиденный ещё на прошлой неделе, что положил его в реставрационную, и что карточку перемещения оставил в черновиках, потому что торопился к отправлению комиссии. Когда вы просите назвать время, он называет сначала час, потом тот же час, но другими словами, и объясняет это тем, что смотрел на часы на телефоне, а не на стенные. Это можно проверить: в посте охраны есть запись, когда смена сдавала ключ и кто проходил по турнику. Смена сегодня не сдавала ключ вовсе: охрана на месте всю ночь, а журнал с подписью может относиться к любой из прошлых недель.\n\nЧисло улик у вас пока два: отпечаток от несущей рамы в пыли у служебного коридора и разрыв во времени в журнале перемещений. Скелетов он не даёт — в журнале пропущен один номер и не проставлено ни «перемещено», ни «возвращено», а смотритель настаивает на том, что вернул предмет. Третий след, если он есть, лежит в реставрационной, куда ночью никто не ходит и где на камеру попадает только дверь.\n\nДо открытия остаётся время, которого не хватит ни на что, кроме порядка. Если вы перекроете выходы, смена встанет в коридорах, часть экспозиции придётся закрыть дверь в лицо утренней очереди, и человек, который сейчас путается в двух ответах, поймёт, что за ним пришли целенаправленно. Если не перекроете, вы сохраните смене обычный режим и свободный выход, а значит и свободный выход для того, кто ещё не вынес из здания ничего, но вполне может.\n\nСейчас перед вами то, что есть: час ночной смены, две улики, доступ к трём запертым залам, подозрение, записанное как силуэт в зале фарфора, и здание, в котором ещё никто не уехал. Проверять журнал, смотреть запись целиком, идти в реставрационную или требовать объяснений — можно в любом порядке, и ни одна из этих линий не закроется сама, когда наступит утро.",
+    "en": "The lights are on in the porcelain hall an hour before opening, and there is no reason for them to be. They are on because someone pressed the switch by the inner door and never came back to it, and the attendant, walking past, saw first a rectangle of clean dust on the floor and then an empty pedestal. The vitrine glass is intact, the lock has not been touched, and none of that looks like theft. It looks like the piece was carried out and brought back almost to its place, as if the pedestal had simply been forgotten.\n\nYou are the curator on duty tonight, and the night came to you because the colleague who was meant to leave six weeks ago traded shifts with you and handed over not a procedure but an impression: that everything here gets settled by a phone call to the next hall. Twenty minutes ago you asked the guard where the spare key is, and he answered with confidence, then answered differently, then said he did not remember, and pointed you at the shift log, where somebody has signed for the key without entering a time. Since then you have a bare pedestal, a warm light, and a man who can speak in two registers at once.\n\nThe first thing that supplies time is the camera record. The archive runs on a loop: eleven minutes of footage, a pause for the rewind, and no marks between, because the marks are added by hand and nobody in this shift has added any. In the porcelain hall, on the segment everyone keeps replaying, there is a clear silhouette: dark, with even shoulders, in the right half of the frame. It stands motionless for eleven minutes and then is gone, at the moment the picture shifts, and that moment coincides with a trolley of paintings moving in the neighbouring hall.\n\nCoincides — and that is the first suspicion worth testing rather than accepting. Yesterday the hall hosted a travelling exhibition, and part of the pictures had been taken down for it: one went onto a trolley, and the trolley was turned with its polished back to the porcelain case. Light from the case throws onto it, and the glass of the inner door reflects everything standing in the hall, including the empty pedestal and the shape of whoever was in fact standing beside it. The silhouette in the footage may be the reflection of the person who did approach the pedestal, and that explains the even shoulders and the stillness better than a human being who stood still for eleven minutes.\n\nThe attendant you spoke to remembers the evening differently. He insists he removed the piece because of a chip he noticed the week before, that he put it in the restoration room, and that he left the transfer card in drafts because he was hurrying to see a commission off. When you ask for a time, he gives an hour first and the same hour afterwards in different words, and explains that he was looking at his phone rather than the wall clock. That can be checked: the security desk has a record of when the watch handed over the key and who passed the turnstile. No key changed hands tonight. The guard has been at his post all night, and the signed entry in the log may belong to any of the past few weeks.\n\nYou have two pieces of evidence so far: marks in the dust left by a carrying frame near the service corridor, and a gap in time in the transfer journal. Neither yields a name on its own. A single number is missing from the journal, and it is marked neither as moved nor as returned, while the attendant maintains he put the piece back. The third trace, if there is one, lies in the restoration room, where nobody goes at night and where the cameras see only the door.\n\nWhat is left before opening is time, and it is not enough for anything except order. If you lock the exits, the shift ends up standing in the corridors, part of the exhibition has to be closed to the morning queue, and the man who is currently muddling two answers will understand that someone has come for him on purpose. If you do not, the shift keeps its ordinary rhythm and its ordinary way out, and with it a way out for whoever has not yet taken a single thing out of the building but easily might.\n\nThis is what you have: the first hour of the night watch, two pieces of evidence, access to three locked halls, a suspicion recorded as a silhouette in the porcelain hall, and a building in which nobody has yet left. You can check the journal, watch the full recording, go down to the restoration room or press for answers, in any order you like, and none of those lines will close by itself when morning comes."
+  }
 }

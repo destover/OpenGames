@@ -19,8 +19,8 @@
       "sol": 1,
       "power": 65,
       "water": 42,
+      "filters": 35,
       "storm": "Пыльная буря приближается с запада.",
-      "ended": false,
       "location": "dome",
       "goalStatus": "active"
     }
@@ -42,6 +42,22 @@
     "ration": {
       "label": "Сократить расход воды",
       "icon": "💧"
+    },
+    "filter": {
+      "label": "Заменить картридж фильтра",
+      "icon": "🧪"
+    },
+    "vent": {
+      "label": "Проверить воздуховоды и стыки",
+      "icon": "🌬️"
+    },
+    "comms": {
+      "label": "Выйти на связь с Землёй",
+      "icon": "📡"
+    },
+    "rover": {
+      "label": "Вывести ровер к западной батарее",
+      "icon": "🚙"
     }
   },
   "ui": {
@@ -50,6 +66,7 @@
       "sol": "Сол",
       "power": "Энергия",
       "water": "Вода",
+      "filters": "Картриджи фильтра",
       "storm": "Буря",
       "location": "Место",
       "goalStatus": "Цель"
@@ -79,6 +96,22 @@
       "panels": {
         "ru": "Солнечные панели",
         "en": "Solar panels"
+      },
+      "airlock": {
+        "ru": "Шлюз",
+        "en": "Airlock"
+      },
+      "water_room": {
+        "ru": "Водный отсек",
+        "en": "Water room"
+      },
+      "comms_room": {
+        "ru": "Радиорубка",
+        "en": "Radio room"
+      },
+      "west_battery": {
+        "ru": "Западная батарея",
+        "en": "West battery"
       }
     }
   },
@@ -93,6 +126,7 @@
         "sol": "Сол",
         "power": "Энергия",
         "water": "Вода",
+        "filters": "Картриджи фильтра",
         "storm": "Буря",
         "location": "Место",
         "goalStatus": "Цель"
@@ -101,11 +135,21 @@
         "free_text": "Свободное действие",
         "seal": "Укрепить купол",
         "solar": "Повернуть панели",
-        "ration": "Сократить расход воды"
+        "ration": "Сократить расход воды",
+        "filter": "Заменить картридж фильтра",
+        "vent": "Проверить воздуховоды и стыки",
+        "comms": "Выйти на связь с Землёй",
+        "rover": "Вывести ровер к западной батарее"
       },
       "values": {
         "Пыльная буря приближается с запада.": "Пыльная буря приближается с запада.",
         "Купол укреплен и готов к буре.": "Купол укреплен и готов к буре.",
+        "Фронт с пылью дошёл до западной батареи, видимость упала.": "Фронт с пылью дошёл до западной батареи, видимость упала.",
+        "Пыль осела на панелях, выработка идёт неравномерно.": "Пыль осела на панелях, выработка идёт неравномерно.",
+        "Запас картриджей фильтра уменьшился.": "Запас картриджей фильтра уменьшился.",
+        "Связь с Землёй шла с перебоями, сеанс короткий.": "Связь с Землёй шла с перебоями, сеанс короткий.",
+        "Водный отсек проверен, течь в контуре не найдена.": "Водный отсек проверен, течь в контуре не найдена.",
+        "Стык затянут, уплотнение восстановлено.": "Стык затянут, уплотнение восстановлено.",
         "active": "В процессе",
         "completed": "Выполнена",
         "failed": "Провалена"
@@ -121,6 +165,7 @@
         "sol": "Sol",
         "power": "Power",
         "water": "Water",
+        "filters": "Filter cartridges",
         "storm": "Storm",
         "location": "Location",
         "goalStatus": "Objective"
@@ -129,11 +174,21 @@
         "free_text": "Free action",
         "seal": "Reinforce dome",
         "solar": "Align solar panels",
-        "ration": "Ration resources"
+        "ration": "Ration resources",
+        "filter": "Replace the filter cartridge",
+        "vent": "Inspect air ducts and seams",
+        "comms": "Open a link with Earth",
+        "rover": "Send the rover to the west battery"
       },
       "values": {
         "Пыльная буря приближается с запада.": "A dust storm is approaching from the west.",
         "Купол укреплен и готов к буре.": "The dome is reinforced and ready for the storm.",
+        "Фронт с пылью дошёл до западной батареи, видимость упала.": "The dust front has reached the west battery; visibility is down.",
+        "Пыль осела на панелях, выработка идёт неравномерно.": "Dust has settled on the panels; output is uneven.",
+        "Запас картриджей фильтра уменьшился.": "The stock of filter cartridges has gone down.",
+        "Связь с Землёй шла с перебоями, сеанс короткий.": "Contact with Earth broke up; the window was short.",
+        "Водный отсек проверен, течь в контуре не найдена.": "The water room is checked; no leak in the loop.",
+        "Стык затянут, уплотнение восстановлено.": "The seam is tightened; the seal is restored.",
         "active": "In progress",
         "completed": "Completed",
         "failed": "Failed"
@@ -146,7 +201,9 @@
       "physicalRules": [
         "Снаружи форпоста нет пригодной для дыхания атмосферы; выход требует герметичной защиты.",
         "Пыльная буря снижает видимость и может ухудшить выработку солнечных панелей.",
-        "Энергия и вода не восстанавливаются без работающего источника или найденного запаса; повреждения требуют ремонта."
+        "Энергия и вода не восстанавливаются без работающего источника или найденного запаса; повреждения требуют ремонта.",
+        "Возврат воды в контур зависит от исправного фильтра: без картриджа отмеченный перегон остаётся просто объёмом.",
+        "Работа радиорубки, насосов и приводов панелей идёт от того же источника, что и жизнеобеспечение."
       ],
       "continuity": "Соблюдай известное состояние персонажа и мира, расположение, ресурсы и причинность всех предыдущих ходов.",
       "tone": "Взрослая реалистичная история: свобода действий игрока сочетается с правдоподобными последствиями и ограничениями мира.",
@@ -157,36 +214,42 @@
         },
         "beats": {
           "ru": [
-            "На форпост приближается буря; энергия, вода и герметичность купола ограничивают время внешних работ.",
-            "Неровный выход панели совпадает с полосой старого следа обслуживания, а не с повреждением; затенённый датчик ошибочно считает запас равномерным.",
-            "Экипаж выбирает между ремонтом снаружи, перераспределением энергии и сохранением запаса для систем жизнеобеспечения."
+            "Пыльный фронт с запада съедает обзор и садится на панели; форпост живёт на шестьдесят пяти процентах энергии и сорока двух процентах воды, и оба числа с этого момента только убывают.",
+            "Просадка герметичности на западном стыке совпадает по времени с ручным переводом западной ветки; смена хочет знать, что важнее: стык, панели или фильтр, и ждёт порядка действий.",
+            "До прихода фронта выбирается приоритет вечерних работ: укрепление уплотнений, очистка панелей или замена картриджа, и каждый выбор тянет из одного и того же остатка.",
+            "Первая ночь под плотной пылью показывает разницу: сделанное держит, несделанное придётся делать в худших условиях, при заглушённых датчиках и одном исправном скафандре.",
+            "После фронта снимают реальные показания: выход панелей падает полосой, совпадающей со старой полосой обслуживания, а отчёт о воде расписан в две колонки, и сходятся только обе.",
+            "Открытым остаётся решение форпоста: удержать ли расчётный цикл зимы на честных цифрах или на цифрах, которые приятнее и опаснее."
           ],
           "en": [
-            "A storm approaches the outpost; power, water, and hull integrity limit exterior work.",
-            "Uneven panel output follows an old service track, not damage; a shaded sensor makes reserves look uniform.",
-            "The crew must choose an exterior repair, power rationing, or preserve supplies for life support."
+            "The dust front from the west eats up visibility and settles on the panels; the outpost runs on sixty-five percent power and forty-two percent water, and both numbers only fall from here.",
+            "The seal loss at the west seam coincides in time with the manual switch of the western feed; the crew wants to know what matters first: the seam, the panels or the filter, and it waits for an order.",
+            "Before the front arrives, the evening priority is chosen: reinforce the seals, clean the panels, or replace the cartridge, and each choice draws from the same remaining margin.",
+            "The first night under dense dust shows the difference: what was done holds, what was not will have to be done in worse conditions, with shaded sensors and a single serviceable suit.",
+            "After the front, real readings are taken: panel output drops in a band that matches the old service track, and the water report is split into two columns, of which only both together add up.",
+            "The outpost's own decision stays open: hold the winter cycle on honest numbers, or on numbers that read better and are more dangerous."
           ]
         },
         "twists": {
           "ru": [
-            "Пыльная полоса на панели образована электростатически притянутой мелкой фракцией; резкая очистка может повредить покрытие.",
-            "Вода в отчёте включает объём, который ещё нельзя вернуть без фильтра; цифра резерва была оптимистичной, не поддельной."
+            "Пыльная полоса на панелях образована электростатически притянутой мелкой фракцией, и её нельзя счищать жёсткой щёткой: предварительный признак — узкая полоса, совпавшая со старой полосой обслуживания, а причинная опора — статическое осаждение на металле и кремниевом покрытии, а не механическое повреждение; цена ошибки здесь — уход выработки вместе с покрытием.",
+            "Вода в отчёте включает объём, который числится перегоном и физически вернётся в контур только через исправный фильтр; предварительный признак — две колонки расхода, сходящиеся только вместе, при заглушённом козырьком датчике картриджей, а причинная опора — связь между очисткой пыли и откачиванием осадка из отстойника; вывод: запас был оптимистичен, а не подделан, и ошибка в том, что воду считали дважды."
           ],
           "en": [
-            "An electrostatically attracted dust band coats the panel; aggressive cleaning could damage its surface.",
-            "The water report includes volume that cannot be reclaimed without a filter; the reserve figure was optimistic, not falsified."
+            "The dust band on the panels is a fine fraction held by electrostatic attraction, and it must not be scrubbed off with a stiff brush: the preliminary sign is a narrow band matching the old service track, and the causal support is static settling on metal and silicon coating rather than mechanical damage; the price of getting this wrong is output lost together with the coating.",
+            "The water in the report includes volume booked as decant that physically returns to the loop only through a working filter; the preliminary sign is two consumption columns that only add up together, behind a cartridge sensor shaded by its own cowl, and the causal support is the link between panel cleaning and drawing the tank-bottom sediment; the conclusion: the reserve was optimistic, not falsified, and the error is counting the same water twice."
           ]
         },
         "paths": {
           "ru": [
-            "Выходить на ремонт до бури: мощность выше, но скафандр и время становятся критическим риском.",
-            "Перевести оборудование в экономичный режим: давление стабильнее, научная работа останавливается.",
-            "Сохранить фильтр и отложить очистку панели: вода надёжнее, энергетический запас сокращается."
+            "Наружная работа до фронта. Предпосылки: энергия держится выше шестидесяти и есть сухой интервал между порывами. Новая информация: реальная герметичность западной секции и выработка панелей, снятая вблизи. Немедленное последствие: часть энергии уходит в привод и скафандр, выработка падает на время работ. Отложенное: износ уплотнений и сорванное окно на второй выход. Риск: порыв срывает работу и уводит воду из купола. Компромисс: экономить картриджи и воду ради одного выхода. Точки пересечения: решения по куполу, панели, связи и водному отсеку.",
+            "Экономичный режим и водный контур. Предпосылки: смена соглашается на пониженное давление и отказ от второстепенной работы. Новая информация: реальный расход воды по постам и остаток картриджей, который считывается вручную. Немедленное последствие: расход и выработка падают вместе, давление стабильно. Отложенное: то, что не расходуется сегодня, не вернётся в буру, и окно для восстановления сужается. Риск: ошибка в оценке расхода приводит к тихой просадке. Компромисс: тишина в эфире и остановленная работа инженеров. Точки пересечения: наружная работа, замена картриджа, выход на связь.",
+            "Удержать связь и готовить решение к окну. Предпосылки: антенна цела и есть свободный оператор связи. Новая информация: реальные сроки сеанса и готовность экипажа к решению, которого ждут извне. Немедленное последствие: энергия уходит на передачу, вода не расходуется. Отложенное: координация не отменяет расхода, а уточняет его и меняет цену ошибки. Риск: сеанс обрывается, и решение приходится принимать вслепую. Компромисс: снимать задачи с инженеров, оставляя меньше рук на куполе. Точки пересечения: выбор режима, наружные работы, порядок приоритетов."
           ],
           "en": [
-            "Repair before the storm: power improves, while suit and time become critical risks.",
-            "Switch to economy mode: pressure stays stable, research pauses.",
-            "Preserve the filter and defer cleaning: water is safer, energy reserve shrinks."
+            "Exterior work before the front. Premises: power holds above sixty and there is a dry interval between gusts. New information: the real tightness of the west section and panel output read up close. Immediate consequence: part of the power goes to the drive and the suit, and output dips while the work runs. Deferred: worn seals and a lost window for a second exit. Risk: a gust breaks the work off and takes water out of the dome. Trade-off: spare cartridges and water for a single exit. Crossing points: the decisions on the dome, the panels, the link and the water room.",
+            "Economy mode and the water loop. Premises: the shift accepts lower pressure and dropping secondary work. New information: the real water draw at each post and the cartridge count read by hand. Immediate consequence: consumption and output fall together, pressure stays steady. Deferred: what is not spent today does not come back during the storm, and the recovery window narrows. Risk: a misjudged consumption rate ends in a slow sag. Trade-off: silence on the radio and engineers with nothing to do. Crossing points: exterior work, the cartridge change, the link.",
+            "Hold the link and prepare a decision for the window. Premises: the antenna is intact and a comms operator is free. New information: the real length of the session and how ready the crew is for a decision that comes from outside. Immediate consequence: power goes to transmission and no water is spent. Deferred: coordination does not cancel spending, it prices it and changes the cost of a mistake. Risk: the session drops and the decision must be taken blind. Trade-off: pulling tasks off the engineers, leaving fewer hands on the dome. Crossing points: the mode choice, exterior work, the order of priorities."
           ]
         }
       }
@@ -212,6 +275,22 @@
         {
           "id": "communications",
           "text": "Связь с Землёй нестабильна; немедленная помощь не гарантирована."
+        },
+        {
+          "id": "west_battery",
+          "text": "Западная батарея панелей стоит с наветренной стороны и принимает пыль первой; в её обслуживании оставлена старая полоса прохода."
+        },
+        {
+          "id": "water_loop",
+          "text": "Водный отсек соединён с отстойником и фильтром: осадок из отстойника уходит в контур только после замены картриджа, а запас картриджей ограничен."
+        },
+        {
+          "id": "airlock_suits",
+          "text": "Шлюз оснащён одним исправным скафандром; второй скафандр лежит на верстаке и ждёт запчасти, которой на форпосте нет."
+        },
+        {
+          "id": "shift_roster",
+          "text": "На смене дежурят инженер, дежурный связи и водный оператор; решения принимаются по их отчётам, а не по общему сводному отчёту."
         }
       ]
     }
@@ -222,6 +301,7 @@
       "sol",
       "power",
       "water",
+      "filters",
       "storm",
       "goalStatus"
     ],
@@ -237,12 +317,20 @@
       "water": {
         "min": 0,
         "max": 100
+      },
+      "filters": {
+        "min": 0,
+        "max": 100
       }
     },
     "allowedValues": {
       "location": [
         "dome",
-        "panels"
+        "panels",
+        "airlock",
+        "water_room",
+        "comms_room",
+        "west_battery"
       ],
       "goalStatus": [
         "active",
@@ -259,7 +347,12 @@
       "Действия игрока не ограничены списком кнопок или таблицей переходов; предложенные варианты служат лишь подсказками.",
       "Не перемещай персонажа и не меняй место действия без описанной причины и непрерывного пути.",
       "Изменяй состояние только в пределах физических законов, подтверждённых фактов и ограничений пакета.",
-      "Не завершай цель по одному заявлению или догадке; для финала нужны описанные и подтверждённые условия."
+      "Не завершай цель по одному заявлению или догадке; для финала нужны описанные и подтверждённые условия.",
+      "Каждое изменение состояния выводи из уже показанного действия или из физики форпоста: ресурс не появляется из ничего и не тратится без описанной работы с ним.",
+      "Числовые ресурсы меняются только в сторону, заданную ходом: энергия и вода падают от внешней работы, нагрева и расхода, картриджи — только от фактической замены; sol растёт не более чем на единицу за ход.",
+      "Не повторяй один и тот же результат: уже выполненный ремонт, отправленный ровер и потраченная вода остаются в состоянии, и повторный ход должен давать новый результат или честный отказ по причине.",
+      "Отвергнутое решение не выдавай за совершившееся: если попытка не удалась, вода не списана, панель не почищена, а картридж не заменён — оставляй состояние прежним и объясняй причину, не улучшая цифры задним числом.",
+      "Приоритеты смены не заданы: сначала действие, потом его видимое последствие, и любое улучшение числовых полей объясняй через конкретную операцию, а не через саму цель."
     ],
     "stateChangeRules": [
       {
@@ -273,342 +366,15 @@
       {
         "path": "water",
         "maxIncrease": 20
+      },
+      {
+        "path": "filters",
+        "maxIncrease": 20
       }
     ]
   },
   "opening": {
-    "ru": "Марсианский день заканчивается, когда по куполу ударяют первые порывы пылевой бури. Вы — командир смены форпоста: панели уже теряют мощность, связь с орбитой прерывается, а команда ждёт плана, пока снаружи исчезают ориентиры\n\nПыльная буря достигает западной батареи раньше прогноза. Одна секция панелей ещё работает, но уплотнение жилого модуля дрожит, а окно связи скоро закроется.\n\nЗдесь важно помнить, что к моменту вашего появления история уже началась. Марсианский форпост, купол, солнечные панели, запасы воды и приближающаяся буря. Это не отвлечённый фон и не задача, которую можно решить одним эффектным жестом: исходные условия складывались раньше, а люди, объекты и процессы успели приспособиться к ним. Поэтому любое изменение затронет не только то, что видно сейчас, но и привычный порядок, на котором держатся остальные части ситуации. Вы входите в неё с правом действовать, однако сначала нужно понять, что именно считается нормой и кто подтвердил эту норму.\n\nПервое наблюдение относится к конкретному месту: Купол, Солнечные панели. В нём есть заметная деталь, которую легко принять за готовый ответ, но пока это только отправная точка. Сведения получены не одновременно и не одним способом; между тем, что зафиксировано, и тем, что уже успели предположить, остаётся промежуток. Если немедленно закрыть его догадкой, следующие данные будут подгоняться под выбранную версию. Если же точно обозначить, что известно, а что пока лишь кажется вероятным, у вас сохранится возможность увидеть несоответствие, не переписывая задним числом всю картину.\n\nВаша задача сформулирована шире, чем устранить ближайшую помеху: Обеспечить энергию и воду, затем подготовить купол к буре. На практике это означает одновременно следить за непосредственным результатом и за тем, что этот результат позволит узнать. Быстрый шаг может принести видимое улучшение, но ухудшить сравнимость, доступность или доверие; осторожный — сохранить качество проверки, но оставить проблему без немедленного ответа. Эти соображения не равны по весу во всех обстоятельствах. Их порядок зависит от того, какие сведения вы подтвердите и какой ущерб действительно обратим.\n\nВ материалах есть три слоя: исходное состояние, первое наблюдение и объяснение, которое кто-то успел к нему приложить. Не смешивайте их. Выходить на ремонт до бури: мощность выше, но скафандр и время становятся критическим риском. Если цифры или свидетельства расходятся, полезно установить, когда и где именно началось расхождение, кто наблюдал явление напрямую и какие условия могли поменяться между проверками. Иногда спорный показатель оказывается не ложным, а неполным: он честно описывает ту точку, где был получен, но не ту, о которой спрашивает команда.\n\nВам не требуется заранее выбирать единственную стратегию на весь эпизод. В текущем пакете доступны разные типы действий: Укрепить купол, Повернуть панели, Сократить расход воды. Они дают разные виды контроля: одно может уточнить картину, другое — изменить условия, третье — выиграть время или проверить связь между двумя событиями. Выбирая, задайте себе практический вопрос: что должно стать заметно после этого шага, если ваша версия верна? И что вы увидите, если она неверна? Такой критерий превращает действие в проверку, а не просто в жест, после которого приходится надеяться на удачу.\n\nПуть вперёд может разветвиться, и у каждого направления будет собственная цена. Одно решение способно защитить непосредственную цель, но оставить неопределённость; другое — укрепить доказательства, но сузить окно для вмешательства; третье — уменьшить воздействие на окружающую систему, одновременно потребовав новой проверки. Эти различия не делают какой-либо путь правильным заранее. Важнее видеть, какую ценность вы защищаете сейчас, чем рискуете ради неё и какие признаки заставят пересмотреть план. Смена курса допустима, если вы можете объяснить, какая новая информация изменила расчёт.\n\nОглянитесь на Купол, Солнечные панели. Каждая точка открывает свою часть происходящего и скрывает другую; переход между ними сам по себе может менять условия наблюдения. Не считайте схему исчерпывающей: она описывает доступные места, но не гарантирует, что все важные процессы заметны с одной позиции. Сверяйте время, источник и обстоятельства каждого сообщения. Если кто-то говорит «это было так всегда», спросите, за какой период он отвечает; если прибор показывает отклонение, уточните его рабочий диапазон и место установки. Так вы отделите стабильную закономерность от удобного, но слишком широкого обобщения.\n\nЕсть вопросы, на которые пока нельзя честно ответить. Что здесь причина, а что следствие? Действительно ли наблюдаемое изменение требует немедленного вмешательства? Кто или что понесёт последствия, если вы ошибётесь? Неопределённость не означает, что все версии одинаково вероятны; она означает, что следующая сцена должна дать материал для различения. Не превращайте каждую странность в тайный замысел и не отбрасывайте неудобную улику лишь потому, что она мешает плану. Самый убедительный поворот будет иметь смысл только тогда, когда ранние подробности позволят узнать его, а не просто удивиться ему.\n\nНачните с масштаба, который можно проверить. Запишите исходные условия, выберите один важный показатель и не меняйте сразу несколько факторов, если хотите понять, что повлияло на результат. Если вмешательство необходимо прямо сейчас, обозначьте его как временное и сохраните контрольную точку для сравнения. Если можно подождать, определите, какое именно наблюдение оправдает ожидание и сколько времени оно занимает. Это не бюрократическая осторожность: так вы не потеряете возможность отличить настоящую перемену от эффекта собственных действий.\n\nПостепенно прояснится и человеческая сторона задачи: чьи объяснения опираются на наблюдения, кто отвечает за последствия и кому придётся жить с выбранным порядком после того, как срочность спадёт. Доверие здесь не заменяет измерения, но влияет на то, какие сведения вам сообщат и какие шаги команда сможет выполнить вместе. Объясняйте, что проверяете, не обещайте результата раньше проверки и отмечайте, что именно изменило ваше мнение. Иногда это позволит сохранить сотрудничество даже при разногласии; иногда станет ясно, что разные участники защищают несовместимые интересы.\n\nОтдельно рассмотрите направление 3: Сохранить фильтр и отложить очистку панели: вода надёжнее, энергетический запас сокращается. Оно не отменяет остальные возможности и не требует принимать весь план сразу. Спросите, какое подтверждение сделает этот шаг уместным, что останется измеримым после него и кто заметит его побочный эффект первым. Если ответ пока неизвестен, это не повод скрывать пробел: его можно превратить в условие остановки или повторной оценки.",
-    "en": "The Martian day is ending as the first gusts of a dust storm strike the dome. You are the outpost shift commander: solar output is falling, orbital contact is breaking up, and the crew needs a plan as landmarks vanish outside\n\nA dust front reaches the western array earlier than forecast. One panel string still produces power, but the habitat seal is vibrating and the next communication window is short.\n\nRemember that the story had already begun before you arrived. A storm approaches the outpost; power, water, and hull integrity limit exterior work. This is not a backdrop or a problem that can be solved with one dramatic gesture: the conditions formed earlier, and people, objects, and processes have adapted to them. Any change will affect more than what is visible now; it may alter the routine that holds other parts of the situation together. You have authority to act, but first you need to understand what counts as normal here and who has actually verified that baseline.\n\nThe first observation belongs to a specific place: Dome, Solar panels. It contains a detail that may look like an answer, but for now it is only a starting point. The information was gathered at different times and by different means; a gap remains between what was recorded and the explanation someone has attached to it. If you fill that gap with a guess, later evidence may be forced to fit your theory. If you mark what is known and what only seems likely, you can notice a mismatch without rewriting the whole account afterward.\n\nYour objective is broader than removing the nearest obstacle: Secure power and water, then reinforce the dome for the storm. In practice, you must watch both the immediate result and what that result lets you learn. A quick intervention may produce visible improvement while weakening comparison, access, or trust; a cautious one may preserve the quality of the evidence while leaving the problem unresolved. Those concerns do not carry the same weight in every situation. Their order depends on what you confirm and on which harm can actually be reversed.\n\nThe available material has three layers: the initial conditions, the first observation, and the explanation someone has already attached to it. Keep them separate. Repair before the storm: power improves, while suit and time become critical risks. If figures or accounts disagree, establish when and where the mismatch began, who witnessed the event directly, and what could have changed between checks. A disputed reading is sometimes incomplete rather than false: it may accurately describe the point where it was taken, but not the wider area the team is asking about.\n\nYou do not have to choose one strategy for the whole episode in advance. The package offers different kinds of action: Reinforce dome, Align solar panels, Ration resources. Each gives you a different kind of control: one may clarify the picture, another may change the conditions, and another may buy time or test a connection between events. Before choosing, ask a practical question: what should become visible if your theory is right? What would you see if it is wrong? That turns an action into a test, rather than a gesture followed by a hope for good luck.\n\nThe way forward can branch, and each direction has its own cost. One choice may protect the immediate objective while leaving uncertainty; another may strengthen the evidence while narrowing the window to intervene; a third may reduce impact on the surrounding system while requiring a fresh check. None is automatically correct. What matters is seeing which value you are protecting, what you risk for it, and what signs would make you reconsider. A change of course is sound when you can explain what new information changed the calculation.\n\nLook at Dome, Solar panels. Each point reveals one part of the situation and hides another; moving between them can itself change the conditions of observation. Do not treat the map as complete: it lists available places but cannot guarantee that every important process is visible from one position. Compare the time, source, and circumstances of each report. If someone says “it has always been this way,” ask what period they mean; if an instrument shows a deviation, check its operating range and location. This helps separate a stable pattern from a convenient but overly broad conclusion.\n\nSome questions cannot yet be answered honestly. What is a cause, and what is an effect? Does the observed change truly require immediate intervention? Who or what bears the cost if you are wrong? Uncertainty does not mean every theory is equally likely; it means the next scene must give you a way to distinguish them. Do not turn every oddity into a hidden scheme, and do not discard inconvenient evidence because it disrupts a plan. A convincing turn will make sense only if earlier details let you recognize it, not merely be surprised by it.\n\nStart at a scale you can check. Record the baseline, choose one important measure, and avoid changing several factors at once if you need to know what caused the result. If action is necessary now, mark it as temporary and preserve a control point for comparison. If waiting is possible, specify what observation would justify the delay and how long it will take. This is not caution for its own sake: it preserves your ability to distinguish a real change from the effect of your own intervention.\n\nThe human side of the task will become clearer too: whose account rests on observation, who is responsible for the consequences, and who must live with the chosen arrangement after the emergency passes. Trust does not replace measurement, but it affects what people tell you and what the team can do together. Explain what you are checking, do not promise a result before it is verified, and note what changed your mind. That may preserve cooperation through disagreement; it may also show that different participants are protecting interests that cannot be reconciled.\n\nAt the start of the scene, you can see only the edge of a longer chain. What happens next may confirm a familiar explanation, narrow the limits of the problem, or show that the original framing was incomplete. Do not wait for someone to tell you the “real story” all at once: understanding will come from the checks you choose, the system's response, and the consequences you consider acceptable. Keep several theories in mind, but act concretely. Each move should improve the situation, reduce an important uncertainty, or explain honestly why neither is possible yet.\n\nConsider approach 3 separately: Preserve the filter and defer cleaning: water is safer, energy reserve shrinks. It does not erase the other options or require you to commit to the whole plan at once. Ask what evidence would make this step appropriate, what will remain measurable afterward, and who will notice its side effect first. If the answer is not yet known, do not hide the gap; turn it into a condition for pausing or reassessing."
-  },
-  "preparedBranches": [
-    {
-      "id": "storm_pressure",
-      "actions": [
-        "seal",
-        "solar",
-        "ration",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "Пыльная буря достигает западной батареи раньше прогноза. Одна секция панелей ещё работает, но уплотнение жилого модуля дрожит, а окно связи скоро закроется.",
-        "en": "A dust front reaches the western array earlier than forecast. One panel string still produces power, but the habitat seal is vibrating and the next communication window is short."
-      },
-      "mutations": [],
-      "suggestions": [
-        {
-          "text": {
-            "ru": "Сверить обстановку и выбрать безопасный приоритет",
-            "en": "Recheck the situation and choose a safe priority"
-          }
-        },
-        {
-          "text": {
-            "ru": "Сохранить текущий план и подготовить запасной",
-            "en": "Keep the current plan and prepare a backup"
-          }
-        }
-      ]
-    },
-    {
-      "id": "turning_point_sol",
-      "when": {
-        "sol": {
-          "gte": 650
-        }
-      },
-      "actions": [
-        "seal",
-        "solar",
-        "ration",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "Пылевой фронт достигает западной батареи раньше прогноза. Одна цепочка панелей ещё вырабатывает энергию, но уплотнение жилого модуля вибрирует, а до следующего сеанса связи мало времени. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
-        "en": "An alternate route opens as circumstances shift. Continue the current approach or change priorities before events make the consequences harder to reverse."
-      },
-      "mutations": [],
-      "suggestions": [
-        {
-          "text": {
-            "ru": "Сверить обстановку и выбрать безопасный приоритет",
-            "en": "Recheck the situation and choose a safe priority"
-          }
-        },
-        {
-          "text": {
-            "ru": "Сохранить текущий план и подготовить запасной",
-            "en": "Keep the current plan and prepare a backup"
-          }
-        }
-      ]
-    },
-    {
-      "id": "authored_turn_1",
-      "minTurns": 2,
-      "actions": [
-        "seal",
-        "solar",
-        "ration",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "Пыльная полоса на панели образована электростатически притянутой мелкой фракцией; резкая очистка может повредить покрытие.",
-        "en": "An electrostatically attracted dust band coats the panel; aggressive cleaning could damage its surface."
-      },
-      "mutations": [],
-      "suggestions": [],
-      "responses": {
-        "seal": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Укрепить купол». Команда продолжает по пути: Выходить на ремонт до бури: мощность выше, но скафандр и время становятся критическим риском. Улика раскрывает поворот: Пыльная полоса на панели образована электростатически притянутой мелкой фракцией; резкая очистка может повредить покрытие.",
-            "en": "You choose “Reinforce dome.” The team continues along this path: Repair before the storm: power improves, while suit and time become critical risks. The evidence reveals the turn: An electrostatically attracted dust band coats the panel; aggressive cleaning could damage its surface."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Выходить на ремонт до бури: мощность выше, но скафандр и время становятся критическим риском.",
-                "en": "Repair before the storm: power improves, while suit and time become critical risks."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Перевести оборудование в экономичный режим: давление стабильнее, научная работа останавливается.",
-                "en": "Switch to economy mode: pressure stays stable, research pauses."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Сохранить фильтр и отложить очистку панели: вода надёжнее, энергетический запас сокращается.",
-                "en": "Preserve the filter and defer cleaning: water is safer, energy reserve shrinks."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "solar": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Повернуть панели». Команда продолжает по пути: Перевести оборудование в экономичный режим: давление стабильнее, научная работа останавливается. Улика раскрывает поворот: Пыльная полоса на панели образована электростатически притянутой мелкой фракцией; резкая очистка может повредить покрытие.",
-            "en": "You choose “Align solar panels.” The team continues along this path: Switch to economy mode: pressure stays stable, research pauses. The evidence reveals the turn: An electrostatically attracted dust band coats the panel; aggressive cleaning could damage its surface."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Выходить на ремонт до бури: мощность выше, но скафандр и время становятся критическим риском.",
-                "en": "Repair before the storm: power improves, while suit and time become critical risks."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Перевести оборудование в экономичный режим: давление стабильнее, научная работа останавливается.",
-                "en": "Switch to economy mode: pressure stays stable, research pauses."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Сохранить фильтр и отложить очистку панели: вода надёжнее, энергетический запас сокращается.",
-                "en": "Preserve the filter and defer cleaning: water is safer, energy reserve shrinks."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "ration": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Сократить расход воды». Команда продолжает по пути: Сохранить фильтр и отложить очистку панели: вода надёжнее, энергетический запас сокращается. Улика раскрывает поворот: Пыльная полоса на панели образована электростатически притянутой мелкой фракцией; резкая очистка может повредить покрытие.",
-            "en": "You choose “Ration resources.” The team continues along this path: Preserve the filter and defer cleaning: water is safer, energy reserve shrinks. The evidence reveals the turn: An electrostatically attracted dust band coats the panel; aggressive cleaning could damage its surface."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Выходить на ремонт до бури: мощность выше, но скафандр и время становятся критическим риском.",
-                "en": "Repair before the storm: power improves, while suit and time become critical risks."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Перевести оборудование в экономичный режим: давление стабильнее, научная работа останавливается.",
-                "en": "Switch to economy mode: pressure stays stable, research pauses."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Сохранить фильтр и отложить очистку панели: вода надёжнее, энергетический запас сокращается.",
-                "en": "Preserve the filter and defer cleaning: water is safer, energy reserve shrinks."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "free_text": {
-          "narrative": {
-            "ru": "Ваш свободный план меняет способ проверки. Команда раскрывает поворот по найденной улике: Пыльная полоса на панели образована электростатически притянутой мелкой фракцией; резкая очистка может повредить покрытие.",
-            "en": "Your free-form plan changes how the team checks the clue. The turn is revealed by the evidence: An electrostatically attracted dust band coats the panel; aggressive cleaning could damage its surface."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Выходить на ремонт до бури: мощность выше, но скафандр и время становятся критическим риском.",
-                "en": "Repair before the storm: power improves, while suit and time become critical risks."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Перевести оборудование в экономичный режим: давление стабильнее, научная работа останавливается.",
-                "en": "Switch to economy mode: pressure stays stable, research pauses."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Сохранить фильтр и отложить очистку панели: вода надёжнее, энергетический запас сокращается.",
-                "en": "Preserve the filter and defer cleaning: water is safer, energy reserve shrinks."
-              },
-              "icon": "↗️"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "id": "authored_turn_2",
-      "minTurns": 4,
-      "actions": [
-        "seal",
-        "solar",
-        "ration",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "Вода в отчёте включает объём, который ещё нельзя вернуть без фильтра; цифра резерва была оптимистичной, не поддельной.",
-        "en": "The water report includes volume that cannot be reclaimed without a filter; the reserve figure was optimistic, not falsified."
-      },
-      "mutations": [],
-      "suggestions": [],
-      "responses": {
-        "seal": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Укрепить купол». Команда продолжает по пути: Выходить на ремонт до бури: мощность выше, но скафандр и время становятся критическим риском. Улика раскрывает поворот: Вода в отчёте включает объём, который ещё нельзя вернуть без фильтра; цифра резерва была оптимистичной, не поддельной.",
-            "en": "You choose “Reinforce dome.” The team continues along this path: Repair before the storm: power improves, while suit and time become critical risks. The evidence reveals the turn: The water report includes volume that cannot be reclaimed without a filter; the reserve figure was optimistic, not falsified."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Выходить на ремонт до бури: мощность выше, но скафандр и время становятся критическим риском.",
-                "en": "Repair before the storm: power improves, while suit and time become critical risks."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Перевести оборудование в экономичный режим: давление стабильнее, научная работа останавливается.",
-                "en": "Switch to economy mode: pressure stays stable, research pauses."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Сохранить фильтр и отложить очистку панели: вода надёжнее, энергетический запас сокращается.",
-                "en": "Preserve the filter and defer cleaning: water is safer, energy reserve shrinks."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "solar": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Повернуть панели». Команда продолжает по пути: Перевести оборудование в экономичный режим: давление стабильнее, научная работа останавливается. Улика раскрывает поворот: Вода в отчёте включает объём, который ещё нельзя вернуть без фильтра; цифра резерва была оптимистичной, не поддельной.",
-            "en": "You choose “Align solar panels.” The team continues along this path: Switch to economy mode: pressure stays stable, research pauses. The evidence reveals the turn: The water report includes volume that cannot be reclaimed without a filter; the reserve figure was optimistic, not falsified."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Выходить на ремонт до бури: мощность выше, но скафандр и время становятся критическим риском.",
-                "en": "Repair before the storm: power improves, while suit and time become critical risks."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Перевести оборудование в экономичный режим: давление стабильнее, научная работа останавливается.",
-                "en": "Switch to economy mode: pressure stays stable, research pauses."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Сохранить фильтр и отложить очистку панели: вода надёжнее, энергетический запас сокращается.",
-                "en": "Preserve the filter and defer cleaning: water is safer, energy reserve shrinks."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "ration": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Сократить расход воды». Команда продолжает по пути: Сохранить фильтр и отложить очистку панели: вода надёжнее, энергетический запас сокращается. Улика раскрывает поворот: Вода в отчёте включает объём, который ещё нельзя вернуть без фильтра; цифра резерва была оптимистичной, не поддельной.",
-            "en": "You choose “Ration resources.” The team continues along this path: Preserve the filter and defer cleaning: water is safer, energy reserve shrinks. The evidence reveals the turn: The water report includes volume that cannot be reclaimed without a filter; the reserve figure was optimistic, not falsified."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Выходить на ремонт до бури: мощность выше, но скафандр и время становятся критическим риском.",
-                "en": "Repair before the storm: power improves, while suit and time become critical risks."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Перевести оборудование в экономичный режим: давление стабильнее, научная работа останавливается.",
-                "en": "Switch to economy mode: pressure stays stable, research pauses."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Сохранить фильтр и отложить очистку панели: вода надёжнее, энергетический запас сокращается.",
-                "en": "Preserve the filter and defer cleaning: water is safer, energy reserve shrinks."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "free_text": {
-          "narrative": {
-            "ru": "Ваш свободный план меняет способ проверки. Команда раскрывает поворот по найденной улике: Вода в отчёте включает объём, который ещё нельзя вернуть без фильтра; цифра резерва была оптимистичной, не поддельной.",
-            "en": "Your free-form plan changes how the team checks the clue. The turn is revealed by the evidence: The water report includes volume that cannot be reclaimed without a filter; the reserve figure was optimistic, not falsified."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Выходить на ремонт до бури: мощность выше, но скафандр и время становятся критическим риском.",
-                "en": "Repair before the storm: power improves, while suit and time become critical risks."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Перевести оборудование в экономичный режим: давление стабильнее, научная работа останавливается.",
-                "en": "Switch to economy mode: pressure stays stable, research pauses."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Сохранить фильтр и отложить очистку панели: вода надёжнее, энергетический запас сокращается.",
-                "en": "Preserve the filter and defer cleaning: water is safer, energy reserve shrinks."
-              },
-              "icon": "↗️"
-            }
-          ]
-        }
-      }
-    }
-  ]
+    "ru": "Пыль приходит раньше, чем её становится видно. Сначала из внешней заслонки обзорного окна исчезает соседняя секция панели — контур растворяется, будто кто-то провёл по стеклу серой рукой. Потом на герметичный купол ложится шорох, и с каждой минутой он делается плотнее, суше, злее. В вентиляционных решётках гудит воздух, и гул слегка сбивается на каждом порыве: давление внутри держится, но держится с напряжением, как ладонь, придерживающая дверь. Вы стоите у пульта смены в жилом модуле, когда на табло герметичности проходит первая ненулевая цифра — минус две десятых процента по западному стыку. Пыльная буря приближается с запада. Теперь это уже не прогноз, а то, что видно своими глазами через мутное стекло.\n\nВы ведёте эту смену первый день и до этого не были в команде форпоста. Вы пришли из-за смены у внутренних маршрутов, где нет пыли, нет ремонта под открытым небом и нет человека, который живёт месяцами рядом с одним и тем же скрипом вентиляции. За утро вы успели выучить то, что здесь считается нормой. В шесть инженер снимает показания панелей и запоминает их, а не записывает красиво. В семь дежурный связи дважды выходит на орбиту и дважды получает ответ, которого ждёт не полностью. В полдень расход воды сверяют по постам, и одна цифра в отчёте всегда отличается от другой, и никто не может объяснить почему. Всё это держалось здесь годами. Сегодня держаться начинает хуже.\n\nСитуация складывалась до вас, и складывалась постепенно, шаг за шагом. Три недели назад западная батарея начала давать неравномерный выход по секциям: сначала это списали на пыль, потом на повреждение одного из модулей, потом просто перестали обсуждать, потому что график потребления и без того не сходился. Позавчера пыль легла на панели плотнее обычного, и станция связи отметила выхлоп с запада. Вчера вечером дежурный перевёл западную ветку в ручной режим, чтобы регулятор не срезал питание на весь жилой контур. Сегодня утром инженер записал в журнал, что стык потерял две десятых процента, и ушёл спать. Он был прав в наблюдении и ни в чём больше.\n\nСейчас на руках у смены три вещи, и все три требуют одного и того же: энергии, которой шестьдесят пять процентов, и воды, которой сорок два. Первое — укрепить стык, который подводит прямо к пыли. Второе — повернуть и очистить панели, потому что пыль съедает выработку быстрее, чем её даёт солнце. Третье — не дать воде закончиться раньше, чем фильтр вернёт хотя бы часть отмеченного резерва. Снаружи атмосферы для дыхания нет, и любой выход требует герметичной защиты. Всё, что не сделано до прихода фронта, потом придётся делать в худших условиях: в пыли, без ориентиров, в скафандре, рассчитанном на один выход.\n\nЛюди здесь не жалуются. Инженер молча переодевает перчатки, потому что резина на них пахнет машинным маслом, а не пылью, и ему это не нравится. Дежурный связи держит ухо у наушника, хотя связь с Землёй уже второй час нестабильна и толку от неё почти нет. Водный оператор ходит по куполу с планшетом и пересчитывает воду по постам, как человек, который не доверяет общему отчёту. Они устали не от бури, а от ожидания решения. Помните и другое: вода в отчёте расписана в две колонки, и одна из них помечена как перегон. Отметка привычная, чужая. Почему цифры сходятся только при двух колонках вместе, никто не объяснил.\n\nЕсть и вторая нестыковка. Выработка панелей падает не равномерно по секциям, а узкой полосой, и эта полоса идёт ровно там, где по крыше проходит старая полоса обслуживания: там, ещё до вас, ходили и клали маршрутные метки. Повреждение так не выглядит. И ещё: у внешнего датчика, который показывает остаток фильтрующих картриджей, с самого начала стоит заглушенный козырёк, и цифра резерва сходилась красиво именно потому, что козырёк гасил разброс. Обе нестыковки объясняются десятком способов — от грязного стекла до неверного коэффициента в пересчёте. Обе требуют времени, которого у смены нет.\n\nПока в куполе есть шестьдесят пять процентов энергии, один работающий насос отбора воды и один исправный скафандр в шлюзе; второй лежит на верстаке и ждёт запчасти, которой на форпосте нет. Практически это значит, что любой выход наружу — это вода, время и герметичность, взятые из общего запаса. Любое решение внутри — это выбор между давлением, водой и тем, что останется завтра. И неверно выбранный приоритет не исправляется следующим решением: упущенный сеанс связи, сорванный картридж или стёртая посадочная площадка под панели остаются позади и в сегодняшний день уже не вернутся.\n\nФронт пройдёт по дуге через несколько часов. К вечеру пыль станет плотной настолько, что панели перестанут давать что-либо осмысленное, а ориентиры исчезнут, и тогда любая наружная работа станет работой вслепую. До этого нужно решить, куда пойдёт каждая единица энергии: на уплотнение, на очистку панелей, на фильтрацию или на связь. Каждый из этих выборов разумен, и ни один не делает остальные ненужными. Но расчёт без проверки остаётся версией. Проверить можно только снаружи и только в скафандре, где приборы врут, а вода уходит в трещины уплотнения.\n\nПока не сделано ничего. Первый день, энергия шестьдесят пять, вода сорок два, стык ещё держит, панели ещё работают, шлюз заперт, картриджи на месте. Весь экипаж в куполе смотрит на вас и ждёт, в каком порядке вы назовёте то, что нужно делать в первую очередь. От того, что вы скажете сейчас, зависит, что останется в журнале к вечеру: цифра, полоса на панели или пустая колонка в отчёте, от которой никуда не деться. Время идёт. Пыль идёт.",
+    "en": "Dust arrives before it becomes visible. First the next panel section vanishes from behind the outer shutter of the observation window — the outline dissolves, as if someone had drawn a grey hand across the glass. Then a whisper settles on the sealed dome, and with every minute it turns denser, drier, worse. Air hums in the vent grilles, and the note slips on each gust: the pressure inside holds, but it holds the way a hand holds a door shut. You are standing at the shift console in the habitat module when the first non-zero number comes up on the seal display — minus two-tenths of a percent at the west seam. A dust storm is approaching from the west. It is no longer a forecast now; it is what you can see with your own eyes through the clouded glass.\n\nThis is the first shift you lead, and you have never served on the outpost crew before. You arrived from an internal routing post, where there is no dust, no repair work under open sky, and nobody who lives for months next to the same creak in the ventilation. In one morning you learned what counts as normal here. At six the engineer reads the panels and memorises the numbers instead of writing them down neatly. At seven the comms watch stands up to orbit twice and twice receives an answer that is not quite the one it was waiting for. At noon water use is reconciled post by post, and one figure in the report always differs from the other, and nobody can say why. All of this held here for years. Today it is beginning to hold less well.\n\nThe situation assembled itself before you came, and it assembled itself gradually, step by step. Three weeks ago the west battery began giving uneven output by section: first it was blamed on dust, then on damage to one of the modules, and then it simply stopped being discussed, because the consumption schedule did not add up anyway. The day before yesterday the dust settled on the panels more heavily than usual, and the relay station noted outflow from the west. Yesterday evening the watch put the western feed into manual mode so the regulator would not cut power to the entire habitat loop. This morning the engineer wrote in the log that the seam had lost two-tenths of a percent, and went to sleep. He was right in his observation and in nothing else.\n\nThe shift is now holding three things, and all three ask for the same thing: the energy at sixty-five percent and the water at forty-two. First, reinforce the seam that leads straight into the dust. Second, turn and clean the panels, because dust eats output faster than the sun supplies it. Third, keep the water from running out before the filter returns at least part of the reserve on record. There is no breathable atmosphere outside, and any exit requires sealed protection. Whatever is not done before the front arrives will have to be done in worse conditions: in the dust, without landmarks, in a suit rated for a single outing.\n\nNobody here complains. The engineer changes gloves in silence, because the rubber still smells of machine oil rather than dust and it bothers him. The comms watch keeps an earpiece in even though contact with Earth has been unstable for two hours and yields almost nothing. The water operator walks the dome with a tablet and recounts consumption post by post, like someone who does not trust the summary report. They are tired not of the storm but of waiting for a decision. And remember one more thing: the water in the report is written in two columns, and one of them is marked as decant. The mark is routine, someone else's habit. Why the figures only add up when both columns are counted together, nobody has explained.\n\nThere is a second mismatch. Panel output falls not evenly across sections but in a narrow band, and that band runs exactly where the old service track crosses the roof: where people walked before you and laid route markers. Damage does not look like that. And there is more: the external sensor that shows the remaining filter cartridges has had a cowl over it from the start, and the reserve figure reconciled beautifully precisely because the cowl suppressed the spread. Both mismatches have a dozen explanations, from a dirty window to a wrong coefficient in the conversion. Both cost time the shift does not have.\n\nWhile the dome holds sixty-five percent power, there is one working draw pump and one serviceable suit in the airlock; the second lies on a bench waiting for a part the outpost does not stock. In practice this means that any exit outside takes water, time and tightness from the common reserve. Any decision inside is a choice between pressure, water, and whatever is left tomorrow. And a badly chosen priority is not corrected by the next decision: a missed comms window, a spoiled cartridge or a cleared landing spot under the panels stay behind and will not come back today.\n\nThe front will pass along the arc within a few hours. By evening the dust will be dense enough that the panels stop giving anything meaningful and the landmarks disappear, and then any exterior work becomes work done blind. Before that, you have to decide where every unit of power goes: into the seal, into cleaning the panels, into filtration, or into the link. Each of those choices is reasonable, and none of them makes the others unnecessary. But a calculation without verification remains a version. Verification is possible only outside, and only in a suit, where the instruments lie and the water drains into the cracks of a seal.\n\nNothing has been done yet. The first day, power sixty-five, water forty-two, the seam still holding, the panels still producing, the airlock sealed, the cartridges in place. The whole crew in the dome is looking at you, waiting to hear in what order you will name the things that must be done first. What you say now decides what will be in the log by evening: a figure, a band on the panel, or an empty column in the report that cannot be argued away. Time is passing. The dust is passing too."
+  }
 }

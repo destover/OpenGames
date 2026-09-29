@@ -6,7 +6,7 @@
     "setting": "Многодневная океанская регата: экипаж небольшого гоночного судна балансирует скорость, целостность парусов, усталость и неполный прогноз погоды.",
     "categoryRu": "Парусный спорт",
     "background": "/assets/ocean-regatta.jpg",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "schemaVersion": "2",
     "isNew": true,
     "durationMinutes": [
@@ -23,6 +23,7 @@
       "forecast": 46,
       "progress": 28,
       "hours": 22,
+      "helm": 64,
       "location": "deck",
       "goalStatus": "active"
     }
@@ -44,6 +45,30 @@
     "crew": {
       "label": "Перераспределить вахту",
       "icon": "🧭"
+    },
+    "reef": {
+      "label": "Убрать парус и заменить фал",
+      "icon": "🪢"
+    },
+    "inspect_hull": {
+      "label": "Осмотреть подводную часть корпуса",
+      "icon": "🔎"
+    },
+    "buoy_check": {
+      "label": "Проверить данные ближайшего буя",
+      "icon": "📡"
+    },
+    "mark_rivals": {
+      "label": "Разметить соперников на карте",
+      "icon": "🗺️"
+    },
+    "hail": {
+      "label": "Запросить у соперников их курс",
+      "icon": "📻"
+    },
+    "rest_watch": {
+      "label": "Дать экипажу короткий отдых",
+      "icon": "☕"
     }
   },
   "ui": {
@@ -56,6 +81,7 @@
       "forecast": "Надёжность прогноза",
       "progress": "Пройдено дистанции",
       "hours": "Часов до закрытия окна",
+      "helm": "Устойчивость румпеля",
       "location": "Место",
       "goalStatus": "Цель"
     }
@@ -70,6 +96,7 @@
         "forecast": "Надёжность прогноза",
         "progress": "Пройдено дистанции",
         "hours": "Часов до закрытия окна",
+        "helm": "Устойчивость румпеля",
         "location": "Место",
         "goalStatus": "Цель"
       },
@@ -77,7 +104,13 @@
         "free_text": "Свободное действие",
         "weather": "Сопоставить прогноз с наблюдениями",
         "trim": "Изменить настройку парусов",
-        "crew": "Перераспределить вахту"
+        "crew": "Перераспределить вахту",
+        "reef": "Убрать парус и заменить фал",
+        "inspect_hull": "Осмотреть подводную часть корпуса",
+        "buoy_check": "Проверить данные ближайшего буя",
+        "mark_rivals": "Разметить соперников на карте",
+        "hail": "Запросить у соперников их курс",
+        "rest_watch": "Дать экипажу короткий отдых"
       },
       "manifest": {
         "title": "Ветер решений",
@@ -99,6 +132,7 @@
         "forecast": "Forecast confidence",
         "progress": "Distance completed",
         "hours": "Hours to finish window",
+        "helm": "Helm control",
         "location": "Location",
         "goalStatus": "Objective"
       },
@@ -106,7 +140,13 @@
         "free_text": "Free action",
         "weather": "Compare forecast with observations",
         "trim": "Adjust sail trim",
-        "crew": "Rebalance the watch"
+        "crew": "Rebalance the watch",
+        "reef": "Reef the sail and replace the halyard",
+        "inspect_hull": "Inspect the underwater body",
+        "buoy_check": "Check the nearest buoy data",
+        "mark_rivals": "Mark the rivals on the chart",
+        "hail": "Ask the rivals for their course",
+        "rest_watch": "Give the crew a short rest"
       },
       "manifest": {
         "title": "Wind of Decisions",
@@ -152,6 +192,18 @@
       "lee": {
         "ru": "Подветренная сторона",
         "en": "Leeward side"
+      },
+      "bow": {
+        "ru": "Носовая площадка",
+        "en": "Foredeck"
+      },
+      "engine": {
+        "ru": "Моторный отсек",
+        "en": "Engine compartment"
+      },
+      "bunk": {
+        "ru": "Каюта и рундук",
+        "en": "Cabin and locker"
       }
     }
   },
@@ -173,36 +225,44 @@
         },
         "beats": {
           "ru": [
-            "Регата длится несколько дней; экипаж балансирует скорость, усталость, целостность парусов и неполный прогноз.",
-            "Утренний ветер приходит под углом к прогнозу из-за берегового эффекта, а не фронта; дрожание румпеля указывает на усталость рулевого.",
-            "Шкипер выбирает темп и смену вахты, понимая цену времени и риска травмы."
+            "Утро третьего дня, пройдено меньше трети дистанции, и судно идёт на попутном ветре в шесть узлов, оставляя соседей за кормой.",
+            "Ветер над водой уходит влево от сводного направления, и в работе паруса это чувствуется как постоянная боковая тяга, а не как перемена погоды.",
+            "Экипаж после ночной вахты спит неполными сменами, рулевой выравнивает руль позже, чем нужно, и смена команды попадает на самый свежий ветер.",
+            "От носа поступают сообщения о стуке в ранчоутере, который слышен только на резком ходу, и два человека на борту дают ему разные объяснения, оба правдоподобные.",
+            "Радиопередачи о соперниках приходят в разное время суток, часть из них можно подтвердить визуально, а часть не подтверждалась ни разу и остаётся чужой пересказ.",
+            "К середине дня остаётся выбрать одно из четырёх: идти быстро в надежде на ветер, идти осторожно и чинить, спросить соперников прямо или уходить в сторону от их пути и рассчитывать только на себя."
           ],
           "en": [
-            "The multi-day regatta balances speed, fatigue, sail integrity, and an incomplete forecast.",
-            "Morning wind differs because of a coastal effect, not a front; helm vibration suggests the helmsman is tired.",
-            "The skipper chooses pace and watch rotation, weighing time against injury risk."
+            "Morning of the third day, less than a third of the distance covered, the boat running in six knots of pressure with the neighbours astern.",
+            "The wind over the water leans left of the direction in the summary, and the sail feels this as a constant lateral pull rather than as a change in the weather.",
+            "The crew sleeps in broken shifts after the night watch, the helmsman straightens the wheel later than he should, and the crew change falls in the freshest wind of the day.",
+            "From the bow come reports of a knock in the runauter that is audible only at speed, and two people aboard give it two explanations, both plausible.",
+            "Radio reports about the rivals arrive at different hours, some can be confirmed by eye, and some have never been checked and remain someone else’s retelling.",
+            "By midday one of four things has to be chosen: sail fast and trust the wind, go carefully and repair, ask the rivals directly, or turn away from their line and rely on your own boat alone."
           ]
         },
         "twists": {
           "ru": [
-            "В прогнозе использован береговой буй, который потерял передачу при смене ветра; облачность остаётся настоящей угрозой, но сдвигается по времени.",
-            "Шов паруса цел, а звук вызван ослабшим креплением фала; полная замена ткани была бы лишним риском."
+            "Отклонение ветра создаёт не фронт, а береговой эффект: над водой он гнётся влево стабильно, и если идти прямо по сводке, судно будет сносить на мелководье; в таблице это выглядит как отсутствие свежих данных буя, который молчит уже несколько часов.",
+            "Структура паруса цела, и шов, которому приписывают этот стук, не даёт никакого отношения к звуку: источник — ослабшаяся обойма фала у передней шкаторины, а полная замена ткани была бы дорогой ошибкой, потраченной впустую."
           ],
           "en": [
-            "The forecast buoy lost transmission during the wind shift; clouds remain a threat, but the front is later.",
-            "The sail seam is sound; the noise comes from a loose halyard fitting, so replacing fabric would be needless risk."
+            "The wind shift is not a front but a coastal effect: over the water it bends left steadily, and anyone sailing straight off the summary gets set toward the shallows; in the table this looks like missing buoy data, because the buoy has been silent for hours.",
+            "The sail cloth is sound, and the seam everyone blames has nothing to do with the noise: the source is a loose halyard fitting at the forestay shackle, and replacing the whole panel would be an expensive mistake spent for nothing."
           ]
         },
         "paths": {
           "ru": [
-            "Снизить скорость и сменить рулевого: экипаж восстановится, позиции будут потеряны.",
-            "Взять осторожный угол и оставить запас паруса: медленнее, зато нагрузка и ремонтируемость лучше.",
-            "Продолжить курс с короткими сменами вахты: шанс на место выше, риск накопленной усталости растёт."
+            "Идти в споре с ветром на полной парусности и потом чинить. Предпосылка: запас ткани есть, а экипаж способен держать частую смену. Новое: выясняется, откуда приходит стук, и о нём узнаёт вся команда. Немедленное последствие: скорость растёт, корпус и парус одновременно теряют ресурс, усталость поднимается быстрее. Отложенное: к ночи придётся ремонтировать в темноте или терпеть шум, который заглушает команды. Риск: уйти с дистанции раньше, чем ремонт признан нужным. Компромисс: позиция сегодня против состояния судна завтра. Точки пересечения: с решением спросить соперников — время радиообмена идёт параллельно ходу; с решением уйти в сторону от их пути — вы теряете слишком много на развороте.",
+            "Снизить ход, убрать парус и починить оснастку в спокойной воде. Предпосылка: ветер спадает настолько, что судно держит курс без ручной работы. Новое: стук исчезает, а заодно выясняется, что команда умеет работать тихо и быстро. Немедленное последствие: экипаж восстанавливается, но дистанция теряется темпом, и соперники уходят за горизонт. Отложенное: время на ремонт вычитается из последних часов окна, которых и так мало. Риск: если ветер вернётся раньше, ремонт придётся бросить. Компромисс: надёжное судно против занятого места. Точки пересечения: с решением идти быстро — парус уже убран, обратно его поднимать придётся; с решением уйти в сторону — тихий ход позволяет смотреть не на соперников, а на воду.",
+            "Запросить у соперников их курс и сверить с тем, что видно. Предпосылка: радио работает, а соперники не в разрыве с вами. Новое: одно из трёх сообщений подтверждается визуально, и становится понятно, что ваша сводка ветра совпадает с чужим наблюдением. Немедленное последствие: карта становится точнее, а решение перестаёт быть ставкой на догадку. Отложенное: если чужой курс окажут правдивым только сейчас, ваша карта устареет быстрее, чем обычно. Риск: чужое слово о собственной скорости ничего не гарантирует. Компромисс: уверенность в информации против потери времени на разговор. Точки пересечения: с решением уходить в сторону — вы знаете, кого именно обходите; с ремонтом — смена на вахте идёт в эфире, а не у инструментов.",
+            "Уйти в сторону от соперников и взять дистанцию на устойчивость. Предпосылка: усталость экипажа уже видна, а корпус и парус ещё держат. Новое: выясняется, сколько на самом деле стоит ваш отставание и что выигрыш даёт не скорость, а ровный ход. Немедленное последствие: усталость падает, руль ведёт себя спокойнее, но дистанция проигрывается целиком. Отложенное: возвращаться в группу придётся уже с израсходованным резервом, и торговаться придётся не скоростью, а временем. Риск: оказаться вне видимости соперников и вне их предупреждений. Компромисс: экипаж на финише против места в зачёте. Точки пересечения: с решением чинить — тихий ход даёт окно для работы; с запросом по радио — собеседники решают, отвечать ли человеку, который идёт последним."
           ],
           "en": [
-            "Slow down and rotate the helm: the crew recovers but loses places.",
-            "Take a conservative angle and reef early: slower, but strain and repair risk fall.",
-            "Hold course with short watches: placement improves, accumulated fatigue rises."
+            "Sail fast against the wind and repair afterwards. Preconditions: there is cloth in reserve and the crew can hold short shifts. What it brings: the source of the knock is identified, and the whole boat learns it. Immediate consequence: speed rises while hull and sail spend their margin at once, and fatigue climbs faster. Deferred consequence: by nightfall the repair happens in the dark, or the noise goes on drowning out commands. Risk: leaving the course before the repair is admitted to be needed. Tradeoff: a place today against the state of the boat tomorrow. Crossing points: with the decision to ask the rivals the radio exchange runs alongside the run; with the decision to turn away you lose a great deal on the gybe itself.",
+            "Ease off, reef the sail and fix the rigging in settled water. Preconditions: the wind drops far enough for the boat to hold her line by herself. What it brings: the knock disappears, and it turns out the crew is quick and quiet when they work. Immediate consequence: the crew recovers, but the distance goes on tempo and the rivals slide below the horizon. Deferred consequence: the repair comes out of the last hours of the window, and there are few of those. Risk: if the wind comes back first, the repair has to be abandoned. Tradeoff: a sound boat against a place in the standings. Crossing points: with the decision to sail fast the sail is already down and getting it back up costs time; with the decision to stand aside the quiet run lets you watch the water instead of the fleet.",
+            "Ask the rivals for their course and check it against what you can see. Preconditions: the radio works and the rivals are not out of contact range. What it brings: one of the three reports is confirmed by eye, and it becomes clear that your wind summary matches somebody else’s observation. Immediate consequence: the chart gets better and the decision stops being a bet on a guess. Deferred consequence: if their course was honest only a moment ago, your chart goes stale faster than usual. Risk: another skipper’s word about his own speed guarantees nothing. Tradeoff: confidence in the information against time spent talking. Crossing points: with the decision to stand aside you know exactly whom you are working around; with the repair the watch change happens on the air instead of at the fittings.",
+            "Stand away from the fleet and win distance on consistency. Preconditions: crew fatigue is already visible and hull and sail still hold. What it brings: you learn what the deficit actually costs and that what pays is not speed but an even run. Immediate consequence: fatigue falls and the wheel behaves, but the distance is given away outright. Deferred consequence: rejoining the group is done with a spent reserve, and the bargaining will be about time rather than speed. Risk: ending up outside sight of the rivals and outside their warnings. Tradeoff: the crew at the finish against a place in the result. Crossing points: with the decision to repair, the quiet run opens the window for the work; with the radio call the people you are talking to decide whether to answer someone sailing last."
           ]
         }
       }
@@ -228,6 +288,26 @@
         {
           "id": "finish_window",
           "text": "До закрытия погодного окна остаётся около двадцати двух часов."
+        },
+        {
+          "id": "coastal_bend",
+          "text": "Ветер у берега гнётся: над водой он примерно на двадцать градусов левее, чем показывает сводка для суши, и это отклонение держится уже вторые сутки."
+        },
+        {
+          "id": "buoy_silent",
+          "text": "Береговой буй, из которого берётся ветер в сводке, уже несколько часов не передаёт данные; вместо свежего значения в таблице стоит последнее принятое, с отметкой времени."
+        },
+        {
+          "id": "halyard_fitting",
+          "text": "У передней шкаторины фал слегка люфтит в обойме, и на резком ходе стук отдаётся в ранчоутер; ткань паруса при этом не затронута."
+        },
+        {
+          "id": "helm_fatigue",
+          "text": "Рулевой держит румпель обеими руками и компенсирует бортовое рыскание корпусом; двое других замечают, что он выравнивает руль с опозданием."
+        },
+        {
+          "id": "rival_reports",
+          "text": "Сведения о трёх соперниках получены ночью по радио и относятся к разным моментам времени; одно совпадает с вашим наблюдением, два других с момента получения не проверялись."
         }
       ]
     }
@@ -241,6 +321,7 @@
       "forecast",
       "progress",
       "hours",
+      "helm",
       "location",
       "goalStatus"
     ],
@@ -272,6 +353,10 @@
       "hours": {
         "min": 0,
         "max": 72
+      },
+      "helm": {
+        "min": 0,
+        "max": 100
       }
     },
     "allowedValues": {
@@ -279,7 +364,10 @@
         "deck",
         "nav",
         "rigging",
-        "lee"
+        "lee",
+        "bow",
+        "engine",
+        "bunk"
       ],
       "goalStatus": [
         "active",
@@ -297,348 +385,30 @@
       {
         "path": "hull",
         "maxIncrease": 8
+      },
+      {
+        "path": "lead",
+        "maxIncrease": 12
+      },
+      {
+        "path": "helm",
+        "maxIncrease": 10
       }
     ],
     "instructions": [
-      "Не делай прогноз точным задним числом и не перемещай яхту между точками без времени и маршрута.",
-      "Выигрыш позиции должен иметь причину и может увеличить износ или усталость.",
-      "Не восстанавливай корпус и паруса без ремонта, пригодных условий и расхода времени.",
-      "Финал требует пересечения финиша до закрытия окна при мореходном судне и безопасной вахте."
+      "Сохраняй причинно-следственную непрерывность: каждое изменение позиции, корпуса, парусов, усталости, надёжности прогноза, пройденной дистанции, устойчивости руля и оставшихся часов должно следовать из конкретного решения, его цены и прошедшего времени.",
+      "Не повторяй уже показанное: одна и та же сцена и один и тот же результат описываются один раз; при повторном заходе коротко обозначь итог и измени обстановку.",
+      "Положение соперников устаревает со временем: сведения, полученные ночью, нельзя использовать как свежие, а выигрыш позиции обязан иметь названную причину и цену в виде износа, усталости или потраченных часов.",
+      "Чистота строя паруса, целостность корпуса, выносливость экипажа и устойчивость руля не восстанавливаются сами по времени: ремонт, отдых и смена рулевого требуют остановки или снижения хода и занимают реальные часы.",
+      "Не выдавай истолкованный стук в ранчоутере, молчание буя или чужое радиосообщение за доказанный факт: сначала покажи само наблюдение, затем версию, и держи их раздельно; отозванная версия остаётся в истории как отвергнутая, а не переписывает прошлое.",
+      "Люди в кадре сохраняют собственное состояние и голос: рулевой имеет право сказать, что больше не держит темп, экипаж вправе отказаться работать на износ, и цена такого решения проявляется в усталости, технике и позиции, а не в молчаливом согласии.",
+      "Не обещай команде, соперникам или комитету то, чего не обеспечивают оставшиеся часы окна, и не превращай регату в гарантированный результат по чужому прогнозу.",
+      "Не добавляй на борт новых судов, приборов и спасательных средств сверх уже известных: решение, источник которого нельзя проверить на борту, выглядит как сообщение о намерении.",
+      "Финал требует пересечения финиша до закрытия окна при мореходном судне, дееспособной вахте и маршруте, который экипаж может объяснить и отстаивать, а не только пересечения линии."
     ]
   },
   "opening": {
-    "ru": "Утренний прогноз обещал ровный ветер, но над стартовой линией уже собираются тёмные облака. Вы — шкипер гоночной команды; экипаж готов к выходу, один парус требует ремонта, а решение о старте нужно принять до закрытия окна погоды\n\nБоковой ветер ловит парус во время смены команды. Курс удержан, но быстрая настройка нагрузит уставших; замедление позволит сопернику первым выйти в спокойную воду.\n\nЗдесь важно помнить, что к моменту вашего появления история уже началась. Многодневная океанская регата: экипаж небольшого гоночного судна балансирует скорость, целостность парусов, усталость и неполный прогноз погоды. Это не отвлечённый фон и не задача, которую можно решить одним эффектным жестом: исходные условия складывались раньше, а люди, объекты и процессы успели приспособиться к ним. Поэтому любое изменение затронет не только то, что видно сейчас, но и привычный порядок, на котором держатся остальные части ситуации. Вы входите в неё с правом действовать, однако сначала нужно понять, что именно считается нормой и кто подтвердил эту норму.\n\nПервое наблюдение относится к конкретному месту: Палуба, Навигационный стол, Парусное вооружение, Подветренная сторона. В нём есть заметная деталь, которую легко принять за готовый ответ, но пока это только отправная точка. Сведения получены не одновременно и не одним способом; между тем, что зафиксировано, и тем, что уже успели предположить, остаётся промежуток. Если немедленно закрыть его догадкой, следующие данные будут подгоняться под выбранную версию. Если же точно обозначить, что известно, а что пока лишь кажется вероятным, у вас сохранится возможность увидеть несоответствие, не переписывая задним числом всю картину.\n\nВаша задача сформулирована шире, чем устранить ближайшую помеху: Завершить дистанцию в пределах гоночного окна с сохранённой мореходностью, дееспособным экипажем и обоснованным тактическим маршрутом. На практике это означает одновременно следить за непосредственным результатом и за тем, что этот результат позволит узнать. Быстрый шаг может принести видимое улучшение, но ухудшить сравнимость, доступность или доверие; осторожный — сохранить качество проверки, но оставить проблему без немедленного ответа. Эти соображения не равны по весу во всех обстоятельствах. Их порядок зависит от того, какие сведения вы подтвердите и какой ущерб действительно обратим.\n\nВ материалах есть три слоя: исходное состояние, первое наблюдение и объяснение, которое кто-то успел к нему приложить. Не смешивайте их. Снизить скорость и сменить рулевого: экипаж восстановится, позиции будут потеряны. Если цифры или свидетельства расходятся, полезно установить, когда и где именно началось расхождение, кто наблюдал явление напрямую и какие условия могли поменяться между проверками. Иногда спорный показатель оказывается не ложным, а неполным: он честно описывает ту точку, где был получен, но не ту, о которой спрашивает команда.\n\nВам не требуется заранее выбирать единственную стратегию на весь эпизод. В текущем пакете доступны разные типы действий: Сопоставить прогноз с наблюдениями, Изменить настройку парусов, Перераспределить вахту. Они дают разные виды контроля: одно может уточнить картину, другое — изменить условия, третье — выиграть время или проверить связь между двумя событиями. Выбирая, задайте себе практический вопрос: что должно стать заметно после этого шага, если ваша версия верна? И что вы увидите, если она неверна? Такой критерий превращает действие в проверку, а не просто в жест, после которого приходится надеяться на удачу.\n\nПуть вперёд может разветвиться, и у каждого направления будет собственная цена. Одно решение способно защитить непосредственную цель, но оставить неопределённость; другое — укрепить доказательства, но сузить окно для вмешательства; третье — уменьшить воздействие на окружающую систему, одновременно потребовав новой проверки. Эти различия не делают какой-либо путь правильным заранее. Важнее видеть, какую ценность вы защищаете сейчас, чем рискуете ради неё и какие признаки заставят пересмотреть план. Смена курса допустима, если вы можете объяснить, какая новая информация изменила расчёт.\n\nОглянитесь на Палуба, Навигационный стол, Парусное вооружение, Подветренная сторона. Каждая точка открывает свою часть происходящего и скрывает другую; переход между ними сам по себе может менять условия наблюдения. Не считайте схему исчерпывающей: она описывает доступные места, но не гарантирует, что все важные процессы заметны с одной позиции. Сверяйте время, источник и обстоятельства каждого сообщения. Если кто-то говорит «это было так всегда», спросите, за какой период он отвечает; если прибор показывает отклонение, уточните его рабочий диапазон и место установки. Так вы отделите стабильную закономерность от удобного, но слишком широкого обобщения.\n\nЕсть вопросы, на которые пока нельзя честно ответить. Что здесь причина, а что следствие? Действительно ли наблюдаемое изменение требует немедленного вмешательства? Кто или что понесёт последствия, если вы ошибётесь? Неопределённость не означает, что все версии одинаково вероятны; она означает, что следующая сцена должна дать материал для различения. Не превращайте каждую странность в тайный замысел и не отбрасывайте неудобную улику лишь потому, что она мешает плану. Самый убедительный поворот будет иметь смысл только тогда, когда ранние подробности позволят узнать его, а не просто удивиться ему.\n\nНачните с масштаба, который можно проверить. Запишите исходные условия, выберите один важный показатель и не меняйте сразу несколько факторов, если хотите понять, что повлияло на результат. Если вмешательство необходимо прямо сейчас, обозначьте его как временное и сохраните контрольную точку для сравнения. Если можно подождать, определите, какое именно наблюдение оправдает ожидание и сколько времени оно занимает. Это не бюрократическая осторожность: так вы не потеряете возможность отличить настоящую перемену от эффекта собственных действий.\n\nПостепенно прояснится и человеческая сторона задачи: чьи объяснения опираются на наблюдения, кто отвечает за последствия и кому придётся жить с выбранным порядком после того, как срочность спадёт. Доверие здесь не заменяет измерения, но влияет на то, какие сведения вам сообщат и какие шаги команда сможет выполнить вместе. Объясняйте, что проверяете, не обещайте результата раньше проверки и отмечайте, что именно изменило ваше мнение. Иногда это позволит сохранить сотрудничество даже при разногласии; иногда станет ясно, что разные участники защищают несовместимые интересы.\n\nОтдельно рассмотрите направление 3: Продолжить курс с короткими сменами вахты: шанс на место выше, риск накопленной усталости растёт. Оно не отменяет остальные возможности и не требует принимать весь план сразу. Спросите, какое подтверждение сделает этот шаг уместным, что останется измеримым после него и кто заметит его побочный эффект первым. Если ответ пока неизвестен, это не повод скрывать пробел: его можно превратить в условие остановки или повторной оценки.",
-    "en": "The morning forecast promised steady wind, but dark clouds are gathering over the starting line. As skipper, you have a ready crew, a sail in need of repair, and a start decision to make before the weather window closes\n\nA crosswind catches the sail during a crew change. The boat holds its line, but a fast adjustment strains tired hands; slowing down may let the rival reach calmer water first.\n\nRemember that the story had already begun before you arrived. The multi-day regatta balances speed, fatigue, sail integrity, and an incomplete forecast. This is not a backdrop or a problem that can be solved with one dramatic gesture: the conditions formed earlier, and people, objects, and processes have adapted to them. Any change will affect more than what is visible now; it may alter the routine that holds other parts of the situation together. You have authority to act, but first you need to understand what counts as normal here and who has actually verified that baseline.\n\nThe first observation belongs to a specific place: Deck, Navigation station, Rigging, Leeward side. It contains a detail that may look like an answer, but for now it is only a starting point. The information was gathered at different times and by different means; a gap remains between what was recorded and the explanation someone has attached to it. If you fill that gap with a guess, later evidence may be forced to fit your theory. If you mark what is known and what only seems likely, you can notice a mismatch without rewriting the whole account afterward.\n\nYour objective is broader than removing the nearest obstacle: Finish within the racing window with a seaworthy vessel, capable crew, and a defensible tactical route. In practice, you must watch both the immediate result and what that result lets you learn. A quick intervention may produce visible improvement while weakening comparison, access, or trust; a cautious one may preserve the quality of the evidence while leaving the problem unresolved. Those concerns do not carry the same weight in every situation. Their order depends on what you confirm and on which harm can actually be reversed.\n\nThe available material has three layers: the initial conditions, the first observation, and the explanation someone has already attached to it. Keep them separate. Slow down and rotate the helm: the crew recovers but loses places. If figures or accounts disagree, establish when and where the mismatch began, who witnessed the event directly, and what could have changed between checks. A disputed reading is sometimes incomplete rather than false: it may accurately describe the point where it was taken, but not the wider area the team is asking about.\n\nYou do not have to choose one strategy for the whole episode in advance. The package offers different kinds of action: Compare forecast with observations, Adjust sail trim, Rebalance the watch. Each gives you a different kind of control: one may clarify the picture, another may change the conditions, and another may buy time or test a connection between events. Before choosing, ask a practical question: what should become visible if your theory is right? What would you see if it is wrong? That turns an action into a test, rather than a gesture followed by a hope for good luck.\n\nThe way forward can branch, and each direction has its own cost. One choice may protect the immediate objective while leaving uncertainty; another may strengthen the evidence while narrowing the window to intervene; a third may reduce impact on the surrounding system while requiring a fresh check. None is automatically correct. What matters is seeing which value you are protecting, what you risk for it, and what signs would make you reconsider. A change of course is sound when you can explain what new information changed the calculation.\n\nLook at Deck, Navigation station, Rigging, Leeward side. Each point reveals one part of the situation and hides another; moving between them can itself change the conditions of observation. Do not treat the map as complete: it lists available places but cannot guarantee that every important process is visible from one position. Compare the time, source, and circumstances of each report. If someone says “it has always been this way,” ask what period they mean; if an instrument shows a deviation, check its operating range and location. This helps separate a stable pattern from a convenient but overly broad conclusion.\n\nSome questions cannot yet be answered honestly. What is a cause, and what is an effect? Does the observed change truly require immediate intervention? Who or what bears the cost if you are wrong? Uncertainty does not mean every theory is equally likely; it means the next scene must give you a way to distinguish them. Do not turn every oddity into a hidden scheme, and do not discard inconvenient evidence because it disrupts a plan. A convincing turn will make sense only if earlier details let you recognize it, not merely be surprised by it.\n\nStart at a scale you can check. Record the baseline, choose one important measure, and avoid changing several factors at once if you need to know what caused the result. If action is necessary now, mark it as temporary and preserve a control point for comparison. If waiting is possible, specify what observation would justify the delay and how long it will take. This is not caution for its own sake: it preserves your ability to distinguish a real change from the effect of your own intervention.\n\nThe human side of the task will become clearer too: whose account rests on observation, who is responsible for the consequences, and who must live with the chosen arrangement after the emergency passes. Trust does not replace measurement, but it affects what people tell you and what the team can do together. Explain what you are checking, do not promise a result before it is verified, and note what changed your mind. That may preserve cooperation through disagreement; it may also show that different participants are protecting interests that cannot be reconciled.\n\nConsider approach 3 separately: Hold course with short watches: placement improves, accumulated fatigue rises. It does not erase the other options or require you to commit to the whole plan at once. Ask what evidence would make this step appropriate, what will remain measurable afterward, and who will notice its side effect first. If the answer is not yet known, do not hide the gap; turn it into a condition for pausing or reassessing."
-  },
-  "preparedBranches": [
-    {
-      "id": "fatigue_pressure",
-      "actions": [
-        "weather",
-        "trim",
-        "crew",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "Боковой ветер ловит парус во время смены команды. Курс удержан, но быстрая настройка нагрузит уставших; замедление позволит сопернику первым выйти в спокойную воду.",
-        "en": "A crosswind catches the sail during a crew change. The boat holds its line, but a fast adjustment strains tired hands; slowing down may let the rival reach calmer water first."
-      },
-      "mutations": [],
-      "suggestions": [
-        {
-          "text": {
-            "ru": "Сверить обстановку и выбрать безопасный приоритет",
-            "en": "Recheck the situation and choose a safe priority"
-          }
-        },
-        {
-          "text": {
-            "ru": "Сохранить текущий план и подготовить запасной",
-            "en": "Keep the current plan and prepare a backup"
-          }
-        }
-      ]
-    },
-    {
-      "id": "turning_point_lead",
-      "when": {
-        "lead": {
-          "gte": 117
-        }
-      },
-      "actions": [
-        "weather",
-        "trim",
-        "crew",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "Порыв бокового ветра наполняет парус во время смены экипажа. Лодка держит курс, но резкая поправка нагрузит уставшие руки; если замедлиться, соперник может первым выйти в более спокойные воды. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
-        "en": "An alternate route opens as circumstances shift. Continue the current approach or change priorities before events make the consequences harder to reverse."
-      },
-      "mutations": [],
-      "suggestions": [
-        {
-          "text": {
-            "ru": "Сверить обстановку и выбрать безопасный приоритет",
-            "en": "Recheck the situation and choose a safe priority"
-          }
-        },
-        {
-          "text": {
-            "ru": "Сохранить текущий план и подготовить запасной",
-            "en": "Keep the current plan and prepare a backup"
-          }
-        }
-      ]
-    },
-    {
-      "id": "authored_turn_1",
-      "minTurns": 2,
-      "actions": [
-        "weather",
-        "trim",
-        "crew",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "В прогнозе использован береговой буй, который потерял передачу при смене ветра; облачность остаётся настоящей угрозой, но сдвигается по времени.",
-        "en": "The forecast buoy lost transmission during the wind shift; clouds remain a threat, but the front is later."
-      },
-      "mutations": [],
-      "suggestions": [],
-      "responses": {
-        "weather": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Сопоставить прогноз с наблюдениями». Команда продолжает по пути: Снизить скорость и сменить рулевого: экипаж восстановится, позиции будут потеряны. Улика раскрывает поворот: В прогнозе использован береговой буй, который потерял передачу при смене ветра; облачность остаётся настоящей угрозой, но сдвигается по времени.",
-            "en": "You choose “Compare forecast with observations.” The team continues along this path: Slow down and rotate the helm: the crew recovers but loses places. The evidence reveals the turn: The forecast buoy lost transmission during the wind shift; clouds remain a threat, but the front is later."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Снизить скорость и сменить рулевого: экипаж восстановится, позиции будут потеряны.",
-                "en": "Slow down and rotate the helm: the crew recovers but loses places."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Взять осторожный угол и оставить запас паруса: медленнее, зато нагрузка и ремонтируемость лучше.",
-                "en": "Take a conservative angle and reef early: slower, but strain and repair risk fall."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Продолжить курс с короткими сменами вахты: шанс на место выше, риск накопленной усталости растёт.",
-                "en": "Hold course with short watches: placement improves, accumulated fatigue rises."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "trim": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Изменить настройку парусов». Команда продолжает по пути: Взять осторожный угол и оставить запас паруса: медленнее, зато нагрузка и ремонтируемость лучше. Улика раскрывает поворот: В прогнозе использован береговой буй, который потерял передачу при смене ветра; облачность остаётся настоящей угрозой, но сдвигается по времени.",
-            "en": "You choose “Adjust sail trim.” The team continues along this path: Take a conservative angle and reef early: slower, but strain and repair risk fall. The evidence reveals the turn: The forecast buoy lost transmission during the wind shift; clouds remain a threat, but the front is later."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Снизить скорость и сменить рулевого: экипаж восстановится, позиции будут потеряны.",
-                "en": "Slow down and rotate the helm: the crew recovers but loses places."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Взять осторожный угол и оставить запас паруса: медленнее, зато нагрузка и ремонтируемость лучше.",
-                "en": "Take a conservative angle and reef early: slower, but strain and repair risk fall."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Продолжить курс с короткими сменами вахты: шанс на место выше, риск накопленной усталости растёт.",
-                "en": "Hold course with short watches: placement improves, accumulated fatigue rises."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "crew": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Перераспределить вахту». Команда продолжает по пути: Продолжить курс с короткими сменами вахты: шанс на место выше, риск накопленной усталости растёт. Улика раскрывает поворот: В прогнозе использован береговой буй, который потерял передачу при смене ветра; облачность остаётся настоящей угрозой, но сдвигается по времени.",
-            "en": "You choose “Rebalance the watch.” The team continues along this path: Hold course with short watches: placement improves, accumulated fatigue rises. The evidence reveals the turn: The forecast buoy lost transmission during the wind shift; clouds remain a threat, but the front is later."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Снизить скорость и сменить рулевого: экипаж восстановится, позиции будут потеряны.",
-                "en": "Slow down and rotate the helm: the crew recovers but loses places."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Взять осторожный угол и оставить запас паруса: медленнее, зато нагрузка и ремонтируемость лучше.",
-                "en": "Take a conservative angle and reef early: slower, but strain and repair risk fall."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Продолжить курс с короткими сменами вахты: шанс на место выше, риск накопленной усталости растёт.",
-                "en": "Hold course with short watches: placement improves, accumulated fatigue rises."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "free_text": {
-          "narrative": {
-            "ru": "Ваш свободный план меняет способ проверки. Команда раскрывает поворот по найденной улике: В прогнозе использован береговой буй, который потерял передачу при смене ветра; облачность остаётся настоящей угрозой, но сдвигается по времени.",
-            "en": "Your free-form plan changes how the team checks the clue. The turn is revealed by the evidence: The forecast buoy lost transmission during the wind shift; clouds remain a threat, but the front is later."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Снизить скорость и сменить рулевого: экипаж восстановится, позиции будут потеряны.",
-                "en": "Slow down and rotate the helm: the crew recovers but loses places."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Взять осторожный угол и оставить запас паруса: медленнее, зато нагрузка и ремонтируемость лучше.",
-                "en": "Take a conservative angle and reef early: slower, but strain and repair risk fall."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Продолжить курс с короткими сменами вахты: шанс на место выше, риск накопленной усталости растёт.",
-                "en": "Hold course with short watches: placement improves, accumulated fatigue rises."
-              },
-              "icon": "↗️"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "id": "authored_turn_2",
-      "minTurns": 4,
-      "actions": [
-        "weather",
-        "trim",
-        "crew",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "Шов паруса цел, а звук вызван ослабшим креплением фала; полная замена ткани была бы лишним риском.",
-        "en": "The sail seam is sound; the noise comes from a loose halyard fitting, so replacing fabric would be needless risk."
-      },
-      "mutations": [],
-      "suggestions": [],
-      "responses": {
-        "weather": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Сопоставить прогноз с наблюдениями». Команда продолжает по пути: Снизить скорость и сменить рулевого: экипаж восстановится, позиции будут потеряны. Улика раскрывает поворот: Шов паруса цел, а звук вызван ослабшим креплением фала; полная замена ткани была бы лишним риском.",
-            "en": "You choose “Compare forecast with observations.” The team continues along this path: Slow down and rotate the helm: the crew recovers but loses places. The evidence reveals the turn: The sail seam is sound; the noise comes from a loose halyard fitting, so replacing fabric would be needless risk."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Снизить скорость и сменить рулевого: экипаж восстановится, позиции будут потеряны.",
-                "en": "Slow down and rotate the helm: the crew recovers but loses places."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Взять осторожный угол и оставить запас паруса: медленнее, зато нагрузка и ремонтируемость лучше.",
-                "en": "Take a conservative angle and reef early: slower, but strain and repair risk fall."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Продолжить курс с короткими сменами вахты: шанс на место выше, риск накопленной усталости растёт.",
-                "en": "Hold course with short watches: placement improves, accumulated fatigue rises."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "trim": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Изменить настройку парусов». Команда продолжает по пути: Взять осторожный угол и оставить запас паруса: медленнее, зато нагрузка и ремонтируемость лучше. Улика раскрывает поворот: Шов паруса цел, а звук вызван ослабшим креплением фала; полная замена ткани была бы лишним риском.",
-            "en": "You choose “Adjust sail trim.” The team continues along this path: Take a conservative angle and reef early: slower, but strain and repair risk fall. The evidence reveals the turn: The sail seam is sound; the noise comes from a loose halyard fitting, so replacing fabric would be needless risk."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Снизить скорость и сменить рулевого: экипаж восстановится, позиции будут потеряны.",
-                "en": "Slow down and rotate the helm: the crew recovers but loses places."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Взять осторожный угол и оставить запас паруса: медленнее, зато нагрузка и ремонтируемость лучше.",
-                "en": "Take a conservative angle and reef early: slower, but strain and repair risk fall."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Продолжить курс с короткими сменами вахты: шанс на место выше, риск накопленной усталости растёт.",
-                "en": "Hold course with short watches: placement improves, accumulated fatigue rises."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "crew": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Перераспределить вахту». Команда продолжает по пути: Продолжить курс с короткими сменами вахты: шанс на место выше, риск накопленной усталости растёт. Улика раскрывает поворот: Шов паруса цел, а звук вызван ослабшим креплением фала; полная замена ткани была бы лишним риском.",
-            "en": "You choose “Rebalance the watch.” The team continues along this path: Hold course with short watches: placement improves, accumulated fatigue rises. The evidence reveals the turn: The sail seam is sound; the noise comes from a loose halyard fitting, so replacing fabric would be needless risk."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Снизить скорость и сменить рулевого: экипаж восстановится, позиции будут потеряны.",
-                "en": "Slow down and rotate the helm: the crew recovers but loses places."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Взять осторожный угол и оставить запас паруса: медленнее, зато нагрузка и ремонтируемость лучше.",
-                "en": "Take a conservative angle and reef early: slower, but strain and repair risk fall."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Продолжить курс с короткими сменами вахты: шанс на место выше, риск накопленной усталости растёт.",
-                "en": "Hold course with short watches: placement improves, accumulated fatigue rises."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "free_text": {
-          "narrative": {
-            "ru": "Ваш свободный план меняет способ проверки. Команда раскрывает поворот по найденной улике: Шов паруса цел, а звук вызван ослабшим креплением фала; полная замена ткани была бы лишним риском.",
-            "en": "Your free-form plan changes how the team checks the clue. The turn is revealed by the evidence: The sail seam is sound; the noise comes from a loose halyard fitting, so replacing fabric would be needless risk."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Снизить скорость и сменить рулевого: экипаж восстановится, позиции будут потеряны.",
-                "en": "Slow down and rotate the helm: the crew recovers but loses places."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Взять осторожный угол и оставить запас паруса: медленнее, зато нагрузка и ремонтируемость лучше.",
-                "en": "Take a conservative angle and reef early: slower, but strain and repair risk fall."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Продолжить курс с короткими сменами вахты: шанс на место выше, риск накопленной усталости растёт.",
-                "en": "Hold course with short watches: placement improves, accumulated fatigue rises."
-              },
-              "icon": "↗️"
-            }
-          ]
-        }
-      }
-    }
-  ]
+    "ru": "Смена начинается в четверть седьмого, когда над водой ещё держится серая ночная темнота и горизонт с настоящим светом невозможно отличить от того, что мерещится сквозь брызги. Судно идёт на попутном ветре, скорость держится около шести узлов, корпус ровный, и всё выглядит так, будто ничего не требует внимания. На самом деле требует. Палуба мокрая от брызг, рабочий костюм у двух человек промок до пояса, а в ранчоутере с той стороны, где сильнее всего упирается ветер, раздаётся сухой стук на каждом резком ходу. Он не мешает слышать команды, но вы всё время ловите его краем сознания и не можете от него отделаться.\n\nВы встали к рулю ночью, потому что рулевой в предыдущую вахту держал штурвал обеими руками и выравнивал бортовое рыскание корпусом. Он сделал всё правильно: судно шла ровно, снос не увеличивался, никто не ушибся. Только к концу вахты отвечать на борт стало медленнее, и однажды нос ушёл влево настолько, что подветренный борт поднял пену. Сейчас он в рундуке спит, и вы замечаете, что вам приходится делать то же самое — компенсировать корпусом, — и понимаете, что это не усталость в его характере, а усталость в теле.\n\nВетер над водой не совпадает со сводкой, и это известно давно. Прогноз для суши показывает восемьдесят градусов, а над водой лодка идёт на шестьдесят, и это отклонение держится вторые сутки, изо дня в день. Один раз объяснили фронтом, но фронт двигался бы по карте, а тут каждый раз одна и та же разница. Ветер гнётся у берега и больше не выпрямляется, а значит, идти прямо по цифре нельзя: судно будет сносить влево, к мелководью, и там придётся отдавать ход обратно. Вы идёте с поправкой, но поправка выведена на глаз и слухом, а не из измерения, и её точность с каждым часом плывёт вместе с ветром.\n\nДанные, на которые вы всё это опираете, поступают из таблицы, а таблица молчит. Береговой буй, с которого берётся ветер в сводке, уже несколько часов не передаёт данные, и вместо свежего значения там стоит последнее принятое с отметкой времени. Кто-то на брифинге сказал «свежие данные», и это слово разошлось по экипажу, хотя часы на метке отстают от ваших карманных часов на несколько часов. Никто не проверял, потому что проверять обычно некому, и теперь любой вывод о ветре опирается на одно и то же число, которое никто не обновлял.\n\nСоперники известны вам по трём ночным радиосводкам, и все три относятся к разным моментам. Первая — про судно впереди, которое держалось попутного ветра до двух ночи; её вы подтвердили глазами на рассвете, увидев его парус далеко на курсе. Вторая и третья — про тех, кто ушёл влево от вас накануне, и обе сведения молчат с тех пор, как вы их получили. Ни то, ни другое вы не проверяли, и с каждой вахтой эта запись становится всё менее похожей на то, что происходит сейчас. Радио работает, и в этом единственная возможность узнать что-то новое, но обратиться с вопросом — значит потратить время, которого осталось на два десятка часов, и показать сопернику, где вы находитесь.\n\nО стуке в ранчоутере у вас на борту две версии, и обе звучат разумно. Первый матрос говорит о шве, который с прошлой гонки разошёлся и бьёт по ткани на ходу. Второй говорит, что шов проверен и цел, а звук идёт из обоймы фала у передней шкаторины, которая слегка люфтит и отдаётся вниз при резком ходу. Проверить можно оба: ткань видна с палубы, обойма — вполне достаётся рукой, но только в тихую погоду и при малой скорости, то есть вопреки всему, чего от судна хочется в эти минуты. Время на осмотр есть только у того, кто готов его потратить.\n\nОсновной парус изношен сильнее, чем хотелось бы видеть в таком месте. Ткань ещё держит рабочую нагрузку, швы и углы целы, и в спокойную погоду парус работает нормально. Но усилие, которое он терпит сейчас на этих углах, к вечеру будет больше, а к ночи — больше ещё, и решение принимается не на основании того, что повреждено сегодня, а на основании того, что останется к ночи. Корпус держит лучше паруса: подводная часть после вчерашнего обхода волнения осмотрена и не даёт повода для тревоги, но краска в одном месте стёрта до металла, и при большем наклоне это место будет работать против вас.\n\nДо закрытия окна остаётся около двадцати двух часов, и это число меняет всё. Пройдена меньше трети дистанции, отставание от ближайших соседей — около шести минут, и эти шесть минут набраны не в одном месте, а на вчерашнем обходе волнения, где вы решили не рисковать. Решение было верным и оно стоило места, которое до сих пор можно наверстать, если всё пойдёт ровно. Экипаж устал, но держится; руль ведёт себя ровно, пока им управляют внимательно. Погода впереди, скорее всего, останется ровной, но оставлять запас на резкую перемену приходится именно вам, потому что у команды такого запаса уже нет. И четыре вещи, которые вы можете сделать до следующей вахты, ни одна из них не отменяет остальные: идти быстро и чинить потом, снизить ход и заняться оснасткой, спросить соперников прямо или уйти в сторону от их курса.",
+    "en": "The watch changes at a quarter past six, when the water is still holding the grey of night and you cannot tell the real horizon from the one that swims in the spray. The boat is running on pressure at about six knots, the hull is level, and everything looks as if nothing needs attention. In fact something does. The deck is wet with spray, two sets of working clothes are soaked to the waist, and in the runauter on the side where the wind presses hardest there is a dry knock on every fast move. It does not stop you hearing the orders, but you keep catching it at the edge of your attention and you cannot get rid of it.\n\nYou took the wheel at night because the helmsman before you had been holding it with both hands and correcting the boat's yaw with his body. He had done everything right: she ran straight, the drift did not grow, nobody hurt themselves. Only toward the end of the watch did his corrections arrive later than they should, and once the bow went far enough left that the leeward rail threw up foam. He is asleep in the locker now, and you notice that you are doing the same thing — correcting with your body — and you understand that this is not a habit of his, it is a fact of his body.\n\nThe wind over the water does not match the summary, and has not for some time. The forecast for land says eighty degrees, the boat sails at sixty, and the difference has held for two days running. It was explained once as a front, but a front would move along the chart, and here the same discrepancy repeats. The wind bends at the coast and never straightens out again, which means you cannot simply follow the number: the boat would be set to the left, toward the shallows, and you would have to give the speed back to correct it. You do carry the correction, but you carry it by eye and by ear rather than from measurement, and its accuracy drifts with the wind hour by hour.\n\nThe data you are carrying all of this on comes from a table, and the table is silent. The coastal buoy that the summary takes its wind from has stopped transmitting several hours ago, and in place of a fresh reading there is the last one received, with a time mark on it. Somebody said \"fresh data\" at the briefing, and the words went round the crew, although the clock on the mark is several hours behind your own watch. Nobody checked, because there is never anybody free to check, and now every conclusion about the wind rests on a single number that nobody has refreshed.\n\nYou know your rivals from three night radio reports, and all three belong to different moments. The first is about the boat ahead, holding pressure until two in the morning; you confirmed that one by eye at dawn, seeing her sail far off on the same heading. The second and third are about the two who went left of you the day before, and neither has been repeated since you received it. You have checked neither, and with every watch the notes drift further from what is happening now. The radio works, and it is the only way to learn anything new, but asking a question costs some of the twenty-odd hours you have left and shows your rival exactly where you are.\n\nThere are two versions of the knock in the runauter aboard, and both sound reasonable. The first hand says the seam, which has been open since the last race, is slapping the cloth on the move. The second says the seam has been checked and is sound, and the noise comes from the halyard fitting at the forestay, which has a little play in it and knocks downward when the boat runs fast. Either can be tested: the cloth is visible from the deck, and the fitting can be reached by hand, but only in settled water and at low speed, which is against everything the boat wants this minute. The time for the inspection only exists for whoever is willing to spend it.\n\nThe main sail is more worn than you would like to see in this kind of water. The cloth is still holding working load, the seams and corners are intact, and in settled air the sail works normally. But the strain it is carrying on these angles is larger now than it was at dawn, and by nightfall it will be larger again, so the decision is not made on what is damaged today but on what will be left at night. The hull is holding up better than the sail: the underwater body was inspected after yesterday's detour around the swell and gives no cause for alarm, but the paint is worn to the metal in one spot, and at a greater heel that spot will work against you.\n\nAround twenty-two hours remain before the weather window closes, and that number changes everything. Less than a third of the distance is covered, the nearest boats ahead are about six minutes in front, and those six minutes were not lost in one place — they came from yesterday's detour around the swell, where you decided not to take the risk. The decision was the right one and it cost a place, and that place can still be made up if everything goes evenly from here. The crew is tired but holding. The wheel behaves as long as it is handled with attention. The weather ahead will most likely stay even, but the reserve for a sudden change is yours to keep, because the crew has no reserve left. Four things are open to you before the next watch, and none of them cancels the others: run fast and repair afterwards, ease off and work on the rigging, ask the rivals directly, or stand away from their course."
+  }
 }

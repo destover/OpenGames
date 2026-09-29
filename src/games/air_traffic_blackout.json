@@ -3,10 +3,10 @@
     "id": "air-traffic-blackout",
     "title": "Слепая зона",
     "description": "Сохраните безопасное управление воздушным движением, когда шторм одновременно нарушает радар, связь и работу взлётной полосы.",
-    "setting": "Региональный центр управления воздушным движением во время грозового фронта и отказа части радара; самолёты уже в воздухе, а доступность резервной связи не подтверждена.",
+    "setting": "Региональный центр управления воздушным движением во время грозового фронта и отказа части радара; самолёты уже в воздухе, а доступность резервной связи не подтверждён.",
     "categoryRu": "Авиация",
     "background": "/assets/air-traffic.jpg",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "schemaVersion": "2",
     "isNew": true,
     "durationMinutes": [
@@ -22,6 +22,7 @@
       "separation": 12,
       "weather": 72,
       "fatigue": 38,
+      "fuelMargin": 24,
       "location": "radar",
       "goalStatus": "active"
     }
@@ -43,6 +44,30 @@
     "handoff": {
       "label": "Согласовать резервную частоту",
       "icon": "🎧"
+    },
+    "transponder": {
+      "label": "Проверить ответчики и возраст отметок",
+      "icon": "🛩️"
+    },
+    "fuel": {
+      "label": "Сверить запас топлива с обходом ядра",
+      "icon": "⛽"
+    },
+    "wx": {
+      "label": "Запросить свежую сводку метеослужбы",
+      "icon": "⛈️"
+    },
+    "log": {
+      "label": "Сверить журнал смены по времени докладов",
+      "icon": "🗒️"
+    },
+    "relay": {
+      "label": "Перевести блок на резервный пункт связи",
+      "icon": "🔌"
+    },
+    "brief": {
+      "label": "Собрать брифинг соседнему центру",
+      "icon": "📋"
     }
   },
   "ui": {
@@ -54,6 +79,7 @@
       "separation": "Запас эшелонирования",
       "weather": "Угроза погоды",
       "fatigue": "Нагрузка диспетчеров",
+      "fuelMargin": "Запас топлива у ограниченного борта",
       "location": "Место",
       "goalStatus": "Цель"
     }
@@ -67,6 +93,7 @@
         "separation": "Запас эшелонирования",
         "weather": "Угроза погоды",
         "fatigue": "Нагрузка диспетчеров",
+        "fuelMargin": "Запас топлива у ограниченного борта",
         "location": "Место",
         "goalStatus": "Цель"
       },
@@ -74,7 +101,13 @@
         "free_text": "Свободное действие",
         "verify": "Проверить последнюю отметку борта",
         "separate": "Развести потоки по резервному плану",
-        "handoff": "Согласовать резервную частоту"
+        "handoff": "Согласовать резервную частоту",
+        "transponder": "Проверить ответчики и возраст отметок",
+        "fuel": "Сверить запас топлива с обходом ядра",
+        "wx": "Запросить свежую сводку метеослужбы",
+        "log": "Сверить журнал смены по времени докладов",
+        "relay": "Перевести блок на резервный пункт связи",
+        "brief": "Собрать брифинг соседнему центру"
       },
       "manifest": {
         "title": "Слепая зона",
@@ -95,6 +128,7 @@
         "separation": "Separation margin",
         "weather": "Weather threat",
         "fatigue": "Controller workload",
+        "fuelMargin": "Fuel margin of the limited aircraft",
         "location": "Location",
         "goalStatus": "Objective"
       },
@@ -102,7 +136,13 @@
         "free_text": "Free action",
         "verify": "Verify the last aircraft report",
         "separate": "Apply a contingency separation plan",
-        "handoff": "Coordinate a backup frequency"
+        "handoff": "Coordinate a backup frequency",
+        "transponder": "Check transponders and target ages",
+        "fuel": "Reconcile fuel against the weather detour",
+        "wx": "Request a fresh weather briefing",
+        "log": "Reconcile the shift log by report times",
+        "relay": "Move the console to backup communications",
+        "brief": "Assemble a briefing for the neighbor center"
       },
       "manifest": {
         "title": "Blind Sector",
@@ -148,17 +188,31 @@
       "runway": {
         "ru": "Зона управления полосой",
         "en": "Runway operations"
+      },
+      "north": {
+        "ru": "Северный сектор над заливом",
+        "en": "Northern sector over the bay"
+      },
+      "weather": {
+        "ru": "Кабинет метеослужбы",
+        "en": "Weather desk"
+      },
+      "neighbor": {
+        "ru": "Стол связи с соседним центром",
+        "en": "Neighbor center liaison"
       }
     }
   },
   "world": {
     "constants": {
-      "setting": "Региональный центр управления воздушным движением во время грозового фронта и отказа части радара; самолёты уже в воздухе, а доступность резервной связи не подтверждена.",
+      "setting": "Региональный центр управления воздушным движением во время грозового фронта и отказа части радара; самолёты уже в воздухе, а доступность резервной связи не подтверждён.",
       "physicalRules": [
         "Безопасное эшелонирование важнее пропускной способности; визуальный контакт не гарантирован.",
         "Радарная отметка и доклад пилота имеют время и погрешность; устаревшие данные нельзя считать текущими.",
         "Гроза закрывает участки неба и полосы непредсказуемо, но уже известные ограничения сохраняются.",
-        "Передача смены требует подтверждённого списка бортов, ограничений и открытых конфликтов."
+        "Передача смены требует подтверждённого списка бортов, ограничений и открытых конфликтов.",
+        "Запас топлива борта расходуется сам; решение о выходе из сектора не создаёт топливо, а забирает время на согласование.",
+        "Перенос блока на резервный пункт связи освобождает зал, но несколько минут эфира остаются без устойчивого подтверждения."
       ],
       "continuity": "Учитывай всю подтверждённую историю и причинность мира. Не превращай вероятность в факт; последствия должны соответствовать затраченному времени и ресурсам.",
       "tone": "Взрослая реалистичная история с системными компромиссами, неоднозначной информацией и последствиями решений.",
@@ -169,36 +223,44 @@
         },
         "beats": {
           "ru": [
-            "Гроза разрывает радарную картину, а самолёты уже распределены по коридорам и не могут ждать бесконечно.",
-            "Метки времени и радиоподтверждения показывают задержанные цели; резервный канал занят погодными предупреждениями.",
-            "Смена выбирает безопасные эшелоны и границы ручного управления, оставляя проверяемый журнал каждому борту."
+            "Ночная смена уходит в самую тёмную часть ночи: коридоры разведены, но рук на позициях уже не хватает, а фронт сместился раньше прогноза.",
+            "Северный сектор рассыпается на пропуски: время обновления отметок отстаёт от времени докладов, и часть картины держится только на голосе.",
+            "Один борт уходит ниже расчётного запаса топлива, двое других не подтвердили переход на резервную частоту, и эшелонирование перестаёт быть только числом на экране.",
+            "Соседний центр предлагает принять часть сектора, но до брифинга требуется подтверждённый список бортов, ограничения и открытые конфликты.",
+            "Сводка метеослужбы и очередная отметка в северном секторе заставляют пересмотреть то, что десять минут назад считалось надёжным.",
+            "Решение принимается на исходной смене: восемь бортов, треть покрытия, неподтверждённая резервная частота и две равно правдоподобные версии о секторе."
           ],
           "en": [
-            "A storm breaks the radar picture while aircraft already occupy corridors and cannot wait indefinitely.",
-            "Timestamps and radio checks show delayed targets; the backup channel is carrying weather warnings.",
-            "The shift sets safe altitude bands and manual-control limits, leaving an auditable log for every flight."
+            "The night shift is entering its darkest stretch: corridors are already separated, but there are not enough hands on the positions, and the front arrived ahead of the forecast.",
+            "The northern sector breaks into gaps: target update times lag behind report times, and part of the picture survives only by voice.",
+            "One aircraft drops below its planned fuel reserve, two others have not acknowledged the backup frequency, and separation stops being a number on a screen.",
+            "The neighbor center offers to take part of the sector, but a briefing needs a confirmed aircraft list, restrictions, and open conflicts first.",
+            "A weather briefing and one more northern target force a second look at what was considered reliable ten minutes ago.",
+            "The decision is made on this shift as it stands: eight aircraft, a third of coverage, an unconfirmed backup frequency, and two equally plausible readings of the sector."
           ]
         },
         "twists": {
           "ru": [
-            "Ложные отметки совпадают с отражением осадков, а не неизвестным самолётом; признак — одинаковый интервал обновления.",
-            "Резервная антенна исправна, но направлена на метеослужбу по старой схеме; это подтвердит тестовый позывной."
+            "Ровные промежутки между отметками в северном секторе оказываются отражением осадков, а не скрытым бортом; признак — одинаковый интервал обновления при полном молчании на запрос.",
+            "Резервная антенна на крыше исправна, но развёрнута по осенней записи на метеослужбу; тестовый позывной на резервной частоте разделяет одну версию от другой."
           ],
           "en": [
-            "False marks match storm reflections from precipitation, not an unknown aircraft; identical update intervals are the clue.",
-            "The backup antenna works but still points at the weather desk under an old plan; a test call can confirm it."
+            "The evenly spaced northern targets turn out to be precipitation returns, not a hidden aircraft; the clue is an identical update interval with no answer to a query.",
+            "The backup antenna on the roof works but is still pointed at the weather desk under an autumn record; a test call on the backup frequency separates one reading from the other."
           ]
         },
         "paths": {
           "ru": [
-            "Увеличить интервалы и удержать часть бортов: безопаснее, но двум рейсам угрожает запас топлива.",
-            "Проверять маршруты голосом по очереди: меньше ошибок, но диспетчеры теряют общий обзор и устают.",
-            "Открыть один коридор после независимой сверки курса и высоты: поток сохраняется, другой сектор закрывается."
+            "Развести потоки и удержать часть бортов увеличенными интервалами. Предпосылка: хотя бы часть бортов подтверждает эшелон голосом. Новое: становится видно, сколько времени стоит каждый интервал и где именно накапливается задержка. Немедленное последствие: конфликтов меньше, но удержанные борты медленно расходуют топливо. Отложенное последствие: к следующему часу запас топлива у ограниченного борта станет критическим. Риск: борт, который не подтвердил интервал, останется вне контроля. Компромисс: безопасность эшелона против времени. Точки пересечения: с решением увести борты из сектора — удерживать становится некого; с переносом блока — голосовая подтвержность остаётся единственным источником.",
+            "Проверять маршруты голосом по очереди. Предпосылка: эфир держится на основной частоте, а второй диспетчер ещё способен вести перехват. Новое: появляется порядок, в котором экипажи отвечают, и становятся видны те, кто молчит. Немедленное последствие: ошибок в маршрутах меньше, а общий обзор на экране сужается. Отложенное последствие: усталость растёт, и очередь ответов растягивается до минут. Риск: пропущенный вызов во время паузы. Компромисс: надёжность проверки против общей картины. Точки пересечения: с решением передать сектор соседнему центру — очередь становится частью брифинга; с обращением к отметкам — голос и экран начинают расходиться.",
+            "Открыть один коридор после независимой сверки курса и высоты. Предпосылка: есть хотя бы одно независимое подтверждение положения, а соседний сектор можно закрыть. Новое: выясняется, какой ценой даётся каждый открытый коридор и сколько бортов в него помещается. Немедленное последствие: часть потока продолжает движение, другая часть сектора остаётся без радара. Отложенное последствие: закрытый сектор возвращается в работу позже и позже, с устаревшими данными. Риск: ошибка во внешней проверке, которая выглядит как подтверждение. Компромисс: пропускная способность против покрытия. Точки пересечения: с решением усилить связь — открытый коридор держится голосом; с эвакуацией по топливу — коридор меняет форму.",
+            "Перевести блок на резервный пункт связи. Предпосылка: соседнее крыло доступно, а список переносимых бортов умещается в одну передачу. Новое: качество эфира меняется на несколько минут, и становится видно, кто из бортов слышал вас в последние десять минут. Немедленное последствие: зал теряет устойчивое подтверждение команд, зато появляется стабильный канал. Отложенное последствие: часть подтверждений, полученных до переноса, приходится переспрашивать заново. Риск: борт, оставшийся на прежней частоте без подтверждённого перехода. Компромисс: стабильный канал против немедленной связи с большинством. Точки пересечения: с брифингом соседнему центру — переносятся не только частоты, но и неопределённости; с решением развести потоки — интервалы пересчитываются после переноса."
           ],
           "en": [
-            "Increase spacing and hold some flights: safer, but two aircraft approach their fuel limits.",
-            "Verify routes by voice in sequence: fewer errors, but controllers lose the overview and tire.",
-            "Open one corridor after an independent heading and altitude check: traffic continues while another sector closes."
+            "Separate the streams and hold some aircraft at wider intervals. Preconditions: at least part of the fleet confirms the level by voice. What it brings: you can see what each interval costs in time and where the delay accumulates. Immediate consequence: fewer conflicts, but held aircraft burn fuel slowly. Deferred consequence: by the next hour the fuel margin of the limited aircraft becomes critical. Risk: an aircraft that never acknowledged the spacing is out of control. Tradeoff: separation safety against time. Crossing points: with the decision to send aircraft out of sector there is nobody left to hold; with moving the console, voice confirmation remains the only source.",
+            "Verify routes by voice in turn. Preconditions: the radio holds on the main frequency and the second controller can still monitor. What it brings: the order in which crews answer becomes visible, and so do those who stay silent. Immediate consequence: fewer route errors while the overall picture on the screen narrows. Deferred consequence: workload rises and the answer queue stretches into minutes. Risk: a missed call during a pause. Tradeoff: verification reliability against the shared picture. Crossing points: with handing the sector to the neighbor center the queue becomes part of the briefing; with turning to the targets, voice and screen begin to disagree.",
+            "Open one corridor after an independent heading and altitude check. Preconditions: there is at least one independent position confirmation and a neighboring sector can be closed. What it brings: you learn what each open corridor costs and how many aircraft fit in it. Immediate consequence: part of the traffic keeps moving while another part of the sector stays without radar. Deferred consequence: the closed sector returns later, with stale data. Risk: an error in the outside check that looks like a confirmation. Tradeoff: capacity against coverage. Crossing points: with strengthening communications the open corridor is held by voice; with the fuel decision the corridor changes shape.",
+            "Move the console to backup communications. Preconditions: the adjacent wing is available and the transferable aircraft list fits in one handover. What it brings: radio quality changes for several minutes, and you see who actually heard you in the last ten. Immediate consequence: the room loses steady confirmation of commands and gains a stable channel. Deferred consequence: confirmations taken before the move have to be asked for again. Risk: an aircraft left on the old frequency without an acknowledged switch. Tradeoff: a stable channel against immediate contact with most crews. Crossing points: with briefing the neighbor center, not only frequencies move but doubts; with separating the streams, intervals are recalculated after the move."
           ]
         }
       }
@@ -207,11 +269,11 @@
       "facts": [
         {
           "id": "radar_degradation",
-          "text": "Шторм повредил часть радара; в северном секторе появляются пропуски."
+          "text": "Шторм повредил часть радара; в северном секторе появляются пропуски, а время обновления отметок отстаёт от времени докладов."
         },
         {
           "id": "aircraft_count",
-          "text": "Восемь бортов находятся в зоне ответственности центра."
+          "text": "Восемь бортов находятся в зоне ответственности центра, и все они уже в воздухе."
         },
         {
           "id": "runway",
@@ -219,11 +281,31 @@
         },
         {
           "id": "backup_radio",
-          "text": "Резервная частота доступна, но переход на неё ещё не подтверждён каждым экипажем."
+          "text": "Резервная частота 123.45 доступна, но переход на неё ещё не подтверждён каждым экипажем."
         },
         {
           "id": "handover",
           "text": "Соседний центр готов принять часть сектора после согласованного брифинга."
+        },
+        {
+          "id": "fuel_pressure",
+          "text": "У одного из бортов запас топлива уже ниже расчётного на обход погодного ядра."
+        },
+        {
+          "id": "silent_calls",
+          "text": "Два борта не подтвердили переход на резервную частоту; их последние доклады старше обычного."
+        },
+        {
+          "id": "even_returns",
+          "text": "В северном секторе отметки появляются через одинаковые промежутки времени, что нехарактерно для ручной частоты."
+        },
+        {
+          "id": "repeated_briefing",
+          "text": "Метеослужба передала описание ячейки, дословно совпадающее с рапортом двухчасовой давности."
+        },
+        {
+          "id": "antenna_aim",
+          "text": "Ориентация резервной антенны на крыше внесена в журнал осенью и с тех пор не подтверждалась."
         }
       ]
     }
@@ -236,6 +318,7 @@
       "separation",
       "weather",
       "fatigue",
+      "fuelMargin",
       "location",
       "goalStatus"
     ],
@@ -263,6 +346,10 @@
       "fatigue": {
         "min": 0,
         "max": 100
+      },
+      "fuelMargin": {
+        "min": 0,
+        "max": 100
       }
     },
     "allowedValues": {
@@ -270,7 +357,10 @@
         "tower",
         "radar",
         "backup",
-        "runway"
+        "runway",
+        "north",
+        "weather",
+        "neighbor"
       ],
       "goalStatus": [
         "active",
@@ -304,348 +394,33 @@
       {
         "path": "fatigue",
         "maxIncrease": 20
+      },
+      {
+        "path": "fuelMargin",
+        "maxIncrease": 15,
+        "increaseRequires": {
+          "path": "location",
+          "oneOf": [
+            "tower",
+            "radar"
+          ]
+        }
       }
     ],
     "instructions": [
-      "Не перемещай самолёт мгновенно и не объявляй посадку без подтверждения.",
+      "Не перемещай самолёт мгновенно и не объявляй посадку без подтверждения; уход из сектора занимает время, а смена высоты — ещё больше.",
       "Учитывай погрешность и давность наблюдений; не сокращай установленную безопасную дистанцию ради эффективности.",
       "Сокращение числа бортов требует описанного ухода из сектора или подтверждённой посадки.",
+      "Числа меняются только по затраченному времени и названным действиям: проверка, подтверждение голосом, перенос блока, согласование с соседним центром или уход борта; один ход не переписывает весь сектор.",
+      "Не повторяй уже показанное: одна и та же проверка и один и тот же результат описываются один раз; при повторном заходе коротко обозначь итог и измени обстановку.",
+      "Не выдавай истолкованную отметку, повторённую сводку или старую запись об антенне за доказанный факт: сначала покажи само наблюдение, потом версию, и держи их раздельно.",
+      "Не выдавай отвергнутое за совершившееся: если версия опровергнута или снята, она остаётся в истории как отвергнутая, а не переписывается задним числом.",
+      "Люди в эфире описывай их словами, слышимостью и решениями, а не мыслями; диспетчеры, пилоты и соседний центр действуют по своим ограничениям и времени.",
       "Не объявляй цель выполненной, пока каждый борт не учтён и безопасная передача не подтверждена."
     ]
   },
   "opening": {
-    "ru": "Дождь стучит по стеклу пульта управления не как обычный шум, а словно тысячи крошечных пальцев пытаются втянуться внутрь, нарушая тишину вечера. Мой экран гудит с низким гулом, и я вижу, как на фоне темного свечения радара появляются две зеленые метки: один самолет летит на посадку к Восточной полосе А, другой готовится выйти из задержки у Северных ворот для посадки на Западную полосу Б. Это моя рутинная работа уже пятнадцать минут после начала смены — балансировать потоки воздушного движения в условиях ухудшающейся погоды, но сейчас шторм пришел раньше прогноза с такой силой, что приборы начинают отказывать прямо перед глазами.\n\nЯ привычно беру трубку и говорю экипажу первого самолета: «Идите на снижение до шестисот метров», потому что стандартная процедура требует такого подхода при видимости менее километра. Второй пилот подтверждает курс на посадку в тишине, которую я создаю себе усилием воли, отсекая нарастающую тревогу за состояние оборудования. В этот момент мне кажется, что все идет по плану: контроллеры связи продолжают передавать инструкции сквозь шум ветра и дождя, а диспетчер взлетно-посадочных полос отсчитывает секунды между двумя машинами на старте.\n\nВнезапно изображение второго радара мигнет красным индикатором отказа в правом нижнем углу экрана. Система начинает сбрасывать данные о высоте полета для всех approaching aircraft, и я резко понимаю, что теряю визуальное подтверждение положения одного из самолетов прямо на взлетной полосе. Это не просто технический сбой; это первый трещина в фундаменте безопасности всего аэропорта, где теперь каждый метр пути должен определяться исключительно по остаточным данным первичного радара и инерционным навигационным системам пилотов.\n\nВокруг меня начались первые перекаты: диспетчеры связи пытаются найти резервный канал на частоте VHF 123.45, но сигналы прорываются сквозь грозовую дугу лишь в отрывках слов и обрывающихся инструкциях. Мы еще не понимаем масштаба проблемы — нам кажется, что это временный скачок помех, с которым справится переключение на резервную линию связи через минуту или две. Но время работает против нас: каждый пропущенный доклад экипажа теперь стоит дороже обычного риска ошибки из-за человеческого фактора.\n\nЯ смотрю на часы и вижу, что до полной смены осталось еще два часа работы по графику, но реальное окно для безопасной посадки сокращается с каждой секундой. Самолет третий уже находится в зоне снижения, пилот докладывает о плохой видимости из-за ливня и просит разрешения перейти на визуальную посадочный режим ILS CAT II. Мы должны удержать интервал между ними строго по регламенту даже без радарного подтверждения позиции второго аппарата.\n\nВ этот момент я вспоминаю случай три года назад, когда аналогичная гроза заставила нас закрыть полосу всего на полчаса из-за отказа навигационных маяков. Тогда мы потеряли только время и несколько рейсов; сейчас же цена ошибки несопоставимо выше: один неверный расчет дистанции до полосы может привести к вынужденной посадке в поле или столкновению с другим самолетом, который также летит через эту «слепую зону». Ресурсы центра управления воздушным движением ограничены именно тем фактом, что мы не можем просто ждать восстановления работы радара.\n\nСвязь со вторым диспетчерским пульт начинает прерываться на несколько секунд каждые пять минут из-за атмосферных помех. Это уже не технические сбои в привычном понимании — это физическое ограничение канала связи во время мощного грозового фронта, который блокирует прохождение радиоволн определенной частоты. Мы еще не знаем точно, когда связь восстановится или придется полностью перейти на голосовую передачу по телефонным линиям с задержкой в несколько секунд.\n\nВремя идет своим чередом: контроллер связи докладывает о приближении четвертого самолета к аэродрому и запрашивает разрешение на вход в зону посадки. Мы должны принять решение, стоит ли допускать его или перенаправить через обходной маршрут за пределы зоны действия шторма. Каждый такой выбор влияет не только на время прибытия рейса, но и на общую плотность трафика, создавая цепную реакцию сдерживания потоков.\n\nСейчас я вижу перед собой экран управления воздушным движением с двумя зелеными курсорами — один стоит у края зоны покрытия радара, другой уже пересек порог безопасности полосы. До момента моего первого решения остается совсем немного времени: нужно выбрать между риском потери второго самолета из виду и принудительным разворотом четвертого рейса в облака за пределами аэропорта.\n\nЯ ощущаю на себе тяжесть ответственности за каждого пассажира, летящего сейчас через эту зону нестабильной погоды. Шторм пришел раньше прогноза, оборудование отказывает по частям, а связь прерывается под давлением атмосферных возмущений — и именно в этот момент я должен сохранить управление воздушным движением безопасным.",
-    "en": "\"Rain taps against the control glass not as mere noise but like thousands of tiny fingers attempting to claw their way inside, shattering the evening quiet.\" My monitor hums with a low vibration while two green blips materialize upon its dark surface: one aircraft is descending towards Runway A and another prepares for approach at Northern Gate onto Runway B. This has been my routine balance act for fifteen minutes since shift start; managing air traffic flows against worsening weather until the storm arrived earlier than forecast with such force that instruments began failing right before my eyes.\n\nI pick up the handset and speak to the first crew: \"Descend to six hundred feet,\" because standard procedure demands this approach when visibility drops under one kilometer. The second pilot confirms his runway heading in a silence I create for myself by sheer will, cutting through rising anxiety about equipment status. It feels as if everything is proceeding according to plan; controllers continue transmitting instructions through wind and rain noise while the ground controller counts seconds between two vehicles on the starting line.\n\nSuddenly the image of the second radar flickers with a red failure indicator in its lower right corner. The system begins dumping altitude data for all approaching aircraft, and I instantly realize that visual confirmation is lost for one plane directly over the runway threshold. This is not merely a technical glitch; it represents the first crack in the foundation of airport safety where every meter of path must now be determined solely by residual primary radar data and inertial navigation systems within the pilots.\n\nAround me, chaos begins to stir as controllers attempt to find backup channels on VHF 123.45 frequency but signals penetrate only in fragments of words broken by thunderous arcs. We do not yet grasp the full scale of the problem; it seems merely a temporary spike in interference that will resolve via switching lines within one or two minutes. Yet time works against us: every missed crew report now carries greater weight than ordinary risk from human error factors.\n\nI glance at my watch noting there remain just over an hour remaining until shift change ends but the actual window for safe landing shrinks with each passing second. The third aircraft is already in descent zone, pilot reporting poor visibility due to heavy rain and requesting clearance for visual approach mode under ILS CAT II protocol. We must maintain strict intervals between them even without radar confirmation of position for that second apparatus.\n\nIn this moment memory brings back a case from three years ago when similar thunderstorms forced us close the runway only half an hour due to navigation beacon failures; we lost time and flights then while now price of error is incomparably higher: one wrong calculation distance could lead to emergency landing in fields or collision with another aircraft also flying through this \"blind zone.\" Resources are limited precisely because waiting for radar restoration alone cannot save us.\n\nConnection with secondary dispatch console begins interrupting every five seconds due to atmospheric disturbances. This goes beyond typical technical malfunctions; it represents physical limitation of communication channel during powerful storm front blocking passage of radio waves at certain frequencies. We still do not know exactly when connection will restore or whether we must fully transition via voice transmission over phone lines with several second delays.\n\nTime marches forward: controller reports arrival of fourth aircraft requesting permission to enter landing zone. Decision hangs in balance; admit entry or reroute around storm perimeter? Each choice influences arrival time but also overall traffic density creating chain reaction across flow containment streams.\n\nBefore me stands airfield management screen showing two green cursors—one hovering edge radar coverage while another has crossed safety threshold of runway itself. Little time remains before first decision point requiring selection between risk losing second aircraft sight versus mandatory turn-around for fourth flight into clouds beyond airport boundaries."
-  },
-  "preparedBranches": [
-    {
-      "id": "radar_pressure",
-      "actions": [
-        "verify",
-        "separate",
-        "handoff",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "Доклады двух самолётов накладываются у края радиолокационной зоны. Увеличение интервалов даст время сверить позиции, но снизит темп посадок при передаче смены.",
-        "en": "Two aircraft reports overlap at the edge of the radar gap. Increasing separation gives controllers time to reconcile positions, but reduces the arrival rate during the handoff."
-      },
-      "mutations": [],
-      "suggestions": [
-        {
-          "text": {
-            "ru": "Сверить обстановку и выбрать безопасный приоритет",
-            "en": "Recheck the situation and choose a safe priority"
-          }
-        },
-        {
-          "text": {
-            "ru": "Сохранить текущий план и подготовить запасной",
-            "en": "Keep the current plan and prepare a backup"
-          }
-        }
-      ]
-    },
-    {
-      "id": "turning_point_flights",
-      "when": {
-        "flights": {
-          "gte": 26
-        }
-      },
-      "actions": [
-        "verify",
-        "separate",
-        "handoff",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "У края зоны без радиолокационного покрытия совпадают доклады о двух самолётах. Увеличение интервала даст диспетчерам время сверить их позиции, но снизит темп прибывающих рейсов во время передачи управления. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
-        "en": "An alternate route opens as circumstances shift. Continue the current approach or change priorities before events make the consequences harder to reverse."
-      },
-      "mutations": [],
-      "suggestions": [
-        {
-          "text": {
-            "ru": "Сверить обстановку и выбрать безопасный приоритет",
-            "en": "Recheck the situation and choose a safe priority"
-          }
-        },
-        {
-          "text": {
-            "ru": "Сохранить текущий план и подготовить запасной",
-            "en": "Keep the current plan and prepare a backup"
-          }
-        }
-      ]
-    },
-    {
-      "id": "authored_turn_1",
-      "minTurns": 2,
-      "actions": [
-        "verify",
-        "separate",
-        "handoff",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "Ложные отметки совпадают с отражением осадков, а не неизвестным самолётом; признак — одинаковый интервал обновления.",
-        "en": "False marks match storm reflections from precipitation, not an unknown aircraft; identical update intervals are the clue."
-      },
-      "mutations": [],
-      "suggestions": [],
-      "responses": {
-        "verify": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Проверить последнюю отметку борта». Команда продолжает по пути: Увеличить интервалы и удержать часть бортов: безопаснее, но двум рейсам угрожает запас топлива. Улика раскрывает поворот: Ложные отметки совпадают с отражением осадков, а не неизвестным самолётом; признак — одинаковый интервал обновления.",
-            "en": "You choose “Verify the last aircraft report.” The team continues along this path: Increase spacing and hold some flights: safer, but two aircraft approach their fuel limits. The evidence reveals the turn: False marks match storm reflections from precipitation, not an unknown aircraft; identical update intervals are the clue."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Увеличить интервалы и удержать часть бортов: безопаснее, но двум рейсам угрожает запас топлива.",
-                "en": "Increase spacing and hold some flights: safer, but two aircraft approach their fuel limits."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Проверять маршруты голосом по очереди: меньше ошибок, но диспетчеры теряют общий обзор и устают.",
-                "en": "Verify routes by voice in sequence: fewer errors, but controllers lose the overview and tire."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Открыть один коридор после независимой сверки курса и высоты: поток сохраняется, другой сектор закрывается.",
-                "en": "Open one corridor after an independent heading and altitude check: traffic continues while another sector closes."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "separate": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Развести потоки по резервному плану». Команда продолжает по пути: Проверять маршруты голосом по очереди: меньше ошибок, но диспетчеры теряют общий обзор и устают. Улика раскрывает поворот: Ложные отметки совпадают с отражением осадков, а не неизвестным самолётом; признак — одинаковый интервал обновления.",
-            "en": "You choose “Apply a contingency separation plan.” The team continues along this path: Verify routes by voice in sequence: fewer errors, but controllers lose the overview and tire. The evidence reveals the turn: False marks match storm reflections from precipitation, not an unknown aircraft; identical update intervals are the clue."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Увеличить интервалы и удержать часть бортов: безопаснее, но двум рейсам угрожает запас топлива.",
-                "en": "Increase spacing and hold some flights: safer, but two aircraft approach their fuel limits."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Проверять маршруты голосом по очереди: меньше ошибок, но диспетчеры теряют общий обзор и устают.",
-                "en": "Verify routes by voice in sequence: fewer errors, but controllers lose the overview and tire."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Открыть один коридор после независимой сверки курса и высоты: поток сохраняется, другой сектор закрывается.",
-                "en": "Open one corridor after an independent heading and altitude check: traffic continues while another sector closes."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "handoff": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Согласовать резервную частоту». Команда продолжает по пути: Открыть один коридор после независимой сверки курса и высоты: поток сохраняется, другой сектор закрывается. Улика раскрывает поворот: Ложные отметки совпадают с отражением осадков, а не неизвестным самолётом; признак — одинаковый интервал обновления.",
-            "en": "You choose “Coordinate a backup frequency.” The team continues along this path: Open one corridor after an independent heading and altitude check: traffic continues while another sector closes. The evidence reveals the turn: False marks match storm reflections from precipitation, not an unknown aircraft; identical update intervals are the clue."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Увеличить интервалы и удержать часть бортов: безопаснее, но двум рейсам угрожает запас топлива.",
-                "en": "Increase spacing and hold some flights: safer, but two aircraft approach their fuel limits."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Проверять маршруты голосом по очереди: меньше ошибок, но диспетчеры теряют общий обзор и устают.",
-                "en": "Verify routes by voice in sequence: fewer errors, but controllers lose the overview and tire."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Открыть один коридор после независимой сверки курса и высоты: поток сохраняется, другой сектор закрывается.",
-                "en": "Open one corridor after an independent heading and altitude check: traffic continues while another sector closes."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "free_text": {
-          "narrative": {
-            "ru": "Ваш свободный план меняет способ проверки. Команда раскрывает поворот по найденной улике: Ложные отметки совпадают с отражением осадков, а не неизвестным самолётом; признак — одинаковый интервал обновления.",
-            "en": "Your free-form plan changes how the team checks the clue. The turn is revealed by the evidence: False marks match storm reflections from precipitation, not an unknown aircraft; identical update intervals are the clue."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Увеличить интервалы и удержать часть бортов: безопаснее, но двум рейсам угрожает запас топлива.",
-                "en": "Increase spacing and hold some flights: safer, but two aircraft approach their fuel limits."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Проверять маршруты голосом по очереди: меньше ошибок, но диспетчеры теряют общий обзор и устают.",
-                "en": "Verify routes by voice in sequence: fewer errors, but controllers lose the overview and tire."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Открыть один коридор после независимой сверки курса и высоты: поток сохраняется, другой сектор закрывается.",
-                "en": "Open one corridor after an independent heading and altitude check: traffic continues while another sector closes."
-              },
-              "icon": "↗️"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "id": "authored_turn_2",
-      "minTurns": 4,
-      "actions": [
-        "verify",
-        "separate",
-        "handoff",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "Резервная антенна исправна, но направлена на метеослужбу по старой схеме; это подтвердит тестовый позывной.",
-        "en": "The backup antenna works but still points at the weather desk under an old plan; a test call can confirm it."
-      },
-      "mutations": [],
-      "suggestions": [],
-      "responses": {
-        "verify": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Проверить последнюю отметку борта». Команда продолжает по пути: Увеличить интервалы и удержать часть бортов: безопаснее, но двум рейсам угрожает запас топлива. Улика раскрывает поворот: Резервная антенна исправна, но направлена на метеослужбу по старой схеме; это подтвердит тестовый позывной.",
-            "en": "You choose “Verify the last aircraft report.” The team continues along this path: Increase spacing and hold some flights: safer, but two aircraft approach their fuel limits. The evidence reveals the turn: The backup antenna works but still points at the weather desk under an old plan; a test call can confirm it."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Увеличить интервалы и удержать часть бортов: безопаснее, но двум рейсам угрожает запас топлива.",
-                "en": "Increase spacing and hold some flights: safer, but two aircraft approach their fuel limits."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Проверять маршруты голосом по очереди: меньше ошибок, но диспетчеры теряют общий обзор и устают.",
-                "en": "Verify routes by voice in sequence: fewer errors, but controllers lose the overview and tire."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Открыть один коридор после независимой сверки курса и высоты: поток сохраняется, другой сектор закрывается.",
-                "en": "Open one corridor after an independent heading and altitude check: traffic continues while another sector closes."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "separate": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Развести потоки по резервному плану». Команда продолжает по пути: Проверять маршруты голосом по очереди: меньше ошибок, но диспетчеры теряют общий обзор и устают. Улика раскрывает поворот: Резервная антенна исправна, но направлена на метеослужбу по старой схеме; это подтвердит тестовый позывной.",
-            "en": "You choose “Apply a contingency separation plan.” The team continues along this path: Verify routes by voice in sequence: fewer errors, but controllers lose the overview and tire. The evidence reveals the turn: The backup antenna works but still points at the weather desk under an old plan; a test call can confirm it."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Увеличить интервалы и удержать часть бортов: безопаснее, но двум рейсам угрожает запас топлива.",
-                "en": "Increase spacing and hold some flights: safer, but two aircraft approach their fuel limits."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Проверять маршруты голосом по очереди: меньше ошибок, но диспетчеры теряют общий обзор и устают.",
-                "en": "Verify routes by voice in sequence: fewer errors, but controllers lose the overview and tire."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Открыть один коридор после независимой сверки курса и высоты: поток сохраняется, другой сектор закрывается.",
-                "en": "Open one corridor after an independent heading and altitude check: traffic continues while another sector closes."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "handoff": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Согласовать резервную частоту». Команда продолжает по пути: Открыть один коридор после независимой сверки курса и высоты: поток сохраняется, другой сектор закрывается. Улика раскрывает поворот: Резервная антенна исправна, но направлена на метеослужбу по старой схеме; это подтвердит тестовый позывной.",
-            "en": "You choose “Coordinate a backup frequency.” The team continues along this path: Open one corridor after an independent heading and altitude check: traffic continues while another sector closes. The evidence reveals the turn: The backup antenna works but still points at the weather desk under an old plan; a test call can confirm it."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Увеличить интервалы и удержать часть бортов: безопаснее, но двум рейсам угрожает запас топлива.",
-                "en": "Increase spacing and hold some flights: safer, but two aircraft approach their fuel limits."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Проверять маршруты голосом по очереди: меньше ошибок, но диспетчеры теряют общий обзор и устают.",
-                "en": "Verify routes by voice in sequence: fewer errors, but controllers lose the overview and tire."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Открыть один коридор после независимой сверки курса и высоты: поток сохраняется, другой сектор закрывается.",
-                "en": "Open one corridor after an independent heading and altitude check: traffic continues while another sector closes."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "free_text": {
-          "narrative": {
-            "ru": "Ваш свободный план меняет способ проверки. Команда раскрывает поворот по найденной улике: Резервная антенна исправна, но направлена на метеослужбу по старой схеме; это подтвердит тестовый позывной.",
-            "en": "Your free-form plan changes how the team checks the clue. The turn is revealed by the evidence: The backup antenna works but still points at the weather desk under an old plan; a test call can confirm it."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Увеличить интервалы и удержать часть бортов: безопаснее, но двум рейсам угрожает запас топлива.",
-                "en": "Increase spacing and hold some flights: safer, but two aircraft approach their fuel limits."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Проверять маршруты голосом по очереди: меньше ошибок, но диспетчеры теряют общий обзор и устают.",
-                "en": "Verify routes by voice in sequence: fewer errors, but controllers lose the overview and tire."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Открыть один коридор после независимой сверки курса и высоты: поток сохраняется, другой сектор закрывается.",
-                "en": "Open one corridor after an independent heading and altitude check: traffic continues while another sector closes."
-              },
-              "icon": "↗️"
-            }
-          ]
-        }
-      }
-    }
-  ]
+    "ru": "В два сорок ночи в радарном зале пахнет остывшим кофе и мокрой бумагой. Верхняя кромка окна запотела, и по стеклу ползут капли, которые в свете монитора кажутся зелёными. Перед вами восемь бортстендов, и каждый слегка подрагивает от сквозняка из приточной решётки. На третьем, оставшемся с вечера, лежит карандаш. Смена началась в десять вечера, и первые три часа были той работой, которую вы делаете наизусть: развести по коридорам четыре транзитных борта, принять задержанный рейс с севера, дважды согласовать смену эшелона с диспетчерским старта. Пока всё идёт как вчера. Пока в правом верхнем углу экрана не появляется жёлтая полоса о новой ячейке в сорока километрах к северо-западу.\n\nВы пришли в этот центр девять лет назад не из любви к небу, а потому что после института больше было некуда деваться. За это время вы пережили смены с отменами по видимости, проверку комиссией, один памятный вечер, когда потеряли шапку с полосы, и час разговоров на следующий день, после которых никто из начальства не произнёс ни слова. С тех пор вы приучили себя к порядку: сначала время доклада, потом его содержание, и только потом вывод. Сегодняшний вечер начался с того, что в двадцать два часа фронт обещали к трём ночи и с небольшим сдвигом по часам. Обещание выполнилось с точностью до получаса, но с тем существенным дополнением, что уходящая ячейка задела северную часть сектора, и теперь о ней известно больше, чем о приближающейся.\n\nСобственно, к вашему приходу всё главное уже произошло, и произошло без вас. Около десяти вечера на пульте вызова гаснет одна из трёх линий связи, а вместе с ней — изображение северной антенны на главном экране. Дальше — звонок дежурному, потом объявление ограничений для экипажей, потом тишина в эфире, которая длится заметно дольше, чем обычно отвечают. Инженер объясняет по телефону, что отказ не фронтовой, а внутренний, и что ночью работать с этим никто не будет. Отсюда, с этой минуты, каждая команда уходит в эфир, где часть бортов слышит её с трудом, а вы читаете по обрывкам, где именно кончилась фраза.\n\nЧерез сорок минут после этого на вашем столе остаётся то, с чем придётся работать до утра. Восемь бортов в зоне ответственности, из них один уже снят с маршрута и держится в стороне от основного потока. Покрытие в северном секторе держится на треть и продолжает дрожать между соседними отметками. Основная полоса работает с ограничениями из-за бокового ветра, и экипажи, с которыми вы говорите, произносят слово «ветер» чаще, чем любое другое. Запас эшелонирования у контрольной точки — двенадцать минут, и это число вы не можете улучшить ни одной командой: его улучшает только время, потраченное на то, чтобы поставить машины на нужные высоты.\n\nДальше по списку идут вещи, которые не выглядят срочными, пока не посчитаешь их. У одного из бортов запас топлива настолько мал, что обход погодного ядра он теперь не вытянет, и этот экипаж просит разрешения уйти из зоны, не дожидаясь разрешения в коридоре. У двух других последний доклад старше, чем должен быть при нормальном эфире, и перевести их на резервную частоту в 123.45 никто пока не подтвердил. С соседнего центра приходит сообщение, что они готовы взять часть сектора, но при условии, что список бортов, ограничения и открытые конфликты будут переданы целиком, а не по памяти и не по телефону.\n\nПока это всё разговор, а не решение, потому что ни один из этих пунктов нельзя закрыть в одиночку. Резервный пункт связи на соседнем крыле есть, но перевод туда блока отнимает несколько минут и оставляет зал без устойчивого эфира. Запас топлива нельзя увеличить ничьим решением — борт уходит или не уходит, и для этого нужны согласованные действия, а не формулировка. Часть машин нельзя вывести из зоны, если сначала не собрать их в кусок неба, который ещё держит радар. Никто из экипажей не обязан понимать, что у вас происходит в зале, и не станет угадывать, чего от него хотят, если вы не сказали этого прямо и в эфире, а не в журнале.\n\nИ есть два наблюдения, которые вы пока не записали в журнал, потому что обе версии пока одинаково правдоподобны. Первое: в северном секторе отметки появляются через одинаковые промежутки времени, минута в минуту, как будто кто-то отвечает по расписанию. Второе: метеослужба прислала описание ячейки, дословно совпадающее с рапортом, который у вас уже был двумя часами раньше. И то и другое можно объяснить просто — отражением осадков и повтором сводки, — а можно иначе, и в журнале обе версии пока записаны как строки, а не как вывод. Третье, совсем мелкое, тоже ждёт своего часа: антенна на крыше, про которую в журнале есть осенняя запись об ориентации, и с тех пор эту запись никто не подтверждал.\n\nРядом с вами сидит второй диспетчер, который сменился вместе с вами и который в первые полчаса говорил больше, чем нужно. Теперь он молчит, и перед ним раскрыт перехват команд, где одна и та же строчка повторяется десять минут подряд. За стеной в приборной кто-то ходит в туфлях и разговаривает с инженером, и каждое его предложение заканчивается словами «после трёх». Вы не можете ускорить ни ремонт, ни погоду, ни экипажи, но можете решить, что в этих словах вообще считать заданным, а что нет — и это решение стоит дороже любой перестановки на экране.\n\nНа часах без четверти три. Восемь бортов, покрытие в северном секторе на треть, эфир, который держится на одной основной частоте, двенадцать минут эшелонирования, ветер на полосе и список из трёх человек, которые сейчас ждут от вас не похвалы, а решения. Всё, что для этого нужно, уже в зале: журнал с временами докладов, перехват команд, бортстенды на кронштейнах и телефон, который может позвонить соседнему центру. Никто не придёт и не догадается за вас. За окном по стеклу идёт дождь, и первая молния высвечивает антенну на крыше — ту самую, чей поворот записан в журнале ещё с осени.",
+    "en": "At twenty to three in the morning the radar room smells of cold coffee and damp paper. The top edge of the window has fogged over, and the drops running down the glass look green in the light of the monitor. Eight flight progress strips lie in front of you, and each of them trembles slightly in the draft from the ventilation grille. A pencil rests on the third one, left over from the evening. The shift began at ten, and the first three hours were the work you can do from memory: separate four transit aircraft into the corridors, accept the delayed flight from the north, agree an altitude change twice with the ground controller. Everything is going the way it went yesterday. Everything, until the yellow band appears in the top right corner of the screen about a new cell forty kilometres to the north-west.\n\nYou came to this centre nine years ago out of anything but a love of the sky, because after the institute there was nowhere else to go. In that time you have weathered shifts cancelled for low visibility, an inspection commission, one memorable evening when a cap was lost off the runway, and an hour of questions the next day during which nobody in management said a single word. Since then you have trained yourself into an order of things: first the time of the report, then what was said in it, and only then the conclusion. This evening began with the forecast, at ten in the evening, promising the front by three in the morning with a small shift in the timing. The promise was kept to within half an hour, with one substantial addition: the departing cell clipped the northern part of the sector, and now more is known about it than about the one still coming.\n\nBy the time you take over, the main thing has already happened, and it happened without you. At around ten in the evening one of the three voice lines on the console goes dark, and the image of the northern antenna goes with it on the main screen. What follows is a call to the duty technician, then a limitation notice for the crews, then a silence on the frequency that lasts noticeably longer than crews usually take to answer. The engineer explains over the phone that the failure is not storm damage but internal, and that nobody will work on it during the night. From that minute on, every instruction you give goes out into a frequency where some aircraft hear it badly, and you read the truncated words to work out where each sentence stopped.\n\nForty minutes later, what is left on your desk is what you will be working with until morning. Eight aircraft inside the centre's area of responsibility, one of which has already been taken off its route and is holding clear of the main flow. Coverage in the northern sector is holding at a third and keeps flickering between neighbouring targets. The main runway is operating with restrictions because of a crosswind, and the crews you speak to use the word wind more often than any other. The separation at the control point is twelve minutes, and you cannot improve that number with any command: only time spent placing aircraft at the right altitudes improves it.\n\nThen there are the things that do not look urgent until you count them. One aircraft has so little fuel left that it can no longer make the detour around the weather cell, and that crew is asking to leave the area without waiting for clearance in the corridor. Two others have a last report older than it should be on a normal frequency, and nobody has yet acknowledged a switch to the backup frequency at 123.45. A message comes in from the neighbour centre: they are ready to take part of the sector, provided the aircraft list, the restrictions and the open conflicts are handed over in full, not from memory and not over an open phone line.\n\nFor now all of this is conversation rather than decision, because not one of these points can be closed alone. The backup communications point exists on the adjacent wing, but moving the console there takes several minutes and leaves the room without a steady radio picture. Fuel cannot be increased by anyone's decision: an aircraft either leaves or does not, and that takes agreed actions rather than a formulation. Aircraft cannot be taken out of the area until they are gathered into a piece of sky that the radar still holds. No crew is obliged to understand what is happening in your room, and none of them will guess what you want unless you say it plainly and on the frequency rather than in the log.\n\nThere are also two observations you have not yet written into the log, because both readings are equally plausible at the moment. The first: in the northern sector, targets appear at identical intervals, minute by minute, as if something were answering to a schedule. The second: the weather desk has sent a description of the cell that matches word for word the report you already had two hours ago. Both can be explained simply, as precipitation returns and a repeated briefing, and they can be explained another way, and in the log both versions are still recorded as lines rather than as a conclusion. A third, much smaller thing is also waiting its turn: the antenna on the roof, about which the log holds an autumn note about its orientation that nobody has confirmed since.\n\nBeside you sits the second controller, who came on shift with you and who in the first half hour talked more than necessary. Now they are quiet, and in front of them the call monitoring is open, with the same line repeating for ten minutes straight. Through the wall, in the equipment room, someone walks around in indoor shoes talking to the engineer, and every sentence they say ends with the words after three. You cannot hurry the repair, the weather, or the crews. You can decide what in those words actually counts as given and what does not, and that decision costs more than any rearrangement on the screen.\n\nThe clock reads a quarter to three. Eight aircraft, northern coverage at a third, a radio picture hanging on a single main frequency, twelve minutes of separation, wind on the runway, and a list of three people who are waiting not for praise but for a decision. Everything needed for it is already in the room: the log with report times, the call monitoring, the flight strips on their brackets, and the telephone that can reach the neighbour centre. Nobody is going to arrive and work it out for you. Outside, rain runs down the glass, and the first lightning lights up the antenna on the roof, the one whose alignment has been written down in the log since autumn."
+  }
 }

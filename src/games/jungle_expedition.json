@@ -19,8 +19,8 @@
       "day": 1,
       "supplies": 70,
       "team": 60,
+      "water": 55,
       "map": "На карте отмечена река и размытая тропа на север.",
-      "ended": false,
       "location": "camp",
       "goalStatus": "active"
     }
@@ -42,6 +42,22 @@
     "camp": {
       "label": "Разбить лагерь",
       "icon": "⛺"
+    },
+    "marks": {
+      "label": "Разметить тропу метками",
+      "icon": "🪧"
+    },
+    "weather": {
+      "label": "Снять барометр и оценить погоду",
+      "icon": "🌧️"
+    },
+    "aid": {
+      "label": "Оказать помощь участнику группы",
+      "icon": "🩹"
+    },
+    "cache": {
+      "label": "Разобрать старую стоянку",
+      "icon": "📦"
     }
   },
   "ui": {
@@ -50,6 +66,7 @@
       "day": "День",
       "supplies": "Запасы",
       "team": "Состояние команды",
+      "water": "Вода",
       "map": "Карта",
       "location": "Место",
       "goalStatus": "Цель"
@@ -80,9 +97,21 @@
         "ru": "Река",
         "en": "River"
       },
+      "ridge": {
+        "ru": "Сухой гребень",
+        "en": "Dry ridge"
+      },
+      "old_stage": {
+        "ru": "Старая стоянка",
+        "en": "Old stage"
+      },
       "steps": {
         "ru": "Ступени обсерватории",
         "en": "Observatory steps"
+      },
+      "observatory": {
+        "ru": "Обсерватория",
+        "en": "Observatory"
       }
     }
   },
@@ -97,6 +126,7 @@
         "day": "День",
         "supplies": "Запасы",
         "team": "Состояние команды",
+        "water": "Вода",
         "map": "Карта",
         "location": "Место",
         "goalStatus": "Цель"
@@ -105,11 +135,20 @@
         "free_text": "Свободное действие",
         "cross": "Перейти реку",
         "track": "Найти тропу",
-        "camp": "Разбить лагерь"
+        "camp": "Разбить лагерь",
+        "marks": "Разметить тропу метками",
+        "weather": "Снять барометр и оценить погоду",
+        "aid": "Оказать помощь участнику группы",
+        "cache": "Разобрать старую стоянку"
       },
       "values": {
         "На карте отмечена река и размытая тропа на север.": "На карте отмечена река и размытая тропа на север.",
         "На карте появилась тропа к каменным ступеням.": "На карте появилась тропа к каменным ступеням.",
+        "Река поднялась выше отметки брода.": "Река поднялась выше отметки брода.",
+        "Тропа размечена, обратный путь можно найти.": "Тропа размечена, обратный путь можно найти.",
+        "На старую стоянку нашли остатки снаряжения.": "На старую стоянку нашли остатки снаряжения.",
+        "Один участник группы не может идти дальше без помощи.": "Один участник группы не может идти дальше без помощи.",
+        "На север вышли сухие участки тропы.": "На север вышли сухие участки тропы.",
         "active": "В процессе",
         "completed": "Выполнена",
         "failed": "Провалена"
@@ -125,6 +164,7 @@
         "day": "Day",
         "supplies": "Supplies",
         "team": "Team condition",
+        "water": "Water",
         "map": "Map",
         "location": "Location",
         "goalStatus": "Objective"
@@ -133,11 +173,20 @@
         "free_text": "Free action",
         "cross": "Cross the river",
         "track": "Find the trail",
-        "camp": "Set up camp"
+        "camp": "Set up camp",
+        "marks": "Mark the trail",
+        "weather": "Read the barometer and judge the weather",
+        "aid": "Help a member of the group",
+        "cache": "Strip the old stage"
       },
       "values": {
         "На карте отмечена река и размытая тропа на север.": "The map shows a river and a washed-out trail to the north.",
         "На карте появилась тропа к каменным ступеням.": "A trail leading to stone steps has been added to the map.",
+        "Река поднялась выше отметки брода.": "The river has risen above the marked ford.",
+        "Тропа размечена, обратный путь можно найти.": "The trail is marked and the way back can be found.",
+        "На старую стоянку нашли остатки снаряжения.": "Remaining gear has been found at the old stage.",
+        "Один участник группы не может идти дальше без помощи.": "One member of the group cannot go on without help.",
+        "На север вышли сухие участки тропы.": "Dry sections of the trail have been reached to the north.",
         "active": "In progress",
         "completed": "Completed",
         "failed": "Failed"
@@ -150,7 +199,9 @@
       "physicalRules": [
         "Жара, влажность, течение и рельеф влияют на людей и снаряжение; переходы требуют времени и усилий.",
         "Карта неполна: исследование может открыть новые ориентиры, но не подтверждает их заранее.",
-        "Запасы расходуются только по описанным причинам; река и руины сохраняют естественные риски."
+        "Запасы расходуются только по описанным причинам; река и руины сохраняют естественные риски.",
+        "Уровень реки зависит от дождей в верховьях и поднимается в течение суток, поэтому отметки, снятые вчера, устаревают быстро.",
+        "Питьевая вода считается только в чистых закрытых ёмкостях; дождевая вода из открытых каналов и прудов не годится."
       ],
       "continuity": "Соблюдай известное состояние персонажа и мира, расположение, ресурсы и причинность всех предыдущих ходов.",
       "tone": "Взрослая реалистичная история: свобода действий игрока сочетается с правдоподобными последствиями и ограничениями мира.",
@@ -161,36 +212,44 @@
         },
         "beats": {
           "ru": [
-            "Экспедиция идёт по заброшенной тропе к реке и древней обсерватории; карта теряет точность под пологом леса.",
-            "Следы на берегу совпадают с ночным подъёмом воды, а старые метки указывают не путь, а сезонную высоту реки.",
-            "Команда выбирает переправу, обход или лагерь, сохраняя силы и возможность вернуться по подтверждённому маршруту."
+            "Экспедиция стоит первую ночь в лагере на краю леса: седьмая часть припасов промокла, вода в открытых ёмкостях не в счёт, а карта показывает реку и размытую тропу на север.",
+            "За ночь вода поднялась выше отметки брода, и старая тропа на север ушла под осыпь; смена решает, снимать ли лагерь или идти с открытым рюкзаком.",
+            "Первый выход к реке даёт две расходящиеся версии пути: короткий брод и длинный сухой гребень, и обе требуют разного расхода воды, сил и времени.",
+            "На склоне группа видит прямые борозды, которые местные называют ступенями, и находит следы старой стоянки с брошенным снаряжением.",
+            "Ночной ливень и подъём воды проверяют решения: снесённый участок, потерянный трек возврата и уставшие ноги определяют, что можно предпринять на следующий день.",
+            "Открытым остаётся вопрос о цели дневного перехода: обсерватория на горизонте, но подтверждённого маршрута к ней нет, а день уходит независимо от решений."
           ],
           "en": [
-            "The expedition follows an abandoned trail toward a river and an old observatory; the canopy makes the map unreliable.",
-            "Bank tracks match the night’s water rise; old marks show seasonal river height, not a route.",
-            "Choose a crossing, detour, or camp while preserving strength and a confirmed return path."
+            "The expedition stands its first night in the camp at the edge of the forest: a seventh of the supplies are soaked, water in open containers does not count, and the map shows a river and a washed-out trail to the north.",
+            "During the night the water rose above the marked ford and the old northern trail went under a rockfall; the shift must decide whether to pull camp or move on with open packs.",
+            "The first push to the river produces two diverging versions of the route: the short ford and the long dry ridge, and each demands a different expenditure of water, strength and time.",
+            "On the slope the group sees straight grooves the locals call steps, and finds the remains of an old stage with abandoned gear.",
+            "A night downpour and rising water test the decisions: a washed-out section, a lost way back and tired legs decide what is possible the next day.",
+            "The purpose of the day's crossing stays open: the observatory is on the horizon, but no confirmed route to it exists, and the day passes regardless of the choices."
           ]
         },
         "twists": {
           "ru": [
-            "«Ступени» к обсерватории являются водоотводными канавками и ведут к безопасному скальному выступу только в сухую фазу.",
-            "Карта составлена по тени от солнца в сезон наблюдений; сейчас тот же ориентир смещён из-за времени года, а не ошибки картографа."
+            "«Ступени» к обсерватории являются водоотводными канавками и ведут к безопасному скальному выступу только в сухую фазу; предварительный признак — прямые борозды одинаковой ширины, продолжающиеся вниз по склону и не совпадающие с высотой террас, а причинная опора — сезонные ливни, которые годами промывали русло по этим бороздам; ошибочная опора была в форме, привычной для обсерватории.",
+            "Карта составлена по тени от солнца в сезон наблюдений, и сегодня тот же ориентир смещён временем года, а не ошибкой картографа; предварительный признак — расхождение, которое не растёт с расстоянием, а держится постоянным углом, и причинная опора — солнечное положение в момент наблюдений, известное по датам на обороте листа; цена ошибки здесь — потерянный день на ложный ориентир."
           ],
           "en": [
-            "The “steps” to the observatory are drainage grooves; they lead to a safe rock shelf only in the dry phase.",
-            "The map follows the sun-shadow during observation season; today the landmark shifts with the season, not a mapping error."
+            "The \"steps\" to the observatory are drainage grooves that lead to a safe rock shelf only in the dry phase; the preliminary sign is straight grooves of identical width running down the slope without matching terrace height, and the causal support is the seasonal downpours that have washed this line for years; the false support was the shape, which is what an observatory suggests.",
+            "The map was drawn from a sun-shadow during the observation season, and today the same landmark is shifted by the time of year rather than by a cartographer's error; the preliminary sign is a discrepancy that does not grow with distance but holds a constant angle, and the causal support is the solar position at the moment of observation, recorded in the dates on the back of the sheet; the price of this error is a day lost to a false landmark."
           ]
         },
         "paths": {
           "ru": [
-            "Перейти реку в отмеченной точке: короче, но уровень может подняться к вечеру.",
-            "Обойти по сухому гребню: медленнее, зато лагерь останется выше зоны паводка.",
-            "Разбить лагерь и сверить метки с циклом воды: безопаснее, но экспедиция теряет световой день."
+            "Переправа на отмеченном броду. Предпосылки: уровень воды близок к утренней отметке, есть время до вечернего подъёма и развязанный трос через русло. Новая информация: фактическая глубина и скорость течения, состояние дна, возможность вернуться на этот же берег. Немедленное последствие: маршрут сокращается, но группа выходит на другой берег мокрой и рано в свету. Отложенное: оставленный трос и разрушенный выход на берег обратно придётся искать заново. Риск: снос течения и падение уровня после перехода. Компромисс: сушёные запасы уходят на перевязку промокших вещей. Точки пересечения: решения о воде, о помощи участнику группы, о ночёвке.",
+            "Сухой гребень вместо брода. Предпосылки: есть полдня на подъём, обувь держит, и вода в лагере не переливается. Новая информация: высота гребня над паводковой зоной, остатки старой тропы на нём, реальная дальность до обсерватории по ходу. Немедленное последствие: вода и силы команды тратятся вдвое, зато лагерь остаётся выше зоны паводка. Отложенное: к следующему дню группа выходит к обсерватории позже, со снятым временем на разведку. Риск: срыв на мокром корне или сход лавины с осыпи. Компромисс: отказ от сушёных запасов ради переноса. Точки пересечения: решения о воде, о помощи участнику группы, о ночёвке.",
+            "День на сверку меток и разметку. Предпосылки: вода стабильна, день сухой, команда способна работать вдвое медленнее. Новая информация: сезонные отметки на стволах, реальный след старой тропы, безопасный проход для возврата. Немедленное последствие: обратный путь становится подтверждённым, а брод перестаёт быть единственной ставкой. Отложенное: теряется световой день, и окно погоды расходуется на разведку. Риск: ливень смывает метки раньше, чем группа вернётся. Компромисс: приоритет над дальнейшим продвижением. Точки пересечения: все варианты перехода, старая стоянка, оценка погоды.",
+            "Разбор старой стоянки как источник. Предпосылки: стоянка не занята, найденные вещи целы, есть время на разбор без ночёвки в поле. Новая информация: что сохранилось, что сгнило, и насколько прежние люди проходили этот участок в другое время года. Немедленное последствие: часть расхода воды и снаряжения снимается, но время уходит в сторону. Отложенное: найденные вещи придётся нести, что меняет скорость группы. Риск: обвалившаяся кладка и змеи в укрытии. Компромисс: безопасность перед скорстью. Точки пересечения: выбор перехода, помощь участнику группы, ночёвка."
           ],
           "en": [
-            "Cross at the marked point: shorter, but water may rise by evening.",
-            "Detour along the dry ridge: slower, but camp stays above the flood zone.",
-            "Camp and compare marks to the water cycle: safer, but a day of light is lost."
+            "Crossing at the marked ford. Premises: the level is close to the morning reading, there is time before the evening rise, and a rope is rigged across the channel. New information: real depth and current, the condition of the bed, and whether this bank can be regained. Immediate consequence: the route shortens, but the group comes out on the far bank wet and early in the light. Deferred: the rope left behind, and a way back onto that bank that must now be found again. Risk: the current tearing the crossing apart, and the level dropping after the party is across. Trade-off: dried food goes into rewrapping soaked gear. Crossing points: the water decision, helping a member of the group, where to spend the night.",
+            "The dry ridge instead of the ford. Premises: half a day of climbing, boots that hold, and camp water that is not spilling. New information: how far the ridge stands above the flood zone, the remains of the old trail on it, and the true distance to the observatory along it. Immediate consequence: water and team strength are spent at double the rate, but camp stays above the flood zone. Deferred: by the next day the group reaches the observatory later, with no time left for reconnoitre. Risk: a slip on wet root or a rockfall coming off the scree. Trade-off: giving up dried food in order to move. Crossing points: the water decision, helping a member of the group, where to spend the night.",
+            "A day spent comparing marks and setting markers. Premises: water is steady, the day is dry, and the group can work at half speed. New information: seasonal marks on the trunks, the real trace of the old trail, and a safe line for the return. Immediate consequence: the way back becomes confirmed and the ford stops being the only wager. Deferred: a day of light is lost and the weather window is spent on reconnoitre. Risk: rain washes the markers away before the group returns. Trade-off: priority over further advance. Crossing points: every crossing option, the old stage, the weather reading.",
+            "Stripping the old stage as a supply. Premises: the stage is unoccupied, what is there is intact, and there is time to work it without sleeping out. New information: what survived, what rotted, and how far the earlier party came at a different time of year. Immediate consequence: part of the water and gear spending is lifted, but the time goes sideways. Deferred: what is found has to be carried, which changes the pace of the group. Risk: a collapsed cache and snakes in the shelter. Trade-off: safety before speed. Crossing points: the crossing choice, helping a member of the group, the camp."
           ]
         }
       }
@@ -216,6 +275,22 @@
         {
           "id": "team_condition",
           "text": "У экспедиции ограничены запасы и силы команды."
+        },
+        {
+          "id": "seasonal_marks",
+          "text": "На стволах у воды старые метки отмечают сезонные уровни, а не путь; текущий уровень с ними не совпадает."
+        },
+        {
+          "id": "old_stages",
+          "text": "Вдоль тропы встречаются брошенные стоянки прежних партий с оставшимся снаряжением."
+        },
+        {
+          "id": "slope_grooves",
+          "text": "На склоне заметны прямые борозды одинаковой ширины, которые здесь называют ступенями."
+        },
+        {
+          "id": "water_stores",
+          "text": "Питьевая вода считается только в чистых закрытых ёмкостях; часть припасов промокла в ливень, дождевая вода из открытых каналов не годится."
         }
       ]
     }
@@ -226,6 +301,7 @@
       "day",
       "supplies",
       "team",
+      "water",
       "map",
       "goalStatus"
     ],
@@ -241,13 +317,20 @@
       "team": {
         "min": 0,
         "max": 100
+      },
+      "water": {
+        "min": 0,
+        "max": 100
       }
     },
     "allowedValues": {
       "location": [
         "camp",
         "river",
-        "steps"
+        "ridge",
+        "old_stage",
+        "steps",
+        "observatory"
       ],
       "goalStatus": [
         "active",
@@ -264,7 +347,12 @@
       "Действия игрока не ограничены списком кнопок или таблицей переходов; предложенные варианты служат лишь подсказками.",
       "Не перемещай персонажа и не меняй место действия без описанной причины и непрерывного пути.",
       "Изменяй состояние только в пределах физических законов, подтверждённых фактов и ограничений пакета.",
-      "Не завершай цель по одному заявлению или догадке; для финала нужны описанные и подтверждённые условия."
+      "Не завершай цель по одному заявлению или догадке; для финала нужны описанные и подтверждённые условия.",
+      "Каждое изменение состояния выводи из уже показанного действия: вода тратится на переходы и жару, запасы — на ночёвку и еду, силы команды — на перенос и подъём, день растёт не более чем на единицу за ход.",
+      "Числовые ресурсы меняются только по описанным причинам и только в указанную сторону: не начисляй воду из открытых каналов, не восстанавливай силы команды без отдыха и еды, не уменьшай расход запасов без съеденного или выброшенного.",
+      "Не повторяй результат: уже пройденный участок, нанесённые метки и разобранная стоянка не восстанавливаются, и повторный ход обязан дать новое действие или честный отказ по причине.",
+      "Отвергнутое решение не выдавай за совершившееся: если переход не удался, группа не перешла, вода не потрачена, а маршрут не подтверждён — оставляй состояние прежним и объясняй причину.",
+      "Порядок действий не задан игрой: сначала действие и его видимое последствие, улучшение числовых полей объясняй конкретной операцией, а не продвижением к цели."
     ],
     "stateChangeRules": [
       {
@@ -278,342 +366,15 @@
       {
         "path": "team",
         "maxIncrease": 20
+      },
+      {
+        "path": "water",
+        "maxIncrease": 20
       }
     ]
   },
   "opening": {
-    "ru": "После недели пути экспедиция выходит к развилке, которой нет на старых картах. За густой стеной зелени должна быть заброшенная обсерватория, но впереди темнеет небо, а часть припасов промокла. Вы руководите группой и выбираете, как продолжить путь\n\nРека затапливает брод и смывает лёгкие отметки. Через хребет ещё можно пройти, но переход под дождём рискует отделить человека с картой.\n\nЗдесь важно помнить, что к моменту вашего появления история уже началась. Тропический лес, заброшенная тропа, река, карта экспедиции и древняя обсерватория. Это не отвлечённый фон и не задача, которую можно решить одним эффектным жестом: исходные условия складывались раньше, а люди, объекты и процессы успели приспособиться к ним. Поэтому любое изменение затронет не только то, что видно сейчас, но и привычный порядок, на котором держатся остальные части ситуации. Вы входите в неё с правом действовать, однако сначала нужно понять, что именно считается нормой и кто подтвердил эту норму.\n\nПервое наблюдение относится к конкретному месту: Лагерь, Река, Ступени обсерватории. В нём есть заметная деталь, которую легко принять за готовый ответ, но пока это только отправная точка. Сведения получены не одновременно и не одним способом; между тем, что зафиксировано, и тем, что уже успели предположить, остаётся промежуток. Если немедленно закрыть его догадкой, следующие данные будут подгоняться под выбранную версию. Если же точно обозначить, что известно, а что пока лишь кажется вероятным, у вас сохранится возможность увидеть несоответствие, не переписывая задним числом всю картину.\n\nВаша задача сформулирована шире, чем устранить ближайшую помеху: Переправить команду, найти путь к обсерватории и разбить безопасный лагерь. На практике это означает одновременно следить за непосредственным результатом и за тем, что этот результат позволит узнать. Быстрый шаг может принести видимое улучшение, но ухудшить сравнимость, доступность или доверие; осторожный — сохранить качество проверки, но оставить проблему без немедленного ответа. Эти соображения не равны по весу во всех обстоятельствах. Их порядок зависит от того, какие сведения вы подтвердите и какой ущерб действительно обратим.\n\nВ материалах есть три слоя: исходное состояние, первое наблюдение и объяснение, которое кто-то успел к нему приложить. Не смешивайте их. Перейти реку в отмеченной точке: короче, но уровень может подняться к вечеру. Если цифры или свидетельства расходятся, полезно установить, когда и где именно началось расхождение, кто наблюдал явление напрямую и какие условия могли поменяться между проверками. Иногда спорный показатель оказывается не ложным, а неполным: он честно описывает ту точку, где был получен, но не ту, о которой спрашивает команда.\n\nВам не требуется заранее выбирать единственную стратегию на весь эпизод. В текущем пакете доступны разные типы действий: Перейти реку, Найти тропу, Разбить лагерь. Они дают разные виды контроля: одно может уточнить картину, другое — изменить условия, третье — выиграть время или проверить связь между двумя событиями. Выбирая, задайте себе практический вопрос: что должно стать заметно после этого шага, если ваша версия верна? И что вы увидите, если она неверна? Такой критерий превращает действие в проверку, а не просто в жест, после которого приходится надеяться на удачу.\n\nПуть вперёд может разветвиться, и у каждого направления будет собственная цена. Одно решение способно защитить непосредственную цель, но оставить неопределённость; другое — укрепить доказательства, но сузить окно для вмешательства; третье — уменьшить воздействие на окружающую систему, одновременно потребовав новой проверки. Эти различия не делают какой-либо путь правильным заранее. Важнее видеть, какую ценность вы защищаете сейчас, чем рискуете ради неё и какие признаки заставят пересмотреть план. Смена курса допустима, если вы можете объяснить, какая новая информация изменила расчёт.\n\nОглянитесь на Лагерь, Река, Ступени обсерватории. Каждая точка открывает свою часть происходящего и скрывает другую; переход между ними сам по себе может менять условия наблюдения. Не считайте схему исчерпывающей: она описывает доступные места, но не гарантирует, что все важные процессы заметны с одной позиции. Сверяйте время, источник и обстоятельства каждого сообщения. Если кто-то говорит «это было так всегда», спросите, за какой период он отвечает; если прибор показывает отклонение, уточните его рабочий диапазон и место установки. Так вы отделите стабильную закономерность от удобного, но слишком широкого обобщения.\n\nЕсть вопросы, на которые пока нельзя честно ответить. Что здесь причина, а что следствие? Действительно ли наблюдаемое изменение требует немедленного вмешательства? Кто или что понесёт последствия, если вы ошибётесь? Неопределённость не означает, что все версии одинаково вероятны; она означает, что следующая сцена должна дать материал для различения. Не превращайте каждую странность в тайный замысел и не отбрасывайте неудобную улику лишь потому, что она мешает плану. Самый убедительный поворот будет иметь смысл только тогда, когда ранние подробности позволят узнать его, а не просто удивиться ему.\n\nНачните с масштаба, который можно проверить. Запишите исходные условия, выберите один важный показатель и не меняйте сразу несколько факторов, если хотите понять, что повлияло на результат. Если вмешательство необходимо прямо сейчас, обозначьте его как временное и сохраните контрольную точку для сравнения. Если можно подождать, определите, какое именно наблюдение оправдает ожидание и сколько времени оно занимает. Это не бюрократическая осторожность: так вы не потеряете возможность отличить настоящую перемену от эффекта собственных действий.\n\nПостепенно прояснится и человеческая сторона задачи: чьи объяснения опираются на наблюдения, кто отвечает за последствия и кому придётся жить с выбранным порядком после того, как срочность спадёт. Доверие здесь не заменяет измерения, но влияет на то, какие сведения вам сообщат и какие шаги команда сможет выполнить вместе. Объясняйте, что проверяете, не обещайте результата раньше проверки и отмечайте, что именно изменило ваше мнение. Иногда это позволит сохранить сотрудничество даже при разногласии; иногда станет ясно, что разные участники защищают несовместимые интересы.\n\nОтдельно рассмотрите направление 3: Разбить лагерь и сверить метки с циклом воды: безопаснее, но экспедиция теряет световой день. Оно не отменяет остальные возможности и не требует принимать весь план сразу. Спросите, какое подтверждение сделает этот шаг уместным, что останется измеримым после него и кто заметит его побочный эффект первым. Если ответ пока неизвестен, это не повод скрывать пробел: его можно превратить в условие остановки или повторной оценки.",
-    "en": "After a week on the trail, the expedition reaches a fork missing from old maps. The abandoned observatory should lie beyond the wall of green, but clouds are gathering and some supplies are soaked. You lead the team and decide how to proceed\n\nThe river rises over the marked ford and washes away the light trail signs. A ridge still leads across, but moving in the rain risks separating whoever carries the map case.\n\nRemember that the story had already begun before you arrived. The expedition follows an abandoned trail toward a river and an old observatory; the canopy makes the map unreliable. This is not a backdrop or a problem that can be solved with one dramatic gesture: the conditions formed earlier, and people, objects, and processes have adapted to them. Any change will affect more than what is visible now; it may alter the routine that holds other parts of the situation together. You have authority to act, but first you need to understand what counts as normal here and who has actually verified that baseline.\n\nThe first observation belongs to a specific place: Camp, River, Observatory steps. It contains a detail that may look like an answer, but for now it is only a starting point. The information was gathered at different times and by different means; a gap remains between what was recorded and the explanation someone has attached to it. If you fill that gap with a guess, later evidence may be forced to fit your theory. If you mark what is known and what only seems likely, you can notice a mismatch without rewriting the whole account afterward.\n\nYour objective is broader than removing the nearest obstacle: Cross the river, find the observatory trail and establish a safe camp. In practice, you must watch both the immediate result and what that result lets you learn. A quick intervention may produce visible improvement while weakening comparison, access, or trust; a cautious one may preserve the quality of the evidence while leaving the problem unresolved. Those concerns do not carry the same weight in every situation. Their order depends on what you confirm and on which harm can actually be reversed.\n\nThe available material has three layers: the initial conditions, the first observation, and the explanation someone has already attached to it. Keep them separate. Cross at the marked point: shorter, but water may rise by evening. If figures or accounts disagree, establish when and where the mismatch began, who witnessed the event directly, and what could have changed between checks. A disputed reading is sometimes incomplete rather than false: it may accurately describe the point where it was taken, but not the wider area the team is asking about.\n\nYou do not have to choose one strategy for the whole episode in advance. The package offers different kinds of action: Cross the river, Find the trail, Set up camp. Each gives you a different kind of control: one may clarify the picture, another may change the conditions, and another may buy time or test a connection between events. Before choosing, ask a practical question: what should become visible if your theory is right? What would you see if it is wrong? That turns an action into a test, rather than a gesture followed by a hope for good luck.\n\nThe way forward can branch, and each direction has its own cost. One choice may protect the immediate objective while leaving uncertainty; another may strengthen the evidence while narrowing the window to intervene; a third may reduce impact on the surrounding system while requiring a fresh check. None is automatically correct. What matters is seeing which value you are protecting, what you risk for it, and what signs would make you reconsider. A change of course is sound when you can explain what new information changed the calculation.\n\nLook at Camp, River, Observatory steps. Each point reveals one part of the situation and hides another; moving between them can itself change the conditions of observation. Do not treat the map as complete: it lists available places but cannot guarantee that every important process is visible from one position. Compare the time, source, and circumstances of each report. If someone says “it has always been this way,” ask what period they mean; if an instrument shows a deviation, check its operating range and location. This helps separate a stable pattern from a convenient but overly broad conclusion.\n\nSome questions cannot yet be answered honestly. What is a cause, and what is an effect? Does the observed change truly require immediate intervention? Who or what bears the cost if you are wrong? Uncertainty does not mean every theory is equally likely; it means the next scene must give you a way to distinguish them. Do not turn every oddity into a hidden scheme, and do not discard inconvenient evidence because it disrupts a plan. A convincing turn will make sense only if earlier details let you recognize it, not merely be surprised by it.\n\nStart at a scale you can check. Record the baseline, choose one important measure, and avoid changing several factors at once if you need to know what caused the result. If action is necessary now, mark it as temporary and preserve a control point for comparison. If waiting is possible, specify what observation would justify the delay and how long it will take. This is not caution for its own sake: it preserves your ability to distinguish a real change from the effect of your own intervention.\n\nThe human side of the task will become clearer too: whose account rests on observation, who is responsible for the consequences, and who must live with the chosen arrangement after the emergency passes. Trust does not replace measurement, but it affects what people tell you and what the team can do together. Explain what you are checking, do not promise a result before it is verified, and note what changed your mind. That may preserve cooperation through disagreement; it may also show that different participants are protecting interests that cannot be reconciled.\n\nConsider approach 3 separately: Camp and compare marks to the water cycle: safer, but a day of light is lost. It does not erase the other options or require you to commit to the whole plan at once. Ask what evidence would make this step appropriate, what will remain measurable afterward, and who will notice its side effect first. If the answer is not yet known, do not hide the gap; turn it into a condition for pausing or reassessing."
-  },
-  "preparedBranches": [
-    {
-      "id": "supplies_pressure",
-      "actions": [
-        "cross",
-        "track",
-        "camp",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "Река затапливает брод и смывает лёгкие отметки. Через хребет ещё можно пройти, но переход под дождём рискует отделить человека с картой.",
-        "en": "The river rises over the marked ford and washes away the light trail signs. A ridge still leads across, but moving in the rain risks separating whoever carries the map case."
-      },
-      "mutations": [],
-      "suggestions": [
-        {
-          "text": {
-            "ru": "Сверить обстановку и выбрать безопасный приоритет",
-            "en": "Recheck the situation and choose a safe priority"
-          }
-        },
-        {
-          "text": {
-            "ru": "Сохранить текущий план и подготовить запасной",
-            "en": "Keep the current plan and prepare a backup"
-          }
-        }
-      ]
-    },
-    {
-      "id": "turning_point_day",
-      "when": {
-        "day": {
-          "gte": 237
-        }
-      },
-      "actions": [
-        "cross",
-        "track",
-        "camp",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "Река поднялась над отмеченным бродом и смыла лёгкие указатели тропы. Через хребет всё ещё можно пройти, но движение под дождём грозит разлучить того, кто несёт папку с картой. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
-        "en": "An alternate route opens as circumstances shift. Continue the current approach or change priorities before events make the consequences harder to reverse."
-      },
-      "mutations": [],
-      "suggestions": [
-        {
-          "text": {
-            "ru": "Сверить обстановку и выбрать безопасный приоритет",
-            "en": "Recheck the situation and choose a safe priority"
-          }
-        },
-        {
-          "text": {
-            "ru": "Сохранить текущий план и подготовить запасной",
-            "en": "Keep the current plan and prepare a backup"
-          }
-        }
-      ]
-    },
-    {
-      "id": "authored_turn_1",
-      "minTurns": 2,
-      "actions": [
-        "cross",
-        "track",
-        "camp",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "«Ступени» к обсерватории являются водоотводными канавками и ведут к безопасному скальному выступу только в сухую фазу.",
-        "en": "The “steps” to the observatory are drainage grooves; they lead to a safe rock shelf only in the dry phase."
-      },
-      "mutations": [],
-      "suggestions": [],
-      "responses": {
-        "cross": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Перейти реку». Команда продолжает по пути: Перейти реку в отмеченной точке: короче, но уровень может подняться к вечеру. Улика раскрывает поворот: «Ступени» к обсерватории являются водоотводными канавками и ведут к безопасному скальному выступу только в сухую фазу.",
-            "en": "You choose “Cross the river.” The team continues along this path: Cross at the marked point: shorter, but water may rise by evening. The evidence reveals the turn: The “steps” to the observatory are drainage grooves; they lead to a safe rock shelf only in the dry phase."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Перейти реку в отмеченной точке: короче, но уровень может подняться к вечеру.",
-                "en": "Cross at the marked point: shorter, but water may rise by evening."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Обойти по сухому гребню: медленнее, зато лагерь останется выше зоны паводка.",
-                "en": "Detour along the dry ridge: slower, but camp stays above the flood zone."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Разбить лагерь и сверить метки с циклом воды: безопаснее, но экспедиция теряет световой день.",
-                "en": "Camp and compare marks to the water cycle: safer, but a day of light is lost."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "track": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Найти тропу». Команда продолжает по пути: Обойти по сухому гребню: медленнее, зато лагерь останется выше зоны паводка. Улика раскрывает поворот: «Ступени» к обсерватории являются водоотводными канавками и ведут к безопасному скальному выступу только в сухую фазу.",
-            "en": "You choose “Find the trail.” The team continues along this path: Detour along the dry ridge: slower, but camp stays above the flood zone. The evidence reveals the turn: The “steps” to the observatory are drainage grooves; they lead to a safe rock shelf only in the dry phase."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Перейти реку в отмеченной точке: короче, но уровень может подняться к вечеру.",
-                "en": "Cross at the marked point: shorter, but water may rise by evening."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Обойти по сухому гребню: медленнее, зато лагерь останется выше зоны паводка.",
-                "en": "Detour along the dry ridge: slower, but camp stays above the flood zone."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Разбить лагерь и сверить метки с циклом воды: безопаснее, но экспедиция теряет световой день.",
-                "en": "Camp and compare marks to the water cycle: safer, but a day of light is lost."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "camp": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Разбить лагерь». Команда продолжает по пути: Разбить лагерь и сверить метки с циклом воды: безопаснее, но экспедиция теряет световой день. Улика раскрывает поворот: «Ступени» к обсерватории являются водоотводными канавками и ведут к безопасному скальному выступу только в сухую фазу.",
-            "en": "You choose “Set up camp.” The team continues along this path: Camp and compare marks to the water cycle: safer, but a day of light is lost. The evidence reveals the turn: The “steps” to the observatory are drainage grooves; they lead to a safe rock shelf only in the dry phase."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Перейти реку в отмеченной точке: короче, но уровень может подняться к вечеру.",
-                "en": "Cross at the marked point: shorter, but water may rise by evening."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Обойти по сухому гребню: медленнее, зато лагерь останется выше зоны паводка.",
-                "en": "Detour along the dry ridge: slower, but camp stays above the flood zone."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Разбить лагерь и сверить метки с циклом воды: безопаснее, но экспедиция теряет световой день.",
-                "en": "Camp and compare marks to the water cycle: safer, but a day of light is lost."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "free_text": {
-          "narrative": {
-            "ru": "Ваш свободный план меняет способ проверки. Команда раскрывает поворот по найденной улике: «Ступени» к обсерватории являются водоотводными канавками и ведут к безопасному скальному выступу только в сухую фазу.",
-            "en": "Your free-form plan changes how the team checks the clue. The turn is revealed by the evidence: The “steps” to the observatory are drainage grooves; they lead to a safe rock shelf only in the dry phase."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Перейти реку в отмеченной точке: короче, но уровень может подняться к вечеру.",
-                "en": "Cross at the marked point: shorter, but water may rise by evening."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Обойти по сухому гребню: медленнее, зато лагерь останется выше зоны паводка.",
-                "en": "Detour along the dry ridge: slower, but camp stays above the flood zone."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Разбить лагерь и сверить метки с циклом воды: безопаснее, но экспедиция теряет световой день.",
-                "en": "Camp and compare marks to the water cycle: safer, but a day of light is lost."
-              },
-              "icon": "↗️"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "id": "authored_turn_2",
-      "minTurns": 4,
-      "actions": [
-        "cross",
-        "track",
-        "camp",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "Карта составлена по тени от солнца в сезон наблюдений; сейчас тот же ориентир смещён из-за времени года, а не ошибки картографа.",
-        "en": "The map follows the sun-shadow during observation season; today the landmark shifts with the season, not a mapping error."
-      },
-      "mutations": [],
-      "suggestions": [],
-      "responses": {
-        "cross": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Перейти реку». Команда продолжает по пути: Перейти реку в отмеченной точке: короче, но уровень может подняться к вечеру. Улика раскрывает поворот: Карта составлена по тени от солнца в сезон наблюдений; сейчас тот же ориентир смещён из-за времени года, а не ошибки картографа.",
-            "en": "You choose “Cross the river.” The team continues along this path: Cross at the marked point: shorter, but water may rise by evening. The evidence reveals the turn: The map follows the sun-shadow during observation season; today the landmark shifts with the season, not a mapping error."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Перейти реку в отмеченной точке: короче, но уровень может подняться к вечеру.",
-                "en": "Cross at the marked point: shorter, but water may rise by evening."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Обойти по сухому гребню: медленнее, зато лагерь останется выше зоны паводка.",
-                "en": "Detour along the dry ridge: slower, but camp stays above the flood zone."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Разбить лагерь и сверить метки с циклом воды: безопаснее, но экспедиция теряет световой день.",
-                "en": "Camp and compare marks to the water cycle: safer, but a day of light is lost."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "track": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Найти тропу». Команда продолжает по пути: Обойти по сухому гребню: медленнее, зато лагерь останется выше зоны паводка. Улика раскрывает поворот: Карта составлена по тени от солнца в сезон наблюдений; сейчас тот же ориентир смещён из-за времени года, а не ошибки картографа.",
-            "en": "You choose “Find the trail.” The team continues along this path: Detour along the dry ridge: slower, but camp stays above the flood zone. The evidence reveals the turn: The map follows the sun-shadow during observation season; today the landmark shifts with the season, not a mapping error."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Перейти реку в отмеченной точке: короче, но уровень может подняться к вечеру.",
-                "en": "Cross at the marked point: shorter, but water may rise by evening."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Обойти по сухому гребню: медленнее, зато лагерь останется выше зоны паводка.",
-                "en": "Detour along the dry ridge: slower, but camp stays above the flood zone."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Разбить лагерь и сверить метки с циклом воды: безопаснее, но экспедиция теряет световой день.",
-                "en": "Camp and compare marks to the water cycle: safer, but a day of light is lost."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "camp": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Разбить лагерь». Команда продолжает по пути: Разбить лагерь и сверить метки с циклом воды: безопаснее, но экспедиция теряет световой день. Улика раскрывает поворот: Карта составлена по тени от солнца в сезон наблюдений; сейчас тот же ориентир смещён из-за времени года, а не ошибки картографа.",
-            "en": "You choose “Set up camp.” The team continues along this path: Camp and compare marks to the water cycle: safer, but a day of light is lost. The evidence reveals the turn: The map follows the sun-shadow during observation season; today the landmark shifts with the season, not a mapping error."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Перейти реку в отмеченной точке: короче, но уровень может подняться к вечеру.",
-                "en": "Cross at the marked point: shorter, but water may rise by evening."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Обойти по сухому гребню: медленнее, зато лагерь останется выше зоны паводка.",
-                "en": "Detour along the dry ridge: slower, but camp stays above the flood zone."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Разбить лагерь и сверить метки с циклом воды: безопаснее, но экспедиция теряет световой день.",
-                "en": "Camp and compare marks to the water cycle: safer, but a day of light is lost."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "free_text": {
-          "narrative": {
-            "ru": "Ваш свободный план меняет способ проверки. Команда раскрывает поворот по найденной улике: Карта составлена по тени от солнца в сезон наблюдений; сейчас тот же ориентир смещён из-за времени года, а не ошибки картографа.",
-            "en": "Your free-form plan changes how the team checks the clue. The turn is revealed by the evidence: The map follows the sun-shadow during observation season; today the landmark shifts with the season, not a mapping error."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Перейти реку в отмеченной точке: короче, но уровень может подняться к вечеру.",
-                "en": "Cross at the marked point: shorter, but water may rise by evening."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Обойти по сухому гребню: медленнее, зато лагерь останется выше зоны паводка.",
-                "en": "Detour along the dry ridge: slower, but camp stays above the flood zone."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Разбить лагерь и сверить метки с циклом воды: безопаснее, но экспедиция теряет световой день.",
-                "en": "Camp and compare marks to the water cycle: safer, but a day of light is lost."
-              },
-              "icon": "↗️"
-            }
-          ]
-        }
-      }
-    }
-  ]
+    "ru": "Лагерь стоит под навесом из брезента, и капли идут ровно с той частоты, с какой начинается дождь, — сначала редко, потом непрерывно, уже без пауз. Свет за деревьями садится рано: в шесть вечера под пологом темнеет так, что приходится включать лампу над столом, и весь отряд собирается вокруг раскладываемой карты. Земля под ногами не сохнет. Вода стекает с листьев в глиняную лужу у края вырубки, и вы понимаете, что считать её нельзя: пить можно только то, что налито в закрытые ёмкости. На столе рядом с картой лежат два мокрых рюкзака и разбухший от сырости список вещей. Река слышна отсюда — ровный, тяжёлый, уже не дневной шум.\n\nВы ведёте эту группу не всю дорогу. Неделю к лагерю вы шли вместе с людьми, у которых карту нёс человек по имени, которого здесь не называют вслух, а просто говорят «с картой». Вы приняли группу тогда, когда маршрут уже был пройден наполовину, решения принимались по давно сложившейся привычке, а ваша задача звучала коротко: довести людей до обсерватории и поставить лагерь в безопасном месте. За неделю вы запомнили не столько расстояния, сколько то, как здесь устают. Устаёт не спина, а ступня: подошва скользит по мокрой корке, мелкие камни перекатываются под ней, и к третьему дню каждый идёт медленнее, чем позволяет его собственное решение.\n\nДо вас события тоже складывались постепенно. Пять дней назад в верховьях прошёл ливень, которого не ждали, и вода в реке поднялась на два с полной ладони за сутки. На следующий день группа вышла к размытой тропе на север, где ещё держались светлые отметки на стволах, и обнаружила, что лёгкие метки на самом полотне тропы смыло до состояния едва заметных вмятин в мху. Пришлось разворачивать часть груза и нести его в руках. Потом, на подходе к лагерю, задним дождём залило часть припасов: сушёное намокло, часть соли спеклась, и то, что раньше считалось провизией на два дня, теперь было пересчитано заново — хуже.\n\nТеперь перед вами три варианта, и все они упираются в одну и ту же воду. Внизу, в двух часах пути, река перекрыла отмеченный брод, и старая тропа на север ушла под осыпь: пройти можно, но карту с собой лучше не отдавать. В стороне, от брода, поднимается сухой гребень, и по нему можно обойти, но это вдвое дороже по времени и по силам, а на гребне нет тени. Третий вариант — остаться на месте, снять барометр, сравнить уровень воды с метками на стволах и решить всё на свежую погоду. Ни один из вариантов не отменяет остальные, и каждый стоит чего-то, чего не вернуть.\n\nКоманда устала раньше, чем вы. У одного из участников стёрлась подошва до дыр, у другого развязались ремни рюкзака так, что плечи уже сведены. Кипятильник работает от сухого топлива, которого осталось на две ночи, а вода в открытых вёдрах после ливня мутная до дна. Врач есть один, и он одновременно держит в руках аптечку и ремонтный набор, потому что третьего человека в группе не хватает. Пока все в лагере собираются вокруг карты, спор идёт не о том, идти ли, а о том, насколько далеко идти до темноты: световой день здесь заканчивается вместе с дождём.\n\nИ есть две вещи, на которые стоит посмотреть прежде, чем решать. Первая: старые метки на стволах у воды отмечены на разной высоте, и разница между ними куда больше, чем разница сегодняшнего уровня от вчерашнего. Похоже, что эти метки фиксировали не положение тропы, а положение воды в разные месяцы, и сейчас вода стоит заметно ниже верхней отметки. Вторая: на карте, в месте, где вы сейчас стоите, обсерватория отмечена ориентиром, и этот ориентир смещён — причём не с расстоянием, а как будто сама полоса сдвинута, а карта осталась на месте. Расхождение постоянное, без накопления, и это страннее обычной неточности.\n\nОшибиться здесь можно тихо. Отметки на стволах легко принять за указатели пути, а смещённый ориентир — за ошибку картографа, и тогда день уйдёт на ложный путь, а день здесь стоит дорого. С другой стороны, верить меткам как приказу тоже нельзя: они показывают воду, а не тропу, и вода за месяцы меняет русло, оставляя после себя камни и корни, на которых скользит подошва. Цена решения — не деньги и не время, а уставшие ноги и вода в ёмкостях, которых завтра может не хватить на переход.\n\nПока ничего не решено. Первый день, семьдесят процентов запасов, шестьдесят процентов состояния команды, вода в бутылях и часть в бутылках поменьше, карта показывает реку и размытую тропу на север, лагерь стоит, и все смотрят на вас. Впереди темнеет небо, и оно темнеет раньше, чем вы успеваете принять решение. Вам нужно сказать, что делать первым: идти к реке, брать гребень, разбирать старую стоянку, снимать барометр, помогать участнику группы или оставаться и сверять метки. Слова, сказанные сейчас, определят, куда группа выйдет завтра и с чем она туда придёт. Карта под лампой ещё чистая. Место для первой записи — ваше.",
+    "en": "The camp stands under a canvas fly, and the drops arrive at exactly the rate a tropical shower arrives — at first sparse, then without pause, no gaps left. Under the trees the light goes early: at six in the evening the shade is already dark enough that the lamp above the table has to be lit, and the whole group gathers around the map being unfolded. The ground never dries. Water runs off the leaves into a clay pool at the edge of the clearing, and you understand at once that it cannot be counted: only what is poured into closed containers is drinkable. On the table beside the map lie two soaked packs and a supply list swollen with damp. The river can be heard from here — even, heavy, no longer the sound of a daytime stream.\n\nYou have not led this group the whole way. For a week you walked to camp with people whose map is carried by the one they do not name aloud, and simply refer to as the one with the map. You took over the group when the route was already half covered, decisions were being made out of a long-formed habit, and your task sounded short: bring the people to the observatory and set up camp somewhere safe. In that week you remembered less about distances than about how people tire here. It is not the back that tires but the foot: the sole slides on wet crust, small stones roll under it, and by the third day everyone walks slower than their own decision intended.\n\nBefore you, the situation assembled itself gradually as well. Five days ago there was a downpour in the upper catchment that nobody expected, and the river rose by more than two hands in a day. The next day the group reached the washed-out northern trail, where light marks on the trunks still held, and found that the faint signs on the trail surface itself had been washed down to barely visible dents in the moss. Part of the load had to be repacked and carried by hand. Then, on the approach to camp, a passing shower soaked part of the supplies: the dried food took water, part of the salt caked, and what had been counted as two days of rations was recalculated, and worse.\n\nThere are now three ways forward, and all three come down to the same water. Down below, two hours out, the river has covered the marked ford, and the old northern trail has gone under a rockfall: it can be passed, but the map is better not handed to anyone doing it. To one side, away from the ford, a dry ridge climbs, and it can be used to go around, but it costs twice the time and twice the strength, and the ridge offers no shade. The third way is to stay put, read the barometer, compare the water level against the marks on the trunks, and decide everything on fresh weather. None of the options cancels the others, and each of them costs something that cannot be given back.\n\nThe team is more tired than you are. One member has worn a sole through to holes; another has pack straps cutting into shoulders that have already drawn in. The stove runs on dry fuel with two nights of it left, and the water in the open buckets has gone cloudy all the way down after the rain. There is one medic, and he is holding the medical kit and the repair set at the same time, because the group is one person short. While everyone crowds around the map in camp, the argument is not about whether to move but about how far to get before dark: the usable day here ends with the rain.\n\nThere are two things worth looking at before deciding. First: the old marks on the trunks by the water sit at different heights, and the difference between them is much greater than the difference between today's level and yesterday's. It looks as if those marks recorded not the position of the trail but the position of the water in different months, and the water now stands noticeably below the upper mark. Second: on the map, at the point where you are standing, the observatory is shown as a landmark, and that landmark is displaced — not with distance, but as if the strip itself had slid while the map stayed where it was. The discrepancy is constant, without accumulation, and that is stranger than an ordinary inaccuracy.\n\nThe mistake here can be made quietly. Marks on trunks are easily taken for route signs, and a displaced landmark for a cartographer's error, and then a day is spent on a false trail, which is expensive, because a day here is expensive. Against that, the marks cannot be obeyed as an order either: they show water, not a path, and over months the water changes its channel, leaving stones and roots behind for a sole to slip on. The price of a decision is not money and not time, but tired legs and water in containers that tomorrow may not be enough to cross with.\n\nNothing has been decided yet. The first day, seventy percent of supplies, sixty percent team condition, water in bottles and some in smaller bottles, the map showing a river and a washed-out northern trail, the camp standing, everyone looking at you. Ahead the sky is darkening, and it darkens faster than you can manage a decision. You have to say what comes first: go down to the river, take the ridge, strip the old stage, read the barometer, help the member of the group, or stay and compare the marks. The words you say now decide where the group stands tomorrow and what it will have when it gets there. The map under the lamp is still clean. The first line of the record is yours to write."
+  }
 }

@@ -23,5 +23,9 @@ output/
 *.tar.gz
 *.zip
 opengames-ai-*.ts
+*.log
 
 work/
+.kilo/
+.vscode/
+.idea/

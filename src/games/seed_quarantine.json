@@ -1,0 +1,381 @@
+{
+  "manifest": {
+    "id": "seed-quarantine",
+    "title": "Семена за стеклом",
+    "description": "Перед обменом редкими семенами куратор должен отличить угрозу растениям от ошибки ухода и проверить происхождение образцов.",
+    "setting": "Вы куратор коллекционной теплицы. Завтра международный обмен семенами; на листьях редкого вида появились белые пятна, а часть горшков пересажена без полной записи.",
+    "categoryRu": "Ботаническая коллекция",
+    "background": "/assets/seed-quarantine.jpg",
+    "version": "1.0.0",
+    "schemaVersion": "2",
+    "isNew": true,
+    "durationMinutes": [
+      20,
+      35
+    ]
+  },
+  "state": {
+    "initial": {
+      "phase": "opening",
+      "route": "none",
+      "origin": "none",
+      "confidence": 50,
+      "viability": 50,
+      "clues": [],
+      "location": "lab",
+      "outcome": "none",
+      "goalStatus": "active"
+    }
+  },
+  "actions": {
+    "free_text": {
+      "label": "Свободное действие",
+      "input": true,
+      "icon": "✍️"
+    },
+    "assay": {
+      "label": "Исследовать налёт",
+      "icon": "🔬"
+    },
+    "isolate": {
+      "label": "Изолировать секцию",
+      "icon": "🪴"
+    },
+    "trace": {
+      "label": "Сверить происхождение",
+      "icon": "📜"
+    }
+  },
+  "ui": {
+    "accent": "#8fc995",
+    "stateLabels": {
+      "phase": "Этап",
+      "route": "Текущий подход",
+      "origin": "Первый выбор",
+      "confidence": "Достоверность",
+      "viability": "Жизнеспособность",
+      "clues": "Установленные факты",
+      "location": "Место",
+      "outcome": "Итог",
+      "goalStatus": "Цель"
+    }
+  },
+  "i18n": {
+    "ru": {
+      "states": {
+        "phase": "Этап",
+        "route": "Текущий подход",
+        "origin": "Первый выбор",
+        "confidence": "Достоверность",
+        "viability": "Жизнеспособность",
+        "clues": "Установленные факты",
+        "location": "Место",
+        "outcome": "Итог",
+        "goalStatus": "Цель"
+      },
+      "actions": {
+        "free_text": "Свободное действие",
+        "assay": "Исследовать налёт",
+        "isolate": "Изолировать секцию",
+        "trace": "Сверить происхождение"
+      },
+      "manifest": {
+        "title": "Семена за стеклом",
+        "description": "Перед обменом редкими семенами куратор должен отличить угрозу растениям от ошибки ухода и проверить происхождение образцов.",
+        "category": "Ботаническая коллекция"
+      },
+      "values": {
+        "active": "В процессе",
+        "completed": "Цель выполнена",
+        "failed": "Цель провалена",
+        "assay_assay": "Итог: Исследовать налёт → Исследовать налёт",
+        "assay_isolate": "Итог: Исследовать налёт → Изолировать секцию",
+        "assay_trace": "Итог: Исследовать налёт → Сверить происхождение",
+        "isolate_assay": "Итог: Изолировать секцию → Исследовать налёт",
+        "isolate_isolate": "Итог: Изолировать секцию → Изолировать секцию",
+        "isolate_trace": "Итог: Изолировать секцию → Сверить происхождение",
+        "trace_assay": "Итог: Сверить происхождение → Исследовать налёт",
+        "trace_isolate": "Итог: Сверить происхождение → Изолировать секцию",
+        "trace_trace": "Итог: Сверить происхождение → Сверить происхождение",
+        "none": "Не выбрано",
+        "opening": "Завязка",
+        "path": "Первый поворот",
+        "cross": "Пересечение путей",
+        "final": "Решение",
+        "finished": "Финал",
+        "assay": "Исследовать налёт",
+        "initial_assay": "Под микроскопом точки выглядят как угловатые кристаллы, но одной капли мало, чтобы исключить болезнь на остальных листьях.",
+        "twist1_assay": "Раствор налёта показывает соли кальция из ночного распылителя; на проверенных листьях нет роста гриба.",
+        "twist2_assay": "Сравнение старых фотографий и номера посева показывает: один «здоровый» горшок получил повторно использованную бирку другого вида.",
+        "isolate": "Изолировать секцию",
+        "initial_isolate": "Вы закрываете секцию и отмечаете влажность до переноса.",
+        "twist1_isolate": "На стекле и листьях совпадают минеральные кристаллы из распылителя, а не колонии гриба.",
+        "twist2_isolate": "Сравнение старых фотографий и номера посева показывает: один «здоровый» горшок получил повторно использованную бирку другого вида.",
+        "trace": "Сверить происхождение",
+        "initial_trace": "В журнале пересадки вы находите два горшка с одной старой биркой, хотя их номера посева различны.",
+        "twist1_trace": "Садовник показывает промывку распылителя после жёсткой воды: налёт минеральный.",
+        "twist2_trace": "Сравнение старых фотографий и номера посева показывает: один «здоровый» горшок получил повторно использованную бирку другого вида."
+      }
+    },
+    "en": {
+      "states": {
+        "phase": "Phase",
+        "route": "Current approach",
+        "origin": "First choice",
+        "confidence": "Evidence confidence",
+        "viability": "Plant viability",
+        "clues": "Established facts",
+        "location": "Location",
+        "outcome": "Outcome",
+        "goalStatus": "Objective"
+      },
+      "actions": {
+        "free_text": "Free action",
+        "assay": "Analyze the spots",
+        "isolate": "Isolate the section",
+        "trace": "Trace provenance"
+      },
+      "manifest": {
+        "title": "Seeds Behind Glass",
+        "description": "Before a rare-seed exchange, a curator must separate a plant threat from a care error and verify specimen origins.",
+        "category": "Botanical Collection"
+      },
+      "values": {
+        "active": "In progress",
+        "completed": "Objective achieved",
+        "failed": "Objective failed",
+        "assay_assay": "Outcome: Analyze the spots → Analyze the spots",
+        "assay_isolate": "Outcome: Analyze the spots → Isolate the section",
+        "assay_trace": "Outcome: Analyze the spots → Trace provenance",
+        "isolate_assay": "Outcome: Isolate the section → Analyze the spots",
+        "isolate_isolate": "Outcome: Isolate the section → Isolate the section",
+        "isolate_trace": "Outcome: Isolate the section → Trace provenance",
+        "trace_assay": "Outcome: Trace provenance → Analyze the spots",
+        "trace_isolate": "Outcome: Trace provenance → Isolate the section",
+        "trace_trace": "Outcome: Trace provenance → Trace provenance",
+        "none": "Not chosen",
+        "opening": "Opening",
+        "path": "First turn",
+        "cross": "Paths intersect",
+        "final": "Decision",
+        "finished": "Ending",
+        "assay": "Analyze the spots",
+        "initial_assay": "Under the microscope, the dots look like angular crystals, but one drop cannot exclude disease on other leaves.",
+        "twist1_assay": "The residue dissolves as calcium salts from the overnight mister; sampled leaves show no fungal growth.",
+        "twist2_assay": "Old photos and sowing numbers show that one “healthy” pot received a reused tag from another species.",
+        "isolate": "Isolate the section",
+        "initial_isolate": "You close the section and log humidity before moving plants.",
+        "twist1_isolate": "Glass and leaves carry matching mineral crystals from the mister, not fungal colonies.",
+        "twist2_isolate": "Old photos and sowing numbers show that one “healthy” pot received a reused tag from another species.",
+        "trace": "Trace provenance",
+        "initial_trace": "The repotting log shows two pots carrying the same old tag although their sowing numbers differ.",
+        "twist1_trace": "The gardener shows the mister flush after hard water: the residue is mineral.",
+        "twist2_trace": "Old photos and sowing numbers show that one “healthy” pot received a reused tag from another species."
+      }
+    }
+  },
+  "goal": {
+    "description": {
+      "ru": "Передать только здоровые семена с доказанным происхождением, сохранив заражённые или сомнительные образцы под контролем.",
+      "en": "Transfer only healthy seeds with proven provenance while keeping infected or uncertain specimens under control."
+    },
+    "completion": {
+      "path": "goalStatus",
+      "value": "completed",
+      "terminalValues": [
+        "completed",
+        "failed"
+      ]
+    }
+  },
+  "map": {
+    "start": "lab",
+    "locations": {
+      "lab": {
+        "ru": "Лаборатория",
+        "en": "Lab"
+      },
+      "quarantine": {
+        "ru": "Карантинная секция",
+        "en": "Quarantine section"
+      },
+      "registry": {
+        "ru": "Коллекционный реестр",
+        "en": "Collection registry"
+      }
+    }
+  },
+  "world": {
+    "constants": {
+      "setting": "Вы куратор коллекционной теплицы. Завтра международный обмен семенами; на листьях редкого вида появились белые пятна, а часть горшков пересажена без полной записи.",
+      "physicalRules": [
+        "Белый налёт нельзя объявлять грибом без пробы; соль с туманообразователя оставляет похожие точки.",
+        "Передача семян требует и здоровья растений, и подтверждённого происхождения родительского образца.",
+        "Изоляция меняет влажность и требует ухода; ошибочная карантинная мера тоже причиняет вред."
+      ],
+      "continuity": "Подтверждённые улики и последствия прежних решений сохраняются; действия свободны, но результат должен быть причинным.",
+      "tone": "Взрослая история с реальными компромиссами, без случайной катастрофы.",
+      "storyArc": {
+        "beats": {
+          "ru": [
+            "Белые пятна угрожают обмену и вызывают вопрос о карантине.",
+            "Анализ связывает налёт с минералами в распылителе, но пересадка нарушила цепочку бирок.",
+            "«Здоровый» горшок оказывается растением другого происхождения из-за повторно использованной бирки.",
+            "Игрок выбирает частичный обмен, задержку или независимую проверку с ценой для растений и партнёров."
+          ],
+          "en": [
+            "White spots threaten the exchange and raise a quarantine question.",
+            "Analysis links residue to misting minerals, but repotting broke the tag chain.",
+            "A “healthy” pot proves to be a different accession because a label was reused.",
+            "The player chooses a partial exchange, a hold, or independent verification with costs for plants and partners."
+          ]
+        },
+        "twists": {
+          "ru": [
+            "Раствор налёта показывает соли кальция из ночного распылителя; на проверенных листьях нет роста гриба. Но чистая поверхность не доказывает, что материнские горшки промаркированы верно.",
+            "На стекле и листьях совпадают минеральные кристаллы из распылителя, а не колонии гриба. Карантин был осторожным, но его сухой воздух уже сушит молодые побеги.",
+            "Садовник показывает промывку распылителя после жёсткой воды: налёт минеральный. Запись пересадки при этом подтверждает, что две бирки снимали одновременно.",
+            "Сравнение старых фотографий и номера посева показывает: один «здоровый» горшок получил повторно использованную бирку другого вида. Риск обмена теперь в ложном происхождении, даже если налёт безвреден. Соль была шумом, ошибка записи — настоящей угрозой коллекции."
+          ],
+          "en": [
+            "The residue dissolves as calcium salts from the overnight mister; sampled leaves show no fungal growth. A clean surface does not prove that parent pots are correctly labeled.",
+            "Glass and leaves carry matching mineral crystals from the mister, not fungal colonies. Quarantine was cautious, but its dry air is already stressing young shoots.",
+            "The gardener shows the mister flush after hard water: the residue is mineral. The repotting record also confirms two tags were removed at once.",
+            "Old photos and sowing numbers show that one “healthy” pot received a reused tag from another species. The exchange risk is now false provenance even if the residue is harmless. Salt was noise; the record error threatens the collection."
+          ]
+        },
+        "paths": {
+          "ru": [
+            "Проверить биологический риск в лаборатории; цена — потеря времени на регистрацию образцов.",
+            "Сдержать возможное заражение сразу; цена — стресс растений в более сухой секции.",
+            "Восстановить происхождение материнских растений; цена — оставшийся без ответа вопрос о налёте."
+          ],
+          "en": [
+            "Test biological risk in the lab; pay with less time for registration.",
+            "Contain possible infection at once; pay in plant stress in a drier room.",
+            "Restore parent-plant provenance; leave the residue question unresolved for longer."
+          ]
+        },
+        "revealPolicy": {
+          "ru": "Покажи первое открытие только после начального действия, второе — после проверки первого; прежний путь меняет цену и достоверность следующего.",
+          "en": "Reveal the first turn only after an opening action and the second after testing the first; earlier choices change the cost and reliability of what follows."
+        }
+      }
+    },
+    "knowledgeGraph": {
+      "facts": [
+        {
+          "id": "seed-quarantine_0",
+          "text": "Белые точки появились после ночного туманообразования, а на стекле видны солевые кристаллы."
+        },
+        {
+          "id": "seed-quarantine_1",
+          "text": "Несколько горшков недавно пересажены, их бирки потёрты."
+        },
+        {
+          "id": "seed-quarantine_2",
+          "text": "Обмен требует подтверждения исходного местонахождения каждого материнского растения."
+        }
+      ]
+    }
+  },
+  "boundaries": {
+    "mutationPaths": [
+      "phase",
+      "route",
+      "origin",
+      "confidence",
+      "viability",
+      "clues",
+      "location",
+      "outcome",
+      "goalStatus"
+    ],
+    "numericBounds": {
+      "confidence": {
+        "min": 0,
+        "max": 100
+      },
+      "viability": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "allowedValues": {
+      "phase": [
+        "opening",
+        "path",
+        "cross",
+        "final",
+        "finished"
+      ],
+      "route": [
+        "none",
+        "assay",
+        "isolate",
+        "trace"
+      ],
+      "origin": [
+        "none",
+        "assay",
+        "isolate",
+        "trace"
+      ],
+      "location": [
+        "lab",
+        "quarantine",
+        "registry"
+      ],
+      "outcome": [
+        "none",
+        "assay_assay",
+        "assay_isolate",
+        "assay_trace",
+        "isolate_assay",
+        "isolate_isolate",
+        "isolate_trace",
+        "trace_assay",
+        "trace_isolate",
+        "trace_trace"
+      ],
+      "goalStatus": [
+        "active",
+        "completed",
+        "failed"
+      ],
+      "clues[]": [
+        "initial_assay",
+        "initial_isolate",
+        "initial_trace",
+        "twist1_assay",
+        "twist1_isolate",
+        "twist1_trace",
+        "twist2_assay",
+        "twist2_isolate",
+        "twist2_trace"
+      ]
+    },
+    "maxArrayItems": {
+      "clues": 3
+    },
+    "maxStringLengths": {},
+    "stateChangeRules": [
+      {
+        "path": "confidence",
+        "maxIncrease": 20
+      },
+      {
+        "path": "viability",
+        "maxIncrease": 20
+      }
+    ],
+    "instructions": [
+      "Мутации ограничены перечисленными полями и пределами.",
+      "Не объявляй конец по числовому порогу; финал зависит от подтверждённого выбора."
+    ]
+  },
+  "opening": {
+    "ru": "Утром стекло теплицы покрыто мелкой солью после ночного туманообразования. Вы отвечаете за коллекцию и завтрашний обмен семенами редкого горного растения. На нескольких листьях белые точки, а рядом стоят недавно пересаженные горшки с потрёпанными бирками. Если это инфекция, выпуск остановят; если налёт минеральный, коллекция потеряет время зря. Вы можете взять пробы, закрыть секцию или поднять историю пересадки вместе с садовниками. За прозрачным стеклом уже ждут курьеры участников обмена.",
+    "en": "Morning light catches fine salt on the greenhouse glass after overnight misting. You are responsible for a rare alpine plant collection and tomorrow’s seed exchange. White dots mark several leaves, while recently repotted plants carry worn tags nearby. If this is infection, release must stop; if mineral residue, the collection may lose time needlessly. You can sample, isolate, or reconstruct the repotting with gardeners. Exchange couriers are already waiting beyond the glass."
+  }
+}

@@ -12,7 +12,6 @@ export interface GamePackage {
   map?: { start: string; locations: Record<string, { ru: string; en: string }>; destinations?: Record<string, string> };
   opening?: { ru: string; en: string };
   i18n?: Record<string, Record<string, Record<string, string>>>;
-  preparedBranches?: Array<{ id: string; minTurns?: number; when?: Record<string, Json | { lt?: number; lte?: number; gt?: number; gte?: number; oneOf?: Json[] }>; actions?: string[]; narrative: { ru: string; en: string }; responses?: Record<string, { narrative: { ru: string; en: string }; mutations?: StateMutationProposal[]; suggestions?: Array<{ text: { ru: string; en: string }; icon?: string }> }>; mutations?: StateMutationProposal[]; suggestions?: Array<{ text: { ru: string; en: string }; icon?: string }> }>;
 }
 
 export interface Action { type: string; text?: string; icon?: string; requestId?: string; language?: 'ru' | 'en' }
@@ -22,7 +21,7 @@ export type StateMutationProposal =
   | { op: 'increment'; path: string; amount: number }
   | { op: 'append'; path: string; value: Json }
   | { op: 'remove'; path: string; value: Json };
-export interface TurnRecord { index: number; action: Action; events: Event[]; narrative: string; at: string; location?: string; source?: string; preparedBranchId?: string; stateMutation?: StateMutationProposal[] }
+export interface TurnRecord { index: number; action: Action; events: Event[]; narrative: string; at: string; location?: string; source?: string; stateMutation?: StateMutationProposal[] }
 export interface Session {
   id: string; gameId: string; ownerId?: string; packageVersion: string; schemaVersion: string;
   suggestions?: Action[]; suggestionLanguage?: string; state: Record<string, Json>; turns: TurnRecord[]; createdAt: string; updatedAt: string;

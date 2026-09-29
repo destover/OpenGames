@@ -1,4 +1,6 @@
 import { randomUUID } from 'node:crypto';
+import { existsSync, mkdirSync, readFileSync, writeFileSync, renameSync } from 'node:fs';
+import { dirname } from 'node:path';
 import type { Action, GamePackage, Session } from './types.ts';
 import { StateEngine } from './engine.ts';
 import type { AIProvider, AIRequestOptions, AIResult } from './ai.ts';
@@ -57,7 +59,11 @@ export class GameRuntime {
   private readonly games: Map<string, GamePackage>;
   private readonly ai: AIProvider;
   private readonly saves: LocalSaveSystem;
-  constructor(games: Map<string, GamePackage>, ai: AIProvider, saves: LocalSaveSystem) {
+  private publication:Record<string,boolean>={};
+  private readonly publicationPath?:string;
+  constructor(games: Map<string, GamePackage>, ai: AIProvider, saves: LocalSaveSystem, publicationPath?:string) {
+    this.publicationPath=publicationPath;
+    if(publicationPath&&existsSync(publicationPath))this.publication=JSON.parse(readFileSync(publicationPath,'utf8'));
     this.games = games; this.ai = ai;
     this.saves = saves;
     for (const [id, game] of games) { validateGamePackage(game); this.engines.set(id, new StateEngine(game)); }
@@ -86,17 +92,20 @@ export class GameRuntime {
       this.sessions.set(session.id, session);
     }
   }
-  listGames() { return [...this.games.values()].map(({ manifest, ui, actions, i18n, goal, map, opening, preparedBranches }) => ({ manifest, ui, actions, i18n, goal, map, opening, preparedBranches })); }
+  listGames(includeUnpublished=false) { return [...this.games.values()].filter(game=>includeUnpublished||this.isPublished(game.manifest.id)).map(({ manifest, ui, actions, i18n, goal, map, opening }) => ({ manifest, ui, actions, i18n, goal, map, opening })); }
+  isPublished(id:string){return this.publication[id]!==false}
+  setPublished(id:string,published:boolean){const game=this.games.get(id);if(!game)throw Object.assign(new Error('Игра не найдена'),{status:404});if(published)validateGamePackage(game);const next={...this.publication,[id]:published};if(this.publicationPath){mkdirSync(dirname(this.publicationPath),{recursive:true,mode:0o700});writeFileSync(this.publicationPath+'.tmp',JSON.stringify(next,null,2),{mode:0o600});renameSync(this.publicationPath+'.tmp',this.publicationPath)}this.publication=next;return {id,published}}
+  sessionPackage(id:string,ownerId?:string){const session=this.get(id,ownerId);return this.listGames(true).find(game=>game.manifest.id===session.gameId)!}
   gamePackage(id:string){return this.games.get(id)}
   validateGamePackageUpdate(id:string,game:GamePackage){if(!this.games.has(id)||game.manifest.id!==id)throw new Error('Игра не найдена');validateGamePackage(game);return true}
   replaceGamePackage(id:string,game:GamePackage){this.validateGamePackageUpdate(id,game);this.games.set(id,structuredClone(game));this.engines.set(id,new StateEngine(game));return this.games.get(id)!}
-  listPopularGames() {
+  listPopularGames(includeUnpublished=false) {
     const stats=new Map<string,{gameId:string;players:Set<string>;sessions:number;turns:number}>();
     for(const session of this.sessions.values()){const item=stats.get(session.gameId)||{gameId:session.gameId,players:new Set<string>(),sessions:0,turns:0};if(session.ownerId)item.players.add(session.ownerId);item.sessions++;item.turns+=session.turns.length;stats.set(session.gameId,item)}
-    return [...this.games.keys()].map(gameId=>{const item=stats.get(gameId);return {gameId,players:item?.players.size||0,sessions:item?.sessions||0,turns:item?.turns||0}}).sort((a,b)=>b.players-a.players||b.sessions-a.sessions||b.turns-a.turns||a.gameId.localeCompare(b.gameId));
+    return [...this.games.keys()].filter(id=>includeUnpublished||this.isPublished(id)).map(gameId=>{const item=stats.get(gameId);return {gameId,players:item?.players.size||0,sessions:item?.sessions||0,turns:item?.turns||0}}).sort((a,b)=>b.players-a.players||b.sessions-a.sessions||b.turns-a.turns||a.gameId.localeCompare(b.gameId));
   }
   create(gameId: string, ownerId?: string) {
-    const game = this.games.get(gameId); if (!game) throw new Error('Игра не найдена');
+    const game = this.games.get(gameId); if (!game) throw Object.assign(new Error('Игра не найдена'),{status:404});if(!this.isPublished(gameId))throw Object.assign(new Error('Игра снята с публикации'),{status:409});
     const now = new Date().toISOString(); const session: Session = { id: randomUUID(), gameId, ownerId, packageVersion: game.manifest.version, schemaVersion: game.manifest.schemaVersion, state: { ...structuredClone(game.state.initial), ...(game.goal?.actions ? { goalProgress: 0 } : {}), engagement: 50, pacing: 'normal', location: game.map?.start || '' }, turns: [], createdAt: now, updatedAt: now };
     this.sessions.set(session.id, session); this.saves.save(session); return session;
   }
@@ -118,14 +127,6 @@ export class GameRuntime {
       const provider = aiOverride || this.ai;
       let result: AIResult | undefined, next: Session | undefined, correction: string | undefined;
       let aiResponseMs = 0;
-      const matchingBranch = (item: NonNullable<GamePackage['preparedBranches']>[number]) => (!item.actions || item.actions.includes(action.type)) && Object.entries(item.when || {}).every(([path, expected]) => {
-        const actual = path.split('.').reduce<any>((node, key) => node?.[key], session.state);
-        if (expected && typeof expected === 'object' && !Array.isArray(expected)) {
-          const rule = expected as { lt?: number; lte?: number; gt?: number; gte?: number; oneOf?: unknown[] };
-          return (rule.lt === undefined || actual < rule.lt) && (rule.lte === undefined || actual <= rule.lte) && (rule.gt === undefined || actual > rule.gt) && (rule.gte === undefined || actual >= rule.gte) && (!rule.oneOf || rule.oneOf.includes(actual));
-        }
-        return actual === expected;
-      });
       const callAI = async (requestOptions?: AIRequestOptions) => {
         const startedAt = Date.now();
         try { return await provider.generate(game, session, action, correction, requestOptions); }
@@ -135,33 +136,16 @@ export class GameRuntime {
       const providerOptions={...options,signal:options?.signal||localController!.signal};
       let timer: ReturnType<typeof setTimeout>|undefined,response:AIResult|null;
       try{
-        response=options?.signal?await callAI(providerOptions):await Promise.race([callAI(providerOptions).catch(error=>{if(error instanceof DonorUnavailableError)throw error;return null}),new Promise<null>(resolve=>{timer=setTimeout(()=>{localController!.abort(new Error('AI response deadline exceeded'));resolve(null)},8000)})]);
+        response=options?.signal?await callAI(providerOptions):await Promise.race([callAI(providerOptions).catch(error=>{if(error instanceof DonorUnavailableError)throw error;return null}),new Promise<null>(resolve=>{timer=setTimeout(()=>{localController!.abort(new Error('AI response deadline exceeded'));resolve(null)},30000)})]);
       }finally{if(timer)clearTimeout(timer)}
       if (response) {
         result = response;
         next = engine.apply(session, action, result.events, result.narrative, result.stateMutation || [], aiResponseMs);
       } else {
-        const usedBranches = new Set<string>();
-        for (const turn of session.turns) {
-          if (turn.preparedBranchId) { usedBranches.add(turn.preparedBranchId); continue; }
-          if (turn.source !== 'prepared') continue;
-          const priorIndex = turn.index - 1;
-          const priorBranch = game.preparedBranches?.filter(item => (!item.actions || item.actions.includes(turn.action.type)) && (item.minTurns === undefined || priorIndex >= item.minTurns) && (!item.when?.location || item.when.location === turn.location)).sort((a,b) => (b.minTurns ?? -1) - (a.minTurns ?? -1))[0];
-          if (priorBranch) usedBranches.add(priorBranch.id);
-        }
-        const eligibleBranches = game.preparedBranches?.filter(item => matchingBranch(item) && (item.minTurns === undefined || session.turns.length >= item.minTurns) && !usedBranches.has(item.id)).sort((a,b) => (b.minTurns ?? -1) - (a.minTurns ?? -1)) || [];
-        const branch = eligibleBranches[0];
         const language = action.language?.toLowerCase().startsWith('en') ? 'en' : 'ru';
-        if (branch) {
-          const response = branch.responses?.[action.type];
-          result = { narrative: response?.narrative[language] || preparedFallbackNarrative(game, action, language), events: [], stateMutation: response?.mutations || branch.mutations || [], suggestions: (response?.suggestions || branch.suggestions || []).map(item => ({ type: 'free_text', text: item.text[language], icon: item.icon || '✦' })), source: 'prepared' };
-          next = engine.apply(session, action, result.events, result.narrative, result.stateMutation, 8000);
-          next.turns.at(-1)!.preparedBranchId = branch.id;
-        } else {
-          const repetitions = session.turns.filter(turn => turn.action.type === action.type).length;
-          result = { narrative: preparedFallbackNarrative(game, action, language, repetitions), events: [], stateMutation: [], suggestions: preparedFallbackSuggestions(game, session, language), source: 'local' };
-          next = engine.apply(session, action, result.events, result.narrative, result.stateMutation, 8000);
-        }
+        const repetitions = session.turns.filter(turn => turn.action.type === action.type).length;
+        result = { narrative: preparedFallbackNarrative(game, action, language, repetitions), events: [], stateMutation: [], suggestions: preparedFallbackSuggestions(game, session, language), source: 'local' };
+        next = engine.apply(session, action, result.events, result.narrative, result.stateMutation, 8000);
       }
       if (!result || !next) throw new Error('Не удалось согласовать состояние с правилами мира');
       Object.assign(next.turns.at(-1)!, { source: result.source, stateMutation: result.stateMutation || [] });

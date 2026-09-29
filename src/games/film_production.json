@@ -6,7 +6,7 @@
     "setting": "Последняя неделя независимого кинопроизводства: сорванный трюковой дубль, ограниченная страховка, дорогой павильон и напряжённый монтаж.",
     "categoryRu": "Кинопроизводство",
     "background": "/assets/film-production.jpg",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "schemaVersion": "2",
     "isNew": true,
     "durationMinutes": [
@@ -22,6 +22,8 @@
       "safety": 46,
       "crew": 51,
       "edit": 23,
+      "coverage": 22,
+      "fatigue": 61,
       "location": "stage",
       "goalStatus": "active"
     }
@@ -43,6 +45,26 @@
     "edit": {
       "label": "Проверить монтажный вариант",
       "icon": "✂️"
+    },
+    "stunt_breakdown": {
+      "label": "Разобрать трюковый блок по шагам",
+      "icon": "🎪"
+    },
+    "set_log": {
+      "label": "Сверить журнал перестановки декораций и света",
+      "icon": "🗂️"
+    },
+    "insurer": {
+      "label": "Согласовать условия со страховщиком",
+      "icon": "📑"
+    },
+    "reblock": {
+      "label": "Перестроить блокинг сцены",
+      "icon": "🎚️"
+    },
+    "shift": {
+      "label": "Перераспределить ночную смену",
+      "icon": "🫖"
     }
   },
   "ui": {
@@ -54,6 +76,8 @@
       "safety": "Уровень безопасности",
       "crew": "Доверие группы",
       "edit": "Готовность монтажа",
+      "coverage": "Подтверждённое покрытие",
+      "fatigue": "Усталость группы",
       "location": "Место",
       "goalStatus": "Цель"
     }
@@ -67,6 +91,8 @@
         "safety": "Уровень безопасности",
         "crew": "Доверие группы",
         "edit": "Готовность монтажа",
+        "coverage": "Подтверждённое покрытие",
+        "fatigue": "Усталость группы",
         "location": "Место",
         "goalStatus": "Цель"
       },
@@ -74,7 +100,12 @@
         "free_text": "Свободное действие",
         "schedule": "Пересобрать съёмочный план",
         "safety": "Провести оценку трюка",
-        "edit": "Проверить монтажный вариант"
+        "edit": "Проверить монтажный вариант",
+        "stunt_breakdown": "Разобрать трюковый блок по шагам",
+        "set_log": "Сверить журнал перестановки декораций и света",
+        "insurer": "Согласовать условия со страховщиком",
+        "reblock": "Перестроить блокинг сцены",
+        "shift": "Перераспределить ночную смену"
       },
       "manifest": {
         "title": "Последний дубль",
@@ -95,6 +126,8 @@
         "safety": "Safety readiness",
         "crew": "Crew trust",
         "edit": "Edit readiness",
+        "coverage": "Confirmed coverage",
+        "fatigue": "Crew fatigue",
         "location": "Location",
         "goalStatus": "Objective"
       },
@@ -102,7 +135,12 @@
         "free_text": "Free action",
         "schedule": "Rebuild the shooting schedule",
         "safety": "Review the stunt safely",
-        "edit": "Review an edit option"
+        "edit": "Review an edit option",
+        "stunt_breakdown": "Break the stunt block into steps",
+        "set_log": "Reconcile the set-change and lighting log",
+        "insurer": "Agree the terms with the insurer",
+        "reblock": "Restage the scene",
+        "shift": "Rota the night crew"
       },
       "manifest": {
         "title": "The Final Take",
@@ -148,6 +186,22 @@
       "safety": {
         "ru": "Комната координатора трюков",
         "en": "Stunt safety room"
+      },
+      "backlot": {
+        "ru": "Внешняя площадка",
+        "en": "Backlot"
+      },
+      "sound": {
+        "ru": "Звуковая студия",
+        "en": "Sound stage"
+      },
+      "screening": {
+        "ru": "Просмотровый зал",
+        "en": "Screening room"
+      },
+      "makeup": {
+        "ru": "Гримёрный цех",
+        "en": "Make-up hall"
       }
     }
   },
@@ -169,36 +223,44 @@
         },
         "beats": {
           "ru": [
-            "На последней неделе съёмок сорван трюковой дубль; страховка ограничена, павильон дорог, монтаж ждёт материал.",
-            "Разбор меток пола показывает, что опора сместилась после перестановки света, хотя сам трюк выполнен по плану.",
-            "Режиссёр выбирает безопасный пересъём, изменение сцены или монтажное решение, отвечая команде за цену каждого."
+            "Сорванный трюковый дубль останавливает ночную смену: площадка замирает, свет гаснет не полностью, и группа стоит, потому что никто не готов сказать первое слово.",
+            "Продюсер приносит смету ночи и список из двух перестановок света и декораций, каждая из которых отдельно укладывалась в бюджет, а обе вместе — уже нет.",
+            "Режиссёр хочет второй дубль до рассвета, координатор трюков требует независимой проверки площадки, а монтажная комната просит материал, которого ещё нет.",
+            "Записи показывают, что трюк был выполнен по плану, а опора сместилась после перестановки света: никто не отменял порядок действий, изменилась сама площадка.",
+            "Усталость после ночной смены становится производственным риском сама по себе, а не только поводом для недовольства, и её нельзя списать словами.",
+            "К премьере остаётся несколько суток, и решение нужно принять по документам, с живыми людьми и с ценой, которую кто-то в итоге заплатит."
           ],
           "en": [
-            "On the final production week, a stunt take fails; insurance is limited, the stage is expensive, and editing needs footage.",
-            "Floor marks show the support shifted after a lighting move, though the stunt followed plan.",
-            "The director chooses a safe retake, a changed scene, or an editorial solution and owns the cost."
+            "A failed stunt take stops the night shoot: the set goes still, the lights stay half on, and the crew stands because nobody is ready to say the first word.",
+            "The producer brings the night’s cost sheet and a list of two moves of lights and set pieces, each of which fitted the budget alone and neither of which fits the two together.",
+            "The director wants a second take before dawn, the stunt coordinator demands an independent survey of the set, and the edit room asks for footage that does not exist yet.",
+            "The records show the stunt was performed to plan while the support shifted after the lighting move: nobody cancelled the sequence, the set itself changed underneath it.",
+            "Fatigue after the night shift becomes a production risk in its own right, not merely a mood, and it cannot be written off in words.",
+            "There are a few days left to the premiere, and the decision has to be made with documents, with the people on the set, and with a price that somebody will eventually pay."
           ]
         },
         "twists": {
           "ru": [
-            "Камера записала сильнейший фрагмент до сигнала «мотор»: актёр уже отреагировал на реальную паузу каскадёра.",
-            "В кадре нет опасного контакта, но страховщик требует сохранить журнал изменения декорации до повторного дубля."
+            "Тонкие признаки заранее: между командами «мотор» и «камера, мотор» в журнале есть техническая пауза в несколько секунд, а монтажный лист помечает фрагмент как лучший в сцене именно потому, что актёр среагировал на настоящую паузу каскадёра. Позже выясняется, что сильнейший материал снят до команды, и он юридически и технически не относится к утверждённой процедуре.",
+            "Тонкие признаки заранее: две перестановки света в журнале площадки отмечены одинаковым временем и одинаковой формулировкой, хотя делали их разные бригады, а между ними девять минут, в течение которых опора не была проверена никем. Страховщик требует журнал до повторного дубля — и проверка обнаруживает именно эти девять минут, без которых сцена выглядит проще и дешевле, чем она есть."
           ],
           "en": [
-            "The strongest shot was recorded before “action”: the actor reacted to the stunt performer’s real pause.",
-            "No dangerous contact appears, but insurance requires the set-change log before any retake."
+            "Early signs: between “action” and “camera, action” the log records a technical pause of several seconds, and the editor marks that fragment as the strongest in the scene precisely because the actor reacted to the stunt performer’s real pause. It turns out later that the best material was shot before the call, and it belongs to neither the approved procedure nor its paperwork.",
+            "Early signs: two lighting moves in the set log carry the same timestamp and the same wording although different crews made them, and nine minutes sit between them during which nobody checked the support. The insurer demands the log before any retake, and the check finds exactly those nine minutes, without which the scene looks simpler and cheaper than it is."
           ]
         },
         "paths": {
           "ru": [
-            "Переснять сцену с независимой проверкой площадки: качество контроля выше, но смена дорожает.",
-            "Перестроить блокинг и показать последствие вне кадра: риск падает, исходный замысел меняется.",
-            "Собрать сцену из безопасного материала и звука: срок соблюдён, часть художественной задумки останется за кадром."
+            "Провести независимую проверку площадки и снимать сцену заново по утверждённой процедуре. Предпосылка: координатор трюков готов повторить осмотр, а в смете остаётся место на независимую проверку. Новое: становится известно, что именно сместилось — опора, освещение или сама декорация — и вина перестаёт быть общей. Немедленное последствие: дубль становится безопаснее, но съёмка занимает часть смены, а монтажная комната получает материал позже, чем рассчитывала. Отложенное: подтверждённая процедура связывает любой будущий повтор с документами, и самовольная перестановка в следующий раз станет дороже всего фильма. Риск: если причина в освещении, а не в опоре, пересъёмка даст тот же кадр и счёт за неё. Компромисс: контроль качества против времени и денег. Точки пересечения: со сверкой журнала — девять минут получают объяснение; с разговором со страховщиком — покрытие подтверждается раньше, чем появляется дубль; с перераспределением смены — усталость перестаёт быть отдельной проблемой.",
+            "Перестроить блокинг так, чтобы опасный момент остался за кадром, а последствие читалось по звуку и реакции. Предпосылка: в монтаже уже есть материал с теми же интерьерами и есть согласие автора сцены на изменение. Новое: выясняется, что актёр в кадре реагирует убедительнее, чем опасный фрагмент, и художественная задача оказывается ближе, чем казалось ночью. Немедленное последствие: риск заметно падает, съёмка быстрее и дешевле, но сцена теряет единственный по-настоящему дорогой план. Отложенное: монтажная версия встанет на место пропавшего дубля, и на премьере зритель увидит, что отклонились от первоначального замысла. Риск: режиссёр воспринимает это как уступку производству, а не как решение, и монтажная комната получает противоречивые указания. Компромисс: сохранение тайминга премьеры против художественной честности. Точки пересечения: с разбором трюка — часть блока сохраняется как рискованная, а не выбрасывается; с разговором со страховщиком — полис перестаёт быть главным аргументом.",
+            "Собрать сцену из уже снятого безопасного материала, звука и реакций второй камеры. Предпосылка: монтажная линия работает, а в материале есть планы без опасного элемента. Новое: становится ясно, какие планы действительно держат историю, а какие только показывают эффект. Немедленное последствие: срок премьеры и бюджет почти не страдают, готовность монтажа растёт быстрее, чем материал. Отложенное: в фильме останется тихое место там, где задумывалось напряжение, и зритель выйдет на премьеру с ощущением, что что-то не показали. Риск: склейка выдаёт себя на большом экране, а звуковая реконструкция требует отдельного дня. Компромисс: качество в целом против одного сцена. Точки пересечения: с перераспределением смены — монтажная комната получает работающие руки; с проверкой трюка — безопасный материал получает документированное происхождение.",
+            "Сократить ночную смену, заплатить за переработку и снять сцену в первой половине дня на свежую группу. Предпосылка: студия и техника свободны днём, а продюсер готов поднять расходы. Новое: группа видит, что решение принято в её пользу, и отношение меняется раньше, чем снимется материал. Немедленное последствие: усталость падает, безопасность выше, но бюджет уходит, а деньги из павильона придётся вернуть поимённо — кто-то на этой картине останется без смены. Отложенное: на премьере этот выбор виден в лицах второстепенных ролей и в атмосфере, а не в сюжете. Риск: усталая группа ошибётся не там, где вы рассчитывали. Компромисс: деньги против человеческой надёжности. Точки пересечения: со всем остальным — даёт час, которого ни у кого больше нет; с проверкой трюка — свежая голова на разборе важнее самого дубля."
           ],
           "en": [
-            "Reshoot after an independent safety check: control improves, the day costs more.",
-            "Restage and imply the impact off-screen: risk falls, the original idea changes.",
-            "Build from safe footage and sound: the schedule holds, some intent stays off-screen."
+            "Run an independent survey of the set and reshoot the scene under the approved procedure. Precondition: the stunt coordinator will repeat the inspection and the budget still has room for a survey. New information: it becomes known whether the support, the lighting or the set piece itself shifted, and the fault stops being a shared one. Immediate consequence: the take is safer, but the shoot eats part of the shift and the edit room gets footage later than planned. Deferred consequence: a confirmed procedure ties any future repeat to paperwork, and an unapproved move next time will cost more than the film. Risk: if the cause is the lighting rather than the support, the reshoot gives the same frame and the same invoice. Trade-off: control of quality against time and money. Intersection points: with the log check the nine minutes get an explanation; with the insurer the coverage is confirmed before a take exists; with the crew rota fatigue stops being a separate problem.",
+            "Restage the scene so the dangerous moment stays out of frame and the consequence is read from sound and reaction. Precondition: the edit already has material from the same interiors and the writer of the scene agrees to the change. New information: it turns out the actor in frame is more convincing than the dangerous fragment, and the dramatic problem is closer than it looked at night. Immediate consequence: risk falls sharply, the shoot is faster and cheaper, and the scene loses its one genuinely expensive plan. Deferred consequence: the assembled version stands in for the missing take, and the premiere audience will see that the film moved away from its first intention. Risk: the director reads this as a concession to production rather than a decision, and the edit room receives contradictory instructions. Trade-off: protecting the premiere date against artistic honesty. Intersection points: with the stunt breakdown part of the block survives as risk rather than being discarded; with the insurer the policy stops being the main argument.",
+            "Assemble the scene from safe material already shot, sound, and second-camera reactions. Precondition: the edit line is working and the existing material includes plans without the dangerous element. New information: it becomes clear which plans actually carry the story and which only show off an effect. Immediate consequence: the premiere date and the budget barely suffer, and edit readiness grows faster than footage does. Deferred consequence: the film keeps a quiet patch where tension was meant to be, and the audience leaves the premiere feeling something was withheld. Risk: the join shows on a big screen, and reconstructing the sound costs a day of its own. Trade-off: overall quality against one scene. Intersection points: with the crew rota the edit room gets working hands; with the stunt review the safe material acquires a documented origin.",
+            "Cut the night shift, pay the overtime, and shoot the scene in the first half of the day with a fresh crew. Precondition: the stage and the equipment are free during the day and the producer will accept the cost. New information: the crew sees that the decision went its way and its attitude changes before a single frame is exposed. Immediate consequence: fatigue drops and safety rises, but the money goes and the stage has to be paid back by name — somebody in this picture will lose a shift. Deferred consequence: at the premiere this choice is visible in the faces of the supporting cast and in the atmosphere rather than in the plot. Risk: an exhausted crew makes a mistake somewhere you did not budget for. Trade-off: money against human reliability. Intersection points: with everything else it buys the hour nobody else has; with the stunt review a clear head at the table is worth more than the take."
           ]
         }
       }
@@ -224,6 +286,26 @@
         {
           "id": "crew_conflict",
           "text": "Часть группы требует безопасного графика, продюсер настаивает на соблюдении срока."
+        },
+        {
+          "id": "wet_platform",
+          "text": "Платформа сцены остаётся мокрой после ночного дождя, и тормозной путь камеры по рельсам длиннее расчётного."
+        },
+        {
+          "id": "set_change_log",
+          "text": "Перестановки света и декораций между дулями вносятся в журнал площадки с отметкой времени."
+        },
+        {
+          "id": "camera_before_action",
+          "text": "Между командами была техническая пауза в несколько секунд, отмеченная в журнале как обычная задержка."
+        },
+        {
+          "id": "coverage_limits",
+          "text": "Подтверждённое покрытие распространяется только на процедуры, согласованные письменно, и не покрывает самовольные изменения."
+        },
+        {
+          "id": "night_shift_fatigue",
+          "text": "После ночной смены часть группы работает на пределе, и перестановка смен стоит денег и времени."
         }
       ]
     }
@@ -236,6 +318,8 @@
       "safety",
       "crew",
       "edit",
+      "coverage",
+      "fatigue",
       "location",
       "goalStatus"
     ],
@@ -263,6 +347,14 @@
       "edit": {
         "min": 0,
         "max": 100
+      },
+      "coverage": {
+        "min": 0,
+        "max": 100
+      },
+      "fatigue": {
+        "min": 0,
+        "max": 100
       }
     },
     "allowedValues": {
@@ -270,7 +362,11 @@
         "stage",
         "office",
         "edit",
-        "safety"
+        "safety",
+        "backlot",
+        "sound",
+        "screening",
+        "makeup"
       ],
       "goalStatus": [
         "active",
@@ -304,348 +400,31 @@
       {
         "path": "edit",
         "maxIncrease": 20
+      },
+      {
+        "path": "coverage",
+        "maxIncrease": 15
+      },
+      {
+        "path": "fatigue",
+        "maxIncrease": 12
       }
     ],
     "instructions": [
-      "Не вознаграждай обход техники безопасности дополнительным бюджетом или материалом.",
-      "Не увеличивай пригодный материал, готовность монтажа и уровень безопасности без конкретных завершённых работ.",
-      "Перенос срока или бюджета требует реалистичного источника и последствий для премьеры.",
-      "Фильм считается готовым только когда есть цельная монтажная версия, выполнены правовые и безопасные требования."
+      "Сохраняй причинно-следственную непрерывность: каждое изменение часов, бюджета, материала, безопасности, доверия группы, монтажа, покрытия, усталости и места должно следовать из описанного действия, погоды, освещения и фактически затраченного времени.",
+      "Не возвращай человека на площадку, в монтажную или в любую другую точку без объяснимого действия или события: смена места сама по себе не является перемещением с событием.",
+      "Не повторяй уже показанное: одна и та же сцена и один и тот же результат описываются один раз; при повторном заходе коротко обозначь итог и измени обстановку.",
+      "Не увеличивай пригодный материал, готовность монтажа, уровень безопасности и подтверждённое покрытие без конкретных завершённых работ: снятые и принятые планы, согласованная письменно процедура, проверенная площадка.",
+      "Числовые ресурсы меняются только по описанным основаниям: часы уходят на каждую смену, подготовку и ожидание, бюджет тратится на перестановки, переработки и повторную съёмку, усталость растёт от ночных смен и падает после сна и смены по графику.",
+      "Не вознаграждай обход техники безопасности дополнительным бюджетом, материалом или сдвигом премьеры и не выдавай смелый кадр за доказательство безопасности.",
+      "Не выдавай истолкованный эпизод, запись в журнале или слух за доказанный факт: сначала покажи само наблюдение — время в журнале, отметку о паузе, состояние площадки, — затем версию, и держи их раздельно.",
+      "Не выдавай отвергнутое за совершившееся: если объяснение, оценка или версия отозваны, опровергнуты или заменены, они остаются в истории как отвергнутые, а не переписываются задним числом в факты.",
+      "Люди в кадре действуют в своих интересах и в пределах своих полномочий: координатор трюков останавливает дубль и не отменяет процедуру, режиссёр отвечает за замысел, продюсер за смету, монтажная комната за версию, страховщик — только за письменные условия, группа — за своё право остановить работу.",
+      "Фильм считается готовым только при цельной монтажной версии, выполненных правовых и безопасных требованиях и подтверждённых условиях страхования; молчание, отказы и невыясненные причины остаются в истории как открытые вопросы."
     ]
   },
   "opening": {
-    "ru": "До премьеры осталось три дня, а ночная смена на площадке закончилась спором: режиссёр требует пересъёмку, продюсер видит в смете перерасход, команда ждёт решения по безопасности. Вы — линейный продюсер, которому нужно довести фильм до финиша, не потеряв ни людей, ни замысел\n\nРазрешение на площадку скоро истечёт, и актёр готов к последнему дублю. Кадр готов, но мокрая платформа делает движение камеры опасным без перестановки рельс.\n\nЗдесь важно помнить, что к моменту вашего появления история уже началась. Последняя неделя независимого кинопроизводства: сорванный трюковой дубль, ограниченная страховка, дорогой павильон и напряжённый монтаж. Это не отвлечённый фон и не задача, которую можно решить одним эффектным жестом: исходные условия складывались раньше, а люди, объекты и процессы успели приспособиться к ним. Поэтому любое изменение затронет не только то, что видно сейчас, но и привычный порядок, на котором держатся остальные части ситуации. Вы входите в неё с правом действовать, однако сначала нужно понять, что именно считается нормой и кто подтвердил эту норму.\n\nПервое наблюдение относится к конкретному месту: Съёмочный павильон, Продюсерская, Монтажная, Комната координатора трюков. В нём есть заметная деталь, которую легко принять за готовый ответ, но пока это только отправная точка. Сведения получены не одновременно и не одним способом; между тем, что зафиксировано, и тем, что уже успели предположить, остаётся промежуток. Если немедленно закрыть его догадкой, следующие данные будут подгоняться под выбранную версию. Если же точно обозначить, что известно, а что пока лишь кажется вероятным, у вас сохранится возможность увидеть несоответствие, не переписывая задним числом всю картину.\n\nВаша задача сформулирована шире, чем устранить ближайшую помеху: Подготовить цельную версию фильма к премьере, не выходя за бюджет, не скрывая производственные риски и не подвергая группу опасности. На практике это означает одновременно следить за непосредственным результатом и за тем, что этот результат позволит узнать. Быстрый шаг может принести видимое улучшение, но ухудшить сравнимость, доступность или доверие; осторожный — сохранить качество проверки, но оставить проблему без немедленного ответа. Эти соображения не равны по весу во всех обстоятельствах. Их порядок зависит от того, какие сведения вы подтвердите и какой ущерб действительно обратим.\n\nВ материалах есть три слоя: исходное состояние, первое наблюдение и объяснение, которое кто-то успел к нему приложить. Не смешивайте их. Переснять сцену с независимой проверкой площадки: качество контроля выше, но смена дорожает. Если цифры или свидетельства расходятся, полезно установить, когда и где именно началось расхождение, кто наблюдал явление напрямую и какие условия могли поменяться между проверками. Иногда спорный показатель оказывается не ложным, а неполным: он честно описывает ту точку, где был получен, но не ту, о которой спрашивает команда.\n\nВам не требуется заранее выбирать единственную стратегию на весь эпизод. В текущем пакете доступны разные типы действий: Пересобрать съёмочный план, Провести оценку трюка, Проверить монтажный вариант. Они дают разные виды контроля: одно может уточнить картину, другое — изменить условия, третье — выиграть время или проверить связь между двумя событиями. Выбирая, задайте себе практический вопрос: что должно стать заметно после этого шага, если ваша версия верна? И что вы увидите, если она неверна? Такой критерий превращает действие в проверку, а не просто в жест, после которого приходится надеяться на удачу.\n\nПуть вперёд может разветвиться, и у каждого направления будет собственная цена. Одно решение способно защитить непосредственную цель, но оставить неопределённость; другое — укрепить доказательства, но сузить окно для вмешательства; третье — уменьшить воздействие на окружающую систему, одновременно потребовав новой проверки. Эти различия не делают какой-либо путь правильным заранее. Важнее видеть, какую ценность вы защищаете сейчас, чем рискуете ради неё и какие признаки заставят пересмотреть план. Смена курса допустима, если вы можете объяснить, какая новая информация изменила расчёт.\n\nОглянитесь на Съёмочный павильон, Продюсерская, Монтажная, Комната координатора трюков. Каждая точка открывает свою часть происходящего и скрывает другую; переход между ними сам по себе может менять условия наблюдения. Не считайте схему исчерпывающей: она описывает доступные места, но не гарантирует, что все важные процессы заметны с одной позиции. Сверяйте время, источник и обстоятельства каждого сообщения. Если кто-то говорит «это было так всегда», спросите, за какой период он отвечает; если прибор показывает отклонение, уточните его рабочий диапазон и место установки. Так вы отделите стабильную закономерность от удобного, но слишком широкого обобщения.\n\nЕсть вопросы, на которые пока нельзя честно ответить. Что здесь причина, а что следствие? Действительно ли наблюдаемое изменение требует немедленного вмешательства? Кто или что понесёт последствия, если вы ошибётесь? Неопределённость не означает, что все версии одинаково вероятны; она означает, что следующая сцена должна дать материал для различения. Не превращайте каждую странность в тайный замысел и не отбрасывайте неудобную улику лишь потому, что она мешает плану. Самый убедительный поворот будет иметь смысл только тогда, когда ранние подробности позволят узнать его, а не просто удивиться ему.\n\nНачните с масштаба, который можно проверить. Запишите исходные условия, выберите один важный показатель и не меняйте сразу несколько факторов, если хотите понять, что повлияло на результат. Если вмешательство необходимо прямо сейчас, обозначьте его как временное и сохраните контрольную точку для сравнения. Если можно подождать, определите, какое именно наблюдение оправдает ожидание и сколько времени оно занимает. Это не бюрократическая осторожность: так вы не потеряете возможность отличить настоящую перемену от эффекта собственных действий.\n\nОтдельно рассмотрите направление 3: Собрать сцену из безопасного материала и звука: срок соблюдён, часть художественной задумки останется за кадром. Оно не отменяет остальные возможности и не требует принимать весь план сразу. Спросите, какое подтверждение сделает этот шаг уместным, что останется измеримым после него и кто заметит его побочный эффект первым. Если ответ пока неизвестен, это не повод скрывать пробел: его можно превратить в условие остановки или повторной оценки.",
-    "en": "Three days remain before the premiere, and the night shoot ends in a dispute: the director wants a retake, the producer sees an overrun, and the crew needs a safety decision. As line producer, you must bring the film to the finish without losing the people or the vision behind it\n\nThe location permit expires soon, and the lead actor offers one last take. The shot is ready, but the wet platform makes the planned camera move unsafe without resetting the rig.\n\nRemember that the story had already begun before you arrived. On the final production week, a stunt take fails; insurance is limited, the stage is expensive, and editing needs footage. This is not a backdrop or a problem that can be solved with one dramatic gesture: the conditions formed earlier, and people, objects, and processes have adapted to them. Any change will affect more than what is visible now; it may alter the routine that holds other parts of the situation together. You have authority to act, but first you need to understand what counts as normal here and who has actually verified that baseline.\n\nThe first observation belongs to a specific place: Sound stage, Production office, Edit suite, Stunt safety room. It contains a detail that may look like an answer, but for now it is only a starting point. The information was gathered at different times and by different means; a gap remains between what was recorded and the explanation someone has attached to it. If you fill that gap with a guess, later evidence may be forced to fit your theory. If you mark what is known and what only seems likely, you can notice a mismatch without rewriting the whole account afterward.\n\nYour objective is broader than removing the nearest obstacle: Prepare a coherent cut for the premiere without exceeding the budget, concealing production risks, or endangering the crew. In practice, you must watch both the immediate result and what that result lets you learn. A quick intervention may produce visible improvement while weakening comparison, access, or trust; a cautious one may preserve the quality of the evidence while leaving the problem unresolved. Those concerns do not carry the same weight in every situation. Their order depends on what you confirm and on which harm can actually be reversed.\n\nThe available material has three layers: the initial conditions, the first observation, and the explanation someone has already attached to it. Keep them separate. Reshoot after an independent safety check: control improves, the day costs more. If figures or accounts disagree, establish when and where the mismatch began, who witnessed the event directly, and what could have changed between checks. A disputed reading is sometimes incomplete rather than false: it may accurately describe the point where it was taken, but not the wider area the team is asking about.\n\nYou do not have to choose one strategy for the whole episode in advance. The package offers different kinds of action: Rebuild the shooting schedule, Review the stunt safely, Review an edit option. Each gives you a different kind of control: one may clarify the picture, another may change the conditions, and another may buy time or test a connection between events. Before choosing, ask a practical question: what should become visible if your theory is right? What would you see if it is wrong? That turns an action into a test, rather than a gesture followed by a hope for good luck.\n\nThe way forward can branch, and each direction has its own cost. One choice may protect the immediate objective while leaving uncertainty; another may strengthen the evidence while narrowing the window to intervene; a third may reduce impact on the surrounding system while requiring a fresh check. None is automatically correct. What matters is seeing which value you are protecting, what you risk for it, and what signs would make you reconsider. A change of course is sound when you can explain what new information changed the calculation.\n\nLook at Sound stage, Production office, Edit suite, Stunt safety room. Each point reveals one part of the situation and hides another; moving between them can itself change the conditions of observation. Do not treat the map as complete: it lists available places but cannot guarantee that every important process is visible from one position. Compare the time, source, and circumstances of each report. If someone says “it has always been this way,” ask what period they mean; if an instrument shows a deviation, check its operating range and location. This helps separate a stable pattern from a convenient but overly broad conclusion.\n\nSome questions cannot yet be answered honestly. What is a cause, and what is an effect? Does the observed change truly require immediate intervention? Who or what bears the cost if you are wrong? Uncertainty does not mean every theory is equally likely; it means the next scene must give you a way to distinguish them. Do not turn every oddity into a hidden scheme, and do not discard inconvenient evidence because it disrupts a plan. A convincing turn will make sense only if earlier details let you recognize it, not merely be surprised by it.\n\nStart at a scale you can check. Record the baseline, choose one important measure, and avoid changing several factors at once if you need to know what caused the result. If action is necessary now, mark it as temporary and preserve a control point for comparison. If waiting is possible, specify what observation would justify the delay and how long it will take. This is not caution for its own sake: it preserves your ability to distinguish a real change from the effect of your own intervention.\n\nThe human side of the task will become clearer too: whose account rests on observation, who is responsible for the consequences, and who must live with the chosen arrangement after the emergency passes. Trust does not replace measurement, but it affects what people tell you and what the team can do together. Explain what you are checking, do not promise a result before it is verified, and note what changed your mind. That may preserve cooperation through disagreement; it may also show that different participants are protecting interests that cannot be reconciled.\n\nConsider approach 3 separately: Build from safe footage and sound: the schedule holds, some intent stays off-screen. It does not erase the other options or require you to commit to the whole plan at once. Ask what evidence would make this step appropriate, what will remain measurable afterward, and who will notice its side effect first. If the answer is not yet known, do not hide the gap; turn it into a condition for pausing or reassessing."
-  },
-  "preparedBranches": [
-    {
-      "id": "hours_pressure",
-      "actions": [
-        "schedule",
-        "safety",
-        "edit",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "Разрешение на площадку скоро истечёт, и актёр готов к последнему дублю. Кадр готов, но мокрая платформа делает движение камеры опасным без перестановки рельс.",
-        "en": "The location permit expires soon, and the lead actor offers one last take. The shot is ready, but the wet platform makes the planned camera move unsafe without resetting the rig."
-      },
-      "mutations": [],
-      "suggestions": [
-        {
-          "text": {
-            "ru": "Сверить обстановку и выбрать безопасный приоритет",
-            "en": "Recheck the situation and choose a safe priority"
-          }
-        },
-        {
-          "text": {
-            "ru": "Сохранить текущий план и подготовить запасной",
-            "en": "Keep the current plan and prepare a backup"
-          }
-        }
-      ]
-    },
-    {
-      "id": "turning_point_hours",
-      "when": {
-        "hours": {
-          "lte": 24
-        }
-      },
-      "actions": [
-        "schedule",
-        "safety",
-        "edit",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "Разрешение на съёмку скоро истекает, а исполнитель главной роли предлагает снять последний дубль. Кадр готов, но после дождя перемещение камеры по площадке небезопасно, пока не перенастроят крепление. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
-        "en": "An alternate route opens as circumstances shift. Continue the current approach or change priorities before events make the consequences harder to reverse."
-      },
-      "mutations": [],
-      "suggestions": [
-        {
-          "text": {
-            "ru": "Сверить обстановку и выбрать безопасный приоритет",
-            "en": "Recheck the situation and choose a safe priority"
-          }
-        },
-        {
-          "text": {
-            "ru": "Сохранить текущий план и подготовить запасной",
-            "en": "Keep the current plan and prepare a backup"
-          }
-        }
-      ]
-    },
-    {
-      "id": "authored_turn_1",
-      "minTurns": 2,
-      "actions": [
-        "schedule",
-        "safety",
-        "edit",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "Камера записала сильнейший фрагмент до сигнала «мотор»: актёр уже отреагировал на реальную паузу каскадёра.",
-        "en": "The strongest shot was recorded before “action”: the actor reacted to the stunt performer’s real pause."
-      },
-      "mutations": [],
-      "suggestions": [],
-      "responses": {
-        "schedule": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Пересобрать съёмочный план». Команда продолжает по пути: Переснять сцену с независимой проверкой площадки: качество контроля выше, но смена дорожает. Улика раскрывает поворот: Камера записала сильнейший фрагмент до сигнала «мотор»: актёр уже отреагировал на реальную паузу каскадёра.",
-            "en": "You choose “Rebuild the shooting schedule.” The team continues along this path: Reshoot after an independent safety check: control improves, the day costs more. The evidence reveals the turn: The strongest shot was recorded before “action”: the actor reacted to the stunt performer’s real pause."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Переснять сцену с независимой проверкой площадки: качество контроля выше, но смена дорожает.",
-                "en": "Reshoot after an independent safety check: control improves, the day costs more."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Перестроить блокинг и показать последствие вне кадра: риск падает, исходный замысел меняется.",
-                "en": "Restage and imply the impact off-screen: risk falls, the original idea changes."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Собрать сцену из безопасного материала и звука: срок соблюдён, часть художественной задумки останется за кадром.",
-                "en": "Build from safe footage and sound: the schedule holds, some intent stays off-screen."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "safety": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Провести оценку трюка». Команда продолжает по пути: Перестроить блокинг и показать последствие вне кадра: риск падает, исходный замысел меняется. Улика раскрывает поворот: Камера записала сильнейший фрагмент до сигнала «мотор»: актёр уже отреагировал на реальную паузу каскадёра.",
-            "en": "You choose “Review the stunt safely.” The team continues along this path: Restage and imply the impact off-screen: risk falls, the original idea changes. The evidence reveals the turn: The strongest shot was recorded before “action”: the actor reacted to the stunt performer’s real pause."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Переснять сцену с независимой проверкой площадки: качество контроля выше, но смена дорожает.",
-                "en": "Reshoot after an independent safety check: control improves, the day costs more."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Перестроить блокинг и показать последствие вне кадра: риск падает, исходный замысел меняется.",
-                "en": "Restage and imply the impact off-screen: risk falls, the original idea changes."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Собрать сцену из безопасного материала и звука: срок соблюдён, часть художественной задумки останется за кадром.",
-                "en": "Build from safe footage and sound: the schedule holds, some intent stays off-screen."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "edit": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Проверить монтажный вариант». Команда продолжает по пути: Собрать сцену из безопасного материала и звука: срок соблюдён, часть художественной задумки останется за кадром. Улика раскрывает поворот: Камера записала сильнейший фрагмент до сигнала «мотор»: актёр уже отреагировал на реальную паузу каскадёра.",
-            "en": "You choose “Review an edit option.” The team continues along this path: Build from safe footage and sound: the schedule holds, some intent stays off-screen. The evidence reveals the turn: The strongest shot was recorded before “action”: the actor reacted to the stunt performer’s real pause."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Переснять сцену с независимой проверкой площадки: качество контроля выше, но смена дорожает.",
-                "en": "Reshoot after an independent safety check: control improves, the day costs more."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Перестроить блокинг и показать последствие вне кадра: риск падает, исходный замысел меняется.",
-                "en": "Restage and imply the impact off-screen: risk falls, the original idea changes."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Собрать сцену из безопасного материала и звука: срок соблюдён, часть художественной задумки останется за кадром.",
-                "en": "Build from safe footage and sound: the schedule holds, some intent stays off-screen."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "free_text": {
-          "narrative": {
-            "ru": "Ваш свободный план меняет способ проверки. Команда раскрывает поворот по найденной улике: Камера записала сильнейший фрагмент до сигнала «мотор»: актёр уже отреагировал на реальную паузу каскадёра.",
-            "en": "Your free-form plan changes how the team checks the clue. The turn is revealed by the evidence: The strongest shot was recorded before “action”: the actor reacted to the stunt performer’s real pause."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Переснять сцену с независимой проверкой площадки: качество контроля выше, но смена дорожает.",
-                "en": "Reshoot after an independent safety check: control improves, the day costs more."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Перестроить блокинг и показать последствие вне кадра: риск падает, исходный замысел меняется.",
-                "en": "Restage and imply the impact off-screen: risk falls, the original idea changes."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Собрать сцену из безопасного материала и звука: срок соблюдён, часть художественной задумки останется за кадром.",
-                "en": "Build from safe footage and sound: the schedule holds, some intent stays off-screen."
-              },
-              "icon": "↗️"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "id": "authored_turn_2",
-      "minTurns": 4,
-      "actions": [
-        "schedule",
-        "safety",
-        "edit",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "В кадре нет опасного контакта, но страховщик требует сохранить журнал изменения декорации до повторного дубля.",
-        "en": "No dangerous contact appears, but insurance requires the set-change log before any retake."
-      },
-      "mutations": [],
-      "suggestions": [],
-      "responses": {
-        "schedule": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Пересобрать съёмочный план». Команда продолжает по пути: Переснять сцену с независимой проверкой площадки: качество контроля выше, но смена дорожает. Улика раскрывает поворот: В кадре нет опасного контакта, но страховщик требует сохранить журнал изменения декорации до повторного дубля.",
-            "en": "You choose “Rebuild the shooting schedule.” The team continues along this path: Reshoot after an independent safety check: control improves, the day costs more. The evidence reveals the turn: No dangerous contact appears, but insurance requires the set-change log before any retake."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Переснять сцену с независимой проверкой площадки: качество контроля выше, но смена дорожает.",
-                "en": "Reshoot after an independent safety check: control improves, the day costs more."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Перестроить блокинг и показать последствие вне кадра: риск падает, исходный замысел меняется.",
-                "en": "Restage and imply the impact off-screen: risk falls, the original idea changes."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Собрать сцену из безопасного материала и звука: срок соблюдён, часть художественной задумки останется за кадром.",
-                "en": "Build from safe footage and sound: the schedule holds, some intent stays off-screen."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "safety": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Провести оценку трюка». Команда продолжает по пути: Перестроить блокинг и показать последствие вне кадра: риск падает, исходный замысел меняется. Улика раскрывает поворот: В кадре нет опасного контакта, но страховщик требует сохранить журнал изменения декорации до повторного дубля.",
-            "en": "You choose “Review the stunt safely.” The team continues along this path: Restage and imply the impact off-screen: risk falls, the original idea changes. The evidence reveals the turn: No dangerous contact appears, but insurance requires the set-change log before any retake."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Переснять сцену с независимой проверкой площадки: качество контроля выше, но смена дорожает.",
-                "en": "Reshoot after an independent safety check: control improves, the day costs more."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Перестроить блокинг и показать последствие вне кадра: риск падает, исходный замысел меняется.",
-                "en": "Restage and imply the impact off-screen: risk falls, the original idea changes."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Собрать сцену из безопасного материала и звука: срок соблюдён, часть художественной задумки останется за кадром.",
-                "en": "Build from safe footage and sound: the schedule holds, some intent stays off-screen."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "edit": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Проверить монтажный вариант». Команда продолжает по пути: Собрать сцену из безопасного материала и звука: срок соблюдён, часть художественной задумки останется за кадром. Улика раскрывает поворот: В кадре нет опасного контакта, но страховщик требует сохранить журнал изменения декорации до повторного дубля.",
-            "en": "You choose “Review an edit option.” The team continues along this path: Build from safe footage and sound: the schedule holds, some intent stays off-screen. The evidence reveals the turn: No dangerous contact appears, but insurance requires the set-change log before any retake."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Переснять сцену с независимой проверкой площадки: качество контроля выше, но смена дорожает.",
-                "en": "Reshoot after an independent safety check: control improves, the day costs more."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Перестроить блокинг и показать последствие вне кадра: риск падает, исходный замысел меняется.",
-                "en": "Restage and imply the impact off-screen: risk falls, the original idea changes."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Собрать сцену из безопасного материала и звука: срок соблюдён, часть художественной задумки останется за кадром.",
-                "en": "Build from safe footage and sound: the schedule holds, some intent stays off-screen."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "free_text": {
-          "narrative": {
-            "ru": "Ваш свободный план меняет способ проверки. Команда раскрывает поворот по найденной улике: В кадре нет опасного контакта, но страховщик требует сохранить журнал изменения декорации до повторного дубля.",
-            "en": "Your free-form plan changes how the team checks the clue. The turn is revealed by the evidence: No dangerous contact appears, but insurance requires the set-change log before any retake."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Переснять сцену с независимой проверкой площадки: качество контроля выше, но смена дорожает.",
-                "en": "Reshoot after an independent safety check: control improves, the day costs more."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Перестроить блокинг и показать последствие вне кадра: риск падает, исходный замысел меняется.",
-                "en": "Restage and imply the impact off-screen: risk falls, the original idea changes."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Собрать сцену из безопасного материала и звука: срок соблюдён, часть художественной задумки останется за кадром.",
-                "en": "Build from safe footage and sound: the schedule holds, some intent stays off-screen."
-              },
-              "icon": "↗️"
-            }
-          ]
-        }
-      }
-    }
-  ]
+    "ru": "Свет на павильоне не выключают полностью уже часа три: одна половина декорации остаётся освещённой, потому что так дешевле, и от этого сцена выглядит не разобранной, а забытой. Внизу, на мокрой после ночного дождя платформе, стоят рельсы, на которых должна была пройти камера, и между ними оставлена полоса изоленты — метка, начерченная дважды, второй раз поверх первого, потому что свет двигали. У двери комнаты координатора трюков сидит человек в рабочем комбинезоне и держит в руках планшет, на котором открыт журнал, а не таймер. Он смотрит на строку, где время отмечено с точностью до минуты, и ждёт не сигнала, а решения. В этот момент ничего не двигается: не смена, не камера, не группа из тридцати человек, которая замерла в разных позах на площадке, — и это молчание длится уже вторую минуту, а по практике это самая дорогая минута ночи.\n\nКак вы сюда пришли, вы помните списком, потому что шли по коридору и успевали оглядываться. Вы входите как человек, который отвечает за производство целиком, а не за одну смену: значит за вами стоят и смета, и группа, и премьера, и подпись под бумагой, которая либо существует, либо не существует. В два часа ночи координатор остановил трюк после того, как каскадёр зафиксировал ногу, а актёр ушёл в сторону мокрой платформы; упал не человек, упал свет — операторский коньковый прибор, который поехал по рельсам, и поехал раньше, чем на него дали команду. Трюк был выполнен по плану, и именно это потом окажется самым важным фактом ночи.\n\nВ два тридцать на площадку приехал представитель страховщика, посмотрел на журнал, на рельсы и на мокрый пол, и сказал, что повторный дубль возможен только после того, как изменения площадки будут оформлены письменно. Формулировка была вежливой, и это не сделало её менее конкретной. Он ушёл, оставив на столе распечатку журнала с отметками времени, и попросил, чтобы к нему не звонили с предложениями, а приходили с бумагой.\n\nВы помните и вчерашнее, и позавчерашнее, и они не похожи на то, что происходит сейчас. Вчера монтажная комната показала вам сорок два процента пригодного материала, и вы видели, что это не мало, а много, но не из тех сорока двух процентов, на которых держится финал. Позавчера свет двигали дважды: сначала убрали софит, который резал актёру глаза, потом поставили его обратно на другую высоту, и обе перестановки по отдельности укладывались в смету, пока их не сложили вместе. Смена была ночной, и к четырём утра треть от группы работала так, что повторяла один и тот же жест, и никто этого не замечал. Вы тогда подумали, что усталость никуда не денется к утру, и ошиблись только в сторону того, что её заметят раньше, чем решится что-либо.\n\nСейчас в комнате решения, где вам предстоит работать, четыре требования, и ни одно из них не выполняется само. Режиссёр хочет второй дубль до рассвета, потому что кадр нужен именно этот, а не похожий, и потому что сцена держит монтаж. Продюсер показывает смету ночи, где видно, что два сдвига подряд съедят остаток, и говорит это не как человек, который торгуется, а как человек, который считает вслух. Координатор трюков требует независимой проверки площадки, и требует её до любых движений людей, потому что девять минут между двумя перестановками света никто не проверял. Монтажная комната просит прислать хоть что-то, на что можно опереться, и уточняет, прислать сегодня или завтра. Между вами и людьми в кадре стоит вопрос: чем именно объяснится в итоге эта ночь в отчётности, которую увидят не только они.\n\nЧто известно, а что только предположено, разойтись здесь легко. Зафиксировано: дубль остановлен замечанием координатора, полис покрывает только утверждённые процедуры, перестановки света и декораций вносятся в журнал с отметкой времени, между командами была техническая пауза в несколько секунд, платформа мокрая. Не зафиксировано: что именно удержало опору — перестановка света, сырость или сама декорация. В журнале две перестановки отмечены одинаковым временем и почти одинаковой формулировкой, хотя делали их разные бригады, и между ними остаётся промежуток, которого ни в одном документе нет. Страховщик требует журнал до повторного дубля, и в этом требовании есть свой интерес, но требование всё равно нужно выполнить. Пока перед вами три наблюдения, каждое из которых объясняется минимум двумя способами, и два из них не делают никого виноватым.\n\nПоворотов здесь ровно столько, сколько решений, и каждое из них стоит по-разному. Если снимать сцену заново по утверждённой процедуре, вы получаете материал, который монтажная комната сможет принять без вопросов, и расход, который придётся объяснять перед премьерой. Если разобрать трюк на части и показать опасный момент вне кадра, сцена быстрее выходит из ночи, но исходный замысел уже не вернуть, и режиссёр будет знать, кто предложил замену. Если собрать сцену из безопасного материала, звука и реакций второй камеры, срок и бюджет выдержат, а в фильме останется тихое место там, где задумывалось напряжение. Если заплатить за переработку и перенести съёмку на утро, группа отдохнёт, и кто-то на этой картине потеряет смену, а студийный час вернут поимённо. Ни один из этих путей не бесплатный, и отказ от любого из них — тоже решение, которое кто-то запомнит.\n\nВы стоите в третьем часу ночи, и всё, что здесь есть, уже сложилось до вас. Журнал открыт, и в нём не хватает нескольких минут. Рельсы стоят на мокром полу, изолента набита дважды. Режиссёр ждёт ответа, продюсер считает, монтажная комната ждёт материал, страховщик ждёт журнал, группа ждёт сна. До премьеры трое суток, бюджет в норме, но не с большим запасом, пригодного материала меньше половины, монтажная версия почти не собрана, подтверждённое покрытие держится на одном письменном согласии, и усталость группы уже видна по тому, как они стоят. Разговор в комнате координатора начался с фразы «мы снимаем до рассвета», и она произнесена так, что вопрос уже есть. Отвечать придётся один раз, и от ответа зависит, что здесь будет завтра.",
+    "en": "They have not switched off the lights on the stage completely for about three hours now: half the set stays lit, because that is cheaper, and it makes the scene look abandoned rather than struck. Below, on a platform still wet from the night’s rain, the rails are in place for the camera move, and a strip of tape runs between them — a mark drawn twice, the second time over the first, because the lighting was moved. Outside the door of the stunt coordinator’s room there is a man in work overalls holding a tablet, and on the tablet is the log rather than a timer. He is looking at a line timestamped to the minute, and he is waiting for a decision rather than a cue. Nothing is moving at this moment: not the shift, not the camera, not the thirty people frozen in different attitudes across the set — and the silence has already lasted two minutes, which by practice makes it the most expensive minute of the night.\n\nYou remember how you got here as a list, because you kept glancing back down the corridor. You come in as the person answerable for the whole production rather than for one shift: the estimate, the crew, the premiere and the signature at the bottom of a document are all yours. At two in the morning the coordinator stopped the take after the stunt performer had locked his leg and the actor moved off towards the wet platform; a person did not fall, a light fell — the camera dolly ran along the rails, and it ran before anyone called for it. The stunt was performed to plan, and that would turn out to be the most important fact of the night.\n\nAt half past two an insurance representative arrived, looked at the log, at the rails and at the wet floor, and said that a retake was possible only once the changes to the set were documented in writing. The wording was polite, and that did not make it any less concrete. He left a printed copy of the log with its timestamps on the table and asked not to be called with proposals, but with paperwork.\n\nYesterday the edit room showed you forty-two per cent of usable material, and you understood that this was not a small amount but a large one, only not among the forty-two per cent the ending depends on. The day before, the lighting was moved twice: a soft light that was cutting into the actor’s eyes was taken away first, then put back at a different height, and each move fitted the budget on its own until the two of them were added together. The shift was a night one, and by four in the morning a third of the crew was working at the point where they repeated the same gesture without noticing. You thought then that fatigue would still be there in the morning, and you were wrong only about the direction: you assumed it would be noticed later than the moment when anything got decided.\n\nThere are four demands in the room where you are going to work, and none of them satisfies itself. The director wants a second take before dawn, because the frame needed is that frame and not a similar one, and because the scene is holding the edit together. The producer shows the cost of the night, where it is visible that two shifts back to back will eat what is left, and says it not like a man bargaining but like a man counting out loud. The stunt coordinator demands an independent survey of the set before anyone moves, because in the nine minutes between the two lighting changes nobody checked the support. The edit room asks for anything it can lean on, and asks whether it will arrive today or tomorrow. Between you and the people in front of the camera stands one question: how this night will finally be explained in the paperwork that will be read by more than them.\n\nWhat is established and what is only supposed is easy to blur here. Established: the take was stopped on the coordinator’s call, the policy covers approved procedures only, moves of lights and set pieces are entered in the set log with a timestamp, there was a technical pause of several seconds between the calls, and the platform is wet. Not established: what actually held the support — the lighting move, the damp, or the set piece itself. Two moves in the log carry the same timestamp and almost the same wording although different crews made them, and between them sits an interval that appears in no document. The insurer wants the log before a retake, and that demand has its own interest in it, but it still has to be met. For now you have three observations, each explicable in at least two ways, and two of those ways make nobody guilty.\n\nThere are exactly as many turns here as there are decisions, and each one costs something different. If the scene is shot again under the approved procedure, you get material the edit room can accept without questions, and an expense that will have to be explained before the premiere. If the stunt is taken apart and the dangerous moment happens off-screen, the scene leaves the night faster, but the original intention cannot be recovered, and the director will know who proposed the substitute. If the scene is built from safe material, sound and second-camera reactions, the date and the budget hold, and the film keeps a quiet patch where tension was meant to be. If the overtime is paid and the shoot moves to the morning, the crew rests, somebody in this picture loses a shift, and the stage hour is paid back by name. None of these routes is free, and refusing any one of them is also a decision that somebody will remember.\n\nYou are standing on the stage at three in the morning, and everything here assembled before you did. The log is open, and several minutes are missing from it. The rails stand on wet ground, the tape has been laid twice. The director is waiting for an answer, the producer is counting, the edit room is waiting for footage, the insurer is waiting for a log, and the crew is waiting for sleep. Three days remain to the premiere, the budget is within limits but not by much, less than half the material is usable, the assembled version is barely started, the confirmed coverage rests on a single written agreement, and the crew’s fatigue is already visible in the way they stand. The conversation in the coordinator’s room began with the words “we shoot until dawn,” and it was said in a way that already contains the question. It will be answered once, and what happens here tomorrow depends on that answer."
+  }
 }

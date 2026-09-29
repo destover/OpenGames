@@ -1,0 +1,381 @@
+{
+  "manifest": {
+    "id": "hearing-interval",
+    "title": "Пауза в протоколе",
+    "description": "Перед оглашением решения координатор перевода должен восстановить точный смысл показаний и право свидетеля на паузу.",
+    "setting": "Вы координируете перевод показаний глухого свидетеля в выездном суде. До оглашения решения час; видеозапись, субтитры и бумажный протокол расходятся на одной важной фразе.",
+    "categoryRu": "Судебный перевод",
+    "background": "/assets/hearing-interval.jpg",
+    "version": "1.0.0",
+    "schemaVersion": "2",
+    "isNew": true,
+    "durationMinutes": [
+      20,
+      35
+    ]
+  },
+  "state": {
+    "initial": {
+      "phase": "opening",
+      "route": "none",
+      "origin": "none",
+      "accuracy": 50,
+      "time": 50,
+      "clues": [],
+      "location": "review",
+      "outcome": "none",
+      "goalStatus": "active"
+    }
+  },
+  "actions": {
+    "free_text": {
+      "label": "Свободное действие",
+      "input": true,
+      "icon": "✍️"
+    },
+    "align": {
+      "label": "Сопоставить записи",
+      "icon": "🎞️"
+    },
+    "pause": {
+      "label": "Запросить паузу",
+      "icon": "⏸️"
+    },
+    "ask": {
+      "label": "Уточнить у свидетеля",
+      "icon": "🤝"
+    }
+  },
+  "ui": {
+    "accent": "#a8b7df",
+    "stateLabels": {
+      "phase": "Этап",
+      "route": "Текущий подход",
+      "origin": "Первый выбор",
+      "accuracy": "Точность записи",
+      "time": "Время до решения",
+      "clues": "Установленные факты",
+      "location": "Место",
+      "outcome": "Итог",
+      "goalStatus": "Цель"
+    }
+  },
+  "i18n": {
+    "ru": {
+      "states": {
+        "phase": "Этап",
+        "route": "Текущий подход",
+        "origin": "Первый выбор",
+        "accuracy": "Точность записи",
+        "time": "Время до решения",
+        "clues": "Установленные факты",
+        "location": "Место",
+        "outcome": "Итог",
+        "goalStatus": "Цель"
+      },
+      "actions": {
+        "free_text": "Свободное действие",
+        "align": "Сопоставить записи",
+        "pause": "Запросить паузу",
+        "ask": "Уточнить у свидетеля"
+      },
+      "manifest": {
+        "title": "Пауза в протоколе",
+        "description": "Перед оглашением решения координатор перевода должен восстановить точный смысл показаний и право свидетеля на паузу.",
+        "category": "Судебный перевод"
+      },
+      "values": {
+        "active": "В процессе",
+        "completed": "Цель выполнена",
+        "failed": "Цель провалена",
+        "align_align": "Итог: Сопоставить записи → Сопоставить записи",
+        "align_pause": "Итог: Сопоставить записи → Запросить паузу",
+        "align_ask": "Итог: Сопоставить записи → Уточнить у свидетеля",
+        "pause_align": "Итог: Запросить паузу → Сопоставить записи",
+        "pause_pause": "Итог: Запросить паузу → Запросить паузу",
+        "pause_ask": "Итог: Запросить паузу → Уточнить у свидетеля",
+        "ask_align": "Итог: Уточнить у свидетеля → Сопоставить записи",
+        "ask_pause": "Итог: Уточнить у свидетеля → Запросить паузу",
+        "ask_ask": "Итог: Уточнить у свидетеля → Уточнить у свидетеля",
+        "none": "Не выбрано",
+        "opening": "Завязка",
+        "path": "Первый поворот",
+        "cross": "Пересечение путей",
+        "final": "Решение",
+        "finished": "Финал",
+        "align": "Сопоставить записи",
+        "initial_align": "Вы сравниваете таймкоды и замечаете, что сурдопереводчик начал озвучивать ответ после окончания жестовой фразы.",
+        "twist1_align": "При наложении исходных таймкодов «пропавшая» фраза оказывается концом следующего ответа: последовательный перевод запаздывал на один вопрос.",
+        "twist2_align": "На полной записи видно, что обрезанное движение рук было просьбой о паузе, сделанной до спорной фразы.",
+        "pause": "Запросить паузу",
+        "initial_pause": "Вы просите судью не оглашать решение до сверки носителей и называете точную спорную минуту.",
+        "twist1_pause": "Во время паузы техник показывает сырые дорожки: озвучка отстаёт на один вопрос.",
+        "twist2_pause": "На полной записи видно, что обрезанное движение рук было просьбой о паузе, сделанной до спорной фразы.",
+        "ask": "Уточнить у свидетеля",
+        "initial_ask": "Вы формулируете открытый вопрос свидетелю: что он хотел обозначить после фразы о звонке? Он просит увидеть собственную запись прежде, чем отвечать.",
+        "twist1_ask": "Свидетель указывает на жестовую фразу в своей записи и просит сверить её с вопросом, на который отвечал; озвучка шла с задержкой.",
+        "twist2_ask": "На полной записи видно, что обрезанное движение рук было просьбой о паузе, сделанной до спорной фразы."
+      }
+    },
+    "en": {
+      "states": {
+        "phase": "Phase",
+        "route": "Current approach",
+        "origin": "First choice",
+        "accuracy": "Record accuracy",
+        "time": "Time to ruling",
+        "clues": "Established facts",
+        "location": "Location",
+        "outcome": "Outcome",
+        "goalStatus": "Objective"
+      },
+      "actions": {
+        "free_text": "Free action",
+        "align": "Align the recordings",
+        "pause": "Request a pause",
+        "ask": "Ask the witness"
+      },
+      "manifest": {
+        "title": "The Gap in the Record",
+        "description": "Before a ruling, an interpreting coordinator must restore the meaning of testimony and a witness’s right to pause.",
+        "category": "Court Interpreting"
+      },
+      "values": {
+        "active": "In progress",
+        "completed": "Objective achieved",
+        "failed": "Objective failed",
+        "align_align": "Outcome: Align the recordings → Align the recordings",
+        "align_pause": "Outcome: Align the recordings → Request a pause",
+        "align_ask": "Outcome: Align the recordings → Ask the witness",
+        "pause_align": "Outcome: Request a pause → Align the recordings",
+        "pause_pause": "Outcome: Request a pause → Request a pause",
+        "pause_ask": "Outcome: Request a pause → Ask the witness",
+        "ask_align": "Outcome: Ask the witness → Align the recordings",
+        "ask_pause": "Outcome: Ask the witness → Request a pause",
+        "ask_ask": "Outcome: Ask the witness → Ask the witness",
+        "none": "Not chosen",
+        "opening": "Opening",
+        "path": "First turn",
+        "cross": "Paths intersect",
+        "final": "Decision",
+        "finished": "Ending",
+        "align": "Align the recordings",
+        "initial_align": "Comparing time codes, you see the interpreter voiced the answer after the signed phrase ended.",
+        "twist1_align": "With original time codes aligned, the “missing” phrase is the end of the next answer: consecutive interpretation lagged by one question.",
+        "twist2_align": "The full recording shows the cropped hand movement was a request for a pause before the disputed phrase.",
+        "pause": "Request a pause",
+        "initial_pause": "You ask the judge to delay the ruling pending a review of one identified minute.",
+        "twist1_pause": "During the pause, a technician reveals raw tracks: voicing lags one question behind.",
+        "twist2_pause": "The full recording shows the cropped hand movement was a request for a pause before the disputed phrase.",
+        "ask": "Ask the witness",
+        "initial_ask": "You ask an open question: what did the witness mean after the phrase about the call? They ask to see their recording before answering.",
+        "twist1_ask": "The witness points to a signed phrase in their recording and asks which question it answered; voicing was delayed.",
+        "twist2_ask": "The full recording shows the cropped hand movement was a request for a pause before the disputed phrase."
+      }
+    }
+  },
+  "goal": {
+    "description": {
+      "ru": "Передать суду проверенный смысл показаний и зафиксировать процессуальный выбор свидетеля без подмены его слов.",
+      "en": "Give the court a verified account of the testimony and record the witness’s procedural choice without putting words in their mouth."
+    },
+    "completion": {
+      "path": "goalStatus",
+      "value": "completed",
+      "terminalValues": [
+        "completed",
+        "failed"
+      ]
+    }
+  },
+  "map": {
+    "start": "review",
+    "locations": {
+      "review": {
+        "ru": "Комната просмотра",
+        "en": "Review room"
+      },
+      "court": {
+        "ru": "Зал суда",
+        "en": "Courtroom"
+      },
+      "consultation": {
+        "ru": "Комната свидетеля",
+        "en": "Witness room"
+      }
+    }
+  },
+  "world": {
+    "constants": {
+      "setting": "Вы координируете перевод показаний глухого свидетеля в выездном суде. До оглашения решения час; видеозапись, субтитры и бумажный протокол расходятся на одной важной фразе.",
+      "physicalRules": [
+        "Только свидетель может уточнять свои показания; координатор не вправе придумывать отсутствующие слова.",
+        "Субтитры, стенограмма и видео имеют разные задержки; синхронизация должна учитывать исходные метки времени.",
+        "Процессуальная пауза требует записи причины и возможности возражения сторон."
+      ],
+      "continuity": "Подтверждённые улики и последствия прежних решений сохраняются; действия свободны, но результат должен быть причинным.",
+      "tone": "Взрослая история с реальными компромиссами, без случайной катастрофы.",
+      "storyArc": {
+        "beats": {
+          "ru": [
+            "Спорная фраза меняет порядок событий, а решение уже готовят.",
+            "Задержка последовательного перевода объясняет разрыв дорожек.",
+            "Обрезанный кадр скрывает просьбу свидетеля о паузе, а не признание или новый факт.",
+            "Решение о правке и повторном вопросе должно уважать самостоятельность свидетеля."
+          ],
+          "en": [
+            "A disputed phrase changes event order as a ruling approaches.",
+            "Consecutive interpretation delay explains the track offset.",
+            "The cropped frame hides a request for a pause, not a confession or new evidence.",
+            "Corrections and renewed questioning must respect the witness’s agency."
+          ]
+        },
+        "twists": {
+          "ru": [
+            "При наложении исходных таймкодов «пропавшая» фраза оказывается концом следующего ответа: последовательный перевод запаздывал на один вопрос. В бумажном протоколе её прикрепили к предыдущему.",
+            "Во время паузы техник показывает сырые дорожки: озвучка отстаёт на один вопрос. Исправление затронет порядок показаний, а значит сторонам нужен доступ к тем же файлам.",
+            "Свидетель указывает на жестовую фразу в своей записи и просит сверить её с вопросом, на который отвечал; озвучка шла с задержкой. Его пояснение открывает проверку, но не заменяет синхронизацию.",
+            "На полной записи видно, что обрезанное движение рук было просьбой о паузе, сделанной до спорной фразы. Камера для субтитров не захватила её; теперь вопрос не только в хронологии, но и в том, согласился ли свидетель продолжать без проверки."
+          ],
+          "en": [
+            "With original time codes aligned, the “missing” phrase is the end of the next answer: consecutive interpretation lagged by one question. Paper notes attached it to the previous one.",
+            "During the pause, a technician reveals raw tracks: voicing lags one question behind. Correcting the testimony order means both sides need access to the same files.",
+            "The witness points to a signed phrase in their recording and asks which question it answered; voicing was delayed. Their explanation opens an inquiry but does not replace synchronization.",
+            "The full recording shows the cropped hand movement was a request for a pause before the disputed phrase. The caption camera missed it; the issue is now both chronology and whether the witness agreed to continue without review."
+          ]
+        },
+        "paths": {
+          "ru": [
+            "Восстановить хронологию по первичным дорожкам; цена — время и риск ошибочной синхронизации.",
+            "Сохранить право на проверку до решения; цена — задержка для всех сторон.",
+            "Вернуть свидетелю право уточнить смысл; цена — риск наводящего вопроса."
+          ],
+          "en": [
+            "Reconstruct chronology from primary tracks; pay in time and risk misalignment.",
+            "Preserve review before a ruling; pay by delaying everyone.",
+            "Let the witness clarify meaning; risk a leading question."
+          ]
+        },
+        "revealPolicy": {
+          "ru": "Покажи первое открытие только после начального действия, второе — после проверки первого; прежний путь меняет цену и достоверность следующего.",
+          "en": "Reveal the first turn only after an opening action and the second after testing the first; earlier choices change the cost and reliability of what follows."
+        }
+      }
+    },
+    "knowledgeGraph": {
+      "facts": [
+        {
+          "id": "hearing-interval_0",
+          "text": "Фраза «после звонка» есть на видео, но отсутствует в субтитрах."
+        },
+        {
+          "id": "hearing-interval_1",
+          "text": "Кадр на секунду обрезает руки свидетеля."
+        },
+        {
+          "id": "hearing-interval_2",
+          "text": "Стенограмма ссылается на соседний вопрос; запись и бумага могли использовать разную временную шкалу."
+        }
+      ]
+    }
+  },
+  "boundaries": {
+    "mutationPaths": [
+      "phase",
+      "route",
+      "origin",
+      "accuracy",
+      "time",
+      "clues",
+      "location",
+      "outcome",
+      "goalStatus"
+    ],
+    "numericBounds": {
+      "accuracy": {
+        "min": 0,
+        "max": 100
+      },
+      "time": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "allowedValues": {
+      "phase": [
+        "opening",
+        "path",
+        "cross",
+        "final",
+        "finished"
+      ],
+      "route": [
+        "none",
+        "align",
+        "pause",
+        "ask"
+      ],
+      "origin": [
+        "none",
+        "align",
+        "pause",
+        "ask"
+      ],
+      "location": [
+        "review",
+        "court",
+        "consultation"
+      ],
+      "outcome": [
+        "none",
+        "align_align",
+        "align_pause",
+        "align_ask",
+        "pause_align",
+        "pause_pause",
+        "pause_ask",
+        "ask_align",
+        "ask_pause",
+        "ask_ask"
+      ],
+      "goalStatus": [
+        "active",
+        "completed",
+        "failed"
+      ],
+      "clues[]": [
+        "initial_align",
+        "initial_pause",
+        "initial_ask",
+        "twist1_align",
+        "twist1_pause",
+        "twist1_ask",
+        "twist2_align",
+        "twist2_pause",
+        "twist2_ask"
+      ]
+    },
+    "maxArrayItems": {
+      "clues": 3
+    },
+    "maxStringLengths": {},
+    "stateChangeRules": [
+      {
+        "path": "accuracy",
+        "maxIncrease": 20
+      },
+      {
+        "path": "time",
+        "maxIncrease": 20
+      }
+    ],
+    "instructions": [
+      "Мутации ограничены перечисленными полями и пределами.",
+      "Не объявляй конец по числовому порогу; финал зависит от подтверждённого выбора."
+    ]
+  },
+  "opening": {
+    "ru": "В зале уже убирают микрофоны. Вы отвечаете за доступный перевод: свидетель закончил показания на жестовом языке, а судья готовит решение. В субтитрах не хватает фразы «после звонка»; бумажный протокол относит её к предыдущему вопросу. На записи руки свидетеля на секунду уходят за край кадра. Вы можете сопоставить дорожки, попросить приостановить оглашение или уточнить у свидетеля, что он хотел исправить. Каждое действие затрагивает доверие к протоколу и его право говорить самому.",
+    "en": "Technicians are already removing microphones. You oversee accessible interpretation: the Deaf witness has finished signing and the judge is preparing a ruling. Captions omit “after the call”; the paper record attaches it to the previous question. For a second, the witness’s hands leave the camera frame. You can align the recordings, request a pause, or ask the witness what they meant to correct. Each step affects the record and the witness’s own voice."
+  }
+}

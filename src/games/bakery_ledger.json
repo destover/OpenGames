@@ -1,0 +1,381 @@
+{
+  "manifest": {
+    "id": "bakery-ledger",
+    "title": "Тесто к рассвету",
+    "description": "Ночная пекарня должна выполнить заказ и восстановить происхождение двух заквасок после путаницы в партиях.",
+    "setting": "Вы ведёте ночную смену пекарни перед утренней поставкой в школу и кафе. Две закваски стоят рядом, а накладные и журнал замеса расходятся по маркировке.",
+    "categoryRu": "Пекарня",
+    "background": "/assets/bakery-ledger.jpg",
+    "version": "1.0.0",
+    "schemaVersion": "2",
+    "isNew": true,
+    "durationMinutes": [
+      20,
+      35
+    ]
+  },
+  "state": {
+    "initial": {
+      "phase": "opening",
+      "route": "none",
+      "origin": "none",
+      "traceability": 50,
+      "time": 50,
+      "clues": [],
+      "location": "bench",
+      "outcome": "none",
+      "goalStatus": "active"
+    }
+  },
+  "actions": {
+    "free_text": {
+      "label": "Свободное действие",
+      "input": true,
+      "icon": "✍️"
+    },
+    "trace": {
+      "label": "Проследить партии",
+      "icon": "📒"
+    },
+    "separate": {
+      "label": "Разделить замесы",
+      "icon": "🧤"
+    },
+    "notify": {
+      "label": "Связаться с получателями",
+      "icon": "☎️"
+    }
+  },
+  "ui": {
+    "accent": "#dba771",
+    "stateLabels": {
+      "phase": "Этап",
+      "route": "Текущий подход",
+      "origin": "Первый выбор",
+      "traceability": "Прослеживаемость",
+      "time": "Время до отгрузки",
+      "clues": "Установленные факты",
+      "location": "Место",
+      "outcome": "Итог",
+      "goalStatus": "Цель"
+    }
+  },
+  "i18n": {
+    "ru": {
+      "states": {
+        "phase": "Этап",
+        "route": "Текущий подход",
+        "origin": "Первый выбор",
+        "traceability": "Прослеживаемость",
+        "time": "Время до отгрузки",
+        "clues": "Установленные факты",
+        "location": "Место",
+        "outcome": "Итог",
+        "goalStatus": "Цель"
+      },
+      "actions": {
+        "free_text": "Свободное действие",
+        "trace": "Проследить партии",
+        "separate": "Разделить замесы",
+        "notify": "Связаться с получателями"
+      },
+      "manifest": {
+        "title": "Тесто к рассвету",
+        "description": "Ночная пекарня должна выполнить заказ и восстановить происхождение двух заквасок после путаницы в партиях.",
+        "category": "Пекарня"
+      },
+      "values": {
+        "active": "В процессе",
+        "completed": "Цель выполнена",
+        "failed": "Цель провалена",
+        "trace_trace": "Итог: Проследить партии → Проследить партии",
+        "trace_separate": "Итог: Проследить партии → Разделить замесы",
+        "trace_notify": "Итог: Проследить партии → Связаться с получателями",
+        "separate_trace": "Итог: Разделить замесы → Проследить партии",
+        "separate_separate": "Итог: Разделить замесы → Разделить замесы",
+        "separate_notify": "Итог: Разделить замесы → Связаться с получателями",
+        "notify_trace": "Итог: Связаться с получателями → Проследить партии",
+        "notify_separate": "Итог: Связаться с получателями → Разделить замесы",
+        "notify_notify": "Итог: Связаться с получателями → Связаться с получателями",
+        "none": "Не выбрано",
+        "opening": "Завязка",
+        "path": "Первый поворот",
+        "cross": "Пересечение путей",
+        "final": "Решение",
+        "finished": "Финал",
+        "trace": "Проследить партии",
+        "initial_trace": "Вы сверяете массу банок с ведомостью и находите крышку, переставленную после мойки.",
+        "twist1_trace": "Крышки действительно поменяли местами при мойке, а резкий запах идёт от нагретого сливного лотка рядом с банкой.",
+        "twist2_trace": "Накладная на резервный мешок меняет вывод: его фасовали после кунжутной смеси.",
+        "separate": "Разделить замесы",
+        "initial_separate": "Вы отмечаете оба замеса и отключаете общий делитель.",
+        "twist1_separate": "Под отдельными бирками вы находите след мойки на обеих крышках: их переставили.",
+        "twist2_separate": "Накладная на резервный мешок меняет вывод: его фасовали после кунжутной смеси.",
+        "notify": "Связаться с получателями",
+        "initial_notify": "Школа готова принять меньшую партию при раннем уведомлении; кафе просит доказать отсутствие кунжута, а не просто заменить этикетку.",
+        "twist1_notify": "По просьбе кафе вы проверяете крышки: их переставили после мойки, а запах объясняется тёплым сливом.",
+        "twist2_notify": "Накладная на резервный мешок меняет вывод: его фасовали после кунжутной смеси."
+      }
+    },
+    "en": {
+      "states": {
+        "phase": "Phase",
+        "route": "Current approach",
+        "origin": "First choice",
+        "traceability": "Traceability",
+        "time": "Time to dispatch",
+        "clues": "Established facts",
+        "location": "Location",
+        "outcome": "Outcome",
+        "goalStatus": "Objective"
+      },
+      "actions": {
+        "free_text": "Free action",
+        "trace": "Trace the batches",
+        "separate": "Separate the dough",
+        "notify": "Notify recipients"
+      },
+      "manifest": {
+        "title": "Dough Before Dawn",
+        "description": "A night bakery must fill an order and restore the provenance of two starters after lot labels become confused.",
+        "category": "Bakery"
+      },
+      "values": {
+        "active": "In progress",
+        "completed": "Objective achieved",
+        "failed": "Objective failed",
+        "trace_trace": "Outcome: Trace the batches → Trace the batches",
+        "trace_separate": "Outcome: Trace the batches → Separate the dough",
+        "trace_notify": "Outcome: Trace the batches → Notify recipients",
+        "separate_trace": "Outcome: Separate the dough → Trace the batches",
+        "separate_separate": "Outcome: Separate the dough → Separate the dough",
+        "separate_notify": "Outcome: Separate the dough → Notify recipients",
+        "notify_trace": "Outcome: Notify recipients → Trace the batches",
+        "notify_separate": "Outcome: Notify recipients → Separate the dough",
+        "notify_notify": "Outcome: Notify recipients → Notify recipients",
+        "none": "Not chosen",
+        "opening": "Opening",
+        "path": "First turn",
+        "cross": "Paths intersect",
+        "final": "Decision",
+        "finished": "Ending",
+        "trace": "Trace the batches",
+        "initial_trace": "Matching jar weights to the sheet reveals a lid swapped after washing.",
+        "twist1_trace": "The lids were switched during washing, and the sharp smell comes from a warm drain tray beside a jar.",
+        "twist2_trace": "The reserve sack invoice changes the answer: it was packed after a sesame blend.",
+        "separate": "Separate the dough",
+        "initial_separate": "You mark both doughs and stop the shared divider.",
+        "twist1_separate": "Under the separate tags, wash marks show the lids were switched.",
+        "twist2_separate": "The reserve sack invoice changes the answer: it was packed after a sesame blend.",
+        "notify": "Notify recipients",
+        "initial_notify": "The school can take a smaller batch if told early; the café asks for proof of no sesame, not a new label.",
+        "twist1_notify": "At the café’s request you inspect the lids: they were swapped after washing, while a warm drain explains the odor.",
+        "twist2_notify": "The reserve sack invoice changes the answer: it was packed after a sesame blend."
+      }
+    }
+  },
+  "goal": {
+    "description": {
+      "ru": "Отгрузить только партии с подтверждённым составом, честно распределив нехватку и сохранив безопасность покупателей.",
+      "en": "Ship only batches with verified ingredients, disclose any shortage honestly, and protect customers."
+    },
+    "completion": {
+      "path": "goalStatus",
+      "value": "completed",
+      "terminalValues": [
+        "completed",
+        "failed"
+      ]
+    }
+  },
+  "map": {
+    "start": "bench",
+    "locations": {
+      "bench": {
+        "ru": "Стол контроля",
+        "en": "Control bench"
+      },
+      "proofing": {
+        "ru": "Расстойка",
+        "en": "Proofing room"
+      },
+      "office": {
+        "ru": "Контора",
+        "en": "Office"
+      }
+    }
+  },
+  "world": {
+    "constants": {
+      "setting": "Вы ведёте ночную смену пекарни перед утренней поставкой в школу и кафе. Две закваски стоят рядом, а накладные и журнал замеса расходятся по маркировке.",
+      "physicalRules": [
+        "Обещание «без кунжута» требует подтверждённого состава и отсутствия перекрёстного загрязнения.",
+        "Запах закваски не доказывает ингредиентный состав; сверяй партии с записями и остатками.",
+        "Не отгружай спорный хлеб под видом безопасного; нехватку можно сообщить заранее."
+      ],
+      "continuity": "Подтверждённые улики и последствия прежних решений сохраняются; действия свободны, но результат должен быть причинным.",
+      "tone": "Взрослая история с реальными компромиссами, без случайной катастрофы.",
+      "storyArc": {
+        "beats": {
+          "ru": [
+            "Наклейки и запах заставляют сомневаться в составе двух заказов.",
+            "Следы смешения указывают на перенесённые крышки, а запах исходит от тёплого сливного лотка.",
+            "Резервный мешок муки содержит кунжутный след по накладной: даже «чистая» закваска не гарантирует заказ кафе.",
+            "Игрок решает, что можно выпустить и кому заранее сообщить о нехватке."
+          ],
+          "en": [
+            "Labels and smell cast doubt on two orders.",
+            "The lids were switched, while the smell comes from a warm drain tray.",
+            "A reserve flour sack has sesame contact on its invoice: even the clean starter cannot validate the café order.",
+            "The player decides what can ship and who must hear about a shortage."
+          ]
+        },
+        "twists": {
+          "ru": [
+            "Крышки действительно поменяли местами при мойке, а резкий запах идёт от нагретого сливного лотка рядом с банкой. Запах не свидетельствует о порче или составе теста.",
+            "Под отдельными бирками вы находите след мойки на обеих крышках: их переставили. Резкий запах относится к сливному лотку, так что изоляция нужна из-за происхождения, не из-за порчи.",
+            "По просьбе кафе вы проверяете крышки: их переставили после мойки, а запах объясняется тёплым сливом. Замена наклейки не решит вопрос о составе уже замешанного теста.",
+            "Накладная на резервный мешок меняет вывод: его фасовали после кунжутной смеси. Даже замес с верной закваской не подтверждён как «без кунжута». Теперь важнее происхождение муки и честная замена заказа, чем спор о запахе."
+          ],
+          "en": [
+            "The lids were switched during washing, and the sharp smell comes from a warm drain tray beside a jar. Smell proves neither spoilage nor dough composition.",
+            "Under the separate tags, wash marks show the lids were switched. The sharp odor comes from a drain tray, so isolation concerns provenance, not spoilage.",
+            "At the café’s request you inspect the lids: they were swapped after washing, while a warm drain explains the odor. Relabeling cannot establish what entered the mixed dough.",
+            "The reserve sack invoice changes the answer: it was packed after a sesame blend. Even dough with the correct starter is not verified as sesame-free. Flour provenance and an honest replacement now matter more than the odor."
+          ]
+        },
+        "paths": {
+          "ru": [
+            "Восстановить документы и остатки ингредиентов; цена — минуты расстойки.",
+            "Остановить возможное смешение сразу; цена — часть свежего хлеба.",
+            "Дать получателям выбор до приезда курьера; цена — риск неисполненного заказа."
+          ],
+          "en": [
+            "Rebuild documents and ingredient remnants; pay with proofing time.",
+            "Stop possible mixing at once; pay with some fresh bread.",
+            "Give recipients options before the courier arrives; risk an unfilled order."
+          ]
+        },
+        "revealPolicy": {
+          "ru": "Покажи первое открытие только после начального действия, второе — после проверки первого; прежний путь меняет цену и достоверность следующего.",
+          "en": "Reveal the first turn only after an opening action and the second after testing the first; earlier choices change the cost and reliability of what follows."
+        }
+      }
+    },
+    "knowledgeGraph": {
+      "facts": [
+        {
+          "id": "bakery-ledger_0",
+          "text": "Две банки имеют новые наклейки, а номер в журнале замеса исправлен."
+        },
+        {
+          "id": "bakery-ledger_1",
+          "text": "Школьный заказ допускает обычную рецептуру, кафе заказало вариант без кунжута."
+        },
+        {
+          "id": "bakery-ledger_2",
+          "text": "Более резкий запах может быть связан с температурой сливного лотка рядом с расстойкой."
+        }
+      ]
+    }
+  },
+  "boundaries": {
+    "mutationPaths": [
+      "phase",
+      "route",
+      "origin",
+      "traceability",
+      "time",
+      "clues",
+      "location",
+      "outcome",
+      "goalStatus"
+    ],
+    "numericBounds": {
+      "traceability": {
+        "min": 0,
+        "max": 100
+      },
+      "time": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "allowedValues": {
+      "phase": [
+        "opening",
+        "path",
+        "cross",
+        "final",
+        "finished"
+      ],
+      "route": [
+        "none",
+        "trace",
+        "separate",
+        "notify"
+      ],
+      "origin": [
+        "none",
+        "trace",
+        "separate",
+        "notify"
+      ],
+      "location": [
+        "bench",
+        "proofing",
+        "office"
+      ],
+      "outcome": [
+        "none",
+        "trace_trace",
+        "trace_separate",
+        "trace_notify",
+        "separate_trace",
+        "separate_separate",
+        "separate_notify",
+        "notify_trace",
+        "notify_separate",
+        "notify_notify"
+      ],
+      "goalStatus": [
+        "active",
+        "completed",
+        "failed"
+      ],
+      "clues[]": [
+        "initial_trace",
+        "initial_separate",
+        "initial_notify",
+        "twist1_trace",
+        "twist1_separate",
+        "twist1_notify",
+        "twist2_trace",
+        "twist2_separate",
+        "twist2_notify"
+      ]
+    },
+    "maxArrayItems": {
+      "clues": 3
+    },
+    "maxStringLengths": {},
+    "stateChangeRules": [
+      {
+        "path": "traceability",
+        "maxIncrease": 20
+      },
+      {
+        "path": "time",
+        "maxIncrease": 20
+      }
+    ],
+    "instructions": [
+      "Мутации ограничены перечисленными полями и пределами.",
+      "Не объявляй конец по числовому порогу; финал зависит от подтверждённого выбора."
+    ]
+  },
+  "opening": {
+    "ru": "В три ночи тестомес останавливается посреди смены. Вы отвечаете за утренний школьный хлеб и заказ кафе, где обещано изделие без кунжута. Две закваски стоят в одинаковых стеклянных банках; на крышках новые наклейки, а в журнале замеса один номер перечёркнут. Запах у дальней партии резче обычного, но датчик температуры показывает норму. Можно сверить следы партий, остановить спорный замес или позвонить получателям. Ни один шаг сам по себе не докажет состав булок, а рассвет приближается.",
+    "en": "At three in the morning the mixer stops mid-shift. You are responsible for school bread and a café order promised without sesame. Two starters sit in identical glass jars; lids carry new labels and one number is crossed out in the mixing log. The far batch smells sharper than usual, though its temperature reads normal. You can trace lots, stop disputed dough, or call recipients. No single move proves what is in the bread, and dawn is near."
+  }
+}

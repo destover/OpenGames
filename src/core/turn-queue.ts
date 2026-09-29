@@ -8,8 +8,9 @@ import { DonorAIProvider, DonorUnavailableError } from './donor.ts';
 import { DONOR_LEASE_MS } from './donor-protocol.ts';
 import { DonorPool, type DonorLease } from './donor-pool.ts';
 import { ConnectAIProvider, type ConnectTransport } from './connect-transport.ts';
-import type { AIProvider } from './ai.ts';
+import type { AIProvider, TokenUsage } from './ai.ts';
 import type { CoauthorUsageStore } from './coauthor-usage.ts';
+import type { DeviceRegistry } from './device-registry.ts';
 
 type Job = {id:string;ownerId:string;sessionId:string;action:Action;status:'waiting_in_queue'|'generating'|'completed'|'failed'|'cancelled';createdAt:number;chargedDay?:number;finishedAt?:number;error?:string};
 export class TurnQueue {
@@ -21,9 +22,10 @@ export class TurnQueue {
   private pool:DonorPool;
   private transport?:ConnectTransport;
   private usage?:CoauthorUsageStore;
+  private devices?:DeviceRegistry;
   private file: string;
-  constructor(runtime: GameRuntime, accounts:AccountStore, pool:DonorPool, file: string,transport?:ConnectTransport,usage?:CoauthorUsageStore) {
-    this.runtime=runtime;this.accounts=accounts;this.pool=pool;this.file=file;this.transport=transport;this.usage=usage;mkdirSync(dirname(file),{recursive:true,mode:0o700});
+  constructor(runtime: GameRuntime, accounts:AccountStore, pool:DonorPool, file: string,transport?:ConnectTransport,usage?:CoauthorUsageStore,devices?:DeviceRegistry) {
+    this.runtime=runtime;this.accounts=accounts;this.pool=pool;this.file=file;this.transport=transport;this.usage=usage;this.devices=devices;mkdirSync(dirname(file),{recursive:true,mode:0o700});
     if(existsSync(file)) this.jobs=JSON.parse(readFileSync(file,'utf8'));
     for(const job of this.jobs) if(this.active(job)) {
       const done=this.completedTurn(job);
@@ -77,18 +79,35 @@ export class TurnQueue {
     let lease=first;const tried=new Set<string>(),deadline=Date.now()+DONOR_LEASE_MS,controller=new AbortController();
     const deadlineTimer=setTimeout(()=>controller.abort(new DonorUnavailableError('Истёк общий срок генерации хода')),DONOR_LEASE_MS);
     try{while(true){
-      let usageCall:string|undefined,usageFinished=false;
-      const finishUsage=(status:'responded'|'failed',reason?:string)=>{if(!usageCall||usageFinished)return;usageFinished=true;try{this.usage!.finish(usageCall,status,reason)}catch{}};
+      let usageCall:string|undefined,usageFinished=false,tokens:TokenUsage|undefined,ogcatEarned=0;
+      const finishUsage=(status:'responded'|'failed',reason?:string)=>{if(!usageCall||usageFinished)return;usageFinished=true;try{this.usage!.finish(usageCall,status,reason,tokens,ogcatEarned)}catch{}};
       try{
         const provider=lease.node.kind==='connect'?new ConnectAIProvider(this.transport!,lease.node.id.slice(8),lease.node.model,job.action.requestId!,tried.size+1):new DonorAIProvider(lease.node);
         const coauthorId=lease.node.kind==='connect'?lease.node.id.slice(8):lease.node.id,name=lease.node.kind==='connect'?'OpenGames Connect':'Соавтор OpenGames';
         const tracked:AIProvider={generate:async(game,session,action,correction,options)=>{
           try{usageCall=this.usage?.begin({coauthorId,name,model:lease.node.model,gameId:game.manifest.id})}catch{}
-          try{return await provider.generate(game,session,action,correction,{...options,signal:controller.signal,deadline})}
+          try{const result=await provider.generate(game,session,action,correction,{...options,signal:controller.signal,deadline});if(result.usage)tokens=result.usage;return result}
           catch(error){const unavailable=error instanceof DonorUnavailableError?error:new DonorUnavailableError(error instanceof Error?error.message:'Сценарист не выполнил ход');finishUsage('failed',unavailable.message);throw unavailable}
         }};
         await this.runtime.turn(job.sessionId,job.action,tracked,job.ownerId,{signal:controller.signal,deadline});
-        finishUsage('responded');this.pool.succeeded(lease.node.id);job.status='completed';break;
+        finishUsage('responded');this.pool.succeeded(lease.node.id);job.status='completed';
+        if(this.devices&&lease.node.kind==='connect'){
+          const deviceId=lease.node.id.slice(8);
+          const devices=this.devices.adminCoauthors();
+          const device=devices.find(d=>d.id===deviceId);
+          if(device){
+            ogcatEarned=1;
+            this.accounts.addOgcat(device.owner_id,ogcatEarned,'donor_turn_completed',job.id);
+          }
+        } else if(this.devices&&lease.node.kind==='static'){
+          const devices=this.devices.adminCoauthors();
+          const device=devices.find(d=>d.id===lease.node.id);
+          if(device){
+            ogcatEarned=1;
+            this.accounts.addOgcat(device.owner_id,ogcatEarned,'donor_turn_completed',job.id);
+          }
+        }
+        break;
       }catch(error){
         if(!(error instanceof DonorUnavailableError)){finishUsage('failed',error instanceof Error?error.message:'Ход не применён');throw error}
         finishUsage('failed',error.message);this.pool.failed(lease.node.id);tried.add(lease.node.id);lease.release();

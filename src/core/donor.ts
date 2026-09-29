@@ -27,7 +27,20 @@ export class DonorAIProvider implements AIProvider {
     let data:any;
     try{data=JSON.parse(raw)}catch{throw new DonorUnavailableError('Сценарист вернул неполный ответ. Повторите ход.')}
     let result;
-    try { result = JSON.parse(data.choices[0].message.content); return parseResult(result,game,action,'donor'); }
+    try {
+      result = JSON.parse(data.choices[0].message.content);
+      const parsed = parseResult(result,game,action,'donor');
+      const usage = tokenUsage(data.usage);
+      return usage ? { ...parsed, usage } : parsed;
+    }
     catch { throw new DonorUnavailableError('Сценарист вернул некорректный ответ. Повторите ход.'); }
   }
+}
+
+function tokenUsage(value: unknown) {
+  const prompt = Number((value as {prompt_tokens?:unknown}|undefined)?.prompt_tokens);
+  const completion = Number((value as {completion_tokens?:unknown}|undefined)?.completion_tokens);
+  return Number.isFinite(prompt) && Number.isFinite(completion) && prompt >= 0 && completion >= 0
+    ? { promptTokens: Math.round(prompt), completionTokens: Math.round(completion) }
+    : undefined;
 }

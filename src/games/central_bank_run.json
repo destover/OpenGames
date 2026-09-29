@@ -6,7 +6,7 @@
     "setting": "Независимый центральный банк во время внезапного оттока ликвидности; платёжные расчёты замедляются, а любые решения ограничены мандатом, залогом и побочными эффектами.",
     "categoryRu": "Экономика",
     "background": "/assets/central-bank.jpg",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "schemaVersion": "2",
     "isNew": true,
     "durationMinutes": [
@@ -22,6 +22,8 @@
       "collateral": 54,
       "mandate": 48,
       "hours": 6,
+      "backlog": 71,
+      "exposure": 12,
       "location": "committee",
       "goalStatus": "active"
     }
@@ -43,6 +45,30 @@
     "communicate": {
       "label": "Согласовать публичное сообщение",
       "icon": "📝"
+    },
+    "queue": {
+      "label": "Разобрать очередь непрошедших платежей",
+      "icon": "🧾"
+    },
+    "counterparty": {
+      "label": "Провести двусторонний разбор с крупным участником",
+      "icon": "🤝"
+    },
+    "registry": {
+      "label": "Сверить обеспечение с реестром активов",
+      "icon": "🔍"
+    },
+    "window": {
+      "label": "Открыть внутридневное расчётное окно",
+      "icon": "⏱️"
+    },
+    "ledger": {
+      "label": "Свести ночной операционный журнал",
+      "icon": "🧮"
+    },
+    "deputy": {
+      "label": "Согласовать полномочия с правовым отделом",
+      "icon": "📞"
     }
   },
   "ui": {
@@ -54,6 +80,8 @@
       "collateral": "Качество залога",
       "mandate": "Полномочия комитета",
       "hours": "Часов до открытия",
+      "backlog": "Очередь непрошедших платежей",
+      "exposure": "Открытая поддержка",
       "location": "Место",
       "goalStatus": "Цель"
     }
@@ -67,6 +95,8 @@
         "collateral": "Качество залога",
         "mandate": "Полномочия комитета",
         "hours": "Часов до открытия",
+        "backlog": "Очередь непрошедших платежей",
+        "exposure": "Открытая поддержка",
         "location": "Место",
         "goalStatus": "Цель"
       },
@@ -74,7 +104,13 @@
         "free_text": "Свободное действие",
         "audit": "Проверить залог и платёжный разрыв",
         "facility": "Спроектировать адресную поддержку",
-        "communicate": "Согласовать публичное сообщение"
+        "communicate": "Согласовать публичное сообщение",
+        "queue": "Разобрать очередь непрошедших платежей",
+        "counterparty": "Провести двусторонний разбор с крупным участником",
+        "registry": "Сверить обеспечение с реестром активов",
+        "window": "Открыть внутридневное расчётное окно",
+        "ledger": "Свести ночной операционный журнал",
+        "deputy": "Согласовать полномочия с правовым отделом"
       },
       "manifest": {
         "title": "Паника ликвидности",
@@ -95,6 +131,8 @@
         "collateral": "Collateral quality",
         "mandate": "Committee mandate",
         "hours": "Hours to market open",
+        "backlog": "Queue of failed payments",
+        "exposure": "Open support",
         "location": "Location",
         "goalStatus": "Objective"
       },
@@ -102,7 +140,13 @@
         "free_text": "Free action",
         "audit": "Audit collateral and settlement gaps",
         "facility": "Design targeted liquidity support",
-        "communicate": "Coordinate public guidance"
+        "communicate": "Coordinate public guidance",
+        "queue": "Work through the queue of failed payments",
+        "counterparty": "Hold a two-way review with a major participant",
+        "registry": "Reconcile collateral against the asset registry",
+        "window": "Open the intraday settlement window",
+        "ledger": "Reconcile the overnight operations log",
+        "deputy": "Confirm the mandate with the legal desk"
       },
       "manifest": {
         "title": "Liquidity Panic",
@@ -148,6 +192,22 @@
       "press": {
         "ru": "Пресс-центр",
         "en": "Press room"
+      },
+      "window": {
+        "ru": "Расчётное окно",
+        "en": "Settlement window"
+      },
+      "talks": {
+        "ru": "Переговорная участника",
+        "en": "Counterparty room"
+      },
+      "registry": {
+        "ru": "Реестр обеспечения",
+        "en": "Collateral registry"
+      },
+      "legal": {
+        "ru": "Правовой отдел",
+        "en": "Legal desk"
       }
     }
   },
@@ -169,36 +229,44 @@
         },
         "beats": {
           "ru": [
-            "Расчёты замедляются, вкладчики видят очереди, а мандат банка не позволяет спасать всех без условий.",
-            "Календарь показывает задержку межбанковского окна; заголовки усилили отток, но не создали его.",
-            "Нужно восстановить платежи и раскрыть пределы помощи, не превращая её в скрытую гарантию."
+            "Ночь в операционном зале: очередь непрошедших платежей растёт, дежурные перекладывают одни и те же заявки, а до открытия рынков остаётся около шести часов.",
+            "Поздно вечером поступили запросы от трёх участников; в двух случаях банк просит перевести расчёт на утро, но не объясняет, что именно мешает сейчас, и молчание читается двояко.",
+            "Крупный участник откладывает объявление об открытии, и часть рынка принимает молчание за решение закрыться; в поддержке уже есть одобренный, но не продлённый на ночь лимит.",
+            "Реестр обеспечения считает активы по вчерашним ценам закрытия, и следовательно, оценивает вклад каждого участника в залоге по состоянию, которое никто не пересматривал.",
+            "Правовой отдел напоминает: мандат покрывает платёжную устойчивость, но не чужие убытки и не политические расходы, поэтому любая мера требует залога, срока и процедуры выхода.",
+            "К рассвету нужно привести платежи в движение, не превратив ночную поддержку в безусловную гарантию, и успеть до того, как отложенное станет неразбираемым."
           ],
           "en": [
-            "Settlement slows and depositors see queues; the mandate does not allow unconditional rescue.",
-            "The calendar shows a delayed interbank window; headlines amplified the outflow but did not cause it.",
-            "Restore payments and define support limits without creating an implicit guarantee."
+            "A night shift on the operations floor: the queue of failed payments keeps growing, the duty staff reshuffle the same requests, and market open is about six hours away.",
+            "Late in the evening three participants filed requests; two of them ask to move settlement to the morning without explaining what blocks it now, and the silence reads more than one way.",
+            "A major institution is delaying its opening announcement, and part of the market reads that silence as a decision to stay shut; support already includes an approved limit that was not extended overnight.",
+            "The collateral registry still values assets at yesterday’s closing prices, so it scores every participant’s contribution by a state of the world nobody has re-examined.",
+            "The legal desk reminds the room that the mandate covers payment stability, not somebody else’s losses and not political spending, which means any measure needs collateral, a term, and a way out.",
+            "By first light the payments have to be moving again without turning overnight support into an unconditional guarantee, and before the delay becomes impossible to unpick."
           ]
         },
         "twists": {
           "ru": [
-            "Главный залог оценён вчерашней ценой; сверка реестра меняет допустимый объём обеспечения.",
-            "Участник раскроет встречное обеспечение лишь при равном доступе банков к процедуре — кризис доверия, не сговор."
+            "Тонкие признаки заранее: в журнале ночных операций от двух участников время проведения обеспечения совпадает до минут с ценой закрытия предыдущего дня, а расхождения по суммам объясняются округлением. При сверке реестра выясняется, что переоценка уменьшает доступный объём поддержки сильнее, чем показывал ночной расчёт; это ошибка оценки, а не сговор участников.",
+            "Тонкие признаки заранее: двое участников с самыми большими очередями отказались от встречи с правовым отделом, но их заявки содержат одинаково подробное описание залога, оформленное одним шаблоном. Позже выясняется, что один из них готов раскрыть встречное обеспечение только при равном доступе всех банков к процедуре проверки ночью, а не при сделке с вами; кризис доверия, а не сговор."
           ],
           "en": [
-            "The main collateral uses yesterday’s price; checking the registry changes how much qualifies.",
-            "A participant will reveal matching collateral only if every bank gets equal access—a trust issue, not a pact."
+            "Early signs: in the overnight operations log, the time two participants booked their collateral matches the previous day’s closing price down to the minute, and the small differences in amounts are explained by rounding. When the registry is reconciled, it turns out the revaluation shrinks the available support more than the overnight calculation showed; this is a valuation error, not collusion.",
+            "Early signs: the two participants with the largest queues declined to meet the legal desk, yet their filings contain identically detailed collateral descriptions written from a single template. Later it becomes clear that one of them will disclose matching collateral only if every bank gets equal access to the verification procedure overnight, not through a deal with you; a trust problem, not a pact."
           ]
         },
         "paths": {
           "ru": [
-            "Выдать краткий обеспеченный кредит: расчёты оживают, риск зависит от залога и возврата.",
-            "Сначала оценить залоги общей процедурой: равенство укрепляется, очередь удлиняется.",
-            "Отделить техническую задержку от неплатёжеспособности: паника может ослабнуть, но часть заявок останется без поддержки."
+            "Выдать короткий обеспеченный кредит одному-двум участникам, не объявляя программу публично. Предпосылка: залог подтверждён ночным расчётом, а мандат ещё допускает одностороннее решение. Новое: вы узнаёте, какие именно расчёты стоят за заявкой, и перестаёте спорить о цифрах вслепую. Немедленное последствие: часть очереди уходит, но открытая поддержка растёт, и каждая следующая заявка будет сравниваться именно с этим прецедентом. Отложенное: возврат ляжет на участника, который уже утром столкнётся с валютным рынком, а публичное молчание будет прочитано как приоритет конкретным банкам. Риск: если оценка залога окажется завышенной, убыток уйдёт на баланс банка, который уже не платит. Компромисс: скорость расчётов против цены поддержки и её видимости. Точки пересечения: с проверкой реестра — сумма поддержки становится меньше и честнее; с публичным сообщением — молчание превращается в требование объяснений; с ночным журналом — появляются доказательства, а не только мнения.",
+            "Сначала ввести общую ночную процедуру оценки залога для всех банков, и только потом обсуждать суммы. Предпосылка: есть хотя бы один человек, способный довести регламент до конца до утра, и не просрочено право на срочное решение. Новое: становятся видны реальные различия между участниками — не только те, кто громче всех требует денег. Немедленное последствие: равенство укрепляется, но очередь удлиняется, и время уходит на оформление, а не на платежи. Отложенное: к открытию рынков процедура станет нормой, которую невозможно отменить тайно, и любая попытка выделить одного участника потребует публичного объяснения. Риск: под общим регламентом незаметно проходят сделки, которых не было видно раньше. Компромисс: контроль цены ошибки против недели или ночи ожидания. Точки пересечения: с двусторонним разбором — один крупный участник может согласиться на процедуру, если она общая; с операционным журналом — журнал становится основой для первой настоящей сверки.",
+            "Публично разделить техническую задержку и настоящую неплатёжеспособность: назвать, что расчёты продолжаются, и не обещать помощь всем подряд. Предпосылка: пресс-центр готов работать по проверенным цифрам, а не по ощущениям. Новое: становится известно, какие участники действительно не могут платить, а какие просто не успели. Немедленное последствие: самые слабые котировки возвращаются, но часть вкладчиков остаётся без ответа на свой вопрос. Отложенное: заявки, отклонённые публично, не вернутся после смены тона, и это сузит круг обращений. Риск: ошибочно названная техническая задержка обесценивает и правдивые строки. Компромисс: доверие к словам против инфляционных ожиданий, которые уже и так высоки. Точки пересечения: с очередью — одна названная причина даёт критерий, по которому очередь можно сортировать; с правовым отделом — формулировки должны выдержать проверку, иначе заявление заберут.",
+            "Держать ночь без крупных решений: закрепить текущие лимиты, наблюдать за очередью и решать на основании данных к утру. Предпосылка: очередь терпима, а мандат не истрачен на промежуточные решения. Новое: вы получаете чистую картину — кто действительно обращается ночью и по каким ценам. Немедленное последствие: расчёты идут неровно, но ни одна чья-то ставка не сделана вслепую. Отложенное: к открытию рынков у участников будет мало времени, а очередь станет частью утренней цены. Риск: пока вы ждёте данных, третий участник решит, что ночь закончилась без него, и уйдёт за поддержкой в другую юрисдикцию. Компромисс: сохранение ресурса решения против потерянного времени. Точки пересечения: с ночным журналом — ожидание перестаёт быть пассивным, если журнал читают системно; с двусторонним разбором — именно там появляются ответы на вопрос, который журнал не закрывает."
           ],
           "en": [
-            "Offer a short secured facility: settlements recover, but exposure depends on collateral and repayment.",
-            "Value collateral through a shared procedure first: fairness improves, queues lengthen.",
-            "Separate technical delay from insolvency publicly: panic may ease, while some requests remain unsupported."
+            "Give a short secured credit to one or two participants without announcing the programme publicly. Precondition: the collateral is confirmed by the overnight calculation and the mandate still allows a unilateral decision. New information: you learn which settlements sit behind the request and stop arguing about numbers in the dark. Immediate consequence: part of the queue clears, but open support grows, and every later request will be measured against that precedent. Deferred consequence: repayment falls on a participant who by morning also faces the currency market, and public silence will be read as a ranking of banks. Risk: if the collateral was overstated, the loss lands on a balance sheet that is already not paying. Trade-off: settlement speed against the price and the visibility of support. Intersection points: with a registry check the support amount becomes smaller and more honest; with the public statement the silence turns into a demand for explanations; with the overnight log evidence appears instead of opinions.",
+            "Put a shared overnight valuation procedure for every bank in place first, and only then discuss amounts. Precondition: someone can finish the regulation before morning and the right to an emergency decision has not expired. New information: the real differences between participants become visible, not only the loudest demands. Immediate consequence: fairness holds, but the queue lengthens and the night is spent on paperwork rather than payments. Deferred consequence: by market open the procedure is a norm nobody can quietly cancel, and favouring one participant would need a public account. Risk: under shared rules, deals nobody saw before pass unnoticed. Trade-off: controlling the cost of error against another night of waiting. Intersection points: with the two-way review one large participant may accept the procedure if it is common; with the operations log the log becomes the basis of the first real reconciliation.",
+            "Say publicly that a technical delay and genuine insolvency are different things: state that settlement continues, and stop promising help to everyone. Precondition: the press room will work from verified numbers rather than impressions. New information: it becomes known who truly cannot pay and who simply did not make the window. Immediate consequence: the weakest quotations recover, while part of the depositors get no answer to their question. Deferred consequence: requests refused in public do not come back when the tone changes, which narrows who will still apply. Risk: a delay wrongly called technical discredits the honest lines too. Trade-off: trust in words against inflation expectations that are already high. Intersection points: with the queue one named cause gives a criterion for sorting it; with the legal desk the wording has to survive review or the statement is withdrawn.",
+            "Hold the night without large decisions: freeze current limits, watch the queue, and decide on the data in the morning. Precondition: the queue is bearable and the mandate is not spent on interim rulings. New information: you get a clean picture of who really applies at night and at what prices. Immediate consequence: settlement runs unevenly, but nobody’s position was taken blind. Deferred consequence: participants have little time before market open, and the queue becomes part of the morning price. Risk: while you wait for data, a third participant may decide the night ended without them and apply elsewhere. Trade-off: keeping the resource of a decision against losing time. Intersection points: with the overnight log waiting stops being passive if the log is read systematically; with the two-way review that is where the answers come from that the log cannot close."
           ]
         }
       }
@@ -224,6 +292,26 @@
         {
           "id": "market_open",
           "text": "До открытия основных торгов остаётся шесть часов."
+        },
+        {
+          "id": "backlog_size",
+          "text": "В очереди на обработку более семидесяти непрошедших платежей, и очередь пополняется быстрее, чем её разбирают."
+        },
+        {
+          "id": "registry_prices",
+          "text": "Реестр обеспечения переоценивает активы один раз в сутки по ценам закрытия предыдущего дня."
+        },
+        {
+          "id": "silent_banks",
+          "text": "Два участника не отвечают на запросы о состоянии; отсутствие ответа не подтверждает неплатёжеспособность."
+        },
+        {
+          "id": "unrenewed_limit",
+          "text": "У одного крупного участника есть ранее одобренный лимит поддержки, который на эту ночь не продлён."
+        },
+        {
+          "id": "open_exposure",
+          "text": "Сейчас открытая поддержка невелика, и каждый новый кредит увеличивает её до возврата."
         }
       ]
     }
@@ -236,6 +324,8 @@
       "collateral",
       "mandate",
       "hours",
+      "backlog",
+      "exposure",
       "location",
       "goalStatus"
     ],
@@ -263,6 +353,14 @@
       "hours": {
         "min": 0,
         "max": 24
+      },
+      "backlog": {
+        "min": 0,
+        "max": 100
+      },
+      "exposure": {
+        "min": 0,
+        "max": 100
       }
     },
     "allowedValues": {
@@ -270,7 +368,11 @@
         "committee",
         "operations",
         "treasury",
-        "press"
+        "press",
+        "window",
+        "talks",
+        "registry",
+        "legal"
       ],
       "goalStatus": [
         "active",
@@ -288,348 +390,26 @@
       {
         "path": "confidence",
         "maxIncrease": 12
+      },
+      {
+        "path": "exposure",
+        "maxIncrease": 16
       }
     ],
     "instructions": [
-      "Не путай временную неликвидность с неплатёжеспособностью; каждая помощь должна иметь залог и срок.",
-      "Не создавай финансовые ресурсы из воздуха и не стирай инфляционную цену экстренных мер.",
-      "Поддержка требует одобрения в рамках мандата и контроля исполнения.",
-      "Финал возможен после устойчивого расчёта платежей, адресной поддержки и убедительной стратегии выхода."
+      "Сохраняй причинно-следственную непрерывность: каждое изменение ликвидности, доверия, инфляционных ожиданий, качества залога, полномочий, часов, очереди, объёма открытой поддержки и места должно следовать из описанного действия, времени ночи и документов.",
+      "Не повторяй уже показанное: одна и та же сцена и один и тот же результат описываются один раз; при повторном заходе коротко обозначь итог и измени обстановку.",
+      "Не путай временную неликвидность с неплатёжеспособностью; каждая выданная помощь должна иметь залог, срок, цену и процедуру возврата.",
+      "Числовые ресурсы меняются только по описанным основаниям: очередь уменьшается реально проведёнными расчётами, открытая поддержка растёт только вместе с выданным кредитом, инфляционные ожидания не падают от заявлений без платёжного механизма.",
+      "Не выдавай отвергнутое за совершившееся: если объяснение, оценка или версия отозваны, опровергнуты или заменены, они остаются в истории как отвергнутые, а не переписываются задним числом в факты.",
+      "Не выдавай предположение за улику: сначала покажи само наблюдение — молчание участника, время проведения обеспечения, шаблонный текст заявки, — затем версию, и держи их раздельно.",
+      "Люди в кадре действуют в своих интересах и пределах полномочий: дежурный операционного зала не принимает решение о поддержке, казначей не расширяет лимит без одобрения, пресс-центр публикует только проверенные цифры, правовой отдел не пропускает формулировки, меняющие мандат.",
+      "Мандат покрывает платёжную устойчивость и не покрывает чужие убытки, политические расходы и безусловные гарантии; исчерпание полномочий — это ограничение, а не повод объявить произвольное решение законным.",
+      "Финал возможен только при устойчивом расчёте платежей, адресной поддержке с проверяемыми условиями, понятной процедуре выхода и сдержанных инфляционных ожиданиях; молчание, отказы и невыясненные причины остаются в истории как открытые вопросы."
     ]
   },
   "opening": {
-    "ru": "Утро началось с очередей у банкоматов и сообщений о задержках платежей. Вы вошли в экстренное заседание как руководитель антикризисного комитета: рынок ждёт решения, у банков заканчивается ликвидность, а поспешная мера способна усилить панику\n\nКрупный участник откладывает объявление об открытии, и рынок принимает молчание за сигнал. Check залог, прежде чем выбирать между временной мерой поддержки и публичным заявлением.\n\nЗдесь важно помнить, что к моменту вашего появления история уже началась. Независимый центральный банк во время внезапного оттока ликвидности; платёжные расчёты замедляются, а любые решения ограничены мандатом, залогом и побочными эффектами. Это не отвлечённый фон и не задача, которую можно решить одним эффектным жестом: исходные условия складывались раньше, а люди, объекты и процессы успели приспособиться к ним. Поэтому любое изменение затронет не только то, что видно сейчас, но и привычный порядок, на котором держатся остальные части ситуации. Вы входите в неё с правом действовать, однако сначала нужно понять, что именно считается нормой и кто подтвердил эту норму.\n\nПервое наблюдение относится к конкретному месту: Зал комитета, Операционный зал, Казначейский канал, Пресс-центр. В нём есть заметная деталь, которую легко принять за готовый ответ, но пока это только отправная точка. Сведения получены не одновременно и не одним способом; между тем, что зафиксировано, и тем, что уже успели предположить, остаётся промежуток. Если немедленно закрыть его догадкой, следующие данные будут подгоняться под выбранную версию. Если же точно обозначить, что известно, а что пока лишь кажется вероятным, у вас сохранится возможность увидеть несоответствие, не переписывая задним числом всю картину.\n\nВаша задача сформулирована шире, чем устранить ближайшую помеху: Восстановить надёжность расчётов и доступ платёжеспособных банков к ликвидности, сохранив проверяемые условия поддержки и управляемые инфляционные ожидания. На практике это означает одновременно следить за непосредственным результатом и за тем, что этот результат позволит узнать. Быстрый шаг может принести видимое улучшение, но ухудшить сравнимость, доступность или доверие; осторожный — сохранить качество проверки, но оставить проблему без немедленного ответа. Эти соображения не равны по весу во всех обстоятельствах. Их порядок зависит от того, какие сведения вы подтвердите и какой ущерб действительно обратим.\n\nВ материалах есть три слоя: исходное состояние, первое наблюдение и объяснение, которое кто-то успел к нему приложить. Не смешивайте их. Выдать краткий обеспеченный кредит: расчёты оживают, риск зависит от залога и возврата. Если цифры или свидетельства расходятся, полезно установить, когда и где именно началось расхождение, кто наблюдал явление напрямую и какие условия могли поменяться между проверками. Иногда спорный показатель оказывается не ложным, а неполным: он честно описывает ту точку, где был получен, но не ту, о которой спрашивает команда.\n\nВам не требуется заранее выбирать единственную стратегию на весь эпизод. В текущем пакете доступны разные типы действий: Проверить залог и платёжный разрыв, Спроектировать адресную поддержку, Согласовать публичное сообщение. Они дают разные виды контроля: одно может уточнить картину, другое — изменить условия, третье — выиграть время или проверить связь между двумя событиями. Выбирая, задайте себе практический вопрос: что должно стать заметно после этого шага, если ваша версия верна? И что вы увидите, если она неверна? Такой критерий превращает действие в проверку, а не просто в жест, после которого приходится надеяться на удачу.\n\nПуть вперёд может разветвиться, и у каждого направления будет собственная цена. Одно решение способно защитить непосредственную цель, но оставить неопределённость; другое — укрепить доказательства, но сузить окно для вмешательства; третье — уменьшить воздействие на окружающую систему, одновременно потребовав новой проверки. Эти различия не делают какой-либо путь правильным заранее. Важнее видеть, какую ценность вы защищаете сейчас, чем рискуете ради неё и какие признаки заставят пересмотреть план. Смена курса допустима, если вы можете объяснить, какая новая информация изменила расчёт.\n\nОглянитесь на Зал комитета, Операционный зал, Казначейский канал, Пресс-центр. Каждая точка открывает свою часть происходящего и скрывает другую; переход между ними сам по себе может менять условия наблюдения. Не считайте схему исчерпывающей: она описывает доступные места, но не гарантирует, что все важные процессы заметны с одной позиции. Сверяйте время, источник и обстоятельства каждого сообщения. Если кто-то говорит «это было так всегда», спросите, за какой период он отвечает; если прибор показывает отклонение, уточните его рабочий диапазон и место установки. Так вы отделите стабильную закономерность от удобного, но слишком широкого обобщения.\n\nЕсть вопросы, на которые пока нельзя честно ответить. Что здесь причина, а что следствие? Действительно ли наблюдаемое изменение требует немедленного вмешательства? Кто или что понесёт последствия, если вы ошибётесь? Неопределённость не означает, что все версии одинаково вероятны; она означает, что следующая сцена должна дать материал для различения. Не превращайте каждую странность в тайный замысел и не отбрасывайте неудобную улику лишь потому, что она мешает плану. Самый убедительный поворот будет иметь смысл только тогда, когда ранние подробности позволят узнать его, а не просто удивиться ему.\n\nНачните с масштаба, который можно проверить. Запишите исходные условия, выберите один важный показатель и не меняйте сразу несколько факторов, если хотите понять, что повлияло на результат. Если вмешательство необходимо прямо сейчас, обозначьте его как временное и сохраните контрольную точку для сравнения. Если можно подождать, определите, какое именно наблюдение оправдает ожидание и сколько времени оно занимает. Это не бюрократическая осторожность: так вы не потеряете возможность отличить настоящую перемену от эффекта собственных действий.\n\nОтдельно рассмотрите направление 3: Отделить техническую задержку от неплатёжеспособности: паника может ослабнуть, но часть заявок останется без поддержки. Оно не отменяет остальные возможности и не требует принимать весь план сразу. Спросите, какое подтверждение сделает этот шаг уместным, что останется измеримым после него и кто заметит его побочный эффект первым. Если ответ пока неизвестен, это не повод скрывать пробел: его можно превратить в условие остановки или повторной оценки.",
-    "en": "The morning begins with queues at cash machines and reports of delayed payments. You enter an emergency committee meeting as its crisis lead: markets await a decision, banks are short on liquidity, and a rushed measure could deepen the panic\n\nA large institution delays its opening announcement, and market desks read the silence as a signal. Verify the collateral before choosing between a temporary facility and a public statement.\n\nRemember that the story had already begun before you arrived. Settlement slows and depositors see queues; the mandate does not allow unconditional rescue. This is not a backdrop or a problem that can be solved with one dramatic gesture: the conditions formed earlier, and people, objects, and processes have adapted to them. Any change will affect more than what is visible now; it may alter the routine that holds other parts of the situation together. You have authority to act, but first you need to understand what counts as normal here and who has actually verified that baseline.\n\nThe first observation belongs to a specific place: Committee room, Operations floor, Treasury channel, Press room. It contains a detail that may look like an answer, but for now it is only a starting point. The information was gathered at different times and by different means; a gap remains between what was recorded and the explanation someone has attached to it. If you fill that gap with a guess, later evidence may be forced to fit your theory. If you mark what is known and what only seems likely, you can notice a mismatch without rewriting the whole account afterward.\n\nYour objective is broader than removing the nearest obstacle: Restore dependable settlement and liquidity access for solvent banks while preserving verifiable support terms and manageable inflation expectations. In practice, you must watch both the immediate result and what that result lets you learn. A quick intervention may produce visible improvement while weakening comparison, access, or trust; a cautious one may preserve the quality of the evidence while leaving the problem unresolved. Those concerns do not carry the same weight in every situation. Their order depends on what you confirm and on which harm can actually be reversed.\n\nThe available material has three layers: the initial conditions, the first observation, and the explanation someone has already attached to it. Keep them separate. Offer a short secured facility: settlements recover, but exposure depends on collateral and repayment. If figures or accounts disagree, establish when and where the mismatch began, who witnessed the event directly, and what could have changed between checks. A disputed reading is sometimes incomplete rather than false: it may accurately describe the point where it was taken, but not the wider area the team is asking about.\n\nYou do not have to choose one strategy for the whole episode in advance. The package offers different kinds of action: Audit collateral and settlement gaps, Design targeted liquidity support, Coordinate public guidance. Each gives you a different kind of control: one may clarify the picture, another may change the conditions, and another may buy time or test a connection between events. Before choosing, ask a practical question: what should become visible if your theory is right? What would you see if it is wrong? That turns an action into a test, rather than a gesture followed by a hope for good luck.\n\nThe way forward can branch, and each direction has its own cost. One choice may protect the immediate objective while leaving uncertainty; another may strengthen the evidence while narrowing the window to intervene; a third may reduce impact on the surrounding system while requiring a fresh check. None is automatically correct. What matters is seeing which value you are protecting, what you risk for it, and what signs would make you reconsider. A change of course is sound when you can explain what new information changed the calculation.\n\nLook at Committee room, Operations floor, Treasury channel, Press room. Each point reveals one part of the situation and hides another; moving between them can itself change the conditions of observation. Do not treat the map as complete: it lists available places but cannot guarantee that every important process is visible from one position. Compare the time, source, and circumstances of each report. If someone says “it has always been this way,” ask what period they mean; if an instrument shows a deviation, check its operating range and location. This helps separate a stable pattern from a convenient but overly broad conclusion.\n\nSome questions cannot yet be answered honestly. What is a cause, and what is an effect? Does the observed change truly require immediate intervention? Who or what bears the cost if you are wrong? Uncertainty does not mean every theory is equally likely; it means the next scene must give you a way to distinguish them. Do not turn every oddity into a hidden scheme, and do not discard inconvenient evidence because it disrupts a plan. A convincing turn will make sense only if earlier details let you recognize it, not merely be surprised by it.\n\nStart at a scale you can check. Record the baseline, choose one important measure, and avoid changing several factors at once if you need to know what caused the result. If action is necessary now, mark it as temporary and preserve a control point for comparison. If waiting is possible, specify what observation would justify the delay and how long it will take. This is not caution for its own sake: it preserves your ability to distinguish a real change from the effect of your own intervention.\n\nThe human side of the task will become clearer too: whose account rests on observation, who is responsible for the consequences, and who must live with the chosen arrangement after the emergency passes. Trust does not replace measurement, but it affects what people tell you and what the team can do together. Explain what you are checking, do not promise a result before it is verified, and note what changed your mind. That may preserve cooperation through disagreement; it may also show that different participants are protecting interests that cannot be reconciled.\n\nConsider approach 3 separately: Separate technical delay from insolvency publicly: panic may ease, while some requests remain unsupported. It does not erase the other options or require you to commit to the whole plan at once. Ask what evidence would make this step appropriate, what will remain measurable afterward, and who will notice its side effect first. If the answer is not yet known, do not hide the gap; turn it into a condition for pausing or reassessing."
-  },
-  "preparedBranches": [
-    {
-      "id": "confidence_pressure",
-      "actions": [
-        "audit",
-        "facility",
-        "communicate",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "Крупный участник откладывает объявление об открытии, и рынок принимает молчание за сигнал. Check залог, прежде чем выбирать между временной мерой поддержки и публичным заявлением.",
-        "en": "A large institution delays its opening announcement, and market desks read the silence as a signal. Verify the collateral before choosing between a temporary facility and a public statement."
-      },
-      "mutations": [],
-      "suggestions": [
-        {
-          "text": {
-            "ru": "Сверить обстановку и выбрать безопасный приоритет",
-            "en": "Recheck the situation and choose a safe priority"
-          }
-        },
-        {
-          "text": {
-            "ru": "Сохранить текущий план и подготовить запасной",
-            "en": "Keep the current plan and prepare a backup"
-          }
-        }
-      ]
-    },
-    {
-      "id": "turning_point_liquidity",
-      "when": {
-        "liquidity": {
-          "gte": 65
-        }
-      },
-      "actions": [
-        "audit",
-        "facility",
-        "communicate",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "Крупный институт задерживает объявление об открытии, и участники рынка воспринимают молчание как сигнал. Прежде чем выбирать между временной поддержкой и публичным заявлением, нужно проверить залог. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
-        "en": "An alternate route opens as circumstances shift. Continue the current approach or change priorities before events make the consequences harder to reverse."
-      },
-      "mutations": [],
-      "suggestions": [
-        {
-          "text": {
-            "ru": "Сверить обстановку и выбрать безопасный приоритет",
-            "en": "Recheck the situation and choose a safe priority"
-          }
-        },
-        {
-          "text": {
-            "ru": "Сохранить текущий план и подготовить запасной",
-            "en": "Keep the current plan and prepare a backup"
-          }
-        }
-      ]
-    },
-    {
-      "id": "authored_turn_1",
-      "minTurns": 2,
-      "actions": [
-        "audit",
-        "facility",
-        "communicate",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "Главный залог оценён вчерашней ценой; сверка реестра меняет допустимый объём обеспечения.",
-        "en": "The main collateral uses yesterday’s price; checking the registry changes how much qualifies."
-      },
-      "mutations": [],
-      "suggestions": [],
-      "responses": {
-        "audit": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Проверить залог и платёжный разрыв». Команда продолжает по пути: Выдать краткий обеспеченный кредит: расчёты оживают, риск зависит от залога и возврата. Улика раскрывает поворот: Главный залог оценён вчерашней ценой; сверка реестра меняет допустимый объём обеспечения.",
-            "en": "You choose “Audit collateral and settlement gaps.” The team continues along this path: Offer a short secured facility: settlements recover, but exposure depends on collateral and repayment. The evidence reveals the turn: The main collateral uses yesterday’s price; checking the registry changes how much qualifies."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Выдать краткий обеспеченный кредит: расчёты оживают, риск зависит от залога и возврата.",
-                "en": "Offer a short secured facility: settlements recover, but exposure depends on collateral and repayment."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Сначала оценить залоги общей процедурой: равенство укрепляется, очередь удлиняется.",
-                "en": "Value collateral through a shared procedure first: fairness improves, queues lengthen."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Отделить техническую задержку от неплатёжеспособности: паника может ослабнуть, но часть заявок останется без поддержки.",
-                "en": "Separate technical delay from insolvency publicly: panic may ease, while some requests remain unsupported."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "facility": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Спроектировать адресную поддержку». Команда продолжает по пути: Сначала оценить залоги общей процедурой: равенство укрепляется, очередь удлиняется. Улика раскрывает поворот: Главный залог оценён вчерашней ценой; сверка реестра меняет допустимый объём обеспечения.",
-            "en": "You choose “Design targeted liquidity support.” The team continues along this path: Value collateral through a shared procedure first: fairness improves, queues lengthen. The evidence reveals the turn: The main collateral uses yesterday’s price; checking the registry changes how much qualifies."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Выдать краткий обеспеченный кредит: расчёты оживают, риск зависит от залога и возврата.",
-                "en": "Offer a short secured facility: settlements recover, but exposure depends on collateral and repayment."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Сначала оценить залоги общей процедурой: равенство укрепляется, очередь удлиняется.",
-                "en": "Value collateral through a shared procedure first: fairness improves, queues lengthen."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Отделить техническую задержку от неплатёжеспособности: паника может ослабнуть, но часть заявок останется без поддержки.",
-                "en": "Separate technical delay from insolvency publicly: panic may ease, while some requests remain unsupported."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "communicate": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Согласовать публичное сообщение». Команда продолжает по пути: Отделить техническую задержку от неплатёжеспособности: паника может ослабнуть, но часть заявок останется без поддержки. Улика раскрывает поворот: Главный залог оценён вчерашней ценой; сверка реестра меняет допустимый объём обеспечения.",
-            "en": "You choose “Coordinate public guidance.” The team continues along this path: Separate technical delay from insolvency publicly: panic may ease, while some requests remain unsupported. The evidence reveals the turn: The main collateral uses yesterday’s price; checking the registry changes how much qualifies."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Выдать краткий обеспеченный кредит: расчёты оживают, риск зависит от залога и возврата.",
-                "en": "Offer a short secured facility: settlements recover, but exposure depends on collateral and repayment."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Сначала оценить залоги общей процедурой: равенство укрепляется, очередь удлиняется.",
-                "en": "Value collateral through a shared procedure first: fairness improves, queues lengthen."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Отделить техническую задержку от неплатёжеспособности: паника может ослабнуть, но часть заявок останется без поддержки.",
-                "en": "Separate technical delay from insolvency publicly: panic may ease, while some requests remain unsupported."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "free_text": {
-          "narrative": {
-            "ru": "Ваш свободный план меняет способ проверки. Команда раскрывает поворот по найденной улике: Главный залог оценён вчерашней ценой; сверка реестра меняет допустимый объём обеспечения.",
-            "en": "Your free-form plan changes how the team checks the clue. The turn is revealed by the evidence: The main collateral uses yesterday’s price; checking the registry changes how much qualifies."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Выдать краткий обеспеченный кредит: расчёты оживают, риск зависит от залога и возврата.",
-                "en": "Offer a short secured facility: settlements recover, but exposure depends on collateral and repayment."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Сначала оценить залоги общей процедурой: равенство укрепляется, очередь удлиняется.",
-                "en": "Value collateral through a shared procedure first: fairness improves, queues lengthen."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Отделить техническую задержку от неплатёжеспособности: паника может ослабнуть, но часть заявок останется без поддержки.",
-                "en": "Separate technical delay from insolvency publicly: panic may ease, while some requests remain unsupported."
-              },
-              "icon": "↗️"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "id": "authored_turn_2",
-      "minTurns": 4,
-      "actions": [
-        "audit",
-        "facility",
-        "communicate",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "Участник раскроет встречное обеспечение лишь при равном доступе банков к процедуре — кризис доверия, не сговор.",
-        "en": "A participant will reveal matching collateral only if every bank gets equal access—a trust issue, not a pact."
-      },
-      "mutations": [],
-      "suggestions": [],
-      "responses": {
-        "audit": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Проверить залог и платёжный разрыв». Команда продолжает по пути: Выдать краткий обеспеченный кредит: расчёты оживают, риск зависит от залога и возврата. Улика раскрывает поворот: Участник раскроет встречное обеспечение лишь при равном доступе банков к процедуре — кризис доверия, не сговор.",
-            "en": "You choose “Audit collateral and settlement gaps.” The team continues along this path: Offer a short secured facility: settlements recover, but exposure depends on collateral and repayment. The evidence reveals the turn: A participant will reveal matching collateral only if every bank gets equal access—a trust issue, not a pact."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Выдать краткий обеспеченный кредит: расчёты оживают, риск зависит от залога и возврата.",
-                "en": "Offer a short secured facility: settlements recover, but exposure depends on collateral and repayment."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Сначала оценить залоги общей процедурой: равенство укрепляется, очередь удлиняется.",
-                "en": "Value collateral through a shared procedure first: fairness improves, queues lengthen."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Отделить техническую задержку от неплатёжеспособности: паника может ослабнуть, но часть заявок останется без поддержки.",
-                "en": "Separate technical delay from insolvency publicly: panic may ease, while some requests remain unsupported."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "facility": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Спроектировать адресную поддержку». Команда продолжает по пути: Сначала оценить залоги общей процедурой: равенство укрепляется, очередь удлиняется. Улика раскрывает поворот: Участник раскроет встречное обеспечение лишь при равном доступе банков к процедуре — кризис доверия, не сговор.",
-            "en": "You choose “Design targeted liquidity support.” The team continues along this path: Value collateral through a shared procedure first: fairness improves, queues lengthen. The evidence reveals the turn: A participant will reveal matching collateral only if every bank gets equal access—a trust issue, not a pact."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Выдать краткий обеспеченный кредит: расчёты оживают, риск зависит от залога и возврата.",
-                "en": "Offer a short secured facility: settlements recover, but exposure depends on collateral and repayment."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Сначала оценить залоги общей процедурой: равенство укрепляется, очередь удлиняется.",
-                "en": "Value collateral through a shared procedure first: fairness improves, queues lengthen."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Отделить техническую задержку от неплатёжеспособности: паника может ослабнуть, но часть заявок останется без поддержки.",
-                "en": "Separate technical delay from insolvency publicly: panic may ease, while some requests remain unsupported."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "communicate": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Согласовать публичное сообщение». Команда продолжает по пути: Отделить техническую задержку от неплатёжеспособности: паника может ослабнуть, но часть заявок останется без поддержки. Улика раскрывает поворот: Участник раскроет встречное обеспечение лишь при равном доступе банков к процедуре — кризис доверия, не сговор.",
-            "en": "You choose “Coordinate public guidance.” The team continues along this path: Separate technical delay from insolvency publicly: panic may ease, while some requests remain unsupported. The evidence reveals the turn: A participant will reveal matching collateral only if every bank gets equal access—a trust issue, not a pact."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Выдать краткий обеспеченный кредит: расчёты оживают, риск зависит от залога и возврата.",
-                "en": "Offer a short secured facility: settlements recover, but exposure depends on collateral and repayment."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Сначала оценить залоги общей процедурой: равенство укрепляется, очередь удлиняется.",
-                "en": "Value collateral through a shared procedure first: fairness improves, queues lengthen."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Отделить техническую задержку от неплатёжеспособности: паника может ослабнуть, но часть заявок останется без поддержки.",
-                "en": "Separate technical delay from insolvency publicly: panic may ease, while some requests remain unsupported."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "free_text": {
-          "narrative": {
-            "ru": "Ваш свободный план меняет способ проверки. Команда раскрывает поворот по найденной улике: Участник раскроет встречное обеспечение лишь при равном доступе банков к процедуре — кризис доверия, не сговор.",
-            "en": "Your free-form plan changes how the team checks the clue. The turn is revealed by the evidence: A participant will reveal matching collateral only if every bank gets equal access—a trust issue, not a pact."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Выдать краткий обеспеченный кредит: расчёты оживают, риск зависит от залога и возврата.",
-                "en": "Offer a short secured facility: settlements recover, but exposure depends on collateral and repayment."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Сначала оценить залоги общей процедурой: равенство укрепляется, очередь удлиняется.",
-                "en": "Value collateral through a shared procedure first: fairness improves, queues lengthen."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Отделить техническую задержку от неплатёжеспособности: паника может ослабнуть, но часть заявок останется без поддержки.",
-                "en": "Separate technical delay from insolvency publicly: panic may ease, while some requests remain unsupported."
-              },
-              "icon": "↗️"
-            }
-          ]
-        }
-      }
-    }
-  ]
+    "ru": "Четвёртый час ночи в операционном зале пахнет остывшим кофе и прогретым пластиком. Свет здесь только от стоек и настенных табло, и от него у всех под глазами тени. В зале девять рабочих мест, и почти за каждым сидят, хотя трое из них уже не смотрят на свои экраны, а смотрят на большое табло сбоку: бегущая строка непрошедших платежей, где за последний час число не уменьшилось ни разу. В очереди больше семидесяти позиций, и она пополняется быстрее, чем её разбирают. Больше всего здесь разговоров на одну фразу: отказ это или задержка. Отказ обрывает расчёт и уезжает обратно с деньгами. Задержка держит деньги на одной стороне, пока система решает, пропустить их или отклонить. Сейчас это отказ, который ещё не дошёл до конца, и отличить его от второго можно только документами, а не на глаз.\n\nКак вы здесь оказались, вы помните целиком, вплоть до того, как потеряли нить. Сегодня днём вы занимались плановой работой, а вечером в двадцать сорок на стол пришли три заявки на срочное урегулирование, и все три подписаны дежурными, а не правлением. В двадцать один пять крупнейший из участников попросил перевести свои расчёты на утро, сославшись на внутренний график, и не объяснил, что именно мешает провести их сейчас. В двадцать два десять два других перестали отвечать на запросы о состоянии: не отказали, а просто перестали подтверждать получение.\n\nОколо полуночи дежурный казначей принёс вам папку с ночным журналом операций и сказал одну фразу, которую вы с тех пор не забыли: «Здесь всё выглядит правильно, и поэтому у меня нет вопросов». Так вы оказались здесь, в коридоре второго этажа, откуда до зала комитета — два поворота, а на каждом придётся объясняться с кем-то новым.\n\nВы шли сюда и думали не о цифрах, а о временах. Торги откроются через шесть часов, и к этому моменту в платёжной системе не должно быть очереди, которую видят обычные люди. Достаточно, чтобы один вкладчик увидел, как его перевод стоит третьим в очереди, и это станет разговором в очереди у следующего отделения. Окно расчётов сместилось, и сдвиг этот вырос не от вчерашнего решения, а от того, что никто не сумел объяснить его причину в разговоре, который длился сорок минут. К шести утрам в операционном зале всё ещё будет гудеть, но вы предпочитаете пережить это утром, а не днём, когда к каждому дежурному подойдёт человек из очереди.\n\nСейчас в комиссии пять человек, и у каждого своя правда. Начальник операционного зала считает, что очередь нужно разбирать вручную, платёж за платежом, и отдавать предпочтение тем, у кого платежи зарплатные. Казначей отвечает за деньги и за то, что они не разойдутся до утра, и настаивает на залоге. Пресс-секретарь терпеливо ждёт у двери, потому что к семи ему нужна строка в официальном сообщении, а строка не может состоять из слова «мы работаем». Ваш заместитель принёс пачку бланков срочного решения и положил её так, чтобы вы видели: он не говорит, что вы её подпишете, но показывает, что решение сегодня кто-то должен подписать. Между этими позициями и вами — вопрос, который вы пока не задали вслух, и от ответа на него зависит, что вообще можно сделать.\n\nОграничения не в правилах, а в цифрах на табло. Ликвидность системы ниже трети от нормального уровня, доверие рынков держится на догадке, инфляционные ожидания задраны так, что любая широкая мера будет прочитана как печать денег, качество залога усреднилось и не гарантирует ничего в частности. Открытая поддержка сейчас невелика, и каждая выданная сумма навсегда останется в балансе до возврата, даже если вернуть её придётся уже в другом составе. Всё это не абстракция: за каждой цифрой стоит конкретный человек в другом здании, который прямо сейчас решает, звонить ли ему вообще.\n\nИ здесь начинается то, что не сходится. Реестр обеспечения обновляется раз в сутки, и в три часа ночи он всё ещё считает активы по вчерашним ценам закрытия, то есть по состоянию рынка, которого уже не существует. Заявки двух банков содержат одинаково подробные описания залога, расписанные почти слово в слово, хотя поданы они из разных систем, и это скорее похоже на общий шаблон, чем на две независимые проверки. У одного из крупных участников есть лимит, одобренный ранее и действительный, но на эту ночь не продлённый, и с молчанием, как с устаревшим кодом, никто не торопится разбираться. Ничто из этого ещё не обвинение. Пока это три наблюдения, каждое из которых можно объяснить по-разному.\n\nСтавки на исход ночи простые и все сразу. Если очередь простоит до открытия, отказы станут публичными, отменённые переводы вернутся отправителям, и утренние торги откроются против ваших же цифр. Если дать поддержку всем, кто её просит, вы снимете сегодняшний дискомфорт, а инфляционные ожидания вырастут ещё, и завтра это придётся разбирать в другом зале. Если дать её только тем, кто громче всех требует, вы сохраните систему и вырастите себе список на утро, где вы будете стоять в одной роли с теми, кого не поддержали. Ошибка в выборе будет стоить одинаково, но деньги, разрешения и залог, израсходованные на неё, не вернутся. В этом зале нет человека, который знает, как из этого выйти, — иначе сюда не пришли бы вы.\n\nВы стоите в зале комитета, в его обычном свете, без ночной спешки: журнал операций открыт на последней странице, три заявки лежат в подборке, реестр залога доступен и вчерашний, очередь продолжает расти, до открытия шесть часов, и решение не принято ни за одно из них. Ниже вами — операционный зал, лестница в правый коридор, переговорная, где ждут разговора, и пресс-центр, где заготовлен текст без единой цифры. Первое движение определит, что будет видно к утру: разбор очереди, сверка обеспечения, звонок правовому отделу, разговор с молчащим участником или публичное сообщение. Пока этого не сделано, ночь остаётся вашей, и всё, что в ней есть, уже на столе.",
+    "en": "It is a little past four in the morning on the operations floor, and the room smells of cold coffee and warm plastic. The only light comes from the racks and the wall boards, and it leaves shadows under everyone's eyes. There are nine workstations here, and nearly every one of them is occupied, though three people have stopped looking at their own screens and are watching the large board on the side wall instead: a running line of payments that failed, where the number has not dropped once in the last hour. There are more than seventy items in the queue, and it fills faster than anyone works through it. Most of the talking on this floor comes down to a single phrase — refusal or delay. A refusal ends the settlement and sends the money back. A delay holds it on one side while the system decides whether to let it through or knock it down. What exists right now is a refusal that has not finished arriving, and telling it apart from the other thing requires documents, not a glance.\n\nYou remember exactly how you ended up here, down to the point where you lost the thread. This morning you were doing routine work, and at eight-forty in the evening three urgent settlement requests arrived on your desk, all signed by duty officers rather than by anyone with authority to commit. At nine-five the largest of the participants asked to move its settlements to the morning, citing an internal schedule, and did not explain what was stopping them from going through now. At ten-ten two others simply stopped answering requests about their condition: not declining, only ceasing to confirm receipt.\n\nAround midnight the duty treasurer brought you the folder with the overnight operations log and said one sentence you have not forgotten since: “Everything in here looks correct, which is why I have no questions.” That is how you ended up in this building, on the second floor, two turns away from the committee room, and every turn on the way there involves explaining yourself to someone new.\n\nYou walked here thinking about times rather than numbers. Trading opens in six hours, and by then there must be no queue in the payment system that an ordinary person can see. It takes only one depositor watching his own transfer sitting third in line, and that becomes a conversation in the queue at the next branch. The settlement window has slipped, and the slip did not grow out of yesterday's decision; it grew out of nobody managing to explain its cause in a conversation that ran forty minutes. By six in the morning the operations floor will still be humming, but you would rather meet that in the morning than in the middle of the day, when every duty officer will have a person from a queue coming up to them.\n\nThere are five people in the committee room tonight, and each one holds a different truth. The head of the operations floor believes the queue must be worked by hand, payment by payment, with priority for the ones that pay wages. The treasurer is responsible for the money and for the money not running out before morning, and insists on collateral. The press officer is waiting politely by the door, because by seven he needs a line for the official statement, and a line cannot consist of the words “we are working on it.” Your deputy has brought a stack of emergency decision forms and set it down where you can see it: he is not saying you will sign it, only making it clear that someone has to sign something tonight. Between those positions and you stands a question you have not yet asked out loud, and what you can do at all depends on the answer.\n\nThe limits are not in the rules, they are in the numbers on the board. System liquidity sits below a third of normal, market confidence is being held up by guesswork, inflation expectations are high enough that any broad measure will be read as money printing, collateral quality has averaged out and guarantees nothing in particular, and the authority you hold tonight does not let you finance somebody else's losses or act without collateral and a term. Open support is small at the moment, and every amount you extend stays on the balance sheet until it is repaid, even if the repayment will be made in a different line-up of people. None of this is abstract: behind each figure stands a particular person in another building deciding right now whether to call at all.\n\nAnd here is where it does not add up. The collateral registry refreshes once a day, and at three in the morning it is still valuing assets at yesterday's closing prices, which means at a state of the market that no longer exists. Two banks have filed collateral descriptions that are equally detailed and worded almost identically, although they came from different systems, which resembles a shared template more than two independent checks. One of the large participants has a limit that was approved earlier and is still valid, but was not extended for this night, and nobody is in a hurry to examine stale code. None of this is an accusation yet. For now these are three observations, each of which can be explained more than one way.\n\nThe stakes of the night are simple and all of them arrive at once. If the queue survives until the open, the refusals become public, cancelled transfers go back to their senders, and the morning session trades against your own figures. If you support everyone who asks, tonight's discomfort is eased and inflation expectations rise further, to be dealt with tomorrow in a different room. If you support only the loudest demand, the system is preserved and you grow yourself a list for the morning, where you will be standing in the same role as those you did not support. Being wrong costs the same either way, but the money, the permissions and the collateral spent on the mistake are not returned. There is no one in this room who knows how to get out, or they would not have sent for you.\n\nYou are standing in the committee room under its ordinary light, with none of the night's rush on you: the operations log is open to its last page, the three requests sit in a bundle, the collateral registry is available and it is yesterday's, the queue is still growing, the open is six hours away, and not one of these has been decided. Below you is the operations floor, the staircase to the right-hand corridor, a room where someone is waiting for a conversation, and a press centre holding a text with no figures in it. Your first move decides what morning will show: working the queue, reconciling the collateral, calling the legal desk, getting the silent participant on the line, or saying something public. None of that has been done yet, and the night is still yours, with everything in it already on the table."
+  }
 }

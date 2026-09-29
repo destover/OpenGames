@@ -6,7 +6,7 @@
     "setting": "Городская больница во время массового поступления пострадавших после крупной аварии; перегруженный триаж, нехватка кислорода и операционных мест, истощённая смена.",
     "categoryRu": "Медицина",
     "background": "/assets/emergency-triage.jpg",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "schemaVersion": "2",
     "isNew": true,
     "durationMinutes": [
@@ -17,6 +17,7 @@
   "state": {
     "initial": {
       "critical": 7,
+      "queue": 9,
       "stabilized": 0,
       "oxygen": 28,
       "beds": 3,
@@ -43,12 +44,37 @@
     "coordinate": {
       "label": "Запросить ресурсы у соседних больниц",
       "icon": "📞"
+    },
+    "tags": {
+      "label": "Разметить приоритет цветными метками",
+      "icon": "🏷️"
+    },
+    "ventilation": {
+      "label": "Проверить вентиляцию и контур подачи воздуха",
+      "icon": "🌀"
+    },
+    "waiting_area": {
+      "label": "Осмотреть зону ожидания",
+      "icon": "🛏️"
+    },
+    "field_crew": {
+      "label": "Связаться с бригадой на месте аварии",
+      "icon": "🚑"
+    },
+    "supplies": {
+      "label": "Сверить остатки расходников и растворов",
+      "icon": "📦"
+    },
+    "handover": {
+      "label": "Подготовить передачу смены",
+      "icon": "📋"
     }
   },
   "ui": {
     "accent": "#d36c78",
     "stateLabels": {
       "critical": "Пациенты в критическом триаже",
+      "queue": "Очередь неосмотренных",
       "stabilized": "Стабилизированы",
       "oxygen": "Запас кислорода",
       "beds": "Свободные операционные места",
@@ -62,6 +88,7 @@
     "ru": {
       "states": {
         "critical": "Пациенты в критическом триаже",
+        "queue": "Очередь неосмотренных",
         "stabilized": "Стабилизированы",
         "oxygen": "Запас кислорода",
         "beds": "Свободные операционные места",
@@ -74,7 +101,13 @@
         "free_text": "Свободное действие",
         "assess": "Повторно оценить приоритеты",
         "allocate": "Перераспределить бригаду",
-        "coordinate": "Запросить ресурсы у соседних больниц"
+        "coordinate": "Запросить ресурсы у соседних больниц",
+        "tags": "Разметить приоритет цветными метками",
+        "ventilation": "Проверить вентиляцию и контур подачи воздуха",
+        "waiting_area": "Осмотреть зону ожидания",
+        "field_crew": "Связаться с бригадой на месте аварии",
+        "supplies": "Сверить остатки расходников и растворов",
+        "handover": "Подготовить передачу смены"
       },
       "manifest": {
         "title": "Цена минуты",
@@ -90,6 +123,7 @@
     "en": {
       "states": {
         "critical": "Critical triage patients",
+        "queue": "Unseen arrivals waiting",
         "stabilized": "Stabilized",
         "oxygen": "Oxygen reserve",
         "beds": "Available operating slots",
@@ -102,7 +136,13 @@
         "free_text": "Free action",
         "assess": "Reassess triage priorities",
         "allocate": "Reassign a care team",
-        "coordinate": "Coordinate mutual aid"
+        "coordinate": "Coordinate mutual aid",
+        "tags": "Mark priorities with colour tags",
+        "ventilation": "Check ventilation and the air supply line",
+        "waiting_area": "Walk the waiting area",
+        "field_crew": "Contact the crew at the crash site",
+        "supplies": "Check remaining consumables and fluids",
+        "handover": "Prepare the shift handover"
       },
       "manifest": {
         "title": "The Cost of a Minute",
@@ -148,6 +188,22 @@
       "supply": {
         "ru": "Склад расходников",
         "en": "Supply room"
+      },
+      "waiting_area": {
+        "ru": "Зона наблюдения и ожидания",
+        "en": "Observation and waiting area"
+      },
+      "imaging": {
+        "ru": "Рентген-блок",
+        "en": "Imaging suite"
+      },
+      "entrance": {
+        "ru": "Приёмное покрытие",
+        "en": "Ambulance bay"
+      },
+      "stairway": {
+        "ru": "Лестничный пролёт у лифтов",
+        "en": "Transfer stairwell"
       }
     }
   },
@@ -169,36 +225,44 @@
         },
         "beats": {
           "ru": [
-            "После аварии прибывают пострадавшие, кислорода и операционных мест не хватает, смена истощена.",
-            "Симптомы у части людей меняются быстрее видимых травм; время воздействия дыма точнее объясняет риск, чем громкость жалобы.",
-            "Триаж должен учитывать повторную оценку, не отдавая очередь самым заметным пациентам."
+            "После аварии поступают пострадавшие с разной тяжестью; кислорода и операционных мест не хватает, смена работает без перерыва.",
+            "Часть симптомов развивается быстрее, чем выглядят видимые травмы, и ранняя повторная оценка меняет очередь у постели.",
+            "Цветовые метки сортировки заканчиваются пачками, и решение о приоритете приходится фиксировать письменно, иначе его невозможно пересмотреть.",
+            "Показания контура подачи воздуха ведут журнал с пропуском записи, и падение давления обсуждается как общая тенденция, а не как событие.",
+            "Родственники в приёмном покрытии задают вопросы тому же персоналу, который принимает новых, и зона ожидания становится вторым фронтом сортировки.",
+            "Подкрепление приходит неполным, и передача смены становится моментом, где решается, что именно следующая смена унаследует: порядок, списки или только очередь у двери."
           ],
           "en": [
-            "After the crash, casualties arrive as oxygen and operating slots run short and the shift tires.",
-            "Some symptoms change faster than visible injuries; exposure time predicts risk better than the loudest complaint.",
-            "Triage must include reassessment without rewarding whoever appears most urgent."
+            "Casualties arrive after the crash with varying severity; oxygen and operating slots are short and the shift works without a break.",
+            "Some symptoms develop faster than the visible injuries suggest, and early reassessment changes the order at the bedside.",
+            "Colour triage tags run out by the packet, so priorities have to be written down or they cannot be revised later.",
+            "The air supply line is logged with a gap, and the pressure drop is being discussed as a trend rather than as an event.",
+            "Relatives in the ambulance bay ask their questions of the same staff who are receiving new arrivals, which turns the waiting area into a second triage front.",
+            "Relief arrives incomplete, and the handover becomes the moment that decides what the next shift inherits: a system, written lists, or only a queue at the door."
           ]
         },
         "twists": {
           "ru": [
-            "Пострадавшие из одного автобуса подверглись разному воздействию из-за открытой задней двери; общая метка «дым» скрывает две группы риска.",
-            "Подача кислорода просела из-за теста резервного контура, а не нового массового ухудшения; инженер может подтвердить график."
+            "Пострадавшие, приехавшие одним транспортным средством, подверглись разному воздействию из-за открытой задней двери: общая метка «дым» прячет две группы риска, и вторая обнаруживается по времени, проведённому рядом с машиной, а не по жалобе.",
+            "Подача кислорода просела из-за теста резервного контура, а не из-за нового массового ухудшения состояния пациентов; журнал инженерной службы с точным временем теста отделяет одно от другого."
           ],
           "en": [
-            "Passengers from one bus had different exposure because its rear door was open; a single “smoke” label hides two risk groups.",
-            "Oxygen pressure fell during a reserve-line test, not because every patient worsened; engineering logs can confirm it."
+            "The casualties who arrived in one vehicle were exposed differently because its rear door stood open: a single smoke label hides two risk groups, and the second shows up in the time spent near the vehicle rather than in the complaint.",
+            "Oxygen delivery fell during a test of the reserve line, not because a new mass of patients worsened; the engineering log with the exact test time separates one from the other."
           ]
         },
         "paths": {
           "ru": [
-            "Повторно оценить нестабильных через короткий интервал: точность растёт, но персонал перегружается.",
-            "Распределить ресурс по клиническим признакам и документировать исключения: справедливость выше, решения медленнее.",
-            "Открыть временный пункт наблюдения вне операционного блока: места освобождаются, но нужен отдельный ответственный за контроль."
+            "Частая переоценка нестабильных через короткий интервал: предпосылка — выделенный круг повторных осмотров и записи в журнале; новая информация — часть пациентов меняет состояние незаметно для очереди; немедленное последствие — в стабилизированных попадают те, кто раньше выглядел хуже всех; отложенное — персонал перестаёт успевать за входящими, и очередь растёт; риск — усталость смены и ошибки при переносе; компромисс — точность против числа рук; точки пересечения — с зоной ожидания, с решением о ротации и с проверкой контура подачи.",
+            "Распределение ресурса по клиническим признакам с письменной фиксацией исключений: предпосылка — согласие смены работать по документу, а не по устной договорённости; новая информация — часть исключений объясняется временем воздействия, а не тяжестью травмы; немедленное последствие — спор о справедливости заменяется спором о записи; отложенное — каждая запись становится проверяемой при передаче смены, а значит более осторожной; риск — решения замедляются; компромисс — прозрачность в ущерб темпу; точки пересечения — с ручной разметкой меток и с журналом вентиляции.",
+            "Временный пункт наблюдения вне операционного блока: предпосылка — назначенный ответственный и отдельное место с круглосуточным осмотром; новая информация — часть пациентов выходит из критического состояния без операции, но с наблюдением; немедленное последствие — операционные места перестают быть узким местом; отложенное — наблюдение требует рук постоянно, а усталость растёт быстрее, чем кажется по журналу; риск — пропуск ухудшения в паузе между осмотрами; компромисс — место получено ценой внимания; точки пересечения — с ротацией персонала, с запросом помощи соседним больницам и с передачей смены.",
+            "Раздельный поток по времени воздействия: предпосылка — сведения от бригады на месте аварии о том, кто и сколько находился рядом с машиной; новая информация — две группы рика, внешне похожие и по-разному реагирующие на поддержку; немедленное последствие — очередь перестаёт быть случайной по составу; отложенное — позже придётся объяснять соседним больницам, почему часть пациентов уехала раньше части; риск — обвинение в неравном подходе к пострадавшим; компромисс — клиническая точность против восприятия справедливости; точки пересечения — с ручной разметкой меток, с зоной ожидания и с передачей смены."
           ],
           "en": [
-            "Reassess unstable patients quickly: accuracy improves, staff load grows.",
-            "Allocate by clinical signs and log exceptions: fairness improves, decisions slow.",
-            "Open a monitored observation area away from operating rooms: space returns, but it needs a named lead."
+            "Frequent reassessment of unstable patients at short intervals: prerequisite is a designated reassessment circle and written logging; the new information is that some patients change condition invisibly to the queue; the immediate effect is that patients who looked worst end up among the stabilized; the deferred cost is that staff stop keeping up with arrivals and the queue grows; the risk is shift fatigue and transfer errors; the compromise is accuracy against a thin supply of hands; it intersects with the waiting area, with the rotation decision and with the air supply check.",
+            "Allocating by clinical signs with written exceptions: prerequisite is the shift agreeing to work from a document rather than a verbal understanding; the new information is that some exceptions trace to exposure time rather than injury severity; the immediate effect is that fairness gives way to argument about the record; the deferred cost is that every entry becomes auditable at handover, and therefore more cautious; the risk is that decisions slow down; the compromise is transparency at the cost of pace; it intersects with hand-marked tags and with the ventilation log.",
+            "A temporary observation area outside the operating block: prerequisite is a named lead and a separate space with round-the-clock review; the new information is that some patients leave critical condition without surgery, given observation; the immediate effect is that operating slots stop being the bottleneck; the deferred cost is that observation consumes hands permanently and fatigue rises faster than the log shows; the risk is missing a deterioration between checks; the compromise is space bought with attention; it intersects with staff rotation, with requesting help from nearby hospitals and with handover.",
+            "Separating patients by exposure time: prerequisite is information from the crew at the crash site about who stood near the vehicle and for how long; the new information is two risk groups that look alike externally and respond differently to support; the immediate effect is that the queue stops being random in composition; the deferred cost is explaining to nearby hospitals later why some patients left before others; the risk of appearing to treat casualties unequally; the compromise is clinical accuracy against the perception of fairness; it intersects with hand-marked tags, with the waiting area and with handover."
           ]
         }
       }
@@ -224,6 +288,26 @@
         {
           "id": "relief_eta",
           "text": "Подкрепление ожидается примерно через восемнадцать минут, но его состав пока неизвестен."
+        },
+        {
+          "id": "one_vehicle",
+          "text": "Часть пострадавших приехала одним транспортным средством, и сведений о том, кто сколько времени находился рядом с ним, пока нет."
+        },
+        {
+          "id": "ventilation_log",
+          "text": "Показания контура подачи воздуха и давления ведутся в журнале смены, но за ночь в нём есть пропуск записи и отметка о проверке резервной линии."
+        },
+        {
+          "id": "triage_tags",
+          "text": "Цветовые метки сортировки выдаются пачками и расходуются быстро; решения о приоритете пока фиксируются в основном устно."
+        },
+        {
+          "id": "relatives",
+          "text": "В приёмном покрытии находятся родственники поступивших, и их вопросы отнимают время у того же персонала, который принимает новых пациентов."
+        },
+        {
+          "id": "no_relief_break",
+          "text": "Никто из смены не отдыхал с начала приёма; короткая ротация обсуждалась, но не согласована."
         }
       ]
     }
@@ -231,6 +315,7 @@
   "boundaries": {
     "mutationPaths": [
       "critical",
+      "queue",
       "stabilized",
       "oxygen",
       "beds",
@@ -243,6 +328,10 @@
       "critical": {
         "min": 0,
         "max": 30
+      },
+      "queue": {
+        "min": 0,
+        "max": 60
       },
       "stabilized": {
         "min": 0,
@@ -270,7 +359,11 @@
         "triage",
         "resus",
         "command",
-        "supply"
+        "supply",
+        "waiting_area",
+        "imaging",
+        "entrance",
+        "stairway"
       ],
       "goalStatus": [
         "active",
@@ -284,348 +377,27 @@
       {
         "path": "stabilized",
         "maxIncrease": 3
+      },
+      {
+        "path": "queue",
+        "maxIncrease": 6
       }
     ],
     "instructions": [
       "Не превращай медицинское решение в гарантированное чудесное спасение.",
       "Решения должны учитывать клинический приоритет, согласие пациента, безопасность и дефицит ресурсов.",
       "Не увеличивай одновременно запас, персонал и мощности без конкретного источника.",
-      "Финал допустим после стабилизации критического потока и передачи смены, не по одному удачному лечению."
+      "Финал допустим после стабилизации критического потока и передачи смены, не по одному удачному лечению.",
+      "Сохраняй причинно-следственную непрерывность: изменение числа неосмотренных, критических, стабилизированных, запаса кислорода, мест, усталости и минут должно следовать из конкретного действия, осмотра, времени и работы контура.",
+      "Не повторяй уже показанное: одна и та же сцена и один и тот же исход описываются один раз, а при повторном заходе обозначается результат и меняются обстоятельства.",
+      "Не выдавай симптом, запись прибора, сообщение из приёмного покрытия или устную сводку за установленный диагноз: сначала покажи само наблюдение, затем версию, и держи их раздельно.",
+      "Не выдавай отвергнутое за совершившееся: если гипотеза снята осмотром, журналом или временем приёма, она остаётся в истории как отвергнутая и не переписывается задним числом как факт.",
+      "Человек в кадре — пациент, родственник, санитар или врач — действует сам, если игрок не задал иное: у него есть состояние, страх, время и право не согласиться с решением.",
+      "Обещание пациенту или родственнику не считается исполненным: исход наступает только после того, как действие выполнено и записано."
     ]
   },
   "opening": {
-    "ru": "Сирены стихли у входа, но машины скорой помощи продолжают прибывать после аварии на трассе. Вы — дежурный руководитель сортировки: свободных коек мало, персонал уже на пределе, и сейчас именно вам предстоит организовать помощь по тяжести состояния\n\nНового пациента нужно подключить к кислороду, а запас падает. Команда может переоценить обоих перед распределением или назначить баллон сейчас и отправить врача искать резерв.\n\nЗдесь важно помнить, что к моменту вашего появления история уже началась. Городская больница во время массового поступления пострадавших после крупной аварии; перегруженный триаж, нехватка кислорода и операционных мест, истощённая смена. Это не отвлечённый фон и не задача, которую можно решить одним эффектным жестом: исходные условия складывались раньше, а люди, объекты и процессы успели приспособиться к ним. Поэтому любое изменение затронет не только то, что видно сейчас, но и привычный порядок, на котором держатся остальные части ситуации. Вы входите в неё с правом действовать, однако сначала нужно понять, что именно считается нормой и кто подтвердил эту норму.\n\nПервое наблюдение относится к конкретному месту: Триажный зал, Реанимация, Штаб смены, Склад расходников. В нём есть заметная деталь, которую легко принять за готовый ответ, но пока это только отправная точка. Сведения получены не одновременно и не одним способом; между тем, что зафиксировано, и тем, что уже успели предположить, остаётся промежуток. Если немедленно закрыть его догадкой, следующие данные будут подгоняться под выбранную версию. Если же точно обозначить, что известно, а что пока лишь кажется вероятным, у вас сохранится возможность увидеть несоответствие, не переписывая задним числом всю картину.\n\nВаша задача сформулирована шире, чем устранить ближайшую помеху: Стабилизировать поток помощи по клиническим приоритетам, удержать критические ресурсы и организовать безопасную смену до прибытия подкрепления. На практике это означает одновременно следить за непосредственным результатом и за тем, что этот результат позволит узнать. Быстрый шаг может принести видимое улучшение, но ухудшить сравнимость, доступность или доверие; осторожный — сохранить качество проверки, но оставить проблему без немедленного ответа. Эти соображения не равны по весу во всех обстоятельствах. Их порядок зависит от того, какие сведения вы подтвердите и какой ущерб действительно обратим.\n\nВ материалах есть три слоя: исходное состояние, первое наблюдение и объяснение, которое кто-то успел к нему приложить. Не смешивайте их. Повторно оценить нестабильных через короткий интервал: точность растёт, но персонал перегружается. Если цифры или свидетельства расходятся, полезно установить, когда и где именно началось расхождение, кто наблюдал явление напрямую и какие условия могли поменяться между проверками. Иногда спорный показатель оказывается не ложным, а неполным: он честно описывает ту точку, где был получен, но не ту, о которой спрашивает команда.\n\nВам не требуется заранее выбирать единственную стратегию на весь эпизод. В текущем пакете доступны разные типы действий: Повторно оценить приоритеты, Перераспределить бригаду, Запросить ресурсы у соседних больниц. Они дают разные виды контроля: одно может уточнить картину, другое — изменить условия, третье — выиграть время или проверить связь между двумя событиями. Выбирая, задайте себе практический вопрос: что должно стать заметно после этого шага, если ваша версия верна? И что вы увидите, если она неверна? Такой критерий превращает действие в проверку, а не просто в жест, после которого приходится надеяться на удачу.\n\nПуть вперёд может разветвиться, и у каждого направления будет собственная цена. Одно решение способно защитить непосредственную цель, но оставить неопределённость; другое — укрепить доказательства, но сузить окно для вмешательства; третье — уменьшить воздействие на окружающую систему, одновременно потребовав новой проверки. Эти различия не делают какой-либо путь правильным заранее. Важнее видеть, какую ценность вы защищаете сейчас, чем рискуете ради неё и какие признаки заставят пересмотреть план. Смена курса допустима, если вы можете объяснить, какая новая информация изменила расчёт.\n\nОглянитесь на Триажный зал, Реанимация, Штаб смены, Склад расходников. Каждая точка открывает свою часть происходящего и скрывает другую; переход между ними сам по себе может менять условия наблюдения. Не считайте схему исчерпывающей: она описывает доступные места, но не гарантирует, что все важные процессы заметны с одной позиции. Сверяйте время, источник и обстоятельства каждого сообщения. Если кто-то говорит «это было так всегда», спросите, за какой период он отвечает; если прибор показывает отклонение, уточните его рабочий диапазон и место установки. Так вы отделите стабильную закономерность от удобного, но слишком широкого обобщения.\n\nЕсть вопросы, на которые пока нельзя честно ответить. Что здесь причина, а что следствие? Действительно ли наблюдаемое изменение требует немедленного вмешательства? Кто или что понесёт последствия, если вы ошибётесь? Неопределённость не означает, что все версии одинаково вероятны; она означает, что следующая сцена должна дать материал для различения. Не превращайте каждую странность в тайный замысел и не отбрасывайте неудобную улику лишь потому, что она мешает плану. Самый убедительный поворот будет иметь смысл только тогда, когда ранние подробности позволят узнать его, а не просто удивиться ему.\n\nНачните с масштаба, который можно проверить. Запишите исходные условия, выберите один важный показатель и не меняйте сразу несколько факторов, если хотите понять, что повлияло на результат. Если вмешательство необходимо прямо сейчас, обозначьте его как временное и сохраните контрольную точку для сравнения. Если можно подождать, определите, какое именно наблюдение оправдает ожидание и сколько времени оно занимает. Это не бюрократическая осторожность: так вы не потеряете возможность отличить настоящую перемену от эффекта собственных действий.\n\nОтдельно рассмотрите направление 3: Открыть временный пункт наблюдения вне операционного блока: места освобождаются, но нужен отдельный ответственный за контроль. Оно не отменяет остальные возможности и не требует принимать весь план сразу. Спросите, какое подтверждение сделает этот шаг уместным, что останется измеримым после него и кто заметит его побочный эффект первым. Если ответ пока неизвестен, это не повод скрывать пробел: его можно превратить в условие остановки или повторной оценки.",
-    "en": "The sirens fade at the entrance, but ambulances keep arriving after a highway collision. You are the triage lead on duty: beds are scarce and staff are stretched thin. Your task is to organize care by clinical urgency\n\nA new arrival needs oxygen just as the reserve gauge dips. The team can reassess both patients before allocation or commit the cylinder now and send another clinician to find backup supply.\n\nRemember that the story had already begun before you arrived. After the crash, casualties arrive as oxygen and operating slots run short and the shift tires. This is not a backdrop or a problem that can be solved with one dramatic gesture: the conditions formed earlier, and people, objects, and processes have adapted to them. Any change will affect more than what is visible now; it may alter the routine that holds other parts of the situation together. You have authority to act, but first you need to understand what counts as normal here and who has actually verified that baseline.\n\nThe first observation belongs to a specific place: Triage bay, Resuscitation, Shift command, Supply room. It contains a detail that may look like an answer, but for now it is only a starting point. The information was gathered at different times and by different means; a gap remains between what was recorded and the explanation someone has attached to it. If you fill that gap with a guess, later evidence may be forced to fit your theory. If you mark what is known and what only seems likely, you can notice a mismatch without rewriting the whole account afterward.\n\nYour objective is broader than removing the nearest obstacle: Stabilize care using clinical priorities, protect critical resources, and organize a safe handover before reinforcements arrive. In practice, you must watch both the immediate result and what that result lets you learn. A quick intervention may produce visible improvement while weakening comparison, access, or trust; a cautious one may preserve the quality of the evidence while leaving the problem unresolved. Those concerns do not carry the same weight in every situation. Their order depends on what you confirm and on which harm can actually be reversed.\n\nThe available material has three layers: the initial conditions, the first observation, and the explanation someone has already attached to it. Keep them separate. Reassess unstable patients quickly: accuracy improves, staff load grows. If figures or accounts disagree, establish when and where the mismatch began, who witnessed the event directly, and what could have changed between checks. A disputed reading is sometimes incomplete rather than false: it may accurately describe the point where it was taken, but not the wider area the team is asking about.\n\nYou do not have to choose one strategy for the whole episode in advance. The package offers different kinds of action: Reassess triage priorities, Reassign a care team, Coordinate mutual aid. Each gives you a different kind of control: one may clarify the picture, another may change the conditions, and another may buy time or test a connection between events. Before choosing, ask a practical question: what should become visible if your theory is right? What would you see if it is wrong? That turns an action into a test, rather than a gesture followed by a hope for good luck.\n\nThe way forward can branch, and each direction has its own cost. One choice may protect the immediate objective while leaving uncertainty; another may strengthen the evidence while narrowing the window to intervene; a third may reduce impact on the surrounding system while requiring a fresh check. None is automatically correct. What matters is seeing which value you are protecting, what you risk for it, and what signs would make you reconsider. A change of course is sound when you can explain what new information changed the calculation.\n\nLook at Triage bay, Resuscitation, Shift command, Supply room. Each point reveals one part of the situation and hides another; moving between them can itself change the conditions of observation. Do not treat the map as complete: it lists available places but cannot guarantee that every important process is visible from one position. Compare the time, source, and circumstances of each report. If someone says “it has always been this way,” ask what period they mean; if an instrument shows a deviation, check its operating range and location. This helps separate a stable pattern from a convenient but overly broad conclusion.\n\nSome questions cannot yet be answered honestly. What is a cause, and what is an effect? Does the observed change truly require immediate intervention? Who or what bears the cost if you are wrong? Uncertainty does not mean every theory is equally likely; it means the next scene must give you a way to distinguish them. Do not turn every oddity into a hidden scheme, and do not discard inconvenient evidence because it disrupts a plan. A convincing turn will make sense only if earlier details let you recognize it, not merely be surprised by it.\n\nStart at a scale you can check. Record the baseline, choose one important measure, and avoid changing several factors at once if you need to know what caused the result. If action is necessary now, mark it as temporary and preserve a control point for comparison. If waiting is possible, specify what observation would justify the delay and how long it will take. This is not caution for its own sake: it preserves your ability to distinguish a real change from the effect of your own intervention.\n\nThe human side of the task will become clearer too: whose account rests on observation, who is responsible for the consequences, and who must live with the chosen arrangement after the emergency passes. Trust does not replace measurement, but it affects what people tell you and what the team can do together. Explain what you are checking, do not promise a result before it is verified, and note what changed your mind. That may preserve cooperation through disagreement; it may also show that different participants are protecting interests that cannot be reconciled.\n\nConsider approach 3 separately: Open a monitored observation area away from operating rooms: space returns, but it needs a named lead. It does not erase the other options or require you to commit to the whole plan at once. Ask what evidence would make this step appropriate, what will remain measurable afterward, and who will notice its side effect first. If the answer is not yet known, do not hide the gap; turn it into a condition for pausing or reassessing."
-  },
-  "preparedBranches": [
-    {
-      "id": "oxygen_pressure",
-      "actions": [
-        "assess",
-        "allocate",
-        "coordinate",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "Нового пациента нужно подключить к кислороду, а запас падает. Команда может переоценить обоих перед распределением или назначить баллон сейчас и отправить врача искать резерв.",
-        "en": "A new arrival needs oxygen just as the reserve gauge dips. The team can reassess both patients before allocation or commit the cylinder now and send another clinician to find backup supply."
-      },
-      "mutations": [],
-      "suggestions": [
-        {
-          "text": {
-            "ru": "Сверить обстановку и выбрать безопасный приоритет",
-            "en": "Recheck the situation and choose a safe priority"
-          }
-        },
-        {
-          "text": {
-            "ru": "Сохранить текущий план и подготовить запасной",
-            "en": "Keep the current plan and prepare a backup"
-          }
-        }
-      ]
-    },
-    {
-      "id": "turning_point_critical",
-      "when": {
-        "critical": {
-          "gte": 19
-        }
-      },
-      "actions": [
-        "assess",
-        "allocate",
-        "coordinate",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "Новому пациенту нужен кислород именно тогда, когда падает показание резервного баллона. Команда может заново оценить состояние обоих пациентов или сразу подключить баллон, отправив другого медика искать запас. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
-        "en": "An alternate route opens as circumstances shift. Continue the current approach or change priorities before events make the consequences harder to reverse."
-      },
-      "mutations": [],
-      "suggestions": [
-        {
-          "text": {
-            "ru": "Сверить обстановку и выбрать безопасный приоритет",
-            "en": "Recheck the situation and choose a safe priority"
-          }
-        },
-        {
-          "text": {
-            "ru": "Сохранить текущий план и подготовить запасной",
-            "en": "Keep the current plan and prepare a backup"
-          }
-        }
-      ]
-    },
-    {
-      "id": "authored_turn_1",
-      "minTurns": 2,
-      "actions": [
-        "assess",
-        "allocate",
-        "coordinate",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "Пострадавшие из одного автобуса подверглись разному воздействию из-за открытой задней двери; общая метка «дым» скрывает две группы риска.",
-        "en": "Passengers from one bus had different exposure because its rear door was open; a single “smoke” label hides two risk groups."
-      },
-      "mutations": [],
-      "suggestions": [],
-      "responses": {
-        "assess": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Повторно оценить приоритеты». Команда продолжает по пути: Повторно оценить нестабильных через короткий интервал: точность растёт, но персонал перегружается. Улика раскрывает поворот: Пострадавшие из одного автобуса подверглись разному воздействию из-за открытой задней двери; общая метка «дым» скрывает две группы риска.",
-            "en": "You choose “Reassess triage priorities.” The team continues along this path: Reassess unstable patients quickly: accuracy improves, staff load grows. The evidence reveals the turn: Passengers from one bus had different exposure because its rear door was open; a single “smoke” label hides two risk groups."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Повторно оценить нестабильных через короткий интервал: точность растёт, но персонал перегружается.",
-                "en": "Reassess unstable patients quickly: accuracy improves, staff load grows."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Распределить ресурс по клиническим признакам и документировать исключения: справедливость выше, решения медленнее.",
-                "en": "Allocate by clinical signs and log exceptions: fairness improves, decisions slow."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Открыть временный пункт наблюдения вне операционного блока: места освобождаются, но нужен отдельный ответственный за контроль.",
-                "en": "Open a monitored observation area away from operating rooms: space returns, but it needs a named lead."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "allocate": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Перераспределить бригаду». Команда продолжает по пути: Распределить ресурс по клиническим признакам и документировать исключения: справедливость выше, решения медленнее. Улика раскрывает поворот: Пострадавшие из одного автобуса подверглись разному воздействию из-за открытой задней двери; общая метка «дым» скрывает две группы риска.",
-            "en": "You choose “Reassign a care team.” The team continues along this path: Allocate by clinical signs and log exceptions: fairness improves, decisions slow. The evidence reveals the turn: Passengers from one bus had different exposure because its rear door was open; a single “smoke” label hides two risk groups."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Повторно оценить нестабильных через короткий интервал: точность растёт, но персонал перегружается.",
-                "en": "Reassess unstable patients quickly: accuracy improves, staff load grows."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Распределить ресурс по клиническим признакам и документировать исключения: справедливость выше, решения медленнее.",
-                "en": "Allocate by clinical signs and log exceptions: fairness improves, decisions slow."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Открыть временный пункт наблюдения вне операционного блока: места освобождаются, но нужен отдельный ответственный за контроль.",
-                "en": "Open a monitored observation area away from operating rooms: space returns, but it needs a named lead."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "coordinate": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Запросить ресурсы у соседних больниц». Команда продолжает по пути: Открыть временный пункт наблюдения вне операционного блока: места освобождаются, но нужен отдельный ответственный за контроль. Улика раскрывает поворот: Пострадавшие из одного автобуса подверглись разному воздействию из-за открытой задней двери; общая метка «дым» скрывает две группы риска.",
-            "en": "You choose “Coordinate mutual aid.” The team continues along this path: Open a monitored observation area away from operating rooms: space returns, but it needs a named lead. The evidence reveals the turn: Passengers from one bus had different exposure because its rear door was open; a single “smoke” label hides two risk groups."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Повторно оценить нестабильных через короткий интервал: точность растёт, но персонал перегружается.",
-                "en": "Reassess unstable patients quickly: accuracy improves, staff load grows."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Распределить ресурс по клиническим признакам и документировать исключения: справедливость выше, решения медленнее.",
-                "en": "Allocate by clinical signs and log exceptions: fairness improves, decisions slow."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Открыть временный пункт наблюдения вне операционного блока: места освобождаются, но нужен отдельный ответственный за контроль.",
-                "en": "Open a monitored observation area away from operating rooms: space returns, but it needs a named lead."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "free_text": {
-          "narrative": {
-            "ru": "Ваш свободный план меняет способ проверки. Команда раскрывает поворот по найденной улике: Пострадавшие из одного автобуса подверглись разному воздействию из-за открытой задней двери; общая метка «дым» скрывает две группы риска.",
-            "en": "Your free-form plan changes how the team checks the clue. The turn is revealed by the evidence: Passengers from one bus had different exposure because its rear door was open; a single “smoke” label hides two risk groups."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Повторно оценить нестабильных через короткий интервал: точность растёт, но персонал перегружается.",
-                "en": "Reassess unstable patients quickly: accuracy improves, staff load grows."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Распределить ресурс по клиническим признакам и документировать исключения: справедливость выше, решения медленнее.",
-                "en": "Allocate by clinical signs and log exceptions: fairness improves, decisions slow."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Открыть временный пункт наблюдения вне операционного блока: места освобождаются, но нужен отдельный ответственный за контроль.",
-                "en": "Open a monitored observation area away from operating rooms: space returns, but it needs a named lead."
-              },
-              "icon": "↗️"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "id": "authored_turn_2",
-      "minTurns": 4,
-      "actions": [
-        "assess",
-        "allocate",
-        "coordinate",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "Подача кислорода просела из-за теста резервного контура, а не нового массового ухудшения; инженер может подтвердить график.",
-        "en": "Oxygen pressure fell during a reserve-line test, not because every patient worsened; engineering logs can confirm it."
-      },
-      "mutations": [],
-      "suggestions": [],
-      "responses": {
-        "assess": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Повторно оценить приоритеты». Команда продолжает по пути: Повторно оценить нестабильных через короткий интервал: точность растёт, но персонал перегружается. Улика раскрывает поворот: Подача кислорода просела из-за теста резервного контура, а не нового массового ухудшения; инженер может подтвердить график.",
-            "en": "You choose “Reassess triage priorities.” The team continues along this path: Reassess unstable patients quickly: accuracy improves, staff load grows. The evidence reveals the turn: Oxygen pressure fell during a reserve-line test, not because every patient worsened; engineering logs can confirm it."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Повторно оценить нестабильных через короткий интервал: точность растёт, но персонал перегружается.",
-                "en": "Reassess unstable patients quickly: accuracy improves, staff load grows."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Распределить ресурс по клиническим признакам и документировать исключения: справедливость выше, решения медленнее.",
-                "en": "Allocate by clinical signs and log exceptions: fairness improves, decisions slow."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Открыть временный пункт наблюдения вне операционного блока: места освобождаются, но нужен отдельный ответственный за контроль.",
-                "en": "Open a monitored observation area away from operating rooms: space returns, but it needs a named lead."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "allocate": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Перераспределить бригаду». Команда продолжает по пути: Распределить ресурс по клиническим признакам и документировать исключения: справедливость выше, решения медленнее. Улика раскрывает поворот: Подача кислорода просела из-за теста резервного контура, а не нового массового ухудшения; инженер может подтвердить график.",
-            "en": "You choose “Reassign a care team.” The team continues along this path: Allocate by clinical signs and log exceptions: fairness improves, decisions slow. The evidence reveals the turn: Oxygen pressure fell during a reserve-line test, not because every patient worsened; engineering logs can confirm it."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Повторно оценить нестабильных через короткий интервал: точность растёт, но персонал перегружается.",
-                "en": "Reassess unstable patients quickly: accuracy improves, staff load grows."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Распределить ресурс по клиническим признакам и документировать исключения: справедливость выше, решения медленнее.",
-                "en": "Allocate by clinical signs and log exceptions: fairness improves, decisions slow."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Открыть временный пункт наблюдения вне операционного блока: места освобождаются, но нужен отдельный ответственный за контроль.",
-                "en": "Open a monitored observation area away from operating rooms: space returns, but it needs a named lead."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "coordinate": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Запросить ресурсы у соседних больниц». Команда продолжает по пути: Открыть временный пункт наблюдения вне операционного блока: места освобождаются, но нужен отдельный ответственный за контроль. Улика раскрывает поворот: Подача кислорода просела из-за теста резервного контура, а не нового массового ухудшения; инженер может подтвердить график.",
-            "en": "You choose “Coordinate mutual aid.” The team continues along this path: Open a monitored observation area away from operating rooms: space returns, but it needs a named lead. The evidence reveals the turn: Oxygen pressure fell during a reserve-line test, not because every patient worsened; engineering logs can confirm it."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Повторно оценить нестабильных через короткий интервал: точность растёт, но персонал перегружается.",
-                "en": "Reassess unstable patients quickly: accuracy improves, staff load grows."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Распределить ресурс по клиническим признакам и документировать исключения: справедливость выше, решения медленнее.",
-                "en": "Allocate by clinical signs and log exceptions: fairness improves, decisions slow."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Открыть временный пункт наблюдения вне операционного блока: места освобождаются, но нужен отдельный ответственный за контроль.",
-                "en": "Open a monitored observation area away from operating rooms: space returns, but it needs a named lead."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "free_text": {
-          "narrative": {
-            "ru": "Ваш свободный план меняет способ проверки. Команда раскрывает поворот по найденной улике: Подача кислорода просела из-за теста резервного контура, а не нового массового ухудшения; инженер может подтвердить график.",
-            "en": "Your free-form plan changes how the team checks the clue. The turn is revealed by the evidence: Oxygen pressure fell during a reserve-line test, not because every patient worsened; engineering logs can confirm it."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Повторно оценить нестабильных через короткий интервал: точность растёт, но персонал перегружается.",
-                "en": "Reassess unstable patients quickly: accuracy improves, staff load grows."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Распределить ресурс по клиническим признакам и документировать исключения: справедливость выше, решения медленнее.",
-                "en": "Allocate by clinical signs and log exceptions: fairness improves, decisions slow."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Открыть временный пункт наблюдения вне операционного блока: места освобождаются, но нужен отдельный ответственный за контроль.",
-                "en": "Open a monitored observation area away from operating rooms: space returns, but it needs a named lead."
-              },
-              "icon": "↗️"
-            }
-          ]
-        }
-      }
-    }
-  ]
+    "ru": "Двери приёмного покрытия открываются и закрываются без остановки, и на каждую волну машин уходит примерно сорок секунд. Свет здесь не выключали. По плитке идут следы, которые никто не успевает смыть, у стены стоят тележки, на которых уже не лежат вещи, а лежат папки. Из реанимации доносится ровный гул компрессора, и в этом гуле перестаёшь слышать одиночный голос — приходится говорить громче, а значит, отвечать на вопросы позже.\n\nВы дежурите по сортировке вторые сутки. За это время вы сделали работу, которую не видно снаружи: разложили поступающих по строкам, а не по первому впечатлению, отметили цветными метками тех, кому нужна поддержка прямо сейчас, и отвели тех, у кого внешне тяжёлое состояние оказывалось устойчивым. Вы решали, кого звать к постели, а кого оставить в очереди, и делали это быстрее, чем успевали объяснять решение родственникам, которые всё равно ждали у дверей. Прошлой ночью у вас была ротация на двадцать минут — и вы не сходили с места.\n\nАвария случилась за городом, и первые машины пришли уже без сортировки на месте: ушиб, ожог, сломанная нога, затруднённое дыхание, и всё это в разном соотношении в каждой машине. Часть пострадавших приехала одним транспортным средством, и сведений о том, кто сколько времени находился рядом с ним, до сих пор нет — бригада с места занята другим. Сейчас в зале семь человек в критическом состоянии, и никто из них не сталкивается с положением, в котором одного врача можно было бы отвлечь без последствий.\n\nРесурсы отсчитываются вслух. Кислорода хватает на часть подключений, и чем дольше идут ночные смены, тем меньше его остаётся именно там, где он нужнее. Три операционных места заняты бригадами, которые работают с того момента, как первые пострадавшие доехали сюда. Восемнадцать минут — время, которое больница называет временем до подкрепления; сколько именно людей приедет и кого они заменят, не известно никому из тех, кто сейчас в зале. Всё, что делается в эти минуты, будет либо продолжено, либо исправлено пришедшими.\n\nДве неоднозначности уже лежат на столе, и обе опасны тем, что выглядят срочными. Первая — журнал контура подачи воздуха: за ночь в нём есть пропуск записи и отметка о проверке резервной линии, а манометр показывает падение. Падение можно объяснить состоянием пациентов, а можно работой контура, и оба объяснения требуют разных действий. Вторая — общая метка «дым» у тех, кто приехал из одной машины: состояния внутри группы выглядят похоже, но одинаковая метка ничего не говорит о том, кто сколько времени дышал ею. Достать точные сведения можно, только позвонив на место.\n\nЗа пределами зала тоже есть места, которые выглядят решением, пока не проверены. Рентген-блок работает на одного человека и на одно исследование за раз, лестничный пролёт у лифтов перекрыт и охраняется, а в зоне наблюдения стоят шесть коек, свободных от расходников и почти свободных от персонала. Если открыть её как наблюдение, туда можно перевести часть пациентов, но у зоны нет назначенного ответственного, и без него она остаётся просто шестью койками.\n\nЕсть и третье, о котором говорят тише. Метки сортировки выдаются пачками, и пачки заканчиваются быстрее, чем успевает вырасти очередь; решения о приоритете держатся в основном в памяти людей, у которых нет ни секунды на то, чтобы их записать. В приёмном покрытии тем временем стоят родственники, и каждый их вопрос стоит минуты, в течение которых очередь в зале не движется. Отказать им в ответе нельзя, ответить быстро — тоже нельзя: времени нет ни у кого.\n\nСмена не отдыхала с начала приёма. Это не жалоба, а факт, с которым приходится считаться: усталость не ухудшает уже принятые решения мгновенно, она делает их хуже через десять минут после последней ошибки, и заметить это трудно, потому что все вокруг заняты. Никто не принимал решения отказать пациенту — наоборот, решение принималось всё время, но всё время кем-то, стоящим в трёх метрах от постели.\n\nВы стоите в начале смены, у края стола, где разложены списки и пачка нераспечатанных меток. Очередь у входа не заканчивается, цифры на манометре продолжают ползти вниз, в реанимации заняты все трое, а в штабе смены на телефоне висит звонок от соседней больницы, который пока никто не берёт. До подкрепления остаётся около восемнадцати минут, и за это время в зале успеет произойти ещё несколько решений — часть из них будет вашей, и все они попадут в чужую смену.",
+    "en": "The ambulance bay doors open and close without pause, and each wave of vehicles takes about forty seconds. Nobody has switched the lights off here. There are tracks on the tiles that nobody has time to wash, and along the wall stand trolleys whose surfaces no longer hold equipment but folders. From resuscitation comes the steady hum of the compressor, and inside that hum a single voice stops being audible — you have to talk louder, which means you answer questions later.\n\nYou have the triage desk for a second night running. In that time you have done work nobody sees from outside: you sorted arrivals by what you could observe rather than by first impression, marked with colour tags those who needed support immediately, and stepped back from the patients whose alarming appearance turned out to be stable. You decided who to call to a bedside and who to leave in the queue, and you decided faster than you could explain the decision to relatives who waited by the doors anyway. Last night you had a twenty-minute rotation scheduled, and you did not leave your place.\n\nThe crash happened outside the city, and the first vehicles arrived already unsorted: bruising, burns, a broken leg, laboured breathing, in a different mix in each vehicle. Some casualties came in a single transport, and there is still no record of who stood near it for how long — the crew at the scene is occupied with something else. Seven people in the bay are in critical condition right now, and not one of them is in a situation where a single clinician can be called away without consequences.\n\nSupplies are being counted aloud. There is enough oxygen for part of the demand, and the longer the night runs, the less of it remains where it is most needed. Three operating slots are held by teams that have been working since the first casualties were brought in. Eighteen minutes is what the hospital calls time to relief; how many people will actually arrive, and whom they will replace, is known to nobody in that bay. Whatever is done in those minutes will either be carried on or corrected by whoever comes in.\n\nTwo ambiguities are already on the table, and both are dangerous because they look urgent. The first is the air supply log: there is a gap in last night's entries and a note about testing the reserve line, while the gauge shows a fall. The fall can be explained by the patients or by the line, and each explanation demands different actions. The second is the shared smoke label on everyone who came from one vehicle: the conditions inside the group look alike, but a shared label says nothing about who breathed it for how long. The only way to get exact figures is to call the scene.\n\nThere is space outside the bay that looks like a solution until it is checked. The imaging suite serves one patient and one study at a time, the transfer stairwell by the lifts is closed off and guarded, and the observation area has six beds free of consumables and almost free of staff. Open it for observation and part of the patients can move there, but the area has no named lead, and without one it stays six beds.\n\nThere is a third, discussed more quietly. Triage tags are handed out by the packet, and the packets run out faster than the queue grows; priority decisions are held mostly in the memory of people who have no second to write them down. Meanwhile relatives are standing in the bay, and every question they ask costs a minute during which the queue inside does not move. You cannot refuse them an answer, and you cannot answer quickly either: nobody has the time.\n\nThe shift has not rested since arrivals began. That is not a complaint but a figure you have to plan around: fatigue does not spoil a decision the moment it is made, it spoils the ones made ten minutes later, and that is hard to notice because everyone around you is busy. Nobody has decided to withhold care from a patient — on the contrary, the decision is being made continuously, and it is always being made by someone standing three metres from a bedside.\n\nYou are standing at the start of the shift at the edge of the table where the lists lie and a packet of unissued tags has been opened. The queue at the entrance does not end, the figures on the gauge keep sliding down, all three resuscitation beds are taken, and in shift command a call from a nearby hospital is going unanswered. About eighteen minutes remain until relief, and in that time several more decisions will be made in that bay — some of them yours, and every one of them will arrive in someone else's shift."
+  }
 }

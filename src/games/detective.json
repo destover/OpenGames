@@ -19,7 +19,6 @@
       "trust": 20,
       "clues": 0,
       "lead": "На окне найден отпечаток, которого нет в архиве.",
-      "ended": false,
       "location": "window",
       "goalStatus": "active"
     }
@@ -41,6 +40,22 @@
     "deduce": {
       "label": "Сформулировать гипотезу",
       "icon": "🧩"
+    },
+    "archive": {
+      "label": "Сверить отпечаток с архивом",
+      "icon": "🗄️"
+    },
+    "gallery_log": {
+      "label": "Сверить журнал зала",
+      "icon": "📋"
+    },
+    "transfer": {
+      "label": "Проверить карточку переноса",
+      "icon": "🗃️"
+    },
+    "seal": {
+      "label": "Оградить место и снять отпечатки",
+      "icon": "🚧"
     }
   },
   "ui": {
@@ -68,7 +83,11 @@
         "free_text": "Свободное действие",
         "inspect": "Изучить улику",
         "question": "Допросить свидетеля",
-        "deduce": "Сформулировать гипотезу"
+        "deduce": "Сформулировать гипотезу",
+        "archive": "Сверить отпечаток с архивом",
+        "gallery_log": "Сверить журнал зала",
+        "transfer": "Проверить карточку переноса",
+        "seal": "Оградить место и снять отпечатки"
       },
       "manifest": {
         "title": "Тень на стекле",
@@ -95,7 +114,11 @@
         "free_text": "Free action",
         "inspect": "Inspect clue",
         "question": "Question witness",
-        "deduce": "Form a hypothesis"
+        "deduce": "Form a hypothesis",
+        "archive": "Check the print against the archive",
+        "gallery_log": "Cross-check the gallery log",
+        "transfer": "Trace the transfer card",
+        "seal": "Secure the scene and lift prints"
       },
       "manifest": {
         "title": "Shadow on Glass",
@@ -138,6 +161,22 @@
       "desk": {
         "ru": "Стол расследования",
         "en": "Investigation desk"
+      },
+      "gallery": {
+        "ru": "Зал экспозиции",
+        "en": "Gallery hall"
+      },
+      "workshop": {
+        "ru": "Мастерская реставратора",
+        "en": "Conservator's workshop"
+      },
+      "service": {
+        "ru": "Служебный коридор",
+        "en": "Service corridor"
+      },
+      "booth": {
+        "ru": "Пост охраны",
+        "en": "Guard booth"
       }
     }
   },
@@ -158,14 +197,20 @@
         },
         "beats": {
           "ru": [
-            "Ночью в музее пропадает небольшая стеклянная работа; окно цело, но на защитном стекле остаётся отпечаток.",
-            "Свидетели расходятся во времени, а журнал зала записан до автоматической смены подсветки.",
-            "Нужно восстановить цепочку доступа и объявить вывод лишь после независимой проверки."
+            "Ночь в музее, витрина в зале открыта, но небольшая стеклянная работа с неё исчезла; окно цело, на защитном стекле остался отпечаток.",
+            "Первое, что требует проверки, — на какой стороне панели лежит отпечаток и совпадает ли рисунок с архивом; отсутствие записи не является именем.",
+            "Свидетели расходятся во времени, а журнал зала заканчивается до автоматической смены подсветки, и в этом промежутке никто не записан.",
+            "Реконструкция доступа упирается в служебный коридор у мастерской, где камеры и свет не покрывают один короткий участок.",
+            "Обнаруживается незакрытая карточка переноса без подписи получателя, и версия о ночном проникновении слабеет, но не исчезает сама.",
+            "Вывод объявляется только когда версия держится на двух независимых источниках и не противоречит ни одному подтверждённому факту."
           ],
           "en": [
-            "A small glass work disappears overnight; the window is intact, but a print remains on the protective pane.",
-            "Witnesses disagree on timing, and the gallery log predates the automatic lighting change.",
-            "Reconstruct access and publish no conclusion before independent verification."
+            "Museum night, the case in the hall stands open, and a small glass work is gone from it; the window is intact and a print remains on the protective pane.",
+            "The first thing to verify is which side of the pane carries the print and whether the pattern matches the archive; the absence of a record is not a name.",
+            "Witnesses disagree about the timing, and the gallery log stops before the automatic lighting change, with nobody recorded in that gap.",
+            "The reconstruction of access runs into the service corridor by the workshop, where cameras and light do not cover one short stretch.",
+            "An unclosed transfer card with no recipient signature turns up, and the night-entry theory weakens without dismissing itself.",
+            "A conclusion is announced only when it rests on two independent sources and contradicts no confirmed fact."
           ]
         },
         "twists": {
@@ -180,14 +225,16 @@
         },
         "paths": {
           "ru": [
-            "Сверить журналы и отложить вывод: точность выше, но музей дольше не может объяснить отсутствие работы.",
-            "Спросить смотрителя о протоколе переноса без обвинений: сотрудничество сохраняется, личные мотивы остаются неизвестны.",
-            "Проверить маршрут камер и освещения: реконструкция яснее, но слепая зона остаётся до ручного осмотра."
+            "Сверить журналы и отложить вывод. Предпосылка: журнал зала, пост охраны и архив отпечатков доступны и сходятся хотя бы по времени. Новое: становится видна точка, где учёт перестал совпадать с событиями. Немедленное последствие: версия о ночном проникновении лишается опоры. Отложенное: музей дольше не может объяснить отсутствие работы, и вопросы придут к тем, кто задержал вывод. Риск: затянуть до утра и потерять доверие зала. Компромисс: точность против скорости. Точки пересечения: с решением опираться на показания — расхождение во времени становится проверяемым; с решением идти в мастерскую — журнал даёт время, а не имя.",
+            "Спросить смотрителя о протоколе переноса без обвинений. Предпосылка: смотритель не считает себя подозреваемым и говорит охотно. Новое: всплывает порядок вещей, который в музее считается обычным, включая то, что карточка может остаться незакрытой. Немедленное последствие: доверие растёт или падает в зависимости от тона. Отложенное: у свидетеля появляется причина пересмотреть свои прежние показания или затвердить их. Риск: спросить не вовремя и получить отказ. Компромисс: мягкость против прямого вопроса. Точки пересечения: с проверкой журнала — ручная запись дополняет автоматическую; с версией о карантине — снимается противоречие или подтверждается.",
+            "Проверить маршрут камер и освещения. Предпосылка: схема камер и расписание подсветки доступны, а записи не перезаписаны. Новое: участок возле служебной двери оказывается вне уверенного обзора. Немедленное последствие: реконструкция становится яснее и одновременно ограниченнее. Отложенное: до ручного осмотра слепая зона остаётся местом, где всё возможно. Риск: опереться на кадры и пропустить, что света там вовсе не было. Компромисс: техника вместо ног. Точки пересечения: с гипотезой о проникновении — она требует либо подтверждения, либо снятия; с интервью — у смотрителя появляется причина спросить, кто гасил свет.",
+            "Зафиксировать место и не оставлять следов своим присутствием. Предпосылка: сцена ещё не растоптана и есть чем снять отпечатки. Новое: часть версий отпадает сама, потому что проверка больше не может быть проведена. Немедленное последствие: ни одна догадка не будет опровергнута или подтверждена заново. Отложенное: к утру сцена потеряет вид и станет местом с историей. Риск: упустить время и оставить материал без проверки. Компромисс: сохранность улики против числа версий. Точки пересечения: с любым дальнейшим шагом — надёжность опоры и количество доступных объяснений меняются навсегда."
           ],
           "en": [
-            "Cross-check logs and defer conclusions: accuracy improves, but the museum cannot explain the absence yet.",
-            "Ask the attendant about transfer procedure without accusation: cooperation survives, motives stay private.",
-            "Map camera and light paths: reconstruction improves, but a blind spot remains until a manual check."
+            "Cross-check the logs and defer the conclusion. Preconditions: the gallery log, the guard post and the print archive are available and at least agree on timing. What it brings: the point where the record stopped matching events becomes visible. Immediate consequence: the night-entry theory loses its support. Deferred consequence: the museum cannot explain the absence for longer, and the delay will be asked of whoever held the conclusion back. Risk: running until morning and losing the hall's trust. Tradeoff: accuracy against speed. Crossing points: with the decision to rely on testimony the disagreement in timing becomes testable; with the decision to go to the workshop the log yields a time, not a name.",
+            "Ask the attendant about the transfer procedure without accusation. Preconditions: the attendant does not yet count himself a suspect and speaks freely. What it brings: the museum's ordinary order surfaces, including the fact that a card may be left unclosed. Immediate consequence: trust rises or falls depending on tone. Deferred consequence: the witness gains a reason to revisit earlier statements or to stand by them. Risk: asking at the wrong moment and getting refused. Tradeoff: softness against a direct question. Crossing points: with the log check a manual entry complements the automatic one; with the quarantine theory a contradiction is removed or confirmed.",
+            "Map the camera and lighting route. Preconditions: the camera layout and the lighting schedule are available and the recordings were not overwritten. What it brings: the stretch by the service door turns out to sit outside reliable coverage. Immediate consequence: the reconstruction gets clearer and narrower at once. Deferred consequence: until someone walks it by hand, the blind spot remains the place where anything is possible. Risk: leaning on footage and missing that there was no light there at all. Tradeoff: technology instead of feet. Crossing points: with the intrusion hypothesis it must be either supported or dropped; with the interview it gives the attendant a reason to ask who switched the lights off.",
+            "Fix the scene and stop adding traces of your own. Preconditions: the scene is not yet walked through and there is a way to lift prints. What it brings: part of the versions drop away by themselves, because the check can no longer be performed. Immediate consequence: no guess will be disproved or reconfirmed. Deferred consequence: by morning the scene will have lost its appearance and become a place with a history. Risk: losing time and leaving the material unverified. Tradeoff: keeping the evidence against the number of versions. Crossing points: with every later step the reliability of the footing and the number of available explanations change for good."
           ]
         }
       }
@@ -213,6 +260,18 @@
         {
           "id": "case_board",
           "text": "Стол расследования предназначен для сопоставления улик и версий."
+        },
+        {
+          "id": "empty_case",
+          "text": "В зале экспозиции витрина стоит открытой, а небольшая стеклянная работы на прежнем месте нет."
+        },
+        {
+          "id": "log_gap",
+          "text": "Журнал зала заканчивается до автоматической смены подсветки; в промежутке нет ни одной записи."
+        },
+        {
+          "id": "open_card",
+          "text": "В журнале переносов есть карточка, оставленная без подписи получателя."
         }
       ]
     }
@@ -244,7 +303,11 @@
       "location": [
         "window",
         "witness",
-        "desk"
+        "desk",
+        "gallery",
+        "workshop",
+        "service",
+        "booth"
       ],
       "goalStatus": [
         "active",
@@ -260,7 +323,12 @@
     "instructions": [
       "Действия игрока не ограничены списком кнопок или таблицей переходов; предложенные варианты служат лишь подсказками.",
       "Не перемещай персонажа и не меняй место действия без описанной причины и непрерывного пути.",
+      "Сохраняй причинно-следственную непрерывность: каждое изменение числа улик, доверия, главы и зацепки должно следовать из описанного наблюдения, показания или действия.",
+      "Не повторяй уже показанное по существу: одна и та же улика не докладывается дважды, а один и тот же вопрос без новых оснований не даёт нового ответа.",
       "Изменяй состояние только в пределах физических законов, подтверждённых фактов и ограничений пакета.",
+      "Не превращай догадку в факт: отсутствие в архиве, молчание свидетеля или странный след остаются тем, чем они являются, пока не описана проверка, которая это меняет.",
+      "Не выдавай отвергнутое за совершившееся: опровергнутая свидетелем, снятая журналом или отброшенная самим игроком версия остаётся в истории как отвергнутая и не переписывается под новый вывод.",
+      "Доверие повышается только за конкретное корректное действие с конкретным человеком; оно не даёт гарантии правдивости и не должно расти вместе с числом улик.",
       "Не завершай цель по одному заявлению или догадке; для финала нужны описанные и подтверждённые условия."
     ],
     "stateChangeRules": [
@@ -279,338 +347,7 @@
     ]
   },
   "opening": {
-    "ru": "Дождь барабанит по окнам старого дома, когда вас вызывают туда перед самым рассветом. Хозяйка дома, Елена Ветрова, исчезла после вечернего приёма; двери заперты изнутри, гости дают противоречивые показания. На запотевшем стекле — свежий отпечаток, которого нет в архиве. Вы ведёте расследование: сначала отделите то, что известно, от того, что лишь кажется правдой\n\nСвидетель замечает диктофон и обрывает фразу. В прежних показаниях есть несоответствие журналу комнаты: нажим может оборвать разговор, а предъявленная запись даст ещё минуту.\n\nЗдесь важно помнить, что к моменту вашего появления история уже началась. Ночной городской музей, отпечаток на окне, свидетели и проверка версий. Это не отвлечённый фон и не задача, которую можно решить одним эффектным жестом: исходные условия складывались раньше, а люди, объекты и процессы успели приспособиться к ним. Поэтому любое изменение затронет не только то, что видно сейчас, но и привычный порядок, на котором держатся остальные части ситуации. Вы входите в неё с правом действовать, однако сначала нужно понять, что именно считается нормой и кто подтвердил эту норму.\n\nПервое наблюдение относится к конкретному месту: Окно музея, Место допроса, Стол расследования. В нём есть заметная деталь, которую легко принять за готовый ответ, но пока это только отправная точка. Сведения получены не одновременно и не одним способом; между тем, что зафиксировано, и тем, что уже успели предположить, остаётся промежуток. Если немедленно закрыть его догадкой, следующие данные будут подгоняться под выбранную версию. Если же точно обозначить, что известно, а что пока лишь кажется вероятным, у вас сохранится возможность увидеть несоответствие, не переписывая задним числом всю картину.\n\nВаша задача сформулирована шире, чем устранить ближайшую помеху: Связать улику с показаниями и сформулировать обоснованную гипотезу. На практике это означает одновременно следить за непосредственным результатом и за тем, что этот результат позволит узнать. Быстрый шаг может принести видимое улучшение, но ухудшить сравнимость, доступность или доверие; осторожный — сохранить качество проверки, но оставить проблему без немедленного ответа. Эти соображения не равны по весу во всех обстоятельствах. Их порядок зависит от того, какие сведения вы подтвердите и какой ущерб действительно обратим.\n\nВ материалах есть три слоя: исходное состояние, первое наблюдение и объяснение, которое кто-то успел к нему приложить. Не смешивайте их. Сверить журналы и отложить вывод: точность выше, но музей дольше не может объяснить отсутствие работы. Если цифры или свидетельства расходятся, полезно установить, когда и где именно началось расхождение, кто наблюдал явление напрямую и какие условия могли поменяться между проверками. Иногда спорный показатель оказывается не ложным, а неполным: он честно описывает ту точку, где был получен, но не ту, о которой спрашивает команда.\n\nВам не требуется заранее выбирать единственную стратегию на весь эпизод. В текущем пакете доступны разные типы действий: Изучить улику, Допросить свидетеля, Сформулировать гипотезу. Они дают разные виды контроля: одно может уточнить картину, другое — изменить условия, третье — выиграть время или проверить связь между двумя событиями. Выбирая, задайте себе практический вопрос: что должно стать заметно после этого шага, если ваша версия верна? И что вы увидите, если она неверна? Такой критерий превращает действие в проверку, а не просто в жест, после которого приходится надеяться на удачу.\n\nПуть вперёд может разветвиться, и у каждого направления будет собственная цена. Одно решение способно защитить непосредственную цель, но оставить неопределённость; другое — укрепить доказательства, но сузить окно для вмешательства; третье — уменьшить воздействие на окружающую систему, одновременно потребовав новой проверки. Эти различия не делают какой-либо путь правильным заранее. Важнее видеть, какую ценность вы защищаете сейчас, чем рискуете ради неё и какие признаки заставят пересмотреть план. Смена курса допустима, если вы можете объяснить, какая новая информация изменила расчёт.\n\nОглянитесь на Окно музея, Место допроса, Стол расследования. Каждая точка открывает свою часть происходящего и скрывает другую; переход между ними сам по себе может менять условия наблюдения. Не считайте схему исчерпывающей: она описывает доступные места, но не гарантирует, что все важные процессы заметны с одной позиции. Сверяйте время, источник и обстоятельства каждого сообщения. Если кто-то говорит «это было так всегда», спросите, за какой период он отвечает; если прибор показывает отклонение, уточните его рабочий диапазон и место установки. Так вы отделите стабильную закономерность от удобного, но слишком широкого обобщения.\n\nЕсть вопросы, на которые пока нельзя честно ответить. Что здесь причина, а что следствие? Действительно ли наблюдаемое изменение требует немедленного вмешательства? Кто или что понесёт последствия, если вы ошибётесь? Неопределённость не означает, что все версии одинаково вероятны; она означает, что следующая сцена должна дать материал для различения. Не превращайте каждую странность в тайный замысел и не отбрасывайте неудобную улику лишь потому, что она мешает плану. Самый убедительный поворот будет иметь смысл только тогда, когда ранние подробности позволят узнать его, а не просто удивиться ему.\n\nНачните с масштаба, который можно проверить. Запишите исходные условия, выберите один важный показатель и не меняйте сразу несколько факторов, если хотите понять, что повлияло на результат. Если вмешательство необходимо прямо сейчас, обозначьте его как временное и сохраните контрольную точку для сравнения. Если можно подождать, определите, какое именно наблюдение оправдает ожидание и сколько времени оно занимает. Это не бюрократическая осторожность: так вы не потеряете возможность отличить настоящую перемену от эффекта собственных действий.\n\nПостепенно прояснится и человеческая сторона задачи: чьи объяснения опираются на наблюдения, кто отвечает за последствия и кому придётся жить с выбранным порядком после того, как срочность спадёт. Доверие здесь не заменяет измерения, но влияет на то, какие сведения вам сообщат и какие шаги команда сможет выполнить вместе. Объясняйте, что проверяете, не обещайте результата раньше проверки и отмечайте, что именно изменило ваше мнение. Иногда это позволит сохранить сотрудничество даже при разногласии; иногда станет ясно, что разные участники защищают несовместимые интересы.\n\nОтдельно рассмотрите направление 3: Проверить маршрут камер и освещения: реконструкция яснее, но слепая зона остаётся до ручного осмотра. Оно не отменяет остальные возможности и не требует принимать весь план сразу. Спросите, какое подтверждение сделает этот шаг уместным, что останется измеримым после него и кто заметит его побочный эффект первым. Если ответ пока неизвестен, это не повод скрывать пробел: его можно превратить в условие остановки или повторной оценки.",
-    "en": "Rain drums against the old house windows when you are summoned just before dawn. The host, Elena Vetrova, vanished after an evening gathering; the doors were locked from within, and the guests disagree about what happened. On the fogged glass is a fresh print absent from the archive. You are leading the investigation: first separate what is known from what only seems true\n\nThe witness notices the recorder and stops mid-sentence. A detail in the earlier statement contradicts the room ledger; pressing now may close the conversation, while showing the discrepancy could earn another minute.\n\nRemember that the story had already begun before you arrived. A small glass work disappears overnight; the window is intact, but a print remains on the protective pane. This is not a backdrop or a problem that can be solved with one dramatic gesture: the conditions formed earlier, and people, objects, and processes have adapted to them. Any change will affect more than what is visible now; it may alter the routine that holds other parts of the situation together. You have authority to act, but first you need to understand what counts as normal here and who has actually verified that baseline.\n\nThe first observation belongs to a specific place: Museum window, Interview area, Investigation desk. It contains a detail that may look like an answer, but for now it is only a starting point. The information was gathered at different times and by different means; a gap remains between what was recorded and the explanation someone has attached to it. If you fill that gap with a guess, later evidence may be forced to fit your theory. If you mark what is known and what only seems likely, you can notice a mismatch without rewriting the whole account afterward.\n\nYour objective is broader than removing the nearest obstacle: Connect the evidence to witness testimony and form a supported hypothesis. In practice, you must watch both the immediate result and what that result lets you learn. A quick intervention may produce visible improvement while weakening comparison, access, or trust; a cautious one may preserve the quality of the evidence while leaving the problem unresolved. Those concerns do not carry the same weight in every situation. Their order depends on what you confirm and on which harm can actually be reversed.\n\nThe available material has three layers: the initial conditions, the first observation, and the explanation someone has already attached to it. Keep them separate. Cross-check logs and defer conclusions: accuracy improves, but the museum cannot explain the absence yet. If figures or accounts disagree, establish when and where the mismatch began, who witnessed the event directly, and what could have changed between checks. A disputed reading is sometimes incomplete rather than false: it may accurately describe the point where it was taken, but not the wider area the team is asking about.\n\nYou do not have to choose one strategy for the whole episode in advance. The package offers different kinds of action: Inspect clue, Question witness, Form a hypothesis. Each gives you a different kind of control: one may clarify the picture, another may change the conditions, and another may buy time or test a connection between events. Before choosing, ask a practical question: what should become visible if your theory is right? What would you see if it is wrong? That turns an action into a test, rather than a gesture followed by a hope for good luck.\n\nThe way forward can branch, and each direction has its own cost. One choice may protect the immediate objective while leaving uncertainty; another may strengthen the evidence while narrowing the window to intervene; a third may reduce impact on the surrounding system while requiring a fresh check. None is automatically correct. What matters is seeing which value you are protecting, what you risk for it, and what signs would make you reconsider. A change of course is sound when you can explain what new information changed the calculation.\n\nLook at Museum window, Interview area, Investigation desk. Each point reveals one part of the situation and hides another; moving between them can itself change the conditions of observation. Do not treat the map as complete: it lists available places but cannot guarantee that every important process is visible from one position. Compare the time, source, and circumstances of each report. If someone says “it has always been this way,” ask what period they mean; if an instrument shows a deviation, check its operating range and location. This helps separate a stable pattern from a convenient but overly broad conclusion.\n\nSome questions cannot yet be answered honestly. What is a cause, and what is an effect? Does the observed change truly require immediate intervention? Who or what bears the cost if you are wrong? Uncertainty does not mean every theory is equally likely; it means the next scene must give you a way to distinguish them. Do not turn every oddity into a hidden scheme, and do not discard inconvenient evidence because it disrupts a plan. A convincing turn will make sense only if earlier details let you recognize it, not merely be surprised by it.\n\nStart at a scale you can check. Record the baseline, choose one important measure, and avoid changing several factors at once if you need to know what caused the result. If action is necessary now, mark it as temporary and preserve a control point for comparison. If waiting is possible, specify what observation would justify the delay and how long it will take. This is not caution for its own sake: it preserves your ability to distinguish a real change from the effect of your own intervention.\n\nThe human side of the task will become clearer too: whose account rests on observation, who is responsible for the consequences, and who must live with the chosen arrangement after the emergency passes. Trust does not replace measurement, but it affects what people tell you and what the team can do together. Explain what you are checking, do not promise a result before it is verified, and note what changed your mind. That may preserve cooperation through disagreement; it may also show that different participants are protecting interests that cannot be reconciled.\n\nConsider approach 3 separately: Map camera and light paths: reconstruction improves, but a blind spot remains until a manual check. It does not erase the other options or require you to commit to the whole plan at once. Ask what evidence would make this step appropriate, what will remain measurable afterward, and who will notice its side effect first. If the answer is not yet known, do not hide the gap; turn it into a condition for pausing or reassessing."
-  },
-  "preparedBranches": [
-    {
-      "id": "contradictory_witness",
-      "actions": [
-        "inspect",
-        "question",
-        "deduce",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "Свидетель замечает диктофон и обрывает фразу. В прежних показаниях есть несоответствие журналу комнаты: нажим может оборвать разговор, а предъявленная запись даст ещё минуту.",
-        "en": "The witness notices the recorder and stops mid-sentence. A detail in the earlier statement contradicts the room ledger; pressing now may close the conversation, while showing the discrepancy could earn another minute."
-      },
-      "mutations": [],
-      "suggestions": [
-        {
-          "text": {
-            "ru": "Сопоставить показания с журналом",
-            "en": "Rebalance effort and check the consequences"
-          }
-        },
-        {
-          "text": {
-            "ru": "Убрать диктофон и спросить о детали",
-            "en": "Keep the current plan and prepare a backup"
-          }
-        }
-      ]
-    },
-    {
-      "id": "turning_point_chapter",
-      "when": {
-        "chapter": {
-          "gte": 237
-        }
-      },
-      "actions": [
-        "inspect",
-        "question",
-        "deduce",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "Свидетель замечает диктофон и замолкает на полуслове. Деталь из прежних показаний не совпадает с журналом комнаты: если настаивать, разговор может оборваться, а предъявленное расхождение, возможно, даст ещё минуту. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
-        "en": "An alternate route opens as circumstances shift. Continue the current approach or change priorities before events make the consequences harder to reverse."
-      },
-      "mutations": [],
-      "suggestions": [
-        {
-          "text": {
-            "ru": "Сопоставить показания с журналом",
-            "en": "Rebalance effort and check the consequences"
-          }
-        },
-        {
-          "text": {
-            "ru": "Убрать диктофон и спросить о детали",
-            "en": "Keep the current plan and prepare a backup"
-          }
-        }
-      ]
-    },
-    {
-      "id": "authored_turn_1",
-      "minTurns": 2,
-      "actions": [
-        "inspect",
-        "question",
-        "deduce",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "Отпечаток находится на внутренней панели защитного стекла; это след реставратора, не проникновения.",
-        "en": "The print is on the inner protective pane: a conservator touched it, not an intruder."
-      },
-      "mutations": [],
-      "suggestions": [],
-      "responses": {
-        "inspect": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Изучить улику». Команда продолжает по пути: Сверить журналы и отложить вывод: точность выше, но музей дольше не может объяснить отсутствие работы. Улика раскрывает поворот: Отпечаток находится на внутренней панели защитного стекла; это след реставратора, не проникновения.",
-            "en": "You choose “Inspect clue.” The team continues along this path: Cross-check logs and defer conclusions: accuracy improves, but the museum cannot explain the absence yet. The evidence reveals the turn: The print is on the inner protective pane: a conservator touched it, not an intruder."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Сверить журналы и отложить вывод: точность выше, но музей дольше не может объяснить отсутствие работы.",
-                "en": "Cross-check logs and defer conclusions: accuracy improves, but the museum cannot explain the absence yet."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Спросить смотрителя о протоколе переноса без обвинений: сотрудничество сохраняется, личные мотивы остаются неизвестны.",
-                "en": "Ask the attendant about transfer procedure without accusation: cooperation survives, motives stay private."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Проверить маршрут камер и освещения: реконструкция яснее, но слепая зона остаётся до ручного осмотра.",
-                "en": "Map camera and light paths: reconstruction improves, but a blind spot remains until a manual check."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "question": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Допросить свидетеля». Команда продолжает по пути: Спросить смотрителя о протоколе переноса без обвинений: сотрудничество сохраняется, личные мотивы остаются неизвестны. Улика раскрывает поворот: Отпечаток находится на внутренней панели защитного стекла; это след реставратора, не проникновения.",
-            "en": "You choose “Question witness.” The team continues along this path: Ask the attendant about transfer procedure without accusation: cooperation survives, motives stay private. The evidence reveals the turn: The print is on the inner protective pane: a conservator touched it, not an intruder."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Сверить журналы и отложить вывод: точность выше, но музей дольше не может объяснить отсутствие работы.",
-                "en": "Cross-check logs and defer conclusions: accuracy improves, but the museum cannot explain the absence yet."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Спросить смотрителя о протоколе переноса без обвинений: сотрудничество сохраняется, личные мотивы остаются неизвестны.",
-                "en": "Ask the attendant about transfer procedure without accusation: cooperation survives, motives stay private."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Проверить маршрут камер и освещения: реконструкция яснее, но слепая зона остаётся до ручного осмотра.",
-                "en": "Map camera and light paths: reconstruction improves, but a blind spot remains until a manual check."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "deduce": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Сформулировать гипотезу». Команда продолжает по пути: Проверить маршрут камер и освещения: реконструкция яснее, но слепая зона остаётся до ручного осмотра. Улика раскрывает поворот: Отпечаток находится на внутренней панели защитного стекла; это след реставратора, не проникновения.",
-            "en": "You choose “Form a hypothesis.” The team continues along this path: Map camera and light paths: reconstruction improves, but a blind spot remains until a manual check. The evidence reveals the turn: The print is on the inner protective pane: a conservator touched it, not an intruder."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Сверить журналы и отложить вывод: точность выше, но музей дольше не может объяснить отсутствие работы.",
-                "en": "Cross-check logs and defer conclusions: accuracy improves, but the museum cannot explain the absence yet."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Спросить смотрителя о протоколе переноса без обвинений: сотрудничество сохраняется, личные мотивы остаются неизвестны.",
-                "en": "Ask the attendant about transfer procedure without accusation: cooperation survives, motives stay private."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Проверить маршрут камер и освещения: реконструкция яснее, но слепая зона остаётся до ручного осмотра.",
-                "en": "Map camera and light paths: reconstruction improves, but a blind spot remains until a manual check."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "free_text": {
-          "narrative": {
-            "ru": "Ваш свободный план меняет способ проверки. Команда раскрывает поворот по найденной улике: Отпечаток находится на внутренней панели защитного стекла; это след реставратора, не проникновения.",
-            "en": "Your free-form plan changes how the team checks the clue. The turn is revealed by the evidence: The print is on the inner protective pane: a conservator touched it, not an intruder."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Сверить журналы и отложить вывод: точность выше, но музей дольше не может объяснить отсутствие работы.",
-                "en": "Cross-check logs and defer conclusions: accuracy improves, but the museum cannot explain the absence yet."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Спросить смотрителя о протоколе переноса без обвинений: сотрудничество сохраняется, личные мотивы остаются неизвестны.",
-                "en": "Ask the attendant about transfer procedure without accusation: cooperation survives, motives stay private."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Проверить маршрут камер и освещения: реконструкция яснее, но слепая зона остаётся до ручного осмотра.",
-                "en": "Map camera and light paths: reconstruction improves, but a blind spot remains until a manual check."
-              },
-              "icon": "↗️"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "id": "authored_turn_2",
-      "minTurns": 4,
-      "actions": [
-        "inspect",
-        "question",
-        "deduce",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "Экспонат временно убрали в карантин после микротрещины, но перемещение не попало в ночной список из-за незакрытой карточки передачи.",
-        "en": "The piece was moved to quarantine after a hairline crack, but the transfer card was never closed on the night list."
-      },
-      "mutations": [],
-      "suggestions": [],
-      "responses": {
-        "inspect": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Изучить улику». Команда продолжает по пути: Сверить журналы и отложить вывод: точность выше, но музей дольше не может объяснить отсутствие работы. Улика раскрывает поворот: Экспонат временно убрали в карантин после микротрещины, но перемещение не попало в ночной список из-за незакрытой карточки передачи.",
-            "en": "You choose “Inspect clue.” The team continues along this path: Cross-check logs and defer conclusions: accuracy improves, but the museum cannot explain the absence yet. The evidence reveals the turn: The piece was moved to quarantine after a hairline crack, but the transfer card was never closed on the night list."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Сверить журналы и отложить вывод: точность выше, но музей дольше не может объяснить отсутствие работы.",
-                "en": "Cross-check logs and defer conclusions: accuracy improves, but the museum cannot explain the absence yet."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Спросить смотрителя о протоколе переноса без обвинений: сотрудничество сохраняется, личные мотивы остаются неизвестны.",
-                "en": "Ask the attendant about transfer procedure without accusation: cooperation survives, motives stay private."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Проверить маршрут камер и освещения: реконструкция яснее, но слепая зона остаётся до ручного осмотра.",
-                "en": "Map camera and light paths: reconstruction improves, but a blind spot remains until a manual check."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "question": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Допросить свидетеля». Команда продолжает по пути: Спросить смотрителя о протоколе переноса без обвинений: сотрудничество сохраняется, личные мотивы остаются неизвестны. Улика раскрывает поворот: Экспонат временно убрали в карантин после микротрещины, но перемещение не попало в ночной список из-за незакрытой карточки передачи.",
-            "en": "You choose “Question witness.” The team continues along this path: Ask the attendant about transfer procedure without accusation: cooperation survives, motives stay private. The evidence reveals the turn: The piece was moved to quarantine after a hairline crack, but the transfer card was never closed on the night list."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Сверить журналы и отложить вывод: точность выше, но музей дольше не может объяснить отсутствие работы.",
-                "en": "Cross-check logs and defer conclusions: accuracy improves, but the museum cannot explain the absence yet."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Спросить смотрителя о протоколе переноса без обвинений: сотрудничество сохраняется, личные мотивы остаются неизвестны.",
-                "en": "Ask the attendant about transfer procedure without accusation: cooperation survives, motives stay private."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Проверить маршрут камер и освещения: реконструкция яснее, но слепая зона остаётся до ручного осмотра.",
-                "en": "Map camera and light paths: reconstruction improves, but a blind spot remains until a manual check."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "deduce": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Сформулировать гипотезу». Команда продолжает по пути: Проверить маршрут камер и освещения: реконструкция яснее, но слепая зона остаётся до ручного осмотра. Улика раскрывает поворот: Экспонат временно убрали в карантин после микротрещины, но перемещение не попало в ночной список из-за незакрытой карточки передачи.",
-            "en": "You choose “Form a hypothesis.” The team continues along this path: Map camera and light paths: reconstruction improves, but a blind spot remains until a manual check. The evidence reveals the turn: The piece was moved to quarantine after a hairline crack, but the transfer card was never closed on the night list."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Сверить журналы и отложить вывод: точность выше, но музей дольше не может объяснить отсутствие работы.",
-                "en": "Cross-check logs and defer conclusions: accuracy improves, but the museum cannot explain the absence yet."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Спросить смотрителя о протоколе переноса без обвинений: сотрудничество сохраняется, личные мотивы остаются неизвестны.",
-                "en": "Ask the attendant about transfer procedure without accusation: cooperation survives, motives stay private."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Проверить маршрут камер и освещения: реконструкция яснее, но слепая зона остаётся до ручного осмотра.",
-                "en": "Map camera and light paths: reconstruction improves, but a blind spot remains until a manual check."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "free_text": {
-          "narrative": {
-            "ru": "Ваш свободный план меняет способ проверки. Команда раскрывает поворот по найденной улике: Экспонат временно убрали в карантин после микротрещины, но перемещение не попало в ночной список из-за незакрытой карточки передачи.",
-            "en": "Your free-form plan changes how the team checks the clue. The turn is revealed by the evidence: The piece was moved to quarantine after a hairline crack, but the transfer card was never closed on the night list."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Сверить журналы и отложить вывод: точность выше, но музей дольше не может объяснить отсутствие работы.",
-                "en": "Cross-check logs and defer conclusions: accuracy improves, but the museum cannot explain the absence yet."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Спросить смотрителя о протоколе переноса без обвинений: сотрудничество сохраняется, личные мотивы остаются неизвестны.",
-                "en": "Ask the attendant about transfer procedure without accusation: cooperation survives, motives stay private."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Проверить маршрут камер и освещения: реконструкция яснее, но слепая зона остаётся до ручного осмотра.",
-                "en": "Map camera and light paths: reconstruction improves, but a blind spot remains until a manual check."
-              },
-              "icon": "↗️"
-            }
-          ]
-        }
-      }
-    }
-  ]
+    "ru": "За стеклом витрины темно, и темнота эта слегка другая, чем та, что за окнами улицы. В зале горит только дежурная линия под потолком, и в её свете небольшая стеклянная работа, которая ещё вчера стояла на постаменте, отсутствует. Постамент пуст, стекло целы, замок заперт, а на защитной панели витрины — отпечаток ладони, чёткий, жирный, посаженный ближе к краю, как кладут ладонь, прощаясь с чем-то, а не входя. Панель можно снять и унести в лабораторию, но тогда след с этого места исчезнет вместе с возможностью посмотреть на него второй раз.\n\nВы пришли на этот вызов без санкции и без права закрывать зал. Достаточно того, что вы умеете различать: где кончилось наблюдение и начался пересказ. До вашего прихода зал закрывали наспех, отодвинули кресло, которым заставляли проход у поста, и убрали с полки журнал, чтобы он не мешал уборке, — и всё это, сделанное в одном темпе, способно испортить больше, чем один неверно истолкованный след. Сейчас заканчивается ночная смена, и у музея есть час, в который можно ходить по залу и не отвечать на вопросы о том, почему так вышло.\n\nПроверьте первое и самое простое, прежде чем решать, с чего начать. Рама витрины не вскрыта, стекло без царапины, пыль на столешнице не сдвинута, и пятно, которое оставил отпечаток, ещё не высохло окончательно. Это значит совсем немного: след свежий. Это не значит, что он чужой, но это уже значит, что он оставлен в ту же ночь, когда пропала работа, и что кто-то подходил к витрине изнутри зала, а не снаружи здания.\n\nОтпечатка нет в архиве — это уже произнесено вслух и уже записано в первую строку. Проверить это стоит отдельно. Архив хранит карточки образцов, и отсутствие в нём совпадения означает ровно одно: такой карточки в архиве нет. Владелец руки, стекло, реставратор, посетитель, никто — это всё версии, и ни одна из них не следует из пустоты в картотеке. Пустой архив — это отсутствие записи, и оно одинаково уживается с десятком объяснений.\n\nСвидетели уже ждут, и это тоже часть обстановки. Смотритель, отработавший ночную смену, сидит у служебной двери и складывает руки так, как складывают, когда готов говорить и не готов отвечать за сказанное. Он говорит, что всё было как обычно, что в заходил один человек поздно вечером, что свет в зале переключается сам, по расписанию, и что он не слышал ничего, потому что был в своём посту. Каждая его фраза правдоподобна и каждая требует сверки с записью.\n\nЗапись — главное, что есть в музее помимо стекла. Журнал зала ведётся автоматически и отмечает вход, движение между залами и переключение подсветки. Проблема в том, что последняя запись стоит на поминут раньше, чем свет над дальней частью зала погас по расписанию. Между этими двумя точками нет ни одной строки. Время там есть, а записи нет — и это не дыра в системе, это молчание, которое кто-то мог использовать, а мог и не использовать.\n\nЕсть ещё место, куда вы до сих пор не смотрели. Служебный коридор ведёт в мастерскую реставратора, и на переходе между ними камеры не покрывают участок длиной в несколько шагов: там стоит старый шкаф, а лампы гаснут по упрощённой схеме, ради экономии. В кадры этого коридора не попадает ни одна минута, проведённая в тени шкафа, и это ещё одно место, где отсутствие записи ничего не доказывает и ничего не исключает.\n\nИ последнее, что замечает взгляд, не будучи зацепкой. В книге переносов между залами есть карточка, оставленная без подписи получателя: строка акта заполнена, строка приёма — пустая. Такой лист обычно не бросают, а закрывают, и обычно он не означает ничего особенного. Но именно такие недописанные строки чаще всего всплывают последними, когда всё остальное уже сходится.\n\nНочь всё ещё идёт. Зал пуст, на посту в платформе кипит свет, и никто не торопит вас ни с выводом, ни с его отменой. До утра всё можно проверить, и ничего нельзя проверить дважды: снятая панель, смятый наст, расспрошенный до конца свидетель и подпись в журнале, которой раньше не было, — каждая из этих вещей отнимает у вас один шанс, и обратно их не вернуть. Витрина открыта, отпечаток на месте, архив без совпадения, журнал с молчанием в середине ночи, свидетель с правдоподобными ответами, коридор без камер и недописанная карточка. Всё это не складывается в историю само — оно сложится только от того, что вы предпочтёте проверить первым, с кем захотите говорить, и какое объяснение решите назвать правдой, когда слова закончатся.",
+    "en": "Behind the case glass it is dark, and the dark in there is slightly different from the dark outside the street. Only the emergency strip along the ceiling is lit, and in its light the small glass work that stood on the plinth yesterday is gone. The plinth is bare, the glass is unbroken, the lock is closed, and on the case's protective panel there is a palm print, sharp and greasy, set close to the edge the way a hand is laid in farewell rather than in entry. The panel can be lifted and taken to a lab, and then the trace disappears from that spot along with any chance of looking at it twice.\n\nYou came to this call without authority and without the power to close the hall. What you have is enough: you can tell where observation ends and retelling begins. Before you arrived, the hall was closed in a hurry, a chair was moved back from the aisle by the post, and the journal was taken off its shelf so it would not be in the way of cleaning, and all of that, done at one tempo, can spoil more than one misread trace. The night shift is ending, and the museum has an hour in which you can walk the hall without having to explain why it ended up like this.\n\nCheck the simplest thing first, before deciding where to begin. The case frame has not been forced, the glass carries no scratch, the dust on the shelf top has not been disturbed, and the smear left by the print has not finished drying. That means very little: the trace is fresh. It does not mean it belongs to a stranger. It does mean it was laid during the same night the work disappeared, and that someone approached the case from inside the hall rather than from outside the building.\n\nThe print is not in the archive. That has already been said out loud and already written on the first line. It is worth checking separately. The archive holds sample cards, and the absence of a match there means exactly one thing: there is no such card in the archive. Owner of the hand, glass, conservator, visitor, nobody — all of them are versions, and not one of them follows from an empty drawer. An empty archive is a missing record, and it lives just as comfortably with a dozen explanations.\n\nThe witnesses are already waiting, and that is part of the arrangement too. The attendant who worked the night shift is sitting by the service door with his hands folded the way hands fold when a man is ready to talk and not ready to answer for what he says. He says everything was as usual, that one person came in late in the evening, that the lights in the hall switch themselves on a schedule, and that he heard nothing, because he was at his post. Every sentence he offers is plausible and every one of them wants checking against a record.\n\nThe record is the most important thing in the museum besides the glass. The gallery log is written automatically and notes entry, movement between halls, and the change of lighting. The problem is that the last entry stands a few minutes before the overheads over the far part of the hall went out on schedule. Between those two points there is not a single line. The time exists there; the record does not. That is not a hole in the system. It is silence, and someone may have used it, or may never have touched it.\n\nThere is one more place you have not looked yet. The service corridor leads to the conservator's workshop, and on that stretch the cameras cover nothing for the length of a few steps: an old cabinet stands there, and the lamps run on a simplified circuit, to save power. Not one minute spent in the cabinet's shadow reaches the footage, and that is one more place where a missing record proves nothing and excludes nothing.\n\nAnd one last thing the eye catches that is not yet a lead. In the book of transfers between halls there is a card left without a recipient's signature: the line for the act is filled in, the line for receipt is blank. A sheet like that is normally not left loose, and normally means nothing in particular. But unfinished lines of that kind are usually what surfaces last, when everything else has already fitted.\n\nThe night is still going on. The hall is empty, the light on the platform is still on, and nobody is rushing you toward a conclusion or away from one. Everything can still be checked before morning, and nothing can be checked twice: a lifted panel, a scuffed floor, a witness talked out to the end, a signature in the log that was not there before — each of those spends one of your chances, and none of them comes back. The case stands open, the print is in place, the archive has no match, the log has a silence in the middle of the night, the witness has plausible answers, the corridor has no cameras, and the transfer card is unsigned. None of this assembles itself into a story. It will assemble only out of what you decide to check first, whom you choose to talk to, and which explanation you are willing to call the truth when you run out of words."
+  }
 }

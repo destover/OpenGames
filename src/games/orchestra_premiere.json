@@ -6,7 +6,7 @@
     "setting": "Симфонический оркестр перед премьерой новой партитуры в историческом концертном зале; акустика нестабильна, партии спорны, времени на полный прогон почти нет.",
     "categoryRu": "Музыка",
     "background": "/assets/orchestra.jpg",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "schemaVersion": "2",
     "isNew": true,
     "durationMinutes": [
@@ -22,6 +22,7 @@
       "acoustics": 55,
       "soloist": 41,
       "expectation": 83,
+      "stamina": 58,
       "location": "stage",
       "goalStatus": "active"
     }
@@ -43,6 +44,30 @@
     "mediate": {
       "label": "Обсудить спорную интерпретацию",
       "icon": "🤝"
+    },
+    "panels": {
+      "label": "Осмотреть акустические панели в яме",
+      "icon": "🪟"
+    },
+    "rebalance": {
+      "label": "Переставить секции и пульты",
+      "icon": "🔁"
+    },
+    "tune": {
+      "label": "Сверить настройку после перестановки",
+      "icon": "🎵"
+    },
+    "compare_editions": {
+      "label": "Сверить две редакции центральной части",
+      "icon": "📄"
+    },
+    "talk_soloist": {
+      "label": "Поговорить с солистом наедине",
+      "icon": "🎙️"
+    },
+    "save_break": {
+      "label": "Отложить генеральный прогон до последнего",
+      "icon": "⏳"
     }
   },
   "ui": {
@@ -54,6 +79,7 @@
       "acoustics": "Баланс акустики",
       "soloist": "Уверенность солиста",
       "expectation": "Ожидание публики",
+      "stamina": "Выносливость секций",
       "location": "Место",
       "goalStatus": "Цель"
     }
@@ -67,6 +93,7 @@
         "acoustics": "Баланс акустики",
         "soloist": "Уверенность солиста",
         "expectation": "Ожидание публики",
+        "stamina": "Выносливость секций",
         "location": "Место",
         "goalStatus": "Цель"
       },
@@ -74,7 +101,13 @@
         "free_text": "Свободное действие",
         "listen": "Сверить баланс секций",
         "rehearse": "Собрать точечный прогон",
-        "mediate": "Обсудить спорную интерпретацию"
+        "mediate": "Обсудить спорную интерпретацию",
+        "panels": "Осмотреть акустические панели в яме",
+        "rebalance": "Переставить секции и пульты",
+        "tune": "Сверить настройку после перестановки",
+        "compare_editions": "Сверить две редакции центральной части",
+        "talk_soloist": "Поговорить с солистом наедине",
+        "save_break": "Отложить генеральный прогон до последнего"
       },
       "manifest": {
         "title": "Чистая нота",
@@ -95,6 +128,7 @@
         "acoustics": "Acoustic balance",
         "soloist": "Soloist confidence",
         "expectation": "Audience expectation",
+        "stamina": "Section stamina",
         "location": "Location",
         "goalStatus": "Objective"
       },
@@ -102,7 +136,13 @@
         "free_text": "Free action",
         "listen": "Listen for sectional balance",
         "rehearse": "Run a focused rehearsal",
-        "mediate": "Resolve an interpretation dispute"
+        "mediate": "Resolve an interpretation dispute",
+        "panels": "Inspect the acoustic panels in the pit",
+        "rebalance": "Reshuffle sections and stands",
+        "tune": "Check the tuning after the move",
+        "compare_editions": "Compare the two editions of the central part",
+        "talk_soloist": "Speak with the soloist alone",
+        "save_break": "Hold back the full run until the last moment"
       },
       "manifest": {
         "title": "The Clear Note",
@@ -148,6 +188,18 @@
       "greenroom": {
         "ru": "Комната музыкантов",
         "en": "Musicians’ room"
+      },
+      "pit": {
+        "ru": "Яма",
+        "en": "The pit"
+      },
+      "foyer": {
+        "ru": "Фойе",
+        "en": "Foyer"
+      },
+      "loft": {
+        "ru": "Верхние хоры",
+        "en": "Upper choir loft"
       }
     }
   },
@@ -169,36 +221,44 @@
         },
         "beats": {
           "ru": [
-            "Оркестр готовится к премьере новой партитуры в зале с нестабильной акустикой; полного прогона не будет.",
-            "Эхо смещается после перестановки концертных панелей для трансляции, а спорная пауза в партии является авторской пометкой, не ошибкой печати.",
-            "Дирижёр решает, менять ли баланс, рассадку или трактовку, не стирая замысел композитора."
+            "Остался час сорок пять: зал ещё накрывают, часть пультов сдвинута к боковому ряду для трансляции, и оркестр ждёт решения, с которого начнётся вечер.",
+            "С первых тактов слышно, что в дальних рядах тихие вступления струнных тонут в отражении, а солист вступает раньше секции и получает в ответ два разных темпа.",
+            "Разговор в комнате музыкантов выясняет, что спор идёт не о вкусе, а о том, какая редакция считается верной, и обе редакции лежат в одной папке.",
+            "Пока репетиция идёт, становится видно, что выносливость секций расходуется быстрее, чем это показывает общее состояние ансамбля: устают те, кто играет тише всех.",
+            "В яме под боковым рядом находят след работы монтажной бригады: панели трогали вечером, никто из музыкальных не знает новой схемы, а официальная записка говорит только о трансляции.",
+            "К последнему прогону остаётся выбрать, что оставить нетронутым: замысел автора, расстановку, честный баланс в зале или человеческие силы секций, которые уже на пределе."
           ],
           "en": [
-            "The orchestra prepares a premiere in a hall with unstable acoustics; there is no time for a full run.",
-            "The echo shifted after broadcast panels were moved; the disputed pause is the composer’s mark, not a printing error.",
-            "The conductor chooses balance, seating, or interpretation without erasing the composer’s intent."
+            "Forty-five minutes are left: the hall is still being dressed, some stands have been pushed toward the side row for the broadcast, and the orchestra is waiting for the decision the evening will start from.",
+            "From the first bars it is clear that quiet string entries sink into the reflection at the back, the soloist enters before the section, and gets two different tempi in answer.",
+            "A conversation in the musicians’ room shows the argument is not about taste but about which edition counts as correct, and both editions lie in the same folder.",
+            "As the rehearsal runs it becomes clear that the sections spend their stamina faster than the ensemble reading suggests: the ones playing softest are the first to tire.",
+            "In the pit under the side row there is evidence of the install crew’s work: the panels were handled in the evening, nobody in the music knows the new arrangement, and the official note only mentions the broadcast.",
+            "By the last run there is a choice about what to leave untouched: the author’s intent, the seating, an honest balance in the hall, or the human reserves of sections already at their limit."
           ]
         },
         "twists": {
           "ru": [
-            "Проблема слышимости создаётся складной панелью над боковым рядом, а не инструментами; её угол можно изменить без перестройки сцены.",
-            "Две версии темпа принадлежат разным редакциям партитуры, обе подписаны композитором для разных залов."
+            "Плохая слышимость у края сцены вызвана не инструментами и не игрой, а складывающейся не в ту сторону панелью, которую держала сцепка с тележкой; стук слышен даже при тихом tutti, и панель можно вернуть в исходное положение без перестройки сцены.",
+            "Два темпа центральной части принадлежат разным редакциям партитуры, обе помечены рукой композитора для разных залов и обе напечатаны с одной рукописи; спор о том, что «правильно», не имеет ответа, пока никто не спросил, для какого зала написан вечер."
           ],
           "en": [
-            "A folding panel above the side seats causes the poor sound, not the instruments; its angle can change without rebuilding the stage.",
-            "Two tempo versions belong to different score editions, both signed by the composer for different halls."
+            "The poor sound at the edge of the stage is caused not by the instruments or the playing but by a panel folded the wrong way, held only by a coupling to a trolley; it can be heard even under a soft tutti, and it can be returned to its position without rebuilding the stage.",
+            "The two tempi of the central part belong to different score editions, both marked by the composer for different halls and both printed from one manuscript; the argument about what is “correct” has no answer while nobody has asked which hall tonight is written for."
           ]
         },
         "paths": {
           "ru": [
-            "Настроить рассадку и оставить темп: верность тексту, часть зала слышит слабее.",
-            "Провести короткий секционный прогон: согласованность растёт, общее звучание остаётся непроверенным.",
-            "Выбрать альтернативную редакцию с объявлением: риск ошибок ниже, оригинальная премьера меняется."
+            "Вернуть панели в исходное положение и не трогать расстановку. Предпосылка: монтажная записка описывает прежнее крепление и панели можно сдвинуть втроём. Новое: становится ясно, где именно ломается ранняя линия звука, и слух зала можно проверить дешёвым способом. Немедленное последствие: вечер читается ровнее, но сдвиг стоит части осторожного времени, а солист остаётся в своей позе. Отложенное: если панель вернули не до конца, дефект вернётся в самой громкой точке. Риск: спорить с бригадой, у которой нет второго комплекта крепежа. Компромисс: чистый звук сегодня против сохранённого резерва вечера. Точки пересечения: с решением переставить пульты — обе правки претендуют на одни и те же двадцать минут; с решением о редакции — авторская пауза наконец слышна в том виде, в каком она написана.",
+            "Переставить пульты так, чтобы струнные встали ближе к погружению, и оставить панели как есть. Предпосылка: яма достаточно глубока, а солист готов сместиться вместе со своим роялем. Новое: видно, где именно зал перестаёт различать тихое, и снимается часть спора о балансе. Немедленное последствие: выносливость секций падает, потому что половина оркестра играет в наклон и встаёт каждые несколько минут. Отложенное: к финалу усталые входят в самую длинную часть и начинают её с опозданием. Риск: перестановка срывает расстановку, к которой оркестр привыкал сутки. Компромисс: слышимость в зале против выносливости музыкантов. Точки пересечения: с правкой панелей — обе правки требуют людей из ямы в один и тот же перерыв; с разговором о редакции — солист становится стороной спора, а не его жертвой.",
+            "Собрать короткий секционный прогон и объявить авторскую паузу как знак. Предпосылка: хотя бы один концертмейстер готов озвучить свою редакцию вслух, а не в бумаге. Новое: спор перестаёт быть частным и становится общим, а в папке находится вторая редакция, о которой никто не говорил. Немедленное последствие: согласованность растёт быстрее, чем общий звук, и первые такты после паузы собираются. Отложенное: если выбрана не та редакция, ошибка станет слышна залу раньше, чем оркестру. Риск: потратить остаток часа на спор вместо музыки. Компромисс: ясность исполнения против резерва времени. Точки пересечения: с решением отложить генеральный прогон — секционная проверка становится единственной проверкой; с решением о перестановке — солист и струнные получают разные указания в один момент.",
+            "Отложить генеральный прогон до последнего, оставив зал для точечных проверок, и потратить время на людей. Предпосылка: зал ещё пуст, а музыканты знают, где им нужно услышать друг друга лучше. Новое: выясняется, что усталость распределена неравномерно и что один человек в сцене сдерживает больше, чем его доля. Немедленное последствие: общий ансамбль не растёт, но и не рассыпается, а недовольные перестают пересылать друг другу замечания. Отложенное: перед последним прогоном остаётся меньше времени, чем нужно, и ошибки в темпе не успевают осесть. Риск: доверие, купленное ценой одного вечера, не переносится на следующий. Компромисс: человеческая надёжность против технической готовности. Точки пересечения: с любой работой в яме — люди заняты, рук не хватает; с возвратом панелей — спокойный разговор становится тем местом, где всплывает авторская пауза."
           ],
           "en": [
-            "Adjust seating and keep the tempo: the text is honored, but some seats hear less.",
-            "Run a short sectional rehearsal: coordination improves, ensemble sound remains untested.",
-            "Choose the alternate edition and announce it: error risk falls, the premiere changes."
+            "Return the panels to their original position and leave the seating alone. Preconditions: the install note describes the old fixing and the panels can be moved by three people. What it brings: it becomes clear exactly where the early string line breaks, and the hall can be tested cheaply. Immediate consequence: the evening reads more evenly, but the move costs part of the careful margin, and the soloist stays where he is. Deferred consequence: if the panel was not fully returned, the defect comes back at the loudest point. Risk: arguing with a crew that has no second set of fittings. Tradeoff: clean sound tonight against a preserved reserve. Crossing points: with the decision to move the stands both fixes claim the same twenty minutes; with the edition decision the author’s pause is finally heard as written.",
+            "Move the stands so the strings sit nearer the pit and leave the panels as they are. Preconditions: the pit is deep enough and the soloist will shift with his piano. What it brings: it becomes visible exactly where the hall stops telling quiet apart, and part of the balance argument dissolves. Immediate consequence: section stamina drops, because half the orchestra plays leaning forward and stands every few minutes. Deferred consequence: the tired players enter the longest part of the work late. Risk: the move breaks a layout the orchestra got used to within a day. Tradeoff: audibility in the hall against the players’ reserves. Crossing points: with the panel fix both repairs need the same people in the pit during the same break; with the edition talk the soloist becomes a party to the argument instead of its victim.",
+            "Run a short sectional rehearsal and announce the author’s pause as a mark. Preconditions: at least one concertmaster will read his edition aloud instead of leaving it on paper. What it brings: the argument stops being private and becomes shared, and a second edition turns up in the folder that nobody mentioned. Immediate consequence: coordination grows faster than sound, and the first bars after the pause gather. Deferred consequence: if the wrong edition was chosen, the audience hears the mistake before the orchestra does. Risk: spending the rest of the hour on the argument instead of on the music. Tradeoff: clarity of performance against a reserve of time. Crossing points: with the decision to hold back the full run the sectional check becomes the only check; with the seating move the soloist and the strings receive different instructions at the same moment.",
+            "Hold back the full run until the last moment, keep the hall for spot checks, and spend the time on people. Preconditions: the hall is still empty and the players know where they need to hear each other better. What it brings: fatigue turns out to be unevenly spread, and one person on stage is holding more than his share. Immediate consequence: the ensemble does not grow, but it does not fall apart either, and the dissatisfied stop passing notes to each other. Deferred consequence: there is less time before the last run than there should be, and tempo mistakes have not settled. Risk: trust bought at the price of one evening does not carry to the next. Tradeoff: human reliability against technical readiness. Crossing points: with any work in the pit the hands are short; with the panel fix the calm conversation becomes the place where the author’s pause surfaces."
           ]
         }
       }
@@ -224,6 +284,26 @@
         {
           "id": "audience",
           "text": "Публика ожидает премьеру, однако музыкальная цель не сводится к аплодисментам."
+        },
+        {
+          "id": "broadcast_panels",
+          "text": "Перед ночной трансляцией под боковой ряд сдвинули складные акустические панели, и у края сцены заметно изменилась высота отражений."
+        },
+        {
+          "id": "panel_fold",
+          "text": "Один из трёх складных элементов сложился не в ту сторону, и сцепка с тележкой держит его только до первого сильного звука."
+        },
+        {
+          "id": "two_editions",
+          "text": "В папке концертмейстера лежат две редакции центральной части: в одной темп написан ровно, в другой темп изменён рукой автора для другого зала."
+        },
+        {
+          "id": "author_mark",
+          "text": "Спорная пауза перед возвращением темы помечена в обеих редакциях знаком, который в этом городе читают как авторское указание, а не как ошибку набора."
+        },
+        {
+          "id": "hour_is_expensive",
+          "text": "Каждый час репетиции уходит из запаса публики: сдвиг начала на четверть часа уже не вернуть, а зал к этому времени заполняют."
         }
       ]
     }
@@ -236,6 +316,7 @@
       "acoustics",
       "soloist",
       "expectation",
+      "stamina",
       "location",
       "goalStatus"
     ],
@@ -263,6 +344,10 @@
       "expectation": {
         "min": 0,
         "max": 100
+      },
+      "stamina": {
+        "min": 0,
+        "max": 100
       }
     },
     "allowedValues": {
@@ -270,7 +355,10 @@
         "stage",
         "rehearsal",
         "balcony",
-        "greenroom"
+        "greenroom",
+        "pit",
+        "foyer",
+        "loft"
       ],
       "goalStatus": [
         "active",
@@ -304,348 +392,26 @@
       {
         "path": "expectation",
         "maxIncrease": 20
+      },
+      {
+        "path": "stamina",
+        "maxIncrease": 10
       }
     ],
     "instructions": [
-      "Не подменяй художественные разногласия простым повышением общей оценки ансамбля.",
-      "Потраченное время репетиции не восстанавливается без реалистичной паузы и условий.",
-      "Учитывай акустику, физическую усталость и способность музыкантов исполнять выбранный темп.",
-      "Цель достигнута после исполнимой общей интерпретации и завершённой премьеры, не при идеальных числах по всем шкалам."
+      "Сохраняй причинно-следственную непрерывность: каждое изменение строя, баланса, выносливости, ожидания публики, места и времени репетиции должно следовать из конкретного действия, его цены и прошедшего времени.",
+      "Не повторяй уже показанное: одна и та же сцена и один и тот же результат описываются один раз; при повторном заходе коротко обозначь итог и измени обстановку.",
+      "Потраченные минуты репетиции не восстанавливаются без реалистичной паузы, и каждая операция с пультами, панелями или редакциями стоит времени, которого осталось мало.",
+      "Чистота строя, согласованность секций, баланс акустики, уверенность солиста, выносливость секций и ожидание публики изменяются по-разному: правка одной шкалы не поднимает остальные автоматически, а улучшение одной секции нередко стоит внимания другой.",
+      "Не выдавай истолкованный стук под боковым рядом или спор о темпе за доказанный факт: сначала покажи само наблюдение, затем версию, и держи их раздельно; признание неверной версии оставляет её в истории как отвергнутую, а не переписывает прошлое.",
+      "Люди в кадре сохраняют собственные мотивы, достоинство и усталость: солист не обязан уступать требованиям, концертмейстер не обязан соглашаться, а решение, принятое без их участия, возвращается в игре как обида, молчание или молчаливое исполнение по привычке.",
+      "Не обещай публике, музыкантам или прессе того, чего не обеспечивают оставшиеся минуты, и не превращай премьеру в спасение упавшего авторитета.",
+      "Не добавляй в зал новых людей, инструментов или репетиционных помещений сверх уже известных: решение, которого нельзя проверить на месте, выглядит как сообщение о намерении.",
+      "Цель считается выполненной не по идеальным числам шкал, а по тому, что публика услышала исполнимое согласованное исполнение и что оркестр дошёл до конца на своих условиях, а не сорвался и не был переписан."
     ]
   },
   "opening": {
-    "ru": "За час до генерального прогона музыканты спорят о темпе финала, а в зале неожиданно изменили расстановку кресел. Вы выходите на сцену как дирижёр премьеры: у оркестра остался один прогон, и каждому нужно услышать общий замысел\n\nСолист вступает раньше доли, и секция отвечает двумя темпами. Короткая репетиция отнимет оставшийся перерыв, а тихая подсказка дирижёра может его сохранить.\n\nЗдесь важно помнить, что к моменту вашего появления история уже началась. Симфонический оркестр перед премьерой новой партитуры в историческом концертном зале; акустика нестабильна, партии спорны, времени на полный прогон почти нет. Это не отвлечённый фон и не задача, которую можно решить одним эффектным жестом: исходные условия складывались раньше, а люди, объекты и процессы успели приспособиться к ним. Поэтому любое изменение затронет не только то, что видно сейчас, но и привычный порядок, на котором держатся остальные части ситуации. Вы входите в неё с правом действовать, однако сначала нужно понять, что именно считается нормой и кто подтвердил эту норму.\n\nПервое наблюдение относится к конкретному месту: Сцена, Репетиционный зал, Балконный пульт, Комната музыкантов. В нём есть заметная деталь, которую легко принять за готовый ответ, но пока это только отправная точка. Сведения получены не одновременно и не одним способом; между тем, что зафиксировано, и тем, что уже успели предположить, остаётся промежуток. Если немедленно закрыть его догадкой, следующие данные будут подгоняться под выбранную версию. Если же точно обозначить, что известно, а что пока лишь кажется вероятным, у вас сохранится возможность увидеть несоответствие, не переписывая задним числом всю картину.\n\nВаша задача сформулирована шире, чем устранить ближайшую помеху: Собрать убедительное исполнение с безопасным балансом звучания, согласованной интерпретацией и уважением к возможностям оркестра до выхода публики. На практике это означает одновременно следить за непосредственным результатом и за тем, что этот результат позволит узнать. Быстрый шаг может принести видимое улучшение, но ухудшить сравнимость, доступность или доверие; осторожный — сохранить качество проверки, но оставить проблему без немедленного ответа. Эти соображения не равны по весу во всех обстоятельствах. Их порядок зависит от того, какие сведения вы подтвердите и какой ущерб действительно обратим.\n\nВ материалах есть три слоя: исходное состояние, первое наблюдение и объяснение, которое кто-то успел к нему приложить. Не смешивайте их. Настроить рассадку и оставить темп: верность тексту, часть зала слышит слабее. Если цифры или свидетельства расходятся, полезно установить, когда и где именно началось расхождение, кто наблюдал явление напрямую и какие условия могли поменяться между проверками. Иногда спорный показатель оказывается не ложным, а неполным: он честно описывает ту точку, где был получен, но не ту, о которой спрашивает команда.\n\nВам не требуется заранее выбирать единственную стратегию на весь эпизод. В текущем пакете доступны разные типы действий: Сверить баланс секций, Собрать точечный прогон, Обсудить спорную интерпретацию. Они дают разные виды контроля: одно может уточнить картину, другое — изменить условия, третье — выиграть время или проверить связь между двумя событиями. Выбирая, задайте себе практический вопрос: что должно стать заметно после этого шага, если ваша версия верна? И что вы увидите, если она неверна? Такой критерий превращает действие в проверку, а не просто в жест, после которого приходится надеяться на удачу.\n\nПуть вперёд может разветвиться, и у каждого направления будет собственная цена. Одно решение способно защитить непосредственную цель, но оставить неопределённость; другое — укрепить доказательства, но сузить окно для вмешательства; третье — уменьшить воздействие на окружающую систему, одновременно потребовав новой проверки. Эти различия не делают какой-либо путь правильным заранее. Важнее видеть, какую ценность вы защищаете сейчас, чем рискуете ради неё и какие признаки заставят пересмотреть план. Смена курса допустима, если вы можете объяснить, какая новая информация изменила расчёт.\n\nОглянитесь на Сцена, Репетиционный зал, Балконный пульт, Комната музыкантов. Каждая точка открывает свою часть происходящего и скрывает другую; переход между ними сам по себе может менять условия наблюдения. Не считайте схему исчерпывающей: она описывает доступные места, но не гарантирует, что все важные процессы заметны с одной позиции. Сверяйте время, источник и обстоятельства каждого сообщения. Если кто-то говорит «это было так всегда», спросите, за какой период он отвечает; если прибор показывает отклонение, уточните его рабочий диапазон и место установки. Так вы отделите стабильную закономерность от удобного, но слишком широкого обобщения.\n\nЕсть вопросы, на которые пока нельзя честно ответить. Что здесь причина, а что следствие? Действительно ли наблюдаемое изменение требует немедленного вмешательства? Кто или что понесёт последствия, если вы ошибётесь? Неопределённость не означает, что все версии одинаково вероятны; она означает, что следующая сцена должна дать материал для различения. Не превращайте каждую странность в тайный замысел и не отбрасывайте неудобную улику лишь потому, что она мешает плану. Самый убедительный поворот будет иметь смысл только тогда, когда ранние подробности позволят узнать его, а не просто удивиться ему.\n\nНачните с масштаба, который можно проверить. Запишите исходные условия, выберите один важный показатель и не меняйте сразу несколько факторов, если хотите понять, что повлияло на результат. Если вмешательство необходимо прямо сейчас, обозначьте его как временное и сохраните контрольную точку для сравнения. Если можно подождать, определите, какое именно наблюдение оправдает ожидание и сколько времени оно занимает. Это не бюрократическая осторожность: так вы не потеряете возможность отличить настоящую перемену от эффекта собственных действий.\n\nПостепенно прояснится и человеческая сторона задачи: чьи объяснения опираются на наблюдения, кто отвечает за последствия и кому придётся жить с выбранным порядком после того, как срочность спадёт. Доверие здесь не заменяет измерения, но влияет на то, какие сведения вам сообщат и какие шаги команда сможет выполнить вместе. Объясняйте, что проверяете, не обещайте результата раньше проверки и отмечайте, что именно изменило ваше мнение. Иногда это позволит сохранить сотрудничество даже при разногласии; иногда станет ясно, что разные участники защищают несовместимые интересы.\n\nОтдельно рассмотрите направление 3: Выбрать альтернативную редакцию с объявлением: риск ошибок ниже, оригинальная премьера меняется. Оно не отменяет остальные возможности и не требует принимать весь план сразу. Спросите, какое подтверждение сделает этот шаг уместным, что останется измеримым после него и кто заметит его побочный эффект первым. Если ответ пока неизвестен, это не повод скрывать пробел: его можно превратить в условие остановки или повторной оценки.",
-    "en": "An hour before the final rehearsal, musicians are arguing over the finale’s tempo and the hall has unexpectedly changed its seating. You step onto the stage as the premiere’s conductor: the orchestra has one run-through left to find a shared interpretation\n\nThe soloist enters a beat early, and the section answers in two tempos. A short sectional rehearsal would use the remaining tuning break, while a quiet cue from the conductor might preserve it.\n\nRemember that the story had already begun before you arrived. The orchestra prepares a premiere in a hall with unstable acoustics; there is no time for a full run. This is not a backdrop or a problem that can be solved with one dramatic gesture: the conditions formed earlier, and people, objects, and processes have adapted to them. Any change will affect more than what is visible now; it may alter the routine that holds other parts of the situation together. You have authority to act, but first you need to understand what counts as normal here and who has actually verified that baseline.\n\nThe first observation belongs to a specific place: Stage, Rehearsal room, Balcony control, Musicians’ room. It contains a detail that may look like an answer, but for now it is only a starting point. The information was gathered at different times and by different means; a gap remains between what was recorded and the explanation someone has attached to it. If you fill that gap with a guess, later evidence may be forced to fit your theory. If you mark what is known and what only seems likely, you can notice a mismatch without rewriting the whole account afterward.\n\nYour objective is broader than removing the nearest obstacle: Shape a convincing performance with balanced sound, a shared interpretation, and respect for the orchestra’s limits before the audience enters. In practice, you must watch both the immediate result and what that result lets you learn. A quick intervention may produce visible improvement while weakening comparison, access, or trust; a cautious one may preserve the quality of the evidence while leaving the problem unresolved. Those concerns do not carry the same weight in every situation. Their order depends on what you confirm and on which harm can actually be reversed.\n\nThe available material has three layers: the initial conditions, the first observation, and the explanation someone has already attached to it. Keep them separate. Adjust seating and keep the tempo: the text is honored, but some seats hear less. If figures or accounts disagree, establish when and where the mismatch began, who witnessed the event directly, and what could have changed between checks. A disputed reading is sometimes incomplete rather than false: it may accurately describe the point where it was taken, but not the wider area the team is asking about.\n\nYou do not have to choose one strategy for the whole episode in advance. The package offers different kinds of action: Listen for sectional balance, Run a focused rehearsal, Resolve an interpretation dispute. Each gives you a different kind of control: one may clarify the picture, another may change the conditions, and another may buy time or test a connection between events. Before choosing, ask a practical question: what should become visible if your theory is right? What would you see if it is wrong? That turns an action into a test, rather than a gesture followed by a hope for good luck.\n\nThe way forward can branch, and each direction has its own cost. One choice may protect the immediate objective while leaving uncertainty; another may strengthen the evidence while narrowing the window to intervene; a third may reduce impact on the surrounding system while requiring a fresh check. None is automatically correct. What matters is seeing which value you are protecting, what you risk for it, and what signs would make you reconsider. A change of course is sound when you can explain what new information changed the calculation.\n\nLook at Stage, Rehearsal room, Balcony control, Musicians’ room. Each point reveals one part of the situation and hides another; moving between them can itself change the conditions of observation. Do not treat the map as complete: it lists available places but cannot guarantee that every important process is visible from one position. Compare the time, source, and circumstances of each report. If someone says “it has always been this way,” ask what period they mean; if an instrument shows a deviation, check its operating range and location. This helps separate a stable pattern from a convenient but overly broad conclusion.\n\nSome questions cannot yet be answered honestly. What is a cause, and what is an effect? Does the observed change truly require immediate intervention? Who or what bears the cost if you are wrong? Uncertainty does not mean every theory is equally likely; it means the next scene must give you a way to distinguish them. Do not turn every oddity into a hidden scheme, and do not discard inconvenient evidence because it disrupts a plan. A convincing turn will make sense only if earlier details let you recognize it, not merely be surprised by it.\n\nStart at a scale you can check. Record the baseline, choose one important measure, and avoid changing several factors at once if you need to know what caused the result. If action is necessary now, mark it as temporary and preserve a control point for comparison. If waiting is possible, specify what observation would justify the delay and how long it will take. This is not caution for its own sake: it preserves your ability to distinguish a real change from the effect of your own intervention.\n\nThe human side of the task will become clearer too: whose account rests on observation, who is responsible for the consequences, and who must live with the chosen arrangement after the emergency passes. Trust does not replace measurement, but it affects what people tell you and what the team can do together. Explain what you are checking, do not promise a result before it is verified, and note what changed your mind. That may preserve cooperation through disagreement; it may also show that different participants are protecting interests that cannot be reconciled.\n\nConsider approach 3 separately: Choose the alternate edition and announce it: error risk falls, the premiere changes. It does not erase the other options or require you to commit to the whole plan at once. Ask what evidence would make this step appropriate, what will remain measurable afterward, and who will notice its side effect first. If the answer is not yet known, do not hide the gap; turn it into a condition for pausing or reassessing."
-  },
-  "preparedBranches": [
-    {
-      "id": "cohesion_pressure",
-      "actions": [
-        "listen",
-        "rehearse",
-        "mediate",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "Солист вступает раньше доли, и секция отвечает двумя темпами. Короткая репетиция отнимет оставшийся перерыв, а тихая подсказка дирижёра может его сохранить.",
-        "en": "The soloist enters a beat early, and the section answers in two tempos. A short sectional rehearsal would use the remaining tuning break, while a quiet cue from the conductor might preserve it."
-      },
-      "mutations": [],
-      "suggestions": [
-        {
-          "text": {
-            "ru": "Сверить обстановку и выбрать безопасный приоритет",
-            "en": "Recheck the situation and choose a safe priority"
-          }
-        },
-        {
-          "text": {
-            "ru": "Сохранить текущий план и подготовить запасной",
-            "en": "Keep the current plan and prepare a backup"
-          }
-        }
-      ]
-    },
-    {
-      "id": "turning_point_minutes",
-      "when": {
-        "minutes": {
-          "gte": 156
-        }
-      },
-      "actions": [
-        "listen",
-        "rehearse",
-        "mediate",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "Солист вступает на долю такта раньше, и секция отвечает в двух темпах. Короткая репетиция секции займёт оставшийся перерыв на настройку; тихая подсказка дирижёра может сохранить это время. Новая деталь меняет цену решения: прежний план ещё возможен, но запас времени или сил уже не позволит без последствий отменить выбор.",
-        "en": "An alternate route opens as circumstances shift. Continue the current approach or change priorities before events make the consequences harder to reverse."
-      },
-      "mutations": [],
-      "suggestions": [
-        {
-          "text": {
-            "ru": "Сверить обстановку и выбрать безопасный приоритет",
-            "en": "Recheck the situation and choose a safe priority"
-          }
-        },
-        {
-          "text": {
-            "ru": "Сохранить текущий план и подготовить запасной",
-            "en": "Keep the current plan and prepare a backup"
-          }
-        }
-      ]
-    },
-    {
-      "id": "authored_turn_1",
-      "minTurns": 2,
-      "actions": [
-        "listen",
-        "rehearse",
-        "mediate",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "Проблема слышимости создаётся складной панелью над боковым рядом, а не инструментами; её угол можно изменить без перестройки сцены.",
-        "en": "A folding panel above the side seats causes the poor sound, not the instruments; its angle can change without rebuilding the stage."
-      },
-      "mutations": [],
-      "suggestions": [],
-      "responses": {
-        "listen": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Сверить баланс секций». Команда продолжает по пути: Настроить рассадку и оставить темп: верность тексту, часть зала слышит слабее. Улика раскрывает поворот: Проблема слышимости создаётся складной панелью над боковым рядом, а не инструментами; её угол можно изменить без перестройки сцены.",
-            "en": "You choose “Listen for sectional balance.” The team continues along this path: Adjust seating and keep the tempo: the text is honored, but some seats hear less. The evidence reveals the turn: A folding panel above the side seats causes the poor sound, not the instruments; its angle can change without rebuilding the stage."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Настроить рассадку и оставить темп: верность тексту, часть зала слышит слабее.",
-                "en": "Adjust seating and keep the tempo: the text is honored, but some seats hear less."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Провести короткий секционный прогон: согласованность растёт, общее звучание остаётся непроверенным.",
-                "en": "Run a short sectional rehearsal: coordination improves, ensemble sound remains untested."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Выбрать альтернативную редакцию с объявлением: риск ошибок ниже, оригинальная премьера меняется.",
-                "en": "Choose the alternate edition and announce it: error risk falls, the premiere changes."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "rehearse": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Собрать точечный прогон». Команда продолжает по пути: Провести короткий секционный прогон: согласованность растёт, общее звучание остаётся непроверенным. Улика раскрывает поворот: Проблема слышимости создаётся складной панелью над боковым рядом, а не инструментами; её угол можно изменить без перестройки сцены.",
-            "en": "You choose “Run a focused rehearsal.” The team continues along this path: Run a short sectional rehearsal: coordination improves, ensemble sound remains untested. The evidence reveals the turn: A folding panel above the side seats causes the poor sound, not the instruments; its angle can change without rebuilding the stage."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Настроить рассадку и оставить темп: верность тексту, часть зала слышит слабее.",
-                "en": "Adjust seating and keep the tempo: the text is honored, but some seats hear less."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Провести короткий секционный прогон: согласованность растёт, общее звучание остаётся непроверенным.",
-                "en": "Run a short sectional rehearsal: coordination improves, ensemble sound remains untested."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Выбрать альтернативную редакцию с объявлением: риск ошибок ниже, оригинальная премьера меняется.",
-                "en": "Choose the alternate edition and announce it: error risk falls, the premiere changes."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "mediate": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Обсудить спорную интерпретацию». Команда продолжает по пути: Выбрать альтернативную редакцию с объявлением: риск ошибок ниже, оригинальная премьера меняется. Улика раскрывает поворот: Проблема слышимости создаётся складной панелью над боковым рядом, а не инструментами; её угол можно изменить без перестройки сцены.",
-            "en": "You choose “Resolve an interpretation dispute.” The team continues along this path: Choose the alternate edition and announce it: error risk falls, the premiere changes. The evidence reveals the turn: A folding panel above the side seats causes the poor sound, not the instruments; its angle can change without rebuilding the stage."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Настроить рассадку и оставить темп: верность тексту, часть зала слышит слабее.",
-                "en": "Adjust seating and keep the tempo: the text is honored, but some seats hear less."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Провести короткий секционный прогон: согласованность растёт, общее звучание остаётся непроверенным.",
-                "en": "Run a short sectional rehearsal: coordination improves, ensemble sound remains untested."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Выбрать альтернативную редакцию с объявлением: риск ошибок ниже, оригинальная премьера меняется.",
-                "en": "Choose the alternate edition and announce it: error risk falls, the premiere changes."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "free_text": {
-          "narrative": {
-            "ru": "Ваш свободный план меняет способ проверки. Команда раскрывает поворот по найденной улике: Проблема слышимости создаётся складной панелью над боковым рядом, а не инструментами; её угол можно изменить без перестройки сцены.",
-            "en": "Your free-form plan changes how the team checks the clue. The turn is revealed by the evidence: A folding panel above the side seats causes the poor sound, not the instruments; its angle can change without rebuilding the stage."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Настроить рассадку и оставить темп: верность тексту, часть зала слышит слабее.",
-                "en": "Adjust seating and keep the tempo: the text is honored, but some seats hear less."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Провести короткий секционный прогон: согласованность растёт, общее звучание остаётся непроверенным.",
-                "en": "Run a short sectional rehearsal: coordination improves, ensemble sound remains untested."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Выбрать альтернативную редакцию с объявлением: риск ошибок ниже, оригинальная премьера меняется.",
-                "en": "Choose the alternate edition and announce it: error risk falls, the premiere changes."
-              },
-              "icon": "↗️"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "id": "authored_turn_2",
-      "minTurns": 4,
-      "actions": [
-        "listen",
-        "rehearse",
-        "mediate",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "Две версии темпа принадлежат разным редакциям партитуры, обе подписаны композитором для разных залов.",
-        "en": "Two tempo versions belong to different score editions, both signed by the composer for different halls."
-      },
-      "mutations": [],
-      "suggestions": [],
-      "responses": {
-        "listen": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Сверить баланс секций». Команда продолжает по пути: Настроить рассадку и оставить темп: верность тексту, часть зала слышит слабее. Улика раскрывает поворот: Две версии темпа принадлежат разным редакциям партитуры, обе подписаны композитором для разных залов.",
-            "en": "You choose “Listen for sectional balance.” The team continues along this path: Adjust seating and keep the tempo: the text is honored, but some seats hear less. The evidence reveals the turn: Two tempo versions belong to different score editions, both signed by the composer for different halls."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Настроить рассадку и оставить темп: верность тексту, часть зала слышит слабее.",
-                "en": "Adjust seating and keep the tempo: the text is honored, but some seats hear less."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Провести короткий секционный прогон: согласованность растёт, общее звучание остаётся непроверенным.",
-                "en": "Run a short sectional rehearsal: coordination improves, ensemble sound remains untested."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Выбрать альтернативную редакцию с объявлением: риск ошибок ниже, оригинальная премьера меняется.",
-                "en": "Choose the alternate edition and announce it: error risk falls, the premiere changes."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "rehearse": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Собрать точечный прогон». Команда продолжает по пути: Провести короткий секционный прогон: согласованность растёт, общее звучание остаётся непроверенным. Улика раскрывает поворот: Две версии темпа принадлежат разным редакциям партитуры, обе подписаны композитором для разных залов.",
-            "en": "You choose “Run a focused rehearsal.” The team continues along this path: Run a short sectional rehearsal: coordination improves, ensemble sound remains untested. The evidence reveals the turn: Two tempo versions belong to different score editions, both signed by the composer for different halls."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Настроить рассадку и оставить темп: верность тексту, часть зала слышит слабее.",
-                "en": "Adjust seating and keep the tempo: the text is honored, but some seats hear less."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Провести короткий секционный прогон: согласованность растёт, общее звучание остаётся непроверенным.",
-                "en": "Run a short sectional rehearsal: coordination improves, ensemble sound remains untested."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Выбрать альтернативную редакцию с объявлением: риск ошибок ниже, оригинальная премьера меняется.",
-                "en": "Choose the alternate edition and announce it: error risk falls, the premiere changes."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "mediate": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Обсудить спорную интерпретацию». Команда продолжает по пути: Выбрать альтернативную редакцию с объявлением: риск ошибок ниже, оригинальная премьера меняется. Улика раскрывает поворот: Две версии темпа принадлежат разным редакциям партитуры, обе подписаны композитором для разных залов.",
-            "en": "You choose “Resolve an interpretation dispute.” The team continues along this path: Choose the alternate edition and announce it: error risk falls, the premiere changes. The evidence reveals the turn: Two tempo versions belong to different score editions, both signed by the composer for different halls."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Настроить рассадку и оставить темп: верность тексту, часть зала слышит слабее.",
-                "en": "Adjust seating and keep the tempo: the text is honored, but some seats hear less."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Провести короткий секционный прогон: согласованность растёт, общее звучание остаётся непроверенным.",
-                "en": "Run a short sectional rehearsal: coordination improves, ensemble sound remains untested."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Выбрать альтернативную редакцию с объявлением: риск ошибок ниже, оригинальная премьера меняется.",
-                "en": "Choose the alternate edition and announce it: error risk falls, the premiere changes."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "free_text": {
-          "narrative": {
-            "ru": "Ваш свободный план меняет способ проверки. Команда раскрывает поворот по найденной улике: Две версии темпа принадлежат разным редакциям партитуры, обе подписаны композитором для разных залов.",
-            "en": "Your free-form plan changes how the team checks the clue. The turn is revealed by the evidence: Two tempo versions belong to different score editions, both signed by the composer for different halls."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Настроить рассадку и оставить темп: верность тексту, часть зала слышит слабее.",
-                "en": "Adjust seating and keep the tempo: the text is honored, but some seats hear less."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Провести короткий секционный прогон: согласованность растёт, общее звучание остаётся непроверенным.",
-                "en": "Run a short sectional rehearsal: coordination improves, ensemble sound remains untested."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Выбрать альтернативную редакцию с объявлением: риск ошибок ниже, оригинальная премьера меняется.",
-                "en": "Choose the alternate edition and announce it: error risk falls, the premiere changes."
-              },
-              "icon": "↗️"
-            }
-          ]
-        }
-      }
-    }
-  ]
+    "ru": "За девяносто минут до публики зал ещё пахнет разогретым деревом и остывающей пылью от кресел. Свет рабочий, синеватый, сцена освещена наполовину, и в этой полутьме отчётливо видно, что монтажники возились с боковым рядом: складные панели под ним сдвинуты к стене, одна сложена не в ту сторону и держится только сцепкой с тележкой, которую забыли убрать в проход. Из ямы тянет холодным камнем, на пюпитрах у пультов стоят стаканы с остывшим кофе, у струнных на стульях — смычки и тряпки для ладони, всё это ещё хранит тепло рук, но рук в зале почти нет: половина музыкантов ещё в репетиционном зале за сценой, где теплее и где не слышно, как скрипит под полом пустая яма.\n\nВы приехали сюда раньше остальных и за два часа успели услышать больше, чем хотели. Партитура новая, напечатана с одной рукописи, и в ней есть вещь, которую обычно решают за секунду, а здесь приходится решать голосом: в середине обозначена пауза длиннее, чем терпит большинство музыкантов, и после неё тема должна вернуться так, будто ничего не было. Вы слышали эту паузу трижды, и трижды оркестр возвращался в неё раньше, чем требовала нота, а однажды позже. Это не ошибка печати: рядом с паузой стоит знак, который в этом городе читают как авторское указание, и стирать его вам никто не предлагал. Вы слушали из ямы, из верхних хор и из-за рояля, и в каждом из этих мест пауза звучала по-своему — в хорах она казалась короче, из ямы — длиннее, и это тоже было вам на руку: в зале сегодня никто не услышит её так, как слышали немногие.\n\nПока вы слушали, бригада убирала свет для трансляции. Стены под балконами разбирали, часть бокового ряда выносили вперёд под камеры, и панели двигали, чтобы звук отражался ровнее в зону съёмки. Акустик уехал за два часа до вашего приезда и оставил на пульте только устную записку: панели сложены, схема прежняя, если что — спросить у монтажников. Спросить оказалось некому: бригада ушла, а вмятины на тележке и след от ботинка на пыли под панелью остались как след работы, которую никто не проверял с нашей стороны. Вы сфотографировали зал с балкона, потом спустились и прошли вдоль рядов, прислушиваясь к тому, как звук ведёт себя на разных расстояниях от сцены, и этого материала хватило бы на спор, которого не случилось.\n\nСпор всё-таки разгорелся в комнате музыкантов, где пахнет хвоей и горячим чаем. Два концертмейстера держат в руках один и тот же файл страниц и говорят о разных вещах: один о том, что темп центральной части написан под другой зал и в этот будет слишком быстро, другой о том, что автор там ничего не менял и медлить нечем. Обе редакции подписаны рукой композитора, обе напечатаны с той же рукописи, обе лежат в одной папке, которую никто не сдал в библиотеку, потому что библиотека уже не работает. Солист между ними сидит с закрытыми глазами и слушает чужой спор, не участвуя, и это тоже часть его выбора, о котором никто не спрашивал вслух. За стеной слышно, как в репетиционном зале один из альтистов считает такты, а другой перестаёт считать, и вы понимаете, что этот разговор займёт больше, чем сам спор, если его не закончить правильно.\n\nЕсть и то, что не видно с пюпитра. Музыканты устали ещё до вас: вчера была ночная репетиция, а сегодня с утра три часа в репетиционном зале на ногах, и устают не те, кто играет громче всех, а те, кто играет тише. Выносливость секций сейчас держится на сидящих в первых рядах струнных, которые экономят движения и потому кажутся самыми спокойными. Дыхание у деревяных слышно в паузах так отчётливо, что становится ясно: ещё пара полных тути в таком темпе, и обидятся не струнные, а те, кто у них в этой партии дышит.\n\nЧерез открытую дверь слышно, что в дальних рядах уже сидят первые слушатели — сезонная подписка, журналисты с карандашами, и у каждого из них есть ожидание, которое вы не можете отменить. Ожидание публики сейчас выше, чем готова сама партия, и это неуправляемая величина: её нельзя поднять, можно только не дать ей превратиться в обиду. Скоро в зал пустят тех, кто пришёл поддержать автора, и часть из них слышала сегодняшнюю репетицию за стеной. Если вечер пройдёт с обидой, они выйдут с тем же впечатлением, что и после.\n\nОтдельно стоит то, что вы пока не проверили, но уже слышали: при самом тихом tutti под боковым рядом и дальше возникает сухой стук, которого не должно быть там, где стоят смычки. Он не зависит от силы звука и повторяется в одном и том же такте, хотя панель никто не трогает с вечера. Объяснить его можно двумя способами — либо сложенной не в ту сторону панелью, либо тем, что под сценой двигают что-то ещё, — и оба пока лишь версии. Смучает и другое: солист вступает раньше секции, секция отвечает ему двумя разными темпами, и в этом расхождении его уверенность убывает от прогона к прогону, хотя формально он играет безупречно. Проверяя панель, вы неизбежно отнимете у кого-то внимание, а проверяя уверенность солиста, не получите сведений о звуке.\n\nДо финала ничего не обещано вслух. Можно потратить часть часа на то, чтобы договориться, можно вернуть панели и расставить пульты иначе, можно увести солиста в сторону и узнать, чего он ждёт от вечера, можно сравнить обе редакции вслух, а можно оставить всё как есть и рискнуть на одном общем прогоне в последние минуты, когда музыканты уже устали, а зал полон. Каждый из этих ходов стоит времени, которого осталось мало, и ни один из них не отменяет остальные. Время идёт, зал полнится, монтажники не вернутся, а пюпитры стоят там, где их оставили.",
+    "en": "Ninety minutes before the audience arrives, the hall still smells of warmed wood and cooling dust from the seats. The work light is bluish, the stage is lit halfway, and in that half-dark you can plainly see what the install crew did to the side row: the folding panels under it have been pushed against the wall, one of them is folded the wrong way and is held only by a coupling to the trolley nobody thought to move out of the aisle. Cold stone comes up from the pit, paper cups of long-cold coffee stand on the stands, and on the string players’ chairs lie bows and cloths for the palm; all of it still holds the warmth of hands, but there are hardly any hands in the hall. Half the orchestra is still in the rehearsal room behind the stage, where it is warmer and where you cannot hear the empty pit creak under the floor.\n\nYou arrived before anyone else, and in two hours you heard more than you wanted to. The score is new, printed from a single manuscript, and it contains the kind of thing a conductor normally settles in a second and here has to settle out loud: in the middle there is a pause longer than most players can bear, and after it the theme has to return as if nothing had happened. You heard that pause three times. Three times the orchestra came back into it before the note required, and once it came back late. This is not a printing slip: beside the pause stands a mark that in this city is read as the composer’s instruction, and nobody has offered to erase it for you. You listened from the pit, from the upper choir loft and from behind the piano, and the pause sounded different in each of those places — shorter from the loft, longer from the pit — which was itself useful, because tonight almost nobody in the hall will hear it the way the few who did heard it.\n\nWhile you were listening, the crew was stripping the light for the broadcast. They took the panels down under the balconies, carried part of the side row forward for the cameras, and shifted the acoustic panels so that the sound would reflect more evenly into the recording zone. The acoustician left two hours before you arrived and left nothing but a spoken note at the desk: the panels are folded, the arrangement is unchanged, ask the crew if anything is wrong. There was nobody to ask. The crew had gone, and the dents in the trolley and the print of a boot in the dust under the panel stayed behind as evidence of work that nobody on the music side had checked. You photographed the hall from the balcony, then went down and walked the rows, listening to how the sound behaved at different distances from the stage. That material would have been enough for the argument that never happened.\n\nThe argument did happen, in the musicians’ room, which smells of rosin and hot tea. Two concertmasters are holding the same set of pages and talking about different things: one says the tempo of the central part was written for a different hall and will be too fast here; the other says the author changed nothing and there is no time to linger. Both editions carry the composer’s hand, both are printed from the same manuscript, and both lie in one folder that nobody returned to the library, because the library is closed. Between them the soloist sits with his eyes shut and listens to the argument without joining it, and that too is a choice of his that nobody has asked him about aloud. Through the wall you can hear a viola player counting bars in the rehearsal room while another stops counting, and you understand that this conversation will take more time than the argument itself unless it is ended the right way.\n\nThere is also what cannot be seen from the stand. The players were already tired before you arrived: last night was a late rehearsal, and this morning was three hours on their feet in the rehearsal room. Fatigue does not take the loudest players first; it takes the quiet ones. Section stamina is currently being held up by the sitting first-desk strings, who economize on movement and so look like the calmest people in the room. You can hear the woodwinds breathing in the gaps as plainly as anything, and it becomes clear that two more full tutti in that tempo will not cost the strings their composure — they will cost the players who breathe for the strings’ part.\n\nThrough the open door you can hear that the first listeners are already taking their seats in the back rows: a season subscription, journalists with pencils, each of them carrying an expectation you cannot cancel. Audience expectation is now higher than the part is ready for, and it is not a quantity you can raise; you can only stop it from turning into resentment. Soon the hall will fill with people who came to support the composer, and some of them heard this morning's rehearsal through the wall. If the evening goes badly, they will leave with the impression they had before they came.\n\nWhat you have not verified but have already heard deserves its own line: under the side row and beyond it, at the softest tutti, a dry knock appears where no bows should be. It does not depend on how loud the music is, and it returns in the same bar, although nobody has touched the panel since the evening began. Two readings are available — the panel folded the wrong way, or something is being moved under the stage — and both are only readings. What disturbs you more is the other matter: the soloist enters before the section, the section answers him with two different tempi, and in that mismatch his confidence drops from one run to the next, although formally he plays faultlessly. Checking the panel will necessarily take someone's attention away, and checking the soloist will teach you nothing about the sound.\n\nNothing has been promised aloud before the end. You can spend part of the hour reaching agreement, or you can put the panels back and stand the sections differently, or take the soloist aside and find out what he actually expects from the evening, or read both editions aloud and let the room choose, or you can leave everything as it is and risk everything on a single common run in the last minutes, when the players are tired and the hall is full. Every one of those moves costs time, and there is not much of it left, and none of them cancels the others. The clock is running, the hall is filling, the install crew will not come back, and the stands are where they were left."
+  }
 }

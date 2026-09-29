@@ -1,0 +1,381 @@
+{
+  "manifest": {
+    "id": "wafer-reference",
+    "title": "Контрольный кристалл",
+    "description": "Ночная смена должна решить, какие партии тактильных датчиков выпускать после противоречивого контроля пластин.",
+    "setting": "Вы руководите сменой чистой комнаты. До утренней отгрузки четыре часа; эталонная карта дефектов, тестовые купоны и маркировка партий расходятся.",
+    "categoryRu": "Микроэлектроника",
+    "background": "/assets/wafer-reference.jpg",
+    "version": "1.0.0",
+    "schemaVersion": "2",
+    "isNew": true,
+    "durationMinutes": [
+      20,
+      35
+    ]
+  },
+  "state": {
+    "initial": {
+      "phase": "opening",
+      "route": "none",
+      "origin": "none",
+      "integrity": 50,
+      "window": 50,
+      "clues": [],
+      "location": "inspection",
+      "outcome": "none",
+      "goalStatus": "active"
+    }
+  },
+  "actions": {
+    "free_text": {
+      "label": "Свободное действие",
+      "input": true,
+      "icon": "✍️"
+    },
+    "audit": {
+      "label": "Сверить карты и купоны",
+      "icon": "🔬"
+    },
+    "hold": {
+      "label": "Изолировать партии",
+      "icon": "🧤"
+    },
+    "consult": {
+      "label": "Связаться с конструктором",
+      "icon": "📞"
+    }
+  },
+  "ui": {
+    "accent": "#6cc8c8",
+    "stateLabels": {
+      "phase": "Этап",
+      "route": "Текущий подход",
+      "origin": "Первый выбор",
+      "integrity": "Надёжность выпуска",
+      "window": "Запас окна",
+      "clues": "Установленные факты",
+      "location": "Место",
+      "outcome": "Итог",
+      "goalStatus": "Цель"
+    }
+  },
+  "i18n": {
+    "ru": {
+      "states": {
+        "phase": "Этап",
+        "route": "Текущий подход",
+        "origin": "Первый выбор",
+        "integrity": "Надёжность выпуска",
+        "window": "Запас окна",
+        "clues": "Установленные факты",
+        "location": "Место",
+        "outcome": "Итог",
+        "goalStatus": "Цель"
+      },
+      "actions": {
+        "free_text": "Свободное действие",
+        "audit": "Сверить карты и купоны",
+        "hold": "Изолировать партии",
+        "consult": "Связаться с конструктором"
+      },
+      "manifest": {
+        "title": "Контрольный кристалл",
+        "description": "Ночная смена должна решить, какие партии тактильных датчиков выпускать после противоречивого контроля пластин.",
+        "category": "Микроэлектроника"
+      },
+      "values": {
+        "active": "В процессе",
+        "completed": "Цель выполнена",
+        "failed": "Цель провалена",
+        "audit_audit": "Итог: Сверить карты и купоны → Сверить карты и купоны",
+        "audit_hold": "Итог: Сверить карты и купоны → Изолировать партии",
+        "audit_consult": "Итог: Сверить карты и купоны → Связаться с конструктором",
+        "hold_audit": "Итог: Изолировать партии → Сверить карты и купоны",
+        "hold_hold": "Итог: Изолировать партии → Изолировать партии",
+        "hold_consult": "Итог: Изолировать партии → Связаться с конструктором",
+        "consult_audit": "Итог: Связаться с конструктором → Сверить карты и купоны",
+        "consult_hold": "Итог: Связаться с конструктором → Изолировать партии",
+        "consult_consult": "Итог: Связаться с конструктором → Связаться с конструктором",
+        "none": "Не выбрано",
+        "opening": "Завязка",
+        "path": "Первый поворот",
+        "cross": "Пересечение путей",
+        "final": "Решение",
+        "finished": "Финал",
+        "audit": "Сверить карты и купоны",
+        "initial_audit": "Вы накладываете карты пластин: дуга совпадает по координатам прибора, а не по ориентации кристаллов.",
+        "twist1_audit": "Повтор на новом купоне чист: дуга была царапиной старого эталона, которую алгоритм переносил на все карты.",
+        "twist2_audit": "Холодовой тест меняет расстановку: новые пластины проходят нагрузку, а старые «зелёные» теряют чувствительность ниже нуля.",
+        "hold": "Изолировать партии",
+        "initial_hold": "Вы маркируете спорные лотки и размыкаете маршрут к упаковке.",
+        "twist1_hold": "На изолированном лотке дуга не совпадает с микроскопией; она отпечатана лишь в цифровом эталоне.",
+        "twist2_hold": "Холодовой тест меняет расстановку: новые пластины проходят нагрузку, а старые «зелёные» теряют чувствительность ниже нуля.",
+        "consult": "Связаться с конструктором",
+        "initial_consult": "Конструктор просит показать дугу вместе с номером маски, не называя её дефектом.",
+        "twist1_consult": "Конструктор узнаёт дугу: это старый контрольный купон, а новый рисунок контактов имеет другую допустимую асимметрию.",
+        "twist2_consult": "Холодовой тест меняет расстановку: новые пластины проходят нагрузку, а старые «зелёные» теряют чувствительность ниже нуля."
+      }
+    },
+    "en": {
+      "states": {
+        "phase": "Phase",
+        "route": "Current approach",
+        "origin": "First choice",
+        "integrity": "Release integrity",
+        "window": "Process window",
+        "clues": "Established facts",
+        "location": "Location",
+        "outcome": "Outcome",
+        "goalStatus": "Objective"
+      },
+      "actions": {
+        "free_text": "Free action",
+        "audit": "Audit maps and coupons",
+        "hold": "Hold the lots",
+        "consult": "Consult the designer"
+      },
+      "manifest": {
+        "title": "The Reference Die",
+        "description": "A night shift must decide which tactile-sensor lots to release after conflicting wafer inspections.",
+        "category": "Microelectronics"
+      },
+      "values": {
+        "active": "In progress",
+        "completed": "Objective achieved",
+        "failed": "Objective failed",
+        "audit_audit": "Outcome: Audit maps and coupons → Audit maps and coupons",
+        "audit_hold": "Outcome: Audit maps and coupons → Hold the lots",
+        "audit_consult": "Outcome: Audit maps and coupons → Consult the designer",
+        "hold_audit": "Outcome: Hold the lots → Audit maps and coupons",
+        "hold_hold": "Outcome: Hold the lots → Hold the lots",
+        "hold_consult": "Outcome: Hold the lots → Consult the designer",
+        "consult_audit": "Outcome: Consult the designer → Audit maps and coupons",
+        "consult_hold": "Outcome: Consult the designer → Hold the lots",
+        "consult_consult": "Outcome: Consult the designer → Consult the designer",
+        "none": "Not chosen",
+        "opening": "Opening",
+        "path": "First turn",
+        "cross": "Paths intersect",
+        "final": "Decision",
+        "finished": "Ending",
+        "audit": "Audit maps and coupons",
+        "initial_audit": "Overlaying wafer maps shows the arc fixed to instrument coordinates, not die orientation.",
+        "twist1_audit": "A repeat with a fresh coupon is clean: a scratch on the old reference had been projected onto every map.",
+        "twist2_audit": "The cold test reverses the ranking: new wafers pass under load, while old “green” stock loses sensitivity below freezing.",
+        "hold": "Hold the lots",
+        "initial_hold": "You tag the disputed trays and break their route to packaging.",
+        "twist1_hold": "Microscopy of the held lot does not match the arc; it exists only in the digital reference.",
+        "twist2_hold": "The cold test reverses the ranking: new wafers pass under load, while old “green” stock loses sensitivity below freezing.",
+        "consult": "Consult the designer",
+        "initial_consult": "The designer asks to see the arc beside the mask number before calling it a defect.",
+        "twist1_consult": "The designer recognizes the arc as an old control coupon; the new contact design has a different permitted asymmetry.",
+        "twist2_consult": "The cold test reverses the ranking: new wafers pass under load, while old “green” stock loses sensitivity below freezing."
+      }
+    }
+  },
+  "goal": {
+    "description": {
+      "ru": "Отправить только прослеживаемые и работоспособные датчики, удержав сомнительные партии с объяснимой причиной.",
+      "en": "Ship only traceable, functional sensors and hold doubtful lots for a documented reason."
+    },
+    "completion": {
+      "path": "goalStatus",
+      "value": "completed",
+      "terminalValues": [
+        "completed",
+        "failed"
+      ]
+    }
+  },
+  "map": {
+    "start": "inspection",
+    "locations": {
+      "inspection": {
+        "ru": "Пост контроля",
+        "en": "Inspection station"
+      },
+      "cleanroom": {
+        "ru": "Чистая зона",
+        "en": "Cleanroom"
+      },
+      "design": {
+        "ru": "Конструкторская",
+        "en": "Design desk"
+      }
+    }
+  },
+  "world": {
+    "constants": {
+      "setting": "Вы руководите сменой чистой комнаты. До утренней отгрузки четыре часа; эталонная карта дефектов, тестовые купоны и маркировка партий расходятся.",
+      "physicalRules": [
+        "Пластину нельзя исправить переписыванием карты; решение о выпуске требует физического теста и прослеживаемой маркировки.",
+        "Процессное окно ограничено; изоляция снижает риск, но задерживает отгрузку.",
+        "Одинаковая дуга на разных масках может указывать на эталон, а не на изделия."
+      ],
+      "continuity": "Подтверждённые улики и последствия прежних решений сохраняются; действия свободны, но результат должен быть причинным.",
+      "tone": "Взрослая история с реальными компромиссами, без случайной катастрофы.",
+      "storyArc": {
+        "beats": {
+          "ru": [
+            "Повторяющаяся дуга заставляет усомниться в партии или эталоне.",
+            "Сравнение купона, изоляция и разговор с конструктором открывают разные пути к одной причине.",
+            "Старый контрольный образец и низкотемпературный тест меняют приоритет выпуска.",
+            "Выбор выпуска, задержки или совместного пересмотра фиксирует цену решения."
+          ],
+          "en": [
+            "A repeated arc casts doubt on the lots or the reference.",
+            "Coupon comparison, quarantine, and designer input offer distinct routes to the cause.",
+            "The old control sample and a low-temperature test reverse release priorities.",
+            "Release, hold, or joint review determines the cost of the decision."
+          ]
+        },
+        "twists": {
+          "ru": [
+            "Повтор на новом купоне чист: дуга была царапиной старого эталона, которую алгоритм переносил на все карты. Красный статус новых пластин больше не доказательство брака.",
+            "На изолированном лотке дуга не совпадает с микроскопией; она отпечатана лишь в цифровом эталоне. Карантин сохранил прослеживаемость, но удержал и хорошие пластины.",
+            "Конструктор узнаёт дугу: это старый контрольный купон, а новый рисунок контактов имеет другую допустимую асимметрию. Совет убедителен, но физические характеристики ещё не измерены.",
+            "Холодовой тест меняет расстановку: новые пластины проходят нагрузку, а старые «зелёные» теряют чувствительность ниже нуля. Причина была не только в царапине купона: прежняя маска вообще проверялась при другой температуре."
+          ],
+          "en": [
+            "A repeat with a fresh coupon is clean: a scratch on the old reference had been projected onto every map. A red status on new wafers no longer proves failure.",
+            "Microscopy of the held lot does not match the arc; it exists only in the digital reference. Quarantine preserved traceability but also delayed good wafers.",
+            "The designer recognizes the arc as an old control coupon; the new contact design has a different permitted asymmetry. His account is plausible, but physical performance is still unmeasured.",
+            "The cold test reverses the ranking: new wafers pass under load, while old “green” stock loses sensitivity below freezing. The scratched coupon was only part of the issue; the former mask used a different test temperature."
+          ]
+        },
+        "paths": {
+          "ru": [
+            "Доказать по данным, какие изделия ошибочно забракованы; цена — время на повторный тест.",
+            "Сначала удержать риск; цена — задержка годной партии.",
+            "Сверить замысел датчика с испытанием; цена — зависимость от удалённой проверки."
+          ],
+          "en": [
+            "Use measurements to prove which devices were falsely rejected; pay in retest time.",
+            "Contain risk first; pay by delaying good stock.",
+            "Compare sensor design with inspection; pay by relying on remote review."
+          ]
+        },
+        "revealPolicy": {
+          "ru": "Покажи первое открытие только после начального действия, второе — после проверки первого; прежний путь меняет цену и достоверность следующего.",
+          "en": "Reveal the first turn only after an opening action and the second after testing the first; earlier choices change the cost and reliability of what follows."
+        }
+      }
+    },
+    "knowledgeGraph": {
+      "facts": [
+        {
+          "id": "wafer-reference_0",
+          "text": "Система видит одинаковую дугу на пластинах разных масок."
+        },
+        {
+          "id": "wafer-reference_1",
+          "text": "На столе одновременно старый купон и новая карта допусков."
+        },
+        {
+          "id": "wafer-reference_2",
+          "text": "Номера масок связаны с версией конструкции датчика, а не только датой выпуска."
+        }
+      ]
+    }
+  },
+  "boundaries": {
+    "mutationPaths": [
+      "phase",
+      "route",
+      "origin",
+      "integrity",
+      "window",
+      "clues",
+      "location",
+      "outcome",
+      "goalStatus"
+    ],
+    "numericBounds": {
+      "integrity": {
+        "min": 0,
+        "max": 100
+      },
+      "window": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    "allowedValues": {
+      "phase": [
+        "opening",
+        "path",
+        "cross",
+        "final",
+        "finished"
+      ],
+      "route": [
+        "none",
+        "audit",
+        "hold",
+        "consult"
+      ],
+      "origin": [
+        "none",
+        "audit",
+        "hold",
+        "consult"
+      ],
+      "location": [
+        "inspection",
+        "cleanroom",
+        "design"
+      ],
+      "outcome": [
+        "none",
+        "audit_audit",
+        "audit_hold",
+        "audit_consult",
+        "hold_audit",
+        "hold_hold",
+        "hold_consult",
+        "consult_audit",
+        "consult_hold",
+        "consult_consult"
+      ],
+      "goalStatus": [
+        "active",
+        "completed",
+        "failed"
+      ],
+      "clues[]": [
+        "initial_audit",
+        "initial_hold",
+        "initial_consult",
+        "twist1_audit",
+        "twist1_hold",
+        "twist1_consult",
+        "twist2_audit",
+        "twist2_hold",
+        "twist2_consult"
+      ]
+    },
+    "maxArrayItems": {
+      "clues": 3
+    },
+    "maxStringLengths": {},
+    "stateChangeRules": [
+      {
+        "path": "integrity",
+        "maxIncrease": 20
+      },
+      {
+        "path": "window",
+        "maxIncrease": 20
+      }
+    ],
+    "instructions": [
+      "Мутации ограничены перечисленными полями и пределами.",
+      "Не объявляй конец по числовому порогу; финал зависит от подтверждённого выбора."
+    ]
+  },
+  "opening": {
+    "ru": "В чистой комнате тихо, пока система контроля не окрашивает два лотка в красный. Вы отвечаете за выпуск тактильных датчиков для протезов; утренний курьер уже назначен, а остановка линии сожжёт редкое технологическое окно. На экране повторяется одинаковая дуга «дефекта» у разных пластин, хотя номера масок различаются. Старый контрольный купон лежит рядом с новой картой допусков. Можно сверить данные, изолировать выпуск или вызвать конструктора: каждый путь покупает своё знание ценой времени.",
+    "en": "The cleanroom is quiet until inspection marks two trays red. You authorize tactile sensors for prosthetic devices; a morning courier is booked, and stopping the line will consume a rare process window. The same defect arc appears on different wafers despite different mask numbers. An old control coupon sits beside a new tolerance map. You can audit, hold the lot, or call the designer; each buys different knowledge at a cost."
+  }
+}

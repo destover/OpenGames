@@ -23,8 +23,7 @@
       "inventory": [],
       "discoveredFacts": [],
       "condition": "alive",
-      "goalStatus": "active",
-      "ended": false
+      "goalStatus": "active"
     }
   },
   "actions": {
@@ -48,6 +47,22 @@
     "investigate": {
       "label": "Изучить след",
       "icon": "🧭"
+    },
+    "thaw": {
+      "label": "Растаять снег в котелке",
+      "icon": "🫗"
+    },
+    "cairn": {
+      "label": "Сложить вехи на тропе",
+      "icon": "🪨"
+    },
+    "listen": {
+      "label": "Прислушаться к долине",
+      "icon": "👂"
+    },
+    "share_fire": {
+      "label": "Поделиться огнём",
+      "icon": "🤲"
     }
   },
   "world": {
@@ -67,14 +82,20 @@
         },
         "beats": {
           "ru": [
-            "В заснеженной долине заканчиваются ночь и топливо; нужно найти тепло, воду и понять, кто оставил следы.",
-            "Две линии следов сходятся у собственного кострища: метель замела старый круг, и группа повторно прошла его, приняв след за чужой.",
-            "Команда проверяет ориентиры, но не выдаёт повторный след за доказательство присутствия другого человека."
+            "Ночь в долине идёт к половине, огонь оседает, и всё, что можно сделать с запасом тепла, придётся делать до серого света над гребнем.",
+            "Следы у костра расходятся на две линии, обе ведут к кострищу и обе теряются в метели; выясняется, что старый круг был замечен с другой стороны.",
+            "Топливо и вода становятся делом коллективным: один работает у огня, другой уходит вниз, и у костра остаётся меньше рук, чем нужно.",
+            "В ложбине между скалами на поперечном ветру держится бледный столб; его принимают то за дым, то за пар, и обе версии требуют проверки.",
+            "Отпечаток у костра совпадает с подошвой, которую сушили на огне, и след перестаёт быть уликой против кого-либо, но не становится объяснением.",
+            "К рассвету нужно выбрать одно из трёх: согреться у огня, добыть воду или дойти до укрытия на севере."
           ],
           "en": [
-            "Night and fuel are running out in a snowy valley; the group needs warmth, water, and an explanation for the tracks.",
-            "Two tracks circle back to the camp: a blizzard erased the old loop and the group crossed it again, mistaking it for a stranger.",
-            "Check landmarks without treating a repeated track as proof of another person."
+            "Night in the valley is already past its middle, the fire is settling, and whatever can be done with the stored warmth has to be done before grey light reaches the ridge.",
+            "The tracks split into two lines at the camp, and both lead back to the fire ring and both vanish into the blizzard; the old circle turns out to have been circled from the far side.",
+            "Fuel and water become a shared job: one person works at the fire, another goes down, and the camp is left with fewer hands than it needs.",
+            "In the hollow between the rocks a pale column holds in the crosswind, taken for smoke and then for steam, and both readings still need checking.",
+            "The print at the fire matches a sole that was set out to dry, so the track stops being suspicion against anyone without becoming an explanation.",
+            "By daybreak one of three things has to be chosen: get warm at the fire, reach water, or walk to the shelter in the north."
           ]
         },
         "twists": {
@@ -89,14 +110,16 @@
         },
         "paths": {
           "ru": [
-            "Остаться у костра и нормировать топливо: риск движения ниже, запас тепла ограничен.",
-            "Проверить ручей парой с верёвочной страховкой: шанс на воду растёт, один человек временно остаётся без помощи.",
-            "Идти по подтверждённым ориентирам к укрытию: движение возвращает контроль, но расходует свет и силы."
+            "Удержать огонь и нормировать топливо. Предпосылка: огонь ещё держится и в котелке есть запас. Новое: становится виден порядок, в котором ветки сгорают, и точный остаток ночи. Немедленное последствие: тепло перестаёт убывать, но вода не прибывает. Отложенное: к рассвету топлива не останется, и уйти будет не на чем. Риск: если предположение о запале окажется неверным, ночь придётся встречать без огня. Компромисс: сберечь тепло сейчас ценой потери подвижности. Точки пересечения: с решением идти к воде — огонь остаётся, запас делится; с возвращением к вехам — тропа становится короче, а костёр тоньше.",
+            "Спуститься к ручью в ложбине и проверить воду. Предпосылка: хотя бы один человек достаточно крепок, а берег местами открыт. Новое: подтверждается или отпадает версия о паре, и вода становится либо найденной, либо исключённой. Немедленное последствие: у костра на короткое время остаётся меньше рук. Отложенное: если вода негодна, вернувшийся приносит убыль тепла и известие. Риск: срыв со скалы без подготовки. Компромисс: безопасный спуск в одиночку против общего времени. Точки пересечения: с решением уходить к северному укрытию — ручей оказывается на пути; с вехами — спуск перестаёт быть возвратом вслепую.",
+            "Дойти по подтверждённым ориентирам до северного укрытия. Предпосылка: хотя бы два ориентира опознаны лично, а день ещё не потрачен. Новое: укрытие оказывается либо доступным, либо нет, и слухи о нём уступают проверке. Немедленное последствие: движение возвращает контроль, но расходует силы и часть тепла. Отложенное: обратный путь становится длиннее, а погода может испортиться. Риск: белый след, ориентиры, потерянные в метели. Компромисс: выйти сейчас или дождаться хоть какого-то рассвета. Точки пересечения: с решением остаться у огня — укрытие остаётся слухом; с решением искать воду — можно встретиться в ложбине.",
+            "Ограничить любое движение силами группы и поделить огонь, тепло и воду по расписанию. Предпосылка: рядом есть хотя бы один, кому вы доверяете достаточно, чтобы отдать часть запаса. Новое: открывается то, что думает и о чём молчит второй, и становятся видны его приоритеты. Немедленное последствие: ваше собственное тепло уменьшается. Отложенное: у того, кто рядом, появляется собственный долг, который придётся оплачивать. Риск: неверно выбранный приоритет. Компромисс: доверие против самостоятельности. Точки пересечения: с любым решением у воды и у укрытия — оно перестаёт быть только вашим."
           ],
           "en": [
-            "Stay by the fire and ration fuel: movement risk falls, warmth is limited.",
-            "Check the spring with a rope pair: water becomes possible, one person is briefly without help.",
-            "Follow confirmed landmarks to shelter: movement restores control but spends daylight and strength."
+            "Hold the fire and ration fuel. Preconditions: the flame is still alive and there is something left in the pot. What it brings: the order in which branches burn becomes legible, and so does the exact remainder of the night. Immediate consequence: warmth stops bleeding out, but no water arrives. Deferred consequence: there is no fuel left by daybreak and nothing to walk on. Risk: if the reading of the firing is wrong, the night is met without fire. Tradeoff: save heat now at the price of mobility. Crossing points: with the decision to go for water the fire stays but the supply is divided; with a return to the cairns the trail gets shorter and the fire thinner.",
+            "Go down into the hollow and test the stream. Preconditions: at least one person is still strong enough and the bank is open in places. What it brings: the steam reading is confirmed or dropped, and the water is either found or ruled out. Immediate consequence: the camp is briefly short of hands. Deferred consequence: if the water is bad, the one who returns brings lost warmth and a piece of news. Risk: an unprepared drop off the rock. Tradeoff: a safe descent alone against shared time. Crossing points: with the decision to push for the northern shelter the stream turns out to lie on the way; with the cairns the descent stops being a blind walk back.",
+            "Walk on confirmed landmarks to the shelter in the north. Preconditions: at least two landmarks are recognized by eye and the light is not yet spent. What it brings: the shelter is either usable or not, and rumor gives way to checking. Immediate consequence: movement restores control while spending strength and some warmth. Deferred consequence: the return is longer and the weather may turn. Risk: a whiteout, lost landmarks. Tradeoff: leave now or wait for any light at all. Crossing points: with the decision to stay at the fire the shelter remains a rumor; with the decision to look for water the two routes meet in the hollow.",
+            "Cap every movement by the strength of the group and divide fire, warmth and water on a schedule. Preconditions: there is at least one person near you that you trust enough to hand part of the supply to. What it brings: what the second person thinks and stays silent about opens up, and their priorities become visible. Immediate consequence: your own warmth drops. Deferred consequence: the one beside you now carries a debt of their own that has to be paid. Risk: the wrong priority chosen. Tradeoff: trust against independence. Crossing points: with every decision at the water and at the shelter it stops being yours alone."
           ]
         }
       }
@@ -118,6 +141,22 @@
         {
           "id": "northern_shelter",
           "text": "На севере может находиться заброшенное укрытие; игрок пока не знает, доступно ли оно."
+        },
+        {
+          "id": "low_fuel",
+          "text": "Топлива в запасе мало: штабель у костра тает, а сухое дерево под снегом закончится раньше, чем ночь."
+        },
+        {
+          "id": "two_tracks",
+          "text": "От костра в метель уходят две линии следов; обе теряются на расстоянии нескольких десятков метров."
+        },
+        {
+          "id": "ridge_plume",
+          "text": "Над ложбиной между скалами на поперечном ветру держится бледный столб; что это, пока не установлено."
+        },
+        {
+          "id": "dried_boots",
+          "text": "У костра под сушкой стоят сапоги с сильно стёртой подошвой; владельца никто не называл."
         }
       ]
     }
@@ -152,7 +191,11 @@
       "location": [
         "camp",
         "slope",
-        "shelter"
+        "shelter",
+        "pinefall",
+        "rocks",
+        "spring",
+        "ridge"
       ],
       "condition": [
         "alive",
@@ -197,10 +240,13 @@
     ],
     "instructions": [
       "Не возвращай персонажа к прежнему месту без объяснимого действия или события.",
+      "Сохраняй причинно-следственную непрерывность: каждое изменение тепла, воды, запасов, места и самочувствия должно следовать из описанного действия, погоды и времени ночи.",
+      "Не повторяй уже показанное: одна и та же сцена и один и тот же результат описываются один раз; при повторном заходе коротко обозначь итог и измени обстановку.",
       "Не отменяй рискованное действие шаблонной фразой: описывай его конкретный правдоподобный результат.",
-      "Сохраняй причинно-следственную непрерывность истории.",
       "Новые предметы допускаются только из разрешённого списка; неизвестные факты можно добавлять в discoveredFacts.",
       "После усилия на морозе, ветре или травмы значение warmth снижается; повышать его можно только при явно описанных огне, сухом укрытии или отдыхе.",
+      "Не выдавай истолкованный след, столб над ложбиной или слух об укрытии за доказанный факт: сначала покажи само наблюдение, затем версию, и держи их раздельно в clue и discoveredFacts.",
+      "Не выдавай отвергнутое за совершившееся: если объяснение отозвано, опровергнуто или заменено, оно остаётся в истории как отвергнутое, а не переписывается задним числов на факт.",
       "Цель считается выполненной только если персонаж пережил ночь до рассвета; провал — только если он погиб или объективно больше не может выжить."
     ]
   },
@@ -236,7 +282,11 @@
         "gather": "Собрать хворост",
         "scout": "Осмотреть долину",
         "rest": "Отдохнуть у костра",
-        "investigate": "Изучить след"
+        "investigate": "Изучить след",
+        "thaw": "Растаять снег в котелке",
+        "cairn": "Сложить вехи на тропе",
+        "listen": "Прислушаться к долине",
+        "share_fire": "Поделиться огнём"
       },
       "manifest": {
         "title": "Последний костёр",
@@ -279,7 +329,11 @@
         "gather": "Gather firewood",
         "scout": "Scout the valley",
         "rest": "Rest by the fire",
-        "investigate": "Investigate the trail"
+        "investigate": "Investigate the trail",
+        "thaw": "Melt snow in the pot",
+        "cairn": "Stack cairns on the route",
+        "listen": "Listen to the valley",
+        "share_fire": "Share the fire"
       },
       "manifest": {
         "title": "The Last Campfire",
@@ -334,332 +388,27 @@
       "shelter": {
         "ru": "Северное укрытие",
         "en": "Northern shelter"
+      },
+      "pinefall": {
+        "ru": "Сухая лесина",
+        "en": "Dead pine stand"
+      },
+      "rocks": {
+        "ru": "Скальная полка",
+        "en": "Rock ledge"
+      },
+      "spring": {
+        "ru": "Ложбина у ручья",
+        "en": "Stream hollow"
+      },
+      "ridge": {
+        "ru": "Гребень над осыпью",
+        "en": "Ridge above the scree"
       }
     }
   },
   "opening": {
-    "ru": "Память возвращается вместе с холодом: скользкий склон, сорвавшийся рюкзак и долгая тишина после падения. Вы приходите в себя у небольшого костра в незнакомой заснеженной долине; на снегу видны следы другого человека, огонь слабеет, а до рассвета ещё целая ночь\n\nПорыв ветра почти гасит костёр, и за границей света проступают свежие следы. В ложбине можно сохранить тепло, но погоня сейчас заставит покинуть единственное тёплое место.\n\nЗдесь важно помнить, что к моменту вашего появления история уже началась. Заснеженная долина, один костер, поиск хвороста и воды, следы неизвестного путника. Это не отвлечённый фон и не задача, которую можно решить одним эффектным жестом: исходные условия складывались раньше, а люди, объекты и процессы успели приспособиться к ним. Поэтому любое изменение затронет не только то, что видно сейчас, но и привычный порядок, на котором держатся остальные части ситуации. Вы входите в неё с правом действовать, однако сначала нужно понять, что именно считается нормой и кто подтвердил эту норму.\n\nПервое наблюдение относится к конкретному месту: Костёр, Склон, Северное укрытие. В нём есть заметная деталь, которую легко принять за готовый ответ, но пока это только отправная точка. Сведения получены не одновременно и не одним способом; между тем, что зафиксировано, и тем, что уже успели предположить, остаётся промежуток. Если немедленно закрыть его догадкой, следующие данные будут подгоняться под выбранную версию. Если же точно обозначить, что известно, а что пока лишь кажется вероятным, у вас сохранится возможность увидеть несоответствие, не переписывая задним числом всю картину.\n\nВаша задача сформулирована шире, чем устранить ближайшую помеху: Пережить ночь в холодной долине, используя найденные ресурсы и принимая собственные решения. На практике это означает одновременно следить за непосредственным результатом и за тем, что этот результат позволит узнать. Быстрый шаг может принести видимое улучшение, но ухудшить сравнимость, доступность или доверие; осторожный — сохранить качество проверки, но оставить проблему без немедленного ответа. Эти соображения не равны по весу во всех обстоятельствах. Их порядок зависит от того, какие сведения вы подтвердите и какой ущерб действительно обратим.\n\nВ материалах есть три слоя: исходное состояние, первое наблюдение и объяснение, которое кто-то успел к нему приложить. Не смешивайте их. Остаться у костра и нормировать топливо: риск движения ниже, запас тепла ограничен. Если цифры или свидетельства расходятся, полезно установить, когда и где именно началось расхождение, кто наблюдал явление напрямую и какие условия могли поменяться между проверками. Иногда спорный показатель оказывается не ложным, а неполным: он честно описывает ту точку, где был получен, но не ту, о которой спрашивает команда.\n\nВам не требуется заранее выбирать единственную стратегию на весь эпизод. В текущем пакете доступны разные типы действий: Собрать хворост, Осмотреть долину, Отдохнуть у костра. Они дают разные виды контроля: одно может уточнить картину, другое — изменить условия, третье — выиграть время или проверить связь между двумя событиями. Выбирая, задайте себе практический вопрос: что должно стать заметно после этого шага, если ваша версия верна? И что вы увидите, если она неверна? Такой критерий превращает действие в проверку, а не просто в жест, после которого приходится надеяться на удачу.\n\nПуть вперёд может разветвиться, и у каждого направления будет собственная цена. Одно решение способно защитить непосредственную цель, но оставить неопределённость; другое — укрепить доказательства, но сузить окно для вмешательства; третье — уменьшить воздействие на окружающую систему, одновременно потребовав новой проверки. Эти различия не делают какой-либо путь правильным заранее. Важнее видеть, какую ценность вы защищаете сейчас, чем рискуете ради неё и какие признаки заставят пересмотреть план. Смена курса допустима, если вы можете объяснить, какая новая информация изменила расчёт.\n\nОглянитесь на Костёр, Склон, Северное укрытие. Каждая точка открывает свою часть происходящего и скрывает другую; переход между ними сам по себе может менять условия наблюдения. Не считайте схему исчерпывающей: она описывает доступные места, но не гарантирует, что все важные процессы заметны с одной позиции. Сверяйте время, источник и обстоятельства каждого сообщения. Если кто-то говорит «это было так всегда», спросите, за какой период он отвечает; если прибор показывает отклонение, уточните его рабочий диапазон и место установки. Так вы отделите стабильную закономерность от удобного, но слишком широкого обобщения.\n\nЕсть вопросы, на которые пока нельзя честно ответить. Что здесь причина, а что следствие? Действительно ли наблюдаемое изменение требует немедленного вмешательства? Кто или что понесёт последствия, если вы ошибётесь? Неопределённость не означает, что все версии одинаково вероятны; она означает, что следующая сцена должна дать материал для различения. Не превращайте каждую странность в тайный замысел и не отбрасывайте неудобную улику лишь потому, что она мешает плану. Самый убедительный поворот будет иметь смысл только тогда, когда ранние подробности позволят узнать его, а не просто удивиться ему.\n\nНачните с масштаба, который можно проверить. Запишите исходные условия, выберите один важный показатель и не меняйте сразу несколько факторов, если хотите понять, что повлияло на результат. Если вмешательство необходимо прямо сейчас, обозначьте его как временное и сохраните контрольную точку для сравнения. Если можно подождать, определите, какое именно наблюдение оправдает ожидание и сколько времени оно занимает. Это не бюрократическая осторожность: так вы не потеряете возможность отличить настоящую перемену от эффекта собственных действий.\n\nПостепенно прояснится и человеческая сторона задачи: чьи объяснения опираются на наблюдения, кто отвечает за последствия и кому придётся жить с выбранным порядком после того, как срочность спадёт. Доверие здесь не заменяет измерения, но влияет на то, какие сведения вам сообщат и какие шаги команда сможет выполнить вместе. Объясняйте, что проверяете, не обещайте результата раньше проверки и отмечайте, что именно изменило ваше мнение. Иногда это позволит сохранить сотрудничество даже при разногласии; иногда станет ясно, что разные участники защищают несовместимые интересы.\n\nОтдельно рассмотрите направление 3: Идти по подтверждённым ориентирам к укрытию: движение возвращает контроль, но расходует свет и силы. Оно не отменяет остальные возможности и не требует принимать весь план сразу. Спросите, какое подтверждение сделает этот шаг уместным, что останется измеримым после него и кто заметит его побочный эффект первым. Если ответ пока неизвестен, это не повод скрывать пробел: его можно превратить в условие остановки или повторной оценки.",
-    "en": "Memory returns with the cold: a slick slope, a torn pack, and the long silence after the fall. You come to beside a small fire in an unfamiliar snowy valley. Another person’s tracks mark the snow, the flames are fading, and dawn is still a full night away\n\nThe gusts flatten the fire just as fresh tracks appear beyond its light. A sheltered hollow offers a chance to preserve heat, but following the tracks now means leaving the only warm place.\n\nRemember that the story had already begun before you arrived. Night and fuel are running out in a snowy valley; the group needs warmth, water, and an explanation for the tracks. This is not a backdrop or a problem that can be solved with one dramatic gesture: the conditions formed earlier, and people, objects, and processes have adapted to them. Any change will affect more than what is visible now; it may alter the routine that holds other parts of the situation together. You have authority to act, but first you need to understand what counts as normal here and who has actually verified that baseline.\n\nThe first observation belongs to a specific place: Campfire, Slope, Northern shelter. It contains a detail that may look like an answer, but for now it is only a starting point. The information was gathered at different times and by different means; a gap remains between what was recorded and the explanation someone has attached to it. If you fill that gap with a guess, later evidence may be forced to fit your theory. If you mark what is known and what only seems likely, you can notice a mismatch without rewriting the whole account afterward.\n\nYour objective is broader than removing the nearest obstacle: Survive the night in a frozen valley, using what you find and choosing your own path. In practice, you must watch both the immediate result and what that result lets you learn. A quick intervention may produce visible improvement while weakening comparison, access, or trust; a cautious one may preserve the quality of the evidence while leaving the problem unresolved. Those concerns do not carry the same weight in every situation. Their order depends on what you confirm and on which harm can actually be reversed.\n\nThe available material has three layers: the initial conditions, the first observation, and the explanation someone has already attached to it. Keep them separate. Stay by the fire and ration fuel: movement risk falls, warmth is limited. If figures or accounts disagree, establish when and where the mismatch began, who witnessed the event directly, and what could have changed between checks. A disputed reading is sometimes incomplete rather than false: it may accurately describe the point where it was taken, but not the wider area the team is asking about.\n\nYou do not have to choose one strategy for the whole episode in advance. The package offers different kinds of action: Gather firewood, Scout the valley, Rest by the fire. Each gives you a different kind of control: one may clarify the picture, another may change the conditions, and another may buy time or test a connection between events. Before choosing, ask a practical question: what should become visible if your theory is right? What would you see if it is wrong? That turns an action into a test, rather than a gesture followed by a hope for good luck.\n\nThe way forward can branch, and each direction has its own cost. One choice may protect the immediate objective while leaving uncertainty; another may strengthen the evidence while narrowing the window to intervene; a third may reduce impact on the surrounding system while requiring a fresh check. None is automatically correct. What matters is seeing which value you are protecting, what you risk for it, and what signs would make you reconsider. A change of course is sound when you can explain what new information changed the calculation.\n\nLook at Campfire, Slope, Northern shelter. Each point reveals one part of the situation and hides another; moving between them can itself change the conditions of observation. Do not treat the map as complete: it lists available places but cannot guarantee that every important process is visible from one position. Compare the time, source, and circumstances of each report. If someone says “it has always been this way,” ask what period they mean; if an instrument shows a deviation, check its operating range and location. This helps separate a stable pattern from a convenient but overly broad conclusion.\n\nSome questions cannot yet be answered honestly. What is a cause, and what is an effect? Does the observed change truly require immediate intervention? Who or what bears the cost if you are wrong? Uncertainty does not mean every theory is equally likely; it means the next scene must give you a way to distinguish them. Do not turn every oddity into a hidden scheme, and do not discard inconvenient evidence because it disrupts a plan. A convincing turn will make sense only if earlier details let you recognize it, not merely be surprised by it.\n\nStart at a scale you can check. Record the baseline, choose one important measure, and avoid changing several factors at once if you need to know what caused the result. If action is necessary now, mark it as temporary and preserve a control point for comparison. If waiting is possible, specify what observation would justify the delay and how long it will take. This is not caution for its own sake: it preserves your ability to distinguish a real change from the effect of your own intervention.\n\nThe human side of the task will become clearer too: whose account rests on observation, who is responsible for the consequences, and who must live with the chosen arrangement after the emergency passes. Trust does not replace measurement, but it affects what people tell you and what the team can do together. Explain what you are checking, do not promise a result before it is verified, and note what changed your mind. That may preserve cooperation through disagreement; it may also show that different participants are protecting interests that cannot be reconciled.\n\nConsider approach 3 separately: Follow confirmed landmarks to shelter: movement restores control but spends daylight and strength. It does not erase the other options or require you to commit to the whole plan at once. Ask what evidence would make this step appropriate, what will remain measurable afterward, and who will notice its side effect first. If the answer is not yet known, do not hide the gap; turn it into a condition for pausing or reassessing."
-  },
-  "preparedBranches": [
-    {
-      "id": "dwindling_fire",
-      "actions": [
-        "gather",
-        "scout",
-        "rest",
-        "investigate",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "Порыв ветра почти гасит костёр, и за границей света проступают свежие следы. В ложбине можно сохранить тепло, но погоня сейчас заставит покинуть единственное тёплое место.",
-        "en": "The gusts flatten the fire just as fresh tracks appear beyond its light. A sheltered hollow offers a chance to preserve heat, but following the tracks now means leaving the only warm place."
-      },
-      "mutations": [],
-      "suggestions": [
-        {
-          "text": {
-            "ru": "Укрыть огонь камнями и переждать порыв",
-            "en": "Rebalance effort and check the consequences"
-          }
-        },
-        {
-          "text": {
-            "ru": "Проверить следы, пока их не замело",
-            "en": "Keep the current plan and prepare a backup"
-          }
-        }
-      ],
-      "responses": {
-        "gather": {
-          "narrative": {
-            "ru": "Вы собираете только сухие ветви, различимые в круге костра, и не уходите к тёмной кромке долины. Топливо можно добавить сразу, но следы остаются непроверенными; по дыму становится заметно, что ветер приходит короткими порывами.",
-            "en": "You gather only the dry branches visible within the firelight instead of heading toward the dark edge of the valley. Fuel can be added now, but the tracks remain unchecked; the smoke shows that the wind is arriving in short gusts."
-          }
-        },
-        "scout": {
-          "narrative": {
-            "ru": "Вы осматриваете склон с границы света и сверяете направление отпечатков с ветром. След свежий, но его края уже размывает снег: направление можно наметить, однако определить, кто прошёл, пока нельзя.",
-            "en": "You scan the slope from the edge of the firelight and compare the tracks with the wind. The trail is fresh, but snow is already softening its edges: you can mark its direction, not identify who made it."
-          }
-        },
-        "rest": {
-          "narrative": {
-            "ru": "Вы устраиваетесь у костра, прикрывая пламя от ветра и не засыпая. Тепло даёт короткую передышку, но время не останавливается: за её пределами следы понемногу исчезают под снегом.",
-            "en": "You settle beside the fire, shielding the flame from the wind without falling asleep. The warmth gives you a brief pause, but time keeps moving: beyond the light, the tracks are slowly disappearing under snow."
-          }
-        },
-        "investigate": {
-          "narrative": {
-            "ru": "Вы наклоняетесь к ближайшему отпечатку. Край подошвы смазан резкой сменой шага, а не только ветром; это может говорить о спешке или осторожности, но не доказывает, что незнакомец всё ещё рядом.",
-            "en": "You lean over the nearest print. The sole’s edge is blurred by a sudden change of step, not only by the wind; it may suggest haste or caution, but it does not prove the stranger is still nearby."
-          }
-        },
-        "free_text": {
-          "narrative": {
-            "ru": "Вы пробуете собственный план, не забывая о двух ограничениях: костёр остаётся единственным источником тепла, а снег быстро стирает следы. Команда сначала оценивает, можно ли выполнить действие, не подвергая опасности того, кто останется у огня.",
-            "en": "You try your own plan while keeping two limits in view: the fire is still your only source of warmth, and snow is quickly erasing the tracks. The group first considers whether the action can be taken without endangering whoever stays by the fire."
-          }
-        }
-      }
-    },
-    {
-      "id": "shelter_lead",
-      "when": {
-        "location": "shelter"
-      },
-      "actions": [
-        "investigate",
-        "scout",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "В заброшенном укрытии лежат жестяная кружка и лоскут ткани: путник ушёл поспешно. Дверь можно укрепить от ветра, но тогда след снаружи занесёт снегом.",
-        "en": "Inside the abandoned shelter, a tin cup and a strip of cloth suggest the traveler left in haste. The door can be secured against the wind, though doing so may erase the trail outside."
-      },
-      "mutations": [],
-      "suggestions": [
-        {
-          "text": {
-            "ru": "Осмотреть кружку и ткань",
-            "en": "Rebalance effort and check the consequences"
-          }
-        },
-        {
-          "text": {
-            "ru": "Закрепить дверь и согреть укрытие",
-            "en": "Keep the current plan and prepare a backup"
-          }
-        }
-      ],
-      "responses": {
-        "investigate": {
-          "narrative": {
-            "ru": "В укрытии вы осматриваете жестяную кружку и лоскут ткани. Внутри кружки ещё держится слабый запах дыма, а ткань зацепилась за дверную щеколду: путник действительно уходил поспешно, но причина ухода пока неизвестна.",
-            "en": "Inside the shelter, you inspect the tin cup and scrap of cloth. A faint smell of smoke remains in the cup, and the cloth caught on the door latch: the traveler did leave in a hurry, but the reason is still unknown."
-          }
-        },
-        "scout": {
-          "narrative": {
-            "ru": "Вы проверяете след с порога, стараясь не затоптать его продолжение. Отпечатки уходят в сторону открытого склона, но порыв уже принёс туда свежий снег; возвращаться к костру можно по собственным шагам.",
-            "en": "You follow the trail from the doorway, taking care not to trample its continuation. The prints lead toward the exposed slope, where a gust has already laid fresh snow; your own steps still mark the way back to the fire."
-          }
-        },
-        "free_text": {
-          "narrative": {
-            "ru": "Вы предлагаете свой ход и сверяете его с тем, что уже известно об укрытии: здесь есть защита от ветра, но нет подтверждения, что место безопасно надолго. Команда сначала проверяет, не отрежет ли действие путь обратно к костру.",
-            "en": "You propose your own move and weigh it against what is known about the shelter: it blocks the wind, but there is no proof that it is safe for long. The group first checks whether the action would cut off the way back to the fire."
-          }
-        }
-      }
-    },
-    {
-      "id": "authored_turn_1",
-      "minTurns": 2,
-      "actions": [
-        "investigate",
-        "scout",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "След сапога совпадает с изношенной подошвой одного участника, однако отпечатки вокруг костра показывают, что кто-то сменил его обувь для просушки.",
-        "en": "One boot print matches a worn sole in the group, but prints near the fire show someone changed shoes to dry them."
-      },
-      "mutations": [],
-      "suggestions": [],
-      "responses": {
-        "investigate": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Изучить след». Команда продолжает по пути: Остаться у костра и нормировать топливо: риск движения ниже, запас тепла ограничен. Улика раскрывает поворот: След сапога совпадает с изношенной подошвой одного участника, однако отпечатки вокруг костра показывают, что кто-то сменил его обувь для просушки.",
-            "en": "You choose “Investigate the trail.” The team continues along this path: Stay by the fire and ration fuel: movement risk falls, warmth is limited. The evidence reveals the turn: One boot print matches a worn sole in the group, but prints near the fire show someone changed shoes to dry them."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Остаться у костра и нормировать топливо: риск движения ниже, запас тепла ограничен.",
-                "en": "Stay by the fire and ration fuel: movement risk falls, warmth is limited."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Проверить ручей парой с верёвочной страховкой: шанс на воду растёт, один человек временно остаётся без помощи.",
-                "en": "Check the spring with a rope pair: water becomes possible, one person is briefly without help."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Идти по подтверждённым ориентирам к укрытию: движение возвращает контроль, но расходует свет и силы.",
-                "en": "Follow confirmed landmarks to shelter: movement restores control but spends daylight and strength."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "scout": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Осмотреть долину». Команда продолжает по пути: Проверить ручей парой с верёвочной страховкой: шанс на воду растёт, один человек временно остаётся без помощи. Улика раскрывает поворот: След сапога совпадает с изношенной подошвой одного участника, однако отпечатки вокруг костра показывают, что кто-то сменил его обувь для просушки.",
-            "en": "You choose “Scout the valley.” The team continues along this path: Check the spring with a rope pair: water becomes possible, one person is briefly without help. The evidence reveals the turn: One boot print matches a worn sole in the group, but prints near the fire show someone changed shoes to dry them."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Остаться у костра и нормировать топливо: риск движения ниже, запас тепла ограничен.",
-                "en": "Stay by the fire and ration fuel: movement risk falls, warmth is limited."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Проверить ручей парой с верёвочной страховкой: шанс на воду растёт, один человек временно остаётся без помощи.",
-                "en": "Check the spring with a rope pair: water becomes possible, one person is briefly without help."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Идти по подтверждённым ориентирам к укрытию: движение возвращает контроль, но расходует свет и силы.",
-                "en": "Follow confirmed landmarks to shelter: movement restores control but spends daylight and strength."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "free_text": {
-          "narrative": {
-            "ru": "Ваш свободный план меняет способ проверки. Команда раскрывает поворот по найденной улике: След сапога совпадает с изношенной подошвой одного участника, однако отпечатки вокруг костра показывают, что кто-то сменил его обувь для просушки.",
-            "en": "Your free-form plan changes how the team checks the clue. The turn is revealed by the evidence: One boot print matches a worn sole in the group, but prints near the fire show someone changed shoes to dry them."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Остаться у костра и нормировать топливо: риск движения ниже, запас тепла ограничен.",
-                "en": "Stay by the fire and ration fuel: movement risk falls, warmth is limited."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Проверить ручей парой с верёвочной страховкой: шанс на воду растёт, один человек временно остаётся без помощи.",
-                "en": "Check the spring with a rope pair: water becomes possible, one person is briefly without help."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Идти по подтверждённым ориентирам к укрытию: движение возвращает контроль, но расходует свет и силы.",
-                "en": "Follow confirmed landmarks to shelter: movement restores control but spends daylight and strength."
-              },
-              "icon": "↗️"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "id": "authored_turn_2",
-      "minTurns": 4,
-      "actions": [
-        "investigate",
-        "scout",
-        "free_text"
-      ],
-      "narrative": {
-        "ru": "Дымовой столб возникает только на ветру между скалами; он может быть отражением пара над тёплым ручьём, но воду ещё нужно проверить.",
-        "en": "A smoke-like plume appears only in a crosswind between rocks; it may be steam above a warm spring, but water must be tested."
-      },
-      "mutations": [],
-      "suggestions": [],
-      "responses": {
-        "investigate": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Изучить след». Команда продолжает по пути: Остаться у костра и нормировать топливо: риск движения ниже, запас тепла ограничен. Улика раскрывает поворот: Дымовой столб возникает только на ветру между скалами; он может быть отражением пара над тёплым ручьём, но воду ещё нужно проверить.",
-            "en": "You choose “Investigate the trail.” The team continues along this path: Stay by the fire and ration fuel: movement risk falls, warmth is limited. The evidence reveals the turn: A smoke-like plume appears only in a crosswind between rocks; it may be steam above a warm spring, but water must be tested."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Остаться у костра и нормировать топливо: риск движения ниже, запас тепла ограничен.",
-                "en": "Stay by the fire and ration fuel: movement risk falls, warmth is limited."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Проверить ручей парой с верёвочной страховкой: шанс на воду растёт, один человек временно остаётся без помощи.",
-                "en": "Check the spring with a rope pair: water becomes possible, one person is briefly without help."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Идти по подтверждённым ориентирам к укрытию: движение возвращает контроль, но расходует свет и силы.",
-                "en": "Follow confirmed landmarks to shelter: movement restores control but spends daylight and strength."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "scout": {
-          "narrative": {
-            "ru": "Вы выбираете действие «Осмотреть долину». Команда продолжает по пути: Проверить ручей парой с верёвочной страховкой: шанс на воду растёт, один человек временно остаётся без помощи. Улика раскрывает поворот: Дымовой столб возникает только на ветру между скалами; он может быть отражением пара над тёплым ручьём, но воду ещё нужно проверить.",
-            "en": "You choose “Scout the valley.” The team continues along this path: Check the spring with a rope pair: water becomes possible, one person is briefly without help. The evidence reveals the turn: A smoke-like plume appears only in a crosswind between rocks; it may be steam above a warm spring, but water must be tested."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Остаться у костра и нормировать топливо: риск движения ниже, запас тепла ограничен.",
-                "en": "Stay by the fire and ration fuel: movement risk falls, warmth is limited."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Проверить ручей парой с верёвочной страховкой: шанс на воду растёт, один человек временно остаётся без помощи.",
-                "en": "Check the spring with a rope pair: water becomes possible, one person is briefly without help."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Идти по подтверждённым ориентирам к укрытию: движение возвращает контроль, но расходует свет и силы.",
-                "en": "Follow confirmed landmarks to shelter: movement restores control but spends daylight and strength."
-              },
-              "icon": "↗️"
-            }
-          ]
-        },
-        "free_text": {
-          "narrative": {
-            "ru": "Ваш свободный план меняет способ проверки. Команда раскрывает поворот по найденной улике: Дымовой столб возникает только на ветру между скалами; он может быть отражением пара над тёплым ручьём, но воду ещё нужно проверить.",
-            "en": "Your free-form plan changes how the team checks the clue. The turn is revealed by the evidence: A smoke-like plume appears only in a crosswind between rocks; it may be steam above a warm spring, but water must be tested."
-          },
-          "suggestions": [
-            {
-              "text": {
-                "ru": "Остаться у костра и нормировать топливо: риск движения ниже, запас тепла ограничен.",
-                "en": "Stay by the fire and ration fuel: movement risk falls, warmth is limited."
-              },
-              "icon": "🧭"
-            },
-            {
-              "text": {
-                "ru": "Проверить ручей парой с верёвочной страховкой: шанс на воду растёт, один человек временно остаётся без помощи.",
-                "en": "Check the spring with a rope pair: water becomes possible, one person is briefly without help."
-              },
-              "icon": "⚖️"
-            },
-            {
-              "text": {
-                "ru": "Идти по подтверждённым ориентирам к укрытию: движение возвращает контроль, но расходует свет и силы.",
-                "en": "Follow confirmed landmarks to shelter: movement restores control but spends daylight and strength."
-              },
-              "icon": "↗️"
-            }
-          ]
-        }
-      }
-    }
-  ]
+    "ru": "Голова раскалывается от холода, и первое, что вы видите, — не снег, а огонь. Он лежит ниже уровня глаз, потому что вы лежите на боку, привалившись к валуну, обледеневшему с одной стороны. Угли в нём ещё живые, но живут вполсилы: пламя то и дело ложится вбок, распластавшись по снегу, и в промежутках между порывами слышно, как утробно гудит ложбина. Над вами узкое небо, забитое снегом, который не падает, а летит горизонтально и скрежещет о скалы. Температуры не видно, но её узнаёшь по тому, как дыхание жжёт горло и как деревянная рукоятка ножа липнет к ладони.\n\nЭто место выбрали не вы — его выбрали для вас. Костёр стоит в естественной выемке между валунами, и это единственное здесь, что похоже на решение. Снег вокруг вытоптан в круг шириной с человеческий рост, и круг этот неровный: одна его сторона засыпана наметом, другая утоптана свеже, сколов серую плёнку наста. У дальнего камня темнеет подпалина, а рядом — аккуратная штабелька веток, сложенных так, чтобы между ними проходил воздух. Кто-то занимался этим костром долго и умело и занимался не сегодня утром.\n\nВы помните, как сюда спустились. С гребня уходили затемно, втроём, и шли по самой кромке снежного карниза, пока он ещё держал. Ветер с долины бил в правый бок, и тот, кто шёл первым, уходил на склон там, где снег лежал рыхлым языком над осыпью. Потом была верёвка. Потом подъём. Потом сильный толчок в плечо, точно дверь захлопнулась с другой стороны, и долгое, очень внимательное ожидание, пока дыхание не стало короче мысли. Вас подняли за ремень, отряхнули, дали из чужой руки кружку с чем-то тёплым и почти оставили лежать. С тех пор прошло, может быть, два часа, может быть, четыре. Вы считаете время не часами, а жаркостью: те угли, которые вы помните, заметно осели.\n\nСебя вы проверяете по мелочам и проверяете быстро. Пальцы сгибаются, но сгибаются неохотно. В котелке три глотка воды, и больше набрать здесь нечем, если только не топить снег. Рюкзак цел, но карман с хворостом пуст — вы клали его туда на гребне и не помните, когда вынимали. До рассвета ещё целая ночь, а ночь здесь не проходит тихо и не проходит быстро: она стоит топлива, стоит тепла, стоит внимания.\n\nПод снегом у западной стороны круга тянется линия, ровная и неглубокая, будто её прочертили одним движением, а рядом, крест-накрест с ней, вторая — глубже, с раздвинутым краем. Обе уходят в метель и обе теряются метрах в сорока, где снег снова лежит ровной плитой. Между ними, у самой кромки огня, есть ещё отпечаток, оставленный скорее вскользь, чем ступив: пятка глубже носка, или наоборот. По этому отпечатку уже составлено мнение вслух, и оно слишком готовое для того, чтобы его проверяли.\n\nНад ложбиной между скалами, где ветер дует поперёк склона, держится бледный столб. Он то проявляется, то пропадает в такт порывам, и на ветру его несёт вбок, хотя из самой ложбины не идёт. Издалека это очень похоже на дым от костра, который кто-то развёл под снегом, и очень похоже на пар над водой, которая не застыла. Пока это только то, что видно, — бледный столб на ветру, идущий не из своего места.\n\nПод навесом из ветвей, у края кострового круга, стоят для просушки два сапога. Подошва одного заметно стёрта по наружному краю, и след у огня совпадает с этим рисунком. Это могло бы означать чужака, а означает пока только то, что владелец узнаёт собственную обувь. Никто не называл имени, и никто не спрашивал, где были его ноги вечером, когда остальные уже спали у огня.\n\nИ отдельно — слух, который вы не проверяли. Говорят, на северной стороне долины, за гребнем и старой тропой, стоит брошенное укрытие: то ли охотничья изба, то ли сколоченная наспех будка. Сказать, что это правда, нельзя; сказать, что это неправда, тоже нельзя. Сейчас это просто слово, произнесённое однажды ночью у этого же костра, и оставшееся в памяти вместе с запахом дыма.\n\nОгонь оседает, снег ложится ровнее, и ночь ещё далеко от той половины, за которой она начнёт заканчиваться. Костёр, котелок с тремя глотками, пустой рюкзак, две линии следов, сапоги под навесом и бледный столб над ложбиной — всё это есть уже сейчас, до вашего первого шага. Всё это можно проверить, можно и не проверить, можно разделить с теми, кто рядом у огня, а можно оставить при себе. Снег будет копиться, топливо будет таять, а до серого света над гребнем остаётся столько, сколько останется.",
+    "en": "Your skull splits with the cold, and the first thing you see is not snow but fire. It sits below eye level because you are lying on your side against a boulder iced over on one face. The embers are still alive, but alive by half: the flame keeps laying itself sideways, spreading flat over the snow, and between gusts the hollow makes a low sound in its stomach. Above you the strip of sky is packed with snow that does not fall but travels sideways, grinding against the rock. There is no way to see the temperature. You read it in the way your breath burns your throat and the wooden grip of the knife sticks to your hand.\n\nNobody chose this place for you; it was chosen for you. The fire sits in a natural hollow between boulders, and it is the only thing here that resembles a decision. The snow around it has been trodden into a ring a man's height across, and the ring is uneven: one side has been filled in by drift, the other is freshly stamped and has broken the grey skin of the crust. Farther off, near the dark stone, there is a scorch mark, and beside it a careful stack of branches laid so that air can move between them. Someone worked on this fire for a long time and worked well, and not this morning.\n\nYou remember the way down. You left the ridge in the dark, three of you, walking the very lip of the cornice while it still held. The wind out of the valley hit your right side, and whoever went first stepped out onto the slope where the snow lay in a loose tongue above the scree. There was rope after that. There was the climb back. Then a hard shove in the shoulder, like a door slamming on the far side, and a long, extremely attentive wait until breathing got shorter than thought. They hauled you up by a strap, shook you out, put a mug of something warm into a hand that was not yours, and nearly left you lying there. Two hours have passed since, or four. You do not count time in hours now. You count it in heat: the embers you remember have settled a long way down.\n\nYou check yourself quickly, in small items. Your fingers bend, but reluctantly. There are three swallows of water in the pot, and there is nowhere to get more unless snow is melted. The pack is intact, but the firewood pocket is empty; you put it there on the ridge and cannot remember taking it out. A full night still lies ahead, and nights here are neither quiet nor quick. They cost fuel, they cost warmth, they cost attention.\n\nIn the snow on the west side of the ring runs a line, even and shallow, as if drawn in a single pass, and beside it, crossing it, a second line, deeper, with the edges pushed apart. Both go out into the blizzard and both vanish about forty metres on, where the snow lies level again. Between them, at the very edge of the light, there is one more print, left more in passing than in standing: the heel deeper than the toe, or the other way round. An opinion has already been said out loud about that print, and it is far too finished to have been checked.\n\nAbove the hollow between the rocks, where the wind runs across the slope, a pale column is holding. It appears and vanishes in time with the gusts, and the wind drags it sideways even though nothing is coming out of the hollow itself. From here it looks very much like smoke from a fire somebody lit under the snow, and very much like steam above water that never froze. For now it is only what can be seen: a pale column on the wind, coming from somewhere it should not.\n\nUnder a lean-to of boughs at the edge of the fire ring, two boots stand drying. The sole of one is badly worn along the outside edge, and the print by the light matches that pattern exactly. It might have meant a stranger. What it means so far is that the owner recognizes his own footwear. Nobody has given a name, and nobody has asked where those legs were in the evening, while the others were already asleep by the fire.\n\nAnd then there is the rumor you did not check. They say that on the north side of the valley, past the ridge and the old track, there stands an abandoned shelter: perhaps a hunting cabin, perhaps a shack knocked together in a hurry. There is no way to say it is true, and no way to say it is not. Right now it is only a word said once in the night at this same fire, and left behind along with the smell of smoke.\n\nThe fire settles, the snow lies down flatter, and the night is still a long way from the half after which it starts to end. The fire, the pot with three swallows in it, the empty pack, the two lines of tracks, the boots under the lean-to, the pale column over the hollow: all of it is here already, before your first step. Any of it can be checked, and any of it can be left unchecked; it can be shared with the people keeping the fire beside you, or kept to yourself. Snow will keep piling up, fuel will keep running down, and however much of the night is left is exactly as much as is."
+  }
 }

@@ -5,7 +5,44 @@ import { dirname } from 'node:path';
 
 type EncryptedKey = { iv: string; tag: string; data: string };
 type Limits = {daily_allowance:number;remaining_today:number;last_reset_timestamp:number};
-type User = { id: string; email: string; passwordHash: string; salt: string; openRouterKey?: EncryptedKey; createdAt: string; displayName?: string; role?:'user'|'admin'; disabled?:boolean; provider?: string; providerKeys?: Record<string, EncryptedKey | EncryptedKey[]>; providerModels?: Record<string,string>; aiSource?:'donor'|'personal'; limits?:Limits; refundedTurnJobs?:string[] };
+type ProviderLimitsCache = {
+  provider: string;
+  limit: number | null;
+  usage: number | null;
+  remaining: number | null;
+  resetAt: number | null;
+  fetchedAt: number;
+  error?: string;
+  estimated?: boolean;
+};
+
+type OgcatHistoryEntry = { at: number; delta: number; balance: number; reason: string; jobId?: string };
+
+type User = {
+  id: string;
+  email: string;
+  passwordHash: string;
+  salt: string;
+  openRouterKey?: EncryptedKey;
+  createdAt: string;
+  displayName?: string;
+  role?: 'user' | 'admin';
+  disabled?: boolean;
+  provider?: string;
+  providerKeys?: Record<string, EncryptedKey | EncryptedKey[]>;
+  providerModels?: Record<string, string>;
+  aiSource?: 'donor' | 'personal';
+  limits?: Limits;
+  refundedTurnJobs?: string[];
+  bonusTurns?: number;
+  ogcatBalance: number;
+  ogcatEarnedTotal: number;
+  ogcatSpentTotal: number;
+  ogcatLastEarnedAt?: number;
+  ogcatHistory?: OgcatHistoryEntry[];
+  providerLimits?: Record<string, ProviderLimitsCache>;
+  timezone?: string;
+};
 type SessionRecord = { userId: string; expiresAt: string };
 type ResetRecord = { userId: string; expiresAt: string };
 type Database = { users: User[]; tokens: Record<string, SessionRecord>; passwordResets?: Record<string, ResetRecord> };
@@ -38,10 +75,10 @@ export class AccountStore {
     if(user.openRouterKey&&!all.openrouter?.length) all.openrouter=[user.openRouterKey];
     const keyLabelsByProvider=Object.fromEntries(Object.entries(all).map(([name,records])=>[name,records.map(record=>this.mask(record))]));
     const records=all[provider]||[];
-    return { id:user.id,email:user.email,createdAt:user.createdAt,role:user.role||'user',hasOpenRouterKey:Boolean(all.openrouter?.length),displayName:user.displayName||'',provider,model:currentModel(provider,user.providerModels?.[provider]||''),modelsByProvider:Object.fromEntries(Object.entries(user.providerModels||{}).map(([name,model])=>[name,currentModel(name,model)])),hasKey:records.length>0,keyLabels:records.map(record=>this.mask(record)),keyLabelsByProvider,aiSource:user.aiSource||'donor' };
+    return { id:user.id,email:user.email,createdAt:user.createdAt,role:user.role||'user',hasOpenRouterKey:Boolean(all.openrouter?.length),displayName:user.displayName||'',provider,model:currentModel(provider,user.providerModels?.[provider]||''),modelsByProvider:Object.fromEntries(Object.entries(user.providerModels||{}).map(([name,model])=>[name,currentModel(name,model)])),hasKey:records.length>0,keyLabels:records.map(record=>this.mask(record)),keyLabelsByProvider,aiSource:user.aiSource||'donor',bonusTurns:user.bonusTurns||0,ogcatBalance:user.ogcatBalance||0,ogcatEarnedTotal:user.ogcatEarnedTotal||0,ogcatSpentTotal:user.ogcatSpentTotal||0,timezone:user.timezone };
   }
-  register(email: string, password: string) { email = String(email || '').trim().toLowerCase(); if (!email || password.length < 8) throw new Error('Укажите email и пароль не короче 8 символов'); if (this.db.users.some(user => user.email === email)) throw new Error('Пользователь уже зарегистрирован'); const salt = randomBytes(16).toString('hex'); const user: User = { id: randomBytes(16).toString('hex'), email, salt, passwordHash: scryptSync(password, salt, 32).toString('hex'), createdAt: new Date().toISOString() }; this.db.users.push(user); const token = this.token(user.id); return { token, user: this.public(user) }; }
-  login(email: string, password: string) { const user = this.db.users.find(item => item.email === String(email || '').trim().toLowerCase()); if (!user||user.disabled) throw new Error('Неверный email или пароль'); const actual = scryptSync(password, user.salt, 32); if (!timingSafeEqual(actual, Buffer.from(user.passwordHash, 'hex'))) throw new Error('Неверный email или пароль'); return { token: this.token(user.id), user: this.public(user) }; }
+  register(email: string, password: string) { email = String(email || '').trim().toLowerCase(); if (!email || password.length < 8) throw new Error('Укажите email и пароль не короче 8 символов'); if (this.db.users.some(user => user.email === email)) throw new Error('Пользователь уже зарегистрирован'); const salt = randomBytes(16).toString('hex'); const user: User = { id: randomBytes(16).toString('hex'), email, salt, passwordHash: scryptSync(password, salt, 32).toString('hex'), createdAt: new Date().toISOString(), bonusTurns: 0, ogcatBalance: 0, ogcatEarnedTotal: 0, ogcatSpentTotal: 0, ogcatHistory: [], providerLimits: {} }; this.db.users.push(user); const token = this.token(user.id); return { token, user: this.public(user) }; }
+  login(email: string, password: string, timezone?: string) { const user = this.db.users.find(item => item.email === String(email || '').trim().toLowerCase()); if (!user||user.disabled) throw new Error('Неверный email или пароль'); const actual = scryptSync(password, user.salt, 32); if (!timingSafeEqual(actual, Buffer.from(user.passwordHash, 'hex'))) throw new Error('Неверный email или пароль'); if (timezone && typeof timezone === 'string' && /^[A-Za-z_+\-]+(\/[A-Za-z_+\-]+)+$/.test(timezone)) { user.timezone = timezone; } return { token: this.token(user.id), user: this.public(user) }; }
   userByToken(token?: string) { const id=this.idByToken(token),user=this.db.users.find(item=>item.id===id);return user?this.public(user):undefined; }
   idByToken(token?: string) { if(!token)return;const hash=this.tokenHash(token),record=this.db.tokens[hash];if(!record)return;if(Date.parse(record.expiresAt)<=Date.now()){delete this.db.tokens[hash];this.persist();return}return record.userId; }
   revoke(token?:string){if(!token)return;delete this.db.tokens[this.tokenHash(token)];this.persist()}
@@ -77,4 +114,22 @@ export class AccountStore {
   }
   getProviders(userId: string) { const user=this.db.users.find(u=>u.id===userId); if(!user)return; const provider=user.provider||'openrouter',raw=user.providerKeys?.[provider],records:Array<EncryptedKey>=Array.isArray(raw)?raw:raw?[raw]:[]; const keys=records.map(record=>this.decrypt(record)); if(!keys.length&&provider==='openrouter'){const legacy=this.getOpenRouterKey(userId);if(legacy)keys.push(legacy)} return keys.length?{provider,keys,model:currentModel(provider,user.providerModels?.[provider]||'')}:undefined; }
   getOpenRouterKey(userId: string) { const record = this.db.users.find(item => item.id === userId)?.openRouterKey; return record ? this.decrypt(record) : undefined; }
+
+  getOgcatBalance(userId: string) { const user=this.db.users.find(u=>u.id===userId); if(!user)throw new Error('Пользователь не найден'); return { balance: user.ogcatBalance||0, earnedTotal: user.ogcatEarnedTotal||0, spentTotal: user.ogcatSpentTotal||0, lastEarnedAt: user.ogcatLastEarnedAt }; }
+
+  addOgcat(userId: string, amount: number, reason: string, jobId?: string) { if(!Number.isInteger(amount)||amount<=0)throw new Error('Некорректное количество OGCAT'); const user=this.db.users.find(u=>u.id===userId); if(!user)throw new Error('Пользователь не найден'); const prevBalance=user.ogcatBalance||0; const newBalance=prevBalance+amount; user.ogcatBalance=newBalance; user.ogcatEarnedTotal=(user.ogcatEarnedTotal||0)+amount; user.ogcatLastEarnedAt=Date.now(); user.ogcatHistory||=[]; user.ogcatHistory.push({ at: Date.now(), delta: amount, balance: newBalance, reason, jobId }); if(user.ogcatHistory.length>200) user.ogcatHistory=user.ogcatHistory.slice(-200); this.persist(); return { balance: newBalance, earnedTotal: user.ogcatEarnedTotal }; }
+
+  convertOgcatToTurns(userId: string, amount: number) { if(!Number.isInteger(amount)||amount<=0)throw new Error('Некорректное количество'); const user=this.db.users.find(u=>u.id===userId); if(!user)throw new Error('Пользователь не найден'); const balance=user.ogcatBalance||0; if(balance<amount)throw new Error('Недостаточно OGCAT'); user.ogcatBalance=balance-amount; user.ogcatSpentTotal=(user.ogcatSpentTotal||0)+amount; user.bonusTurns=(user.bonusTurns||0)+amount; user.ogcatHistory||=[]; user.ogcatHistory.push({ at: Date.now(), delta: -amount, balance: user.ogcatBalance, reason: 'convert_to_bonus_turns' }); this.persist(); return { ogcatBalance: user.ogcatBalance, bonusTurns: user.bonusTurns, spentTotal: user.ogcatSpentTotal }; }
+
+  getOgcatHistory(userId: string, limit=50) { const user=this.db.users.find(u=>u.id===userId); if(!user)throw new Error('Пользователь не найден'); return (user.ogcatHistory||[]).slice(-limit).reverse(); }
+
+  useBonusTurn(userId: string) { const user=this.db.users.find(u=>u.id===userId); if(!user)throw new Error('Пользователь не найден'); const bonus=user.bonusTurns||0; if(bonus<=0)return false; user.bonusTurns=bonus-1; this.persist(); return true; }
+
+  getBonusTurns(userId: string) { const user=this.db.users.find(u=>u.id===userId); if(!user)throw new Error('Пользователь не найден'); return user.bonusTurns||0; }
+
+  getProviderLimits(userId: string) { const user=this.db.users.find(u=>u.id===userId); if(!user)throw new Error('Пользователь не найден'); return user.providerLimits||{}; }
+
+  async refreshProviderLimits(userId: string, provider: string) { const user=this.db.users.find(u=>u.id===userId); if(!user)throw new Error('Пользователь не найden'); const config=this.getProviders(userId); if(!config||config.provider!==provider)throw new Error('Ключ провайдера не найден'); const spec=providers[provider as keyof typeof providers]; let limit=null,usage=null,remaining=null,resetAt=null,error: string|undefined,estimated=false; try { if(provider==='openrouter') { const response=await fetch('https://openrouter.ai/api/v1/key',{headers:{Authorization:'Bearer '+config.keys[0]},signal:AbortSignal.timeout(8000)}); if(response.ok){const data=await response.json() as any; limit=data.data?.limit??null; usage=data.data?.usage??null; remaining=data.data?.limit_remaining??null; resetAt=data.data?.limit_reset??null;} else { error=`HTTP ${response.status}`; } } else { estimated=true; error='Provider does not expose limits API'; } } catch(e) { error=e instanceof Error?e.message:'Request failed'; } user.providerLimits||={}; user.providerLimits[provider]={provider,limit,usage,remaining,resetAt,fetchedAt:Date.now(),error,estimated}; this.persist(); return user.providerLimits[provider]; }
+
+  estimateTurns(userId: string, provider: string, coauthorUsage: any) { const user=this.db.users.find(u=>u.id===userId); if(!user)throw new Error('Пользователь не найден'); const limits=user.providerLimits?.[provider]; const stats=coauthorUsage?.summary?.(30); if(!stats)return { estimatedTurns: 0, confidence: 'low' as const, avgTokens: 0, reason: 'No usage statistics' }; const byProvider=stats.byCoauthor?.find((c: any)=>c.id.includes(provider)||c.name.toLowerCase().includes(provider.toLowerCase())); const avgTokens=byProvider?.avgCompletionTokens??byProvider?.avgPromptTokens??0; if(!avgTokens||avgTokens<=0)return { estimatedTurns: 0, confidence: 'low' as const, avgTokens: 0, reason: 'Insufficient token data' }; let remaining=limits?.remaining??limits?.limit??user.limits?.daily_allowance??50; if(limits?.estimated)remaining=Math.min(remaining, user.limits?.daily_allowance??50); const estimatedTurns=Math.floor(remaining/avgTokens); const sampleSize=byProvider?.calls??0; let confidence: 'high'|'medium'|'low'='low'; if(sampleSize>=50)confidence='high'; else if(sampleSize>=10)confidence='medium'; return { estimatedTurns: Math.max(0, estimatedTurns), confidence, avgTokens: Math.round(avgTokens), sampleSize, isEstimate: limits?.estimated??true }; }
 }

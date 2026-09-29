@@ -231,7 +231,13 @@
     "musicOff": "Включить музыку",
     "musicOn": "Выключить музыку",
     "musicVolume": "Громкость музыки",
-    "musicError": "Не удалось воспроизвести музыкальный фон в этом браузере."
+    "musicError": "Не удалось воспроизвести музыкальный фон в этом браузере.",
+    "prologue": "Пролог",
+    "prologueScene": "Сцена",
+    "prologueNavigation": "Навигация по прологу",
+    "prologueStart": "Начать историю",
+    "prologueContinue": "Продолжить",
+    "prologueBack": "Назад"
   },
   "en": {
     "all": "All",
@@ -465,6 +471,12 @@
     "musicOff": "Turn music on",
     "musicOn": "Turn music off",
     "musicVolume": "Music volume",
-    "musicError": "This browser could not play the background music."
+    "musicError": "This browser could not play the background music.",
+    "prologue": "Prologue",
+    "prologueScene": "Scene",
+    "prologueNavigation": "Prologue navigation",
+    "prologueStart": "Begin the story",
+    "prologueContinue": "Continue",
+    "prologueBack": "Back"
   }
 }

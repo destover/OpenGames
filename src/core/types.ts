@@ -14,7 +14,7 @@ export interface GamePackage {
   i18n?: Record<string, Record<string, Record<string, string>>>;
 }
 
-export interface Action { type: string; text?: string; icon?: string; requestId?: string; language?: 'ru' | 'en' }
+export interface Action { type: string; text?: string; icon?: string; requestId?: string; language?: 'ru' | 'en'; covers?: string[] }
 export interface Event { type: string; payload?: Record<string, Json> }
 export type StateMutationProposal =
   | { op: 'set'; path: string; value: Json }

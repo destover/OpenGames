@@ -29,7 +29,7 @@ export class DonorAIProvider implements AIProvider {
     let result;
     try {
       result = JSON.parse(data.choices[0].message.content);
-      const parsed = parseResult(result,game,action,'donor');
+      const parsed = parseResult(result,game,action,'donor',session);
       const usage = tokenUsage(data.usage);
       return usage ? { ...parsed, usage } : parsed;
     }

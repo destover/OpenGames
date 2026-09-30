@@ -95,6 +95,6 @@ export class ConnectAIProvider implements AIProvider {
     const deadline=options?.deadline||Date.now()+DONOR_LEASE_MS;if(deadline<=Date.now())throw new DonorUnavailableError('Время ответа сценариста истекло');
     const request=donorRequest(game,session,action,this.model,correction);
     const result=await this.transport.request(this.deviceId,this.requestId,this.attempt++,request,deadline,options?.signal);
-    return parseResult(result,game,action,'donor');
+    return parseResult(result,game,action,'donor',session);
   }
 }

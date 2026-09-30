@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync, renameSync } from 'node:fs';
 import { dirname } from 'node:path';
+import { coversIntent, dropDuplicateIntents, selectDistinctOptions } from './similarity.ts';
 import type { Action, GamePackage, Session } from './types.ts';
 import { StateEngine } from './engine.ts';
 import type { AIProvider, AIRequestOptions, AIResult } from './ai.ts';
@@ -35,21 +36,60 @@ function preparedFallbackNarrative(game: GamePackage, action: Action, language: 
   return prefix + lines[category][repetitions % lines[category].length];
 }
 
+const SELF_TEMPLATE_PREFIXES = ['Проверить, что изменил', 'Проверить последствия', 'Сопоставить ', 'Развить результат', 'Осмотреться на месте', 'Двигаться к цели', 'Check what', 'Compare “', 'Build on the result', 'Look around the current place', 'Move toward the objective'];
+
+function languageOf(action: Action): 'ru' | 'en' { return action.language?.toLowerCase().startsWith('en') ? 'en' : 'ru'; }
+
+function distinctOptions(game: GamePackage, session: Session, list: Action[], action: Action, language: 'ru' | 'en'): Action[] {
+  const spent = spentIntents(game, session, language);
+  spent.push(action.type === 'free_text' ? action.text || '' : game.i18n?.[language]?.actions?.[action.type] || game.actions[action.type]?.label || action.type);
+  const before = (session.suggestions || []).map(item => item.text || '');
+  const usedTypes = new Set(session.turns.map(turn => turn.action.type));
+  const picked = selectDistinctOptions(list.filter(item => item && game.actions[item.type]), spent.filter(Boolean), before);
+  return picked.map(item => {
+    if (item.type !== 'free_text') return item;
+    const covers = Object.entries(game.actions)
+      .filter(([type]) => type !== 'free_text' && !usedTypes.has(type) && !picked.some(other => other.type === type))
+      .filter(([type]) => coversIntent(item.text || '', game.i18n?.[language]?.actions?.[type] || game.actions[type]?.label || ''))
+      .map(([type]) => type);
+    return covers.length ? { ...item, covers } : item;
+  });
+}
+
+function spentIntents(game: GamePackage, session: Session, language: 'ru' | 'en' = 'ru'): string[] {
+  return session.turns.map(turn => turn.action.type === 'free_text' ? turn.action.text || '' : game.i18n?.[language]?.actions?.[turn.action.type] || game.actions[turn.action.type]?.label || turn.action.type).filter(Boolean);
+}
+
 function preparedFallbackSuggestions(game: GamePackage, session: Session, language: 'ru' | 'en') {
   const last = session.turns.at(-1);
-  const lastAction = last ? (last.action.type === 'free_text' ? last.action.text : game.i18n?.[language]?.actions?.[last.action.type] || game.actions[last.action.type]?.label) : undefined;
+  const lastAction = last ? (last.action.type === 'free_text' ? last.action.text || '' : game.i18n?.[language]?.actions?.[last.action.type] || game.actions[last.action.type]?.label || last.action.type) : '';
   const goal = game.goal?.description?.[language] || game.goal?.label?.[language] || game.manifest.description;
-  const candidates = language === 'ru' ? [
-    `Проверить последствия${lastAction ? ` шага «${lastAction}»` : ' последнего решения'} новым наблюдением.`,
-    `Сопоставить${lastAction ? ` «${lastAction}»` : ' последнее действие'} с предыдущим шагом и выяснить, что изменилось между ними.`,
-    `Развить${lastAction ? ` результат «${lastAction}»` : ' текущую ситуацию'} собственным планом к цели: ${goal}`
+  const place = last?.location ? game.map?.locations?.[last.location]?.[language] : undefined;
+  const quoted = lastAction && !SELF_TEMPLATE_PREFIXES.some(prefix => lastAction.startsWith(prefix)) ? lastAction.replace(/[«»"“”]/g, '').slice(0, 60) : '';
+  const pool = language === 'ru' ? [
+    quoted ? `Проверить, что изменил шаг «${quoted}», и не пропустить последствие.` : 'Проверить по наблюдениям, что изменилось за последний шаг.',
+    `Осмотреться на месте и взять новую улику${place ? `: ${place}` : '.'}`,
+    'Двигаться к цели собственным планом, не повторяя уже сделанное.',
+    'Выбрать один приоритет и объяснить, чем придётся пожертвовать ради цели.',
+    `Понаблюдать за обстановкой, ничего не меняя${place ? ` на ${place}` : ''}.`,
+    Array.isArray(session.state.inventory) && session.state.inventory.length
+      ? `Собрать недостающее для следующего шага: ${(session.state.inventory as string[]).slice(-3).join(', ')}.`
+      : 'Собрать то, чего не хватает для следующего шага, и решить, без чего можно обойтись.'
   ] : [
-    `Check the consequences${lastAction ? ` of “${lastAction}”` : ' of the last decision'} with a new observation.`,
-    `Compare${lastAction ? ` “${lastAction}”` : ' the last action'} with the previous step and find what changed between them.`,
-    `Build${lastAction ? ` on the result of “${lastAction}”` : ' on the current situation'} with your own plan toward the objective: ${goal}`
+    quoted ? `Check what “${quoted}” changed and catch the consequence.` : 'Check by observation what the last step changed.',
+    `Look around the current place for a new clue${place ? `: ${place}` : '.'}`,
+    'Move toward the objective with your own plan, without repeating what is already done.',
+    'Pick one priority and say what has to be sacrificed for the objective.',
+    `Watch the situation without changing anything${place ? ` at ${place}` : ''}.`,
+    Array.isArray(session.state.inventory) && session.state.inventory.length
+      ? `Gather what the next step is missing: ${(session.state.inventory as string[]).slice(-3).join(', ')}.`
+      : 'Gather what the next step is missing and decide what can be given up.'
   ];
-  const used = new Set(session.turns.filter(turn => turn.action.type === 'free_text').map(turn => turn.action.text?.trim().toLocaleLowerCase()).filter(Boolean));
-  return candidates.filter(text => !used.has(text.trim().toLocaleLowerCase())).map(text => ({ type: 'free_text', text, icon: '✦' }));
+  const offset = session.turns.length * 3 % pool.length;
+  const ordered = pool.map((_, index) => pool[(index + offset) % pool.length]);
+  const spent = spentIntents(game, session, language);
+  const kept = dropDuplicateIntents([...ordered, ...spent]).filter(index => index < ordered.length);
+  return kept.map(index => ({ type: 'free_text', text: ordered[index], icon: '✦' }));
 }
 
 export class GameRuntime {
@@ -142,14 +182,14 @@ export class GameRuntime {
         result = response;
         next = engine.apply(session, action, result.events, result.narrative, result.stateMutation || [], aiResponseMs);
       } else {
-        const language = action.language?.toLowerCase().startsWith('en') ? 'en' : 'ru';
+        const language = languageOf(action);
         const repetitions = session.turns.filter(turn => turn.action.type === action.type).length;
         result = { narrative: preparedFallbackNarrative(game, action, language, repetitions), events: [], stateMutation: [], suggestions: preparedFallbackSuggestions(game, session, language), source: 'local' };
         next = engine.apply(session, action, result.events, result.narrative, result.stateMutation, 8000);
       }
       if (!result || !next) throw new Error('Не удалось согласовать состояние с правилами мира');
       Object.assign(next.turns.at(-1)!, { source: result.source, stateMutation: result.stateMutation || [] });
-      next.suggestions = result.suggestions.filter(s => s && game.actions[s.type]);
+      next.suggestions = distinctOptions(game, session, result.suggestions, action, languageOf(action));
       next.suggestionLanguage = action.language || 'ru';
       this.saves.save(next); this.sessions.set(id, next);
       return { session: next, narrative: result.narrative, suggestions: next.suggestions, source: result.source };

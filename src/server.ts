@@ -17,6 +17,10 @@ import { TurnQueue } from './core/turn-queue.ts';
 import { DeviceRegistry } from './core/device-registry.ts';
 import { ConnectTransport } from './core/connect-transport.ts';
 import { CoauthorUsageStore } from './core/coauthor-usage.ts';
+import { BillingStore, packageById } from './core/billing.ts';
+import { paymentRegistry, PaymentError, type ProviderEvent } from './core/payments.ts';
+import { SharedKeyStore, ROUTE_LABELS, SHARED_ROUTES } from './core/shared-key.ts';
+import { balanceState, fetchBalance } from './core/provider-balance.ts';
 import type { Action, GamePackage } from './core/types.ts';
 import survival from './games/survival.json' with { type: 'json' };
 import detective from './games/detective.json' with { type: 'json' };
@@ -79,6 +83,9 @@ const accounts = new AccountStore(join(root, '..', 'data', 'accounts.json'));
 accounts.initializeAdmin(process.env.OPENGAME_ADMIN_EMAIL);
 const adminData=join(root,'..','data','admin');mkdirSync(adminData,{recursive:true,mode:0o700});const adminAudit=join(adminData,'audit.jsonl');
 const coauthorUsage=new CoauthorUsageStore(join(root,'..','data','coauthor-usage.sqlite'));
+const billing=new BillingStore(join(root,'..','data','billing.sqlite'));
+const sharedKeys=new SharedKeyStore(join(root,'..','data','shared-keys.sqlite'));
+const payments=paymentRegistry(process.env);
 function audit(actor:string,action:string,target:string,details:Record<string,unknown>={}){appendFileSync(adminAudit,JSON.stringify({at:new Date().toISOString(),actor,action,target,details})+'\n',{mode:0o600});}
 const deviceRegistry=aiMode==='donor'?new DeviceRegistry(join(root,'..','data','donor-devices.sqlite')):undefined;
 let queue:TurnQueue|undefined,connectTransport:ConnectTransport|undefined;
@@ -94,7 +101,10 @@ const connectDownloads=[
 function browserPlatform(req:import('node:http').IncomingMessage){const hint=String(req.headers['sec-ch-ua-platform']||'').replace(/"/g,'').toLowerCase(),ua=String(req.headers['user-agent']||'').toLowerCase();if(/iphone|ipad|ipod|android|mobile/.test(ua))return null;if(hint==='macos'||(!hint&&/(macintosh|mac os x)/.test(ua)))return 'macos';if(hint==='windows'||(!hint&&ua.includes('windows')))return 'windows';return null}
 const loginAttempts=new Map<string,{count:number;resetAt:number}>(),resetAttempts=new Map<string,{count:number;resetAt:number}>(),sessionCookie='opengame_session';
 const donorAttempts=new Map<string,{count:number;resetAt:number}>();
+const topupAttempts=new Map<string,{count:number;resetAt:number}>();
+function topupAllowed(userId:string){const now=Date.now(),item=topupAttempts.get(userId);if(!item||item.resetAt<=now){topupAttempts.set(userId,{count:1,resetAt:now+60*60_000});return true}if(item.count>=3)return false;item.count++;return true}
 async function body(req: import('node:http').IncomingMessage) { let data = ''; for await (const chunk of req){data+=chunk;if(data.length>1_000_000)throw new Error('Запрос слишком большой')} return data ? JSON.parse(data) : {}; }
+async function rawBody(req: import('node:http').IncomingMessage) { let data = ''; for await (const chunk of req){data+=chunk;if(data.length>256_000)throw new Error('Запрос слишком большой')} return data; }
 function cookie(req:import('node:http').IncomingMessage,name:string){return req.headers.cookie?.split(';').map(v=>v.trim()).find(v=>v.startsWith(name+'='))?.slice(name.length+1)}
 function sessionToken(req:import('node:http').IncomingMessage){return cookie(req,sessionCookie)}
 function authId(req: import('node:http').IncomingMessage) { return accounts.idByToken(sessionToken(req)); }
@@ -119,6 +129,12 @@ const server = createServer(async (req, res) => {
     if (req.method === 'GET' && url.pathname === '/') { const html = await readFile(join(root, '..', 'web', 'index.html'), 'utf8'); res.writeHead(200, { ...securityHeaders,'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' }); res.end(html); return; }
     if (req.method === 'GET' && url.pathname === '/api/ai/providers') return send(res,200,providers);
     if (req.method === 'GET' && url.pathname === '/api/health') {const donor=donorPool?await donorPool.health():undefined,ok=donor?donor.connected:true;return send(res,ok?200:503,{ok,games:runtime.listGames().length,provider:aiMode,aiConnected:ok})}
+    const webhookMatch=url.pathname.match(/^\/api\/payments\/webhook\/([a-z_]{2,16})$/);
+    if(webhookMatch&&(req.method==='POST'||req.method==='PUT')){const provider=payments.byId(webhookMatch[1]);if(!provider)return send(res,404,{error:'Неизвестный платёжный провайдер'});if(!provider.configured)return send(res,503,{error:provider.note});const raw=await rawBody(req);
+      if(!provider.verify({raw,ip:req.socket.remoteAddress||'local',headers:req.headers as Record<string,string|undefined>})){audit('payment:'+provider.id,'payment.webhook.rejected','-',{ip:rateKey(req),bytes:raw.length});return send(res,403,{error:'Уведомление не прошло проверку'})}
+      const event:ProviderEvent|null=provider.parse(raw);if(!event)return send(res,400,{error:'Уведомление не распознано'});
+      const result=billing.applyEvent(provider.id,event);audit('payment:'+provider.id,'payment.webhook',result.paymentId||'-',{status:result.status,externalId:event.externalId,amountRub:event.amountRub??null});
+      return send(res,200,{ok:true,...result})}
     if(url.pathname.startsWith('/api/admin/')){const actor=authId(req);if(!actor)return send(res,401,{error:'Требуется вход'});if(!accounts.isAdmin(actor))return send(res,403,{error:'Недостаточно прав'});if(!['GET','HEAD'].includes(req.method||'')&&req.headers['x-admin-confirm']!=='confirmed')return send(res,403,{error:'Требуется подтверждение действия'});
       if(req.method==='GET'&&url.pathname==='/api/admin/overview')return send(res,200,{...accounts.adminSummary(),games:runtime.listGames().length,sessions:runtime.adminSessions().length,turns:runtime.adminSessions().reduce((n,s)=>n+s.turns.length,0),provider:aiMode,health:'ok',updatedAt:new Date().toISOString()});
       if(req.method==='GET'&&url.pathname==='/api/admin/users')return send(res,200,accounts.adminUsers());
@@ -132,8 +148,22 @@ const server = createServer(async (req, res) => {
       if(req.method==='GET'&&url.pathname==='/api/admin/sessions'){const offset=Math.max(0,Math.min(100_000,Number(url.searchParams.get('offset')||0)||0)),limit=Math.max(1,Math.min(100,Number(url.searchParams.get('limit')||50)||50));return send(res,200,runtime.adminSessionsPage(offset,limit))}
       if(req.method==='PUT'&&/^\/api\/admin\/sessions\/[0-9a-f-]{36}$/i.test(url.pathname)){const id=decodeURIComponent(url.pathname.split('/')[4]),data=await body(req);copyFileSync(join(root,'..','data','saves',id+'.json'),join(adminData,`${id}-${Date.now()}.json`));const updated=runtime.adminReplaceSession(id,data.session);audit(actor,'session.edit',id,{reason:String(data.reason||'').slice(0,300)});return send(res,200,updated)}
       if(req.method==='GET'&&url.pathname==='/api/admin/audit')return send(res,200,existsSync(adminAudit)?readTextSync(adminAudit,'utf8').trim().split(/\r?\n/).slice(-500).filter(Boolean).map(line=>JSON.parse(line)).reverse():[]);
-      if(req.method==='GET'&&url.pathname==='/api/admin/billing')return send(res,200,{available:false,provider:null,records:[],message:'Платежный провайдер не подключен'});
-      if(req.method==='POST'&&/^\/api\/admin\/billing\/[^/]+\/refund$/.test(url.pathname))return send(res,503,{error:'Платежный провайдер не подключен; возврат не выполнен'});
+      if(req.method==='GET'&&url.pathname==='/api/admin/billing'){const days=Math.max(1,Math.min(365,Number(url.searchParams.get('days')||30)||30)),overview=billing.adminOverview(days),status=url.searchParams.get('status')||undefined,userId=url.searchParams.get('userId')||undefined;return send(res,200,{...overview,providers:payments.describe(),records:billing.adminPayments({status,userId,limit:100})})}
+      if(req.method==='POST'&&/^\/api\/admin\/billing\/[0-9a-f-]{36}\/refund$/.test(url.pathname)){const id=url.pathname.split('/')[4],data=await body(req),reason=String(data.reason||'').trim();if(reason.length<3||reason.length>300)return send(res,400,{error:'Укажите причину возврата (3–300 символов)'});const payment=billing.payment(id);if(!payment)return send(res,404,{error:'Платёж не найден'});
+        if(!payment.externalId)return send(res,409,{error:'У платежа нет идентификатора в провайдере: возврат невозможен'});
+        if(payment.status==='refunded')return send(res,409,{error:'Платёж уже возвращён'});
+        const provider=payments.byId(payment.provider);if(!provider)return send(res,503,{error:'Платёжный провайдер больше не поддерживается'});
+        const refund=await provider.refund(payment.externalId,payment.amountRub),result=billing.refund(id,refund.refundId,reason,{provider:payment.provider,amountRub:payment.amountRub});audit(actor,'payment.refund',id,{...result.payment,reason,refundId:refund.refundId,uncoveredRub:result.uncoveredRub||0});return send(res,200,result)}
+      if(req.method==='POST'&&url.pathname==='/api/admin/billing/adjustment'){const data=await body(req),reason=String(data.reason||'').trim(),target=accounts.adminUsers().find(item=>item.id===String(data.userId||''));if(!target)return send(res,404,{error:'Пользователь не найден'});if(reason.length<3||reason.length>300)return send(res,400,{error:'Укажите причину корректировки (3–300 символов)'});const result=billing.adminAdjust(target.id,Number(data.amountRub),reason);audit(actor,'billing.adjustment',target.id,{amountRub:Number(data.amountRub),reason,...result});return send(res,200,result)}
+      if(req.method==='GET'&&url.pathname==='/api/admin/shared-keys')return send(res,200,{...sharedKeys.summary(),routes:SHARED_ROUTES.map(route=>({route,label:ROUTE_LABELS[route]})),keys:sharedKeys.list()});
+      if(req.method==='POST'&&url.pathname==='/api/admin/shared-keys'){const data=await body(req),created=sharedKeys.add({label:data.label,route:String(data.route||''),model:data.model,key:data.key,monthlyCapRub:Number(data.monthlyCapRub||0),note:data.note});audit(actor,'sharedKey.create',created.id,{label:created.label,route:created.route,model:created.model,monthlyCapRub:created.monthlyCapRub});return send(res,201,created)}
+      const sharedMatch=url.pathname.match(/^\/api\/admin\/shared-keys\/([0-9a-f-]{36})(?:\/(balance))?$/);
+      if(sharedMatch){const id=sharedMatch[1],current=sharedKeys.get(id);if(!current)return send(res,404,{error:'Ключ не найден'});
+        if(req.method==='GET'&&!sharedMatch[2])return send(res,200,current);
+        if(req.method==='PATCH'&&!sharedMatch[2]){const data=await body(req),updated=sharedKeys.update(id,data);audit(actor,'sharedKey.update',id,{label:updated.label,route:updated.route,model:updated.model,status:updated.status,monthlyCapRub:updated.monthlyCapRub,reason:String(data.reason||'').slice(0,300)});return send(res,200,updated)}
+        if(req.method==='DELETE'&&!sharedMatch[2]){const data=await body(req).catch(()=>({}) as Record<string,unknown>);const reason=String(data.reason||'').trim();if(reason.length<3)return send(res,400,{error:'Укажите причину удаления (не менее 3 символов)'});sharedKeys.remove(id);audit(actor,'sharedKey.remove',id,{label:current.label,route:current.route,reason});return send(res,200,{ok:true})}
+        if(req.method==='POST'&&sharedMatch[2]){const secret=sharedKeys.secret(id,false);if(!secret)return send(res,503,{error:'Ключ недоступен для проверки'});const snapshot=await fetchBalance(current,secret),updated=sharedKeys.recordBalance(id,snapshot)!;audit(actor,'sharedKey.balance',id,{route:current.route,available:snapshot.available,remainingRub:snapshot.remainingRub??null,state:balanceState(updated)});return send(res,200,{...updated,state:balanceState(updated)})}
+        return send(res,405,{error:'Метод не поддерживается'})}
       if(req.method==='GET'&&url.pathname==='/api/admin/coauthors'){const stats=coauthorUsage.summary(Number(url.searchParams.get('days')||30)),devices=deviceRegistry?.adminCoauthors()||[],names=new Map(devices.map(device=>[device.id,device.name]));return send(res,200,{...stats,byCoauthor:stats.byCoauthor.map(item=>({...item,name:names.get(item.id)||item.name}))})}
       if(req.method==='GET'&&url.pathname==='/api/admin/infrastructure')return send(res,200,{provider:'local-agent',configured:!!process.env.OPENGAME_ADMIN_AGENT,operations:['health','logs','restart','rollback'],message:process.env.OPENGAME_ADMIN_AGENT?'Агент настроен':'Ограниченный VDS-агент не настроен; изменяющие операции недоступны'});
       if(req.method==='POST'&&url.pathname==='/api/admin/infrastructure/operation'){const data=await body(req);if(!['health','logs','restart','rollback'].includes(data.operation)||!process.env.OPENGAME_ADMIN_AGENT)return send(res,503,{error:'Допустимый агент инфраструктуры не настроен'});return send(res,503,{error:'Подключение агента не реализовано'})}
@@ -162,6 +192,30 @@ const server = createServer(async (req, res) => {
     if (req.method === 'GET' && url.pathname === '/api/auth/ogcat') { const userId=authId(req); if(!userId)return send(res,401,{error:'Требуется вход'}); return send(res,200,accounts.getOgcatBalance(userId)); }
     if (req.method === 'POST' && url.pathname === '/api/auth/ogcat/convert') { const userId=authId(req); if(!userId)return send(res,401,{error:'Требуется вход'}); const data=await body(req); const amount=Number(data.amount); if(!Number.isInteger(amount)||amount<=0)return send(res,400,{error:'Некорректное количество'}); return send(res,200,accounts.convertOgcatToTurns(userId,amount)); }
     if (req.method === 'GET' && url.pathname === '/api/auth/ogcat/history') { const userId=authId(req); if(!userId)return send(res,401,{error:'Требуется вход'}); const limit=Math.min(200,Math.max(1,Number(url.searchParams.get('limit')||50))); return send(res,200,accounts.getOgcatHistory(userId,limit)); }
+    if (req.method === 'GET' && url.pathname === '/api/billing') { const userId=authId(req); if(!userId)return send(res,401,{error:'Требуется вход'}); return send(res,200,{...billing.publicView(userId),providers:payments.describe().map(item=>({id:item.id,label:item.label,configured:item.configured}))}); }
+    if (req.method === 'POST' && url.pathname === '/api/payments/topups') {
+      const userId=authId(req); if(!userId)return send(res,401,{error:'Требуется вход'});
+      if(req.headers['x-storage-consent']!=='accepted')return send(res,403,{error:'Требуется согласие на хранение данных'});
+      if(!topupAllowed(userId))return send(res,429,{error:'Слишком много попыток пополнения. Повторите через час'});
+      const data=await body(req),pack=packageById(String(data.packId||''));
+      if(!pack)return send(res,400,{error:'Выберите пакет пополнения'});
+      const provider=payments.byId(String(data.provider||''));
+      if(!provider)return send(res,400,{error:'Платёжный провайдер не выбран'});
+      if(!provider.configured)return send(res,503,{error:provider.note});
+      const pending=billing.create({userId,provider:provider.id,packId:pack.id,commission:Math.round(pack.amountRub*0.016*100)/100});
+      let created;
+      try{created=await provider.create({paymentId:pending.id,amountRub:pack.amountRub,description:'Пополнение баланса OpenGames',returnUrl:publicOrigin})}
+      catch(error){billing.fail(pending.id,error instanceof Error?error.message:'ошибка провайдера');throw error}
+      const payment=billing.linkExternal(pending.id,created.externalId,created.confirmationUrl)!;
+      audit(userId,'payment.topup',payment.id,{provider:provider.id,packId:pack.id,amountRub:pack.amountRub});
+      return send(res,201,{payment,confirmationUrl:created.confirmationUrl,totalRub:pack.amountRub+pack.bonusRub,balanceRub:billing.balanceRub(userId)})}
+    const paymentMatch=url.pathname.match(/^\/api\/payments\/([0-9a-f-]{36})$/);
+    if(paymentMatch&&req.method==='GET'){const userId=authId(req);if(!userId)return send(res,401,{error:'Требуется вход'});
+      const payment=billing.paymentForUser(paymentMatch[1],userId);if(!payment)return send(res,404,{error:'Платёж не найден'});
+      if(payment.status==='pending'&&payment.externalId){const provider=payments.byId(payment.provider);
+        if(provider?.configured){try{const event=await provider.status(payment.externalId);if(event&&event.status!=='pending')billing.applyEvent(provider.id,event)}catch{}}}
+      const fresh=billing.paymentForUser(paymentMatch[1],userId)!;
+      return send(res,200,{payment:fresh,balanceRub:billing.balanceRub(userId),totalRub:fresh.amountRub+fresh.bonusRub})}
     if (req.method === 'GET' && url.pathname === '/api/auth/provider-limits') { const userId=authId(req); if(!userId)return send(res,401,{error:'Требуется вход'}); const limits=accounts.getProviderLimits(userId); const result:Record<string,any>={}; for(const [provider,cache] of Object.entries(limits)){ result[provider]={...cache,estimatedTurns:0,confidence:'low',avgTokens:0}; try{ const est=accounts.estimateTurns(userId,provider,coauthorUsage); result[provider].estimatedTurns=est.estimatedTurns; result[provider].confidence=est.confidence; result[provider].avgTokens=est.avgTokens; result[provider].sampleSize=est.sampleSize; result[provider].isEstimate=est.isEstimate; }catch{} } return send(res,200,result); }
     if (req.method === 'POST' && url.pathname === '/api/auth/provider-limits/refresh') { const userId=authId(req); if(!userId)return send(res,401,{error:'Требуется вход'}); const data=await body(req); const provider=String(data.provider||'').trim(); if(!provider)return send(res,400,{error:'Укажите провайдера'}); const updated=await accounts.refreshProviderLimits(userId,provider); return send(res,200,updated); }
     if(deviceRegistry&&req.method==='POST'&&url.pathname==='/api/donor/pairings'){
@@ -213,7 +267,7 @@ const server = createServer(async (req, res) => {
     if (jobMatch && queue) { const ownerId=authId(req); if (!ownerId) return send(res,401,{error:'Требуется вход'}); if(req.method==='GET')return send(res,200,queue.view(jobMatch[1],ownerId)); if(req.method==='DELETE')return send(res,200,queue.cancel(jobMatch[1],ownerId)); }
     if (turnMatch && req.method === 'POST') { const userId = authId(req); if (!userId) return send(res,401,{error:'Требуется вход'}); const action=await body(req) as Action; if(queue&&accounts.getAiSource(userId)==='donor')return send(res,202,queue.enqueue(turnMatch[1],userId,action)); if(queue?.pending(turnMatch[1],userId))return send(res,409,{error:'Предыдущий ход ещё обрабатывается'}); const config = aiMode !== 'ollama' ? accounts.getProviders(userId) : undefined; if (aiMode !== 'ollama' && !config) return send(res,403,{error:'Добавьте ключ AI-сценариста в профиле'}); const primary = aiMode === 'ollama' ? new OllamaAIProvider() : new RemoteAIProvider(config!.provider,config!.keys,config!.model); return send(res,200,await runtime.turn(turnMatch[1],action,primary,userId)); }
     send(res, 404, { error: 'Not found' });
-  } catch (error) { if(error instanceof DailyLimitError)return send(res,402,{error:error.message,code:error.code,resetAt:error.resetAt});const status=Number((error as Error&{status?:number})?.status);if(Number.isInteger(status)&&status>=400&&status<500)return send(res,status,{error:error instanceof Error?error.message:'Некорректный запрос'});console.error('Request failed:',error instanceof Error?error.message:'unknown error');return send(res,500,{error:'Внутренняя ошибка сервера'}); }
+  } catch (error) { if(error instanceof DailyLimitError)return send(res,402,{error:error.message,code:error.code,resetAt:error.resetAt});if(error instanceof PaymentError)return send(res,error.status,{error:error.message});const status=Number((error as Error&{status?:number})?.status);if(Number.isInteger(status)&&status>=400&&status<500)return send(res,status,{error:error instanceof Error?error.message:'Некорректный запрос'});console.error('Request failed:',error instanceof Error?error.message:'unknown error');return send(res,500,{error:'Внутренняя ошибка сервера'}); }
 });
 if(deviceRegistry&&donorPool){connectTransport=new ConnectTransport(server,deviceRegistry,donorPool);queue=new TurnQueue(runtime,accounts,donorPool,join(root,'..','data','turn-jobs.json'),connectTransport,coauthorUsage,deviceRegistry)}
 let shuttingDown=false;

@@ -30,7 +30,7 @@ export type InfraContext=Required<Omit<InfraContextInput,'publicUrl'|'donor'|'le
 function meminfo(){const out:Record<string,number>={};let text='';try{text=readFileSync('/proc/meminfo','utf8')}catch{return out}
   for(const line of text.split('\n')){const match=/^(\w+):\s+(\d+) kB/.exec(line);if(match)out[match[1]]=Number(match[2])}return out}
 
-function procRssMb(){try{const statusLine=readFileSync('/proc/self/status','utf8');const match=/VmRSS:\s+(\d+) kB/.exec(statusLine);return match?Math.round(Number(match[1])/1024):0}catch{return 0}}
+function procRssMb(){try{const statusLine=readFileSync('/proc/self/status','utf8');const match=/VmRSS:\s+(\d+) kB/.exec(statusLine);if(match)return Math.round(Number(match[1])/1024)}catch{/* без /proc берём данные процесса */}return Math.round(process.memoryUsage().rss/(1024*1024))}
 
 function dirStats(path:string){let files=0,bytes=0;const walk=(dir:string,depth:number)=>{if(depth>3)return;let entries:string[];try{entries=readdirSync(dir)}catch{return}
   for(const name of entries){if(name==='downloads'||name==='assets')continue;const full=dir+'/'+name;let info;try{info=statSync(full)}catch{continue}
@@ -62,7 +62,7 @@ export class InfrastructureMonitor {
       process:{pid:process.pid,rssMb:procRssMb(),uptimeSeconds:Math.round(process.uptime())}
     };
 
-    checks.push({key:'disk',label:'Диск',value:diskPercent+'%',detail:`${diskFreeMb} МБ свободно из ${Math.round(diskTotalMb)} МБ`,status:status(diskPercent,80,90),fix:'Удалите старые релизы в /opt/opengames/releases и архивы в /opt/opengames/backups'});
+    checks.push({key:'disk',label:'Диск',value:diskPercent+'%',detail:`${Math.round(diskFreeMb)} МБ свободно из ${Math.round(diskTotalMb)} МБ`,status:status(diskPercent,80,90),fix:'Удалите старые релизы в /opt/opengames/releases и архивы в /opt/opengames/backups'});
     checks.push({key:'memory',label:'Память',value:usedPercent+'%',detail:`${availableMb} МБ доступно из ${totalMb} МБ${hasMeminfo?'':' · оценка по freemem без учёта кеша'}`,status:status(usedPercent,85,95)});
     if(!hasMeminfo)limitations.push('Память оценена без /proc/meminfo: значение доступной памяти занижено, пороги строгие');
     checks.push({key:'load',label:'Нагрузка',value:String(host.load[0]),detail:`${cores} ядра, нагрузка за 5 и 15 минут: ${host.load[1]} / ${host.load[2]}`,status:load[0]>cores*1.5?'crit':load[0]>cores?'warn':'ok'});

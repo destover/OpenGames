@@ -21,6 +21,7 @@ import { BillingStore, packageById } from './core/billing.ts';
 import { paymentRegistry, PaymentError, type ProviderEvent } from './core/payments.ts';
 import { SharedKeyStore, ROUTE_LABELS, SHARED_ROUTES } from './core/shared-key.ts';
 import { balanceState, fetchBalance } from './core/provider-balance.ts';
+import { LegalStore, LEGAL_DOCUMENTS } from './core/legal.ts';
 import type { Action, GamePackage } from './core/types.ts';
 import survival from './games/survival.json' with { type: 'json' };
 import detective from './games/detective.json' with { type: 'json' };
@@ -85,12 +86,15 @@ const adminData=join(root,'..','data','admin');mkdirSync(adminData,{recursive:tr
 const coauthorUsage=new CoauthorUsageStore(join(root,'..','data','coauthor-usage.sqlite'));
 const billing=new BillingStore(join(root,'..','data','billing.sqlite'));
 const sharedKeys=new SharedKeyStore(join(root,'..','data','shared-keys.sqlite'));
+const legal=new LegalStore(join(root,'..','data','legal.json'));
 const payments=paymentRegistry(process.env);
 function audit(actor:string,action:string,target:string,details:Record<string,unknown>={}){appendFileSync(adminAudit,JSON.stringify({at:new Date().toISOString(),actor,action,target,details})+'\n',{mode:0o600});}
 const deviceRegistry=aiMode==='donor'?new DeviceRegistry(join(root,'..','data','donor-devices.sqlite')):undefined;
 let queue:TurnQueue|undefined,connectTransport:ConnectTransport|undefined;
 const smtp=process.env.SMTP_HOST&&process.env.SMTP_USER&&process.env.SMTP_PASSWORD?nodemailer.createTransport({host:process.env.SMTP_HOST,port:Number(process.env.SMTP_PORT||465),secure:process.env.SMTP_SECURE!=='0',auth:{user:process.env.SMTP_USER,pass:process.env.SMTP_PASSWORD}}):null;
 const json = (value: unknown) => JSON.stringify(value);
+const noIndexHeaders={'X-Robots-Tag':'noindex, nofollow, noarchive, nosnippet','Cache-Control':'no-store'};
+const legalDocs=new Map(LEGAL_DOCUMENTS.map(doc=>[doc.route,doc]));
 const securityHeaders={'Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'",'X-Content-Type-Options':'nosniff','X-Frame-Options':'DENY','Referrer-Policy':'no-referrer','Permissions-Policy':'camera=(), microphone=(), geolocation=()','Cross-Origin-Opener-Policy':'same-origin','Accept-CH':'Sec-CH-UA-Platform'};
 const connectDownloads=[
   {id:'macos-desktop',platform:'macos',kind:'desktop',file:'opengames-connect-0.1.7-macos-arm64.dmg',icon:'connect-macos.svg'},
@@ -126,6 +130,11 @@ const server = createServer(async (req, res) => {
     if (req.method==='GET'&&url.pathname==='/api/donor/downloads'){const platform=browserPlatform(req);return send(res,200,{platform,downloads:connectDownloads.map(({file,...item})=>({...item,url:'/downloads/'+file,recommended:item.platform===platform}))},{'Cache-Control':'no-store','Vary':'User-Agent, Sec-CH-UA-Platform'})}
     if ((req.method==='GET'||req.method==='HEAD')&&url.pathname.startsWith('/downloads/')){const file=url.pathname.slice('/downloads/'.length);if(!connectDownloads.some(item=>item.file===file))return send(res,404,{error:'Файл не найден'});const path=join(root,'..','web','downloads',file),size=(await stat(path)).size;res.writeHead(200,{...securityHeaders,'Content-Type':file.endsWith('.dmg')?'application/x-apple-diskimage':file.endsWith('.exe')?'application/vnd.microsoft.portable-executable':'application/zip','Content-Length':String(size),'Content-Disposition':`attachment; filename="${file}"`,'Cache-Control':'public, max-age=86400, immutable'});if(req.method==='HEAD')res.end();else createReadStream(path).pipe(res);return}
     if (req.method === 'GET' && ['/app.js','/style.css','/redesign.css','/ui.json'].includes(url.pathname)) { const data = await readFile(join(root, '..', 'web', url.pathname.slice(1))); res.writeHead(200, {...securityHeaders,'Content-Type': url.pathname.endsWith('.js') ? 'text/javascript' : url.pathname.endsWith('.css') ? 'text/css' : 'application/json', 'Cache-Control':'no-store'}); res.end(data); return; }
+    if((req.method==='GET'||req.method==='HEAD')&&legalDocs.has(url.pathname)){const doc=legalDocs.get(url.pathname)!,isAdmin=accounts.isAdmin(authId(req)),template=await readFile(join(root,'..','web','legal',doc.template),'utf8'),rendered=legal.render(template,doc.id);
+      if(!rendered.published&&!isAdmin){res.writeHead(503,{...securityHeaders,...noIndexHeaders,'Content-Type':'text/html; charset=utf-8','Retry-After':'3600'});if(req.method==='HEAD')res.end();else res.end(legal.unpublishedPage(doc.title));return}
+      const html=rendered.published?rendered.html.replace(/<div class="notice">[\s\S]*?<\/div>\s*/,''):rendered.html;
+      res.writeHead(200,{...securityHeaders,...noIndexHeaders,'Content-Type':'text/html; charset=utf-8'});if(req.method==='HEAD')res.end();else res.end(html);return}
+    if((req.method==='GET'||req.method==='HEAD')&&url.pathname==='/robots.txt'){const text=await readFile(join(root,'..','web','robots.txt'),'utf8');res.writeHead(200,{...securityHeaders,'Content-Type':'text/plain; charset=utf-8','Cache-Control':'public, max-age=3600'});if(req.method==='HEAD')res.end();else res.end(text);return}
     if (req.method === 'GET' && url.pathname === '/') { const html = await readFile(join(root, '..', 'web', 'index.html'), 'utf8'); res.writeHead(200, { ...securityHeaders,'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' }); res.end(html); return; }
     if (req.method === 'GET' && url.pathname === '/api/ai/providers') return send(res,200,providers);
     if (req.method === 'GET' && url.pathname === '/api/health') {const donor=donorPool?await donorPool.health():undefined,ok=donor?donor.connected:true;return send(res,ok?200:503,{ok,games:runtime.listGames().length,provider:aiMode,aiConnected:ok})}
@@ -155,6 +164,8 @@ const server = createServer(async (req, res) => {
         const provider=payments.byId(payment.provider);if(!provider)return send(res,503,{error:'Платёжный провайдер больше не поддерживается'});
         const refund=await provider.refund(payment.externalId,payment.amountRub),result=billing.refund(id,refund.refundId,reason,{provider:payment.provider,amountRub:payment.amountRub});audit(actor,'payment.refund',id,{...result.payment,reason,refundId:refund.refundId,uncoveredRub:result.uncoveredRub||0});return send(res,200,result)}
       if(req.method==='POST'&&url.pathname==='/api/admin/billing/adjustment'){const data=await body(req),reason=String(data.reason||'').trim(),target=accounts.adminUsers().find(item=>item.id===String(data.userId||''));if(!target)return send(res,404,{error:'Пользователь не найден'});if(reason.length<3||reason.length>300)return send(res,400,{error:'Укажите причину корректировки (3–300 символов)'});const result=billing.adminAdjust(target.id,Number(data.amountRub),reason);audit(actor,'billing.adjustment',target.id,{amountRub:Number(data.amountRub),reason,...result});return send(res,200,result)}
+      if(req.method==='GET'&&url.pathname==='/api/admin/legal')return send(res,200,legal.adminView());
+      if(req.method==='PUT'&&url.pathname==='/api/admin/legal'){const data=await body(req),result=legal.save((data.values||data) as Record<string,string>,String(data.reason||''));audit(actor,'legal.update','-',{changed:result.changed,reason:result.reason,documents:result.documents.map(item=>({id:item.id,published:item.published,missing:item.missing}))});return send(res,200,result)}
       if(req.method==='GET'&&url.pathname==='/api/admin/shared-keys')return send(res,200,{...sharedKeys.summary(),routes:SHARED_ROUTES.map(route=>({route,label:ROUTE_LABELS[route]})),keys:sharedKeys.list()});
       if(req.method==='POST'&&url.pathname==='/api/admin/shared-keys'){const data=await body(req),created=sharedKeys.add({label:data.label,route:String(data.route||''),model:data.model,key:data.key,monthlyCapRub:Number(data.monthlyCapRub||0),note:data.note});audit(actor,'sharedKey.create',created.id,{label:created.label,route:created.route,model:created.model,monthlyCapRub:created.monthlyCapRub});return send(res,201,created)}
       const sharedMatch=url.pathname.match(/^\/api\/admin\/shared-keys\/([0-9a-f-]{36})(?:\/(balance))?$/);

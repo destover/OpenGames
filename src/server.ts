@@ -22,6 +22,7 @@ import { paymentRegistry, PaymentError, type ProviderEvent } from './core/paymen
 import { SharedKeyStore, ROUTE_LABELS, SHARED_ROUTES } from './core/shared-key.ts';
 import { balanceState, fetchBalance } from './core/provider-balance.ts';
 import { LegalStore, LEGAL_DOCUMENTS } from './core/legal.ts';
+import { InfrastructureMonitor } from './core/infrastructure.ts';
 import type { Action, GamePackage } from './core/types.ts';
 import survival from './games/survival.json' with { type: 'json' };
 import detective from './games/detective.json' with { type: 'json' };
@@ -87,6 +88,7 @@ const coauthorUsage=new CoauthorUsageStore(join(root,'..','data','coauthor-usage
 const billing=new BillingStore(join(root,'..','data','billing.sqlite'));
 const sharedKeys=new SharedKeyStore(join(root,'..','data','shared-keys.sqlite'));
 const legal=new LegalStore(join(root,'..','data','legal.json'));
+const infrastructure=new InfrastructureMonitor({releasesDir:join(root,'..','..','releases'),dataDir:join(root,'..','data'),port:Number(process.env.PORT||3000),publicUrl:configuredPublicUrl,units:String(process.env.OPENGAME_ADMIN_UNITS||'opengames,nginx').split(',').map(item=>item.trim()).filter(Boolean),games:runtime.listGames().length,donor:async()=>{const health=donorPool?await donorPool.health():undefined;return {connected:Boolean(health?.connected),devices:donorPool?.size||0}},legal:()=>({terms:legal.complete('terms'),privacy:legal.complete('privacy')}),journalLines:200});
 const payments=paymentRegistry(process.env);
 function audit(actor:string,action:string,target:string,details:Record<string,unknown>={}){appendFileSync(adminAudit,JSON.stringify({at:new Date().toISOString(),actor,action,target,details})+'\n',{mode:0o600});}
 const deviceRegistry=aiMode==='donor'?new DeviceRegistry(join(root,'..','data','donor-devices.sqlite')):undefined;
@@ -176,8 +178,8 @@ const server = createServer(async (req, res) => {
         if(req.method==='POST'&&sharedMatch[2]){const secret=sharedKeys.secret(id,false);if(!secret)return send(res,503,{error:'Ключ недоступен для проверки'});const snapshot=await fetchBalance(current,secret),updated=sharedKeys.recordBalance(id,snapshot)!;audit(actor,'sharedKey.balance',id,{route:current.route,available:snapshot.available,remainingRub:snapshot.remainingRub??null,state:balanceState(updated)});return send(res,200,{...updated,state:balanceState(updated)})}
         return send(res,405,{error:'Метод не поддерживается'})}
       if(req.method==='GET'&&url.pathname==='/api/admin/coauthors'){const stats=coauthorUsage.summary(Number(url.searchParams.get('days')||30)),devices=deviceRegistry?.adminCoauthors()||[],names=new Map(devices.map(device=>[device.id,device.name]));return send(res,200,{...stats,byCoauthor:stats.byCoauthor.map(item=>({...item,name:names.get(item.id)||item.name}))})}
-      if(req.method==='GET'&&url.pathname==='/api/admin/infrastructure')return send(res,200,{provider:'local-agent',configured:!!process.env.OPENGAME_ADMIN_AGENT,operations:['health','logs','restart','rollback'],message:process.env.OPENGAME_ADMIN_AGENT?'Агент настроен':'Ограниченный VDS-агент не настроен; изменяющие операции недоступны'});
-      if(req.method==='POST'&&url.pathname==='/api/admin/infrastructure/operation'){const data=await body(req);if(!['health','logs','restart','rollback'].includes(data.operation)||!process.env.OPENGAME_ADMIN_AGENT)return send(res,503,{error:'Допустимый агент инфраструктуры не настроен'});return send(res,503,{error:'Подключение агента не реализовано'})}
+      if(req.method==='GET'&&url.pathname==='/api/admin/infrastructure')return send(res,200,await infrastructure.report({fresh:url.searchParams.get('fresh')==='1'}));
+      if(req.method==='POST'&&url.pathname==='/api/admin/infrastructure/operation'){const data=await body(req),name=String(data.operation||'');if(!['health','logs'].includes(name))return send(res,400,{error:'Операция недоступна: '+((name==='restart'||name==='rollback')?'перезапуск и откат выполняются вручную по SSH':'неизвестная операция'),fix:name==='restart'?'systemctl restart opengames':name==='rollback'?'ln -sfnT <релиз> /opt/opengames/current && systemctl restart opengames':undefined});return send(res,200,await infrastructure.operation(name))}
       return send(res,404,{error:'Not found'});
     }
     if (req.method === 'POST' && url.pathname === '/api/ai/check') {

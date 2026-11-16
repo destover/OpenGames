@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 import nodemailer from 'nodemailer';
 import { GameRuntime } from './core/runtime.ts';
 import { type AIProvider, RemoteAIProvider, AnthropicProvider, FallbackAIProvider, LocalAIProvider, OllamaAIProvider, OpenAIProvider, OpenRouterProvider } from './core/ai.ts';
-import { modelInfo, pilotModel, type GenerationSettings } from './core/generation.ts';
+import { modelInfo, pilotModel, playerProfileLimits, type GenerationSettings } from './core/generation.ts';
 import { ModelUsageStore } from './core/model-usage.ts';
 import { AccountStore, DailyLimitError } from './core/accounts.ts';
 import { LocalSaveSystem } from './core/save.ts';
@@ -106,7 +106,18 @@ function resolveWriter(userId: string, settings: GenerationSettings) {
 function generationSettings(userId: string, value: any): GenerationSettings {
   const bad = () => Object.assign(new Error('Некорректные настройки генерации'), {status:400});
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw bad();
-  const { provider, model, length, initiative, pace, temperature, topP } = value;
+  const { provider, model, length, initiative, pace, temperature, topP, narration } = value;
+  let playerProfile: GenerationSettings['playerProfile'];
+  if (value.playerProfile !== undefined) {
+    if (!value.playerProfile || typeof value.playerProfile !== 'object' || Array.isArray(value.playerProfile)) throw bad();
+    playerProfile = {};
+    for (const field of Object.keys(playerProfileLimits) as Array<keyof typeof playerProfileLimits>) {
+      const entry = value.playerProfile[field];
+      if (entry === undefined) continue;
+      if (typeof entry !== 'string' || entry.trim().length > playerProfileLimits[field]) throw bad();
+      if (entry.trim()) playerProfile[field] = entry.trim();
+    }
+  }
   if (provider || model) {
     if (typeof provider !== 'string' || typeof model !== 'string' || !Object.hasOwn(providers, provider) ||
       !modelInfo(provider, model) || !accounts.getProviders(userId, provider)) throw bad();
@@ -114,8 +125,9 @@ function generationSettings(userId: string, value: any): GenerationSettings {
   if (length !== undefined && !['short','standard','long'].includes(length) ||
       initiative !== undefined && !['low','normal','high'].includes(initiative) ||
       pace !== undefined && !['slow','normal','fast'].includes(pace) ||
+      narration !== undefined && !['characters','shared'].includes(narration) ||
       [temperature, topP].some(n => n !== undefined && (!Number.isFinite(n) || n < 0 || n > 1))) throw bad();
-  return { provider:provider || undefined, model:model || undefined, length, initiative, pace, temperature, topP };
+  return { provider:provider || undefined, model:model || undefined, length, initiative, pace, temperature, topP, playerProfile, narration };
 }
 accounts.initializeAdmin(process.env.OPENGAME_ADMIN_EMAIL);
 const adminData=join(root,'..','data','admin');mkdirSync(adminData,{recursive:true,mode:0o700});const adminAudit=join(adminData,'audit.jsonl');

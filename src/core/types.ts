@@ -1,7 +1,7 @@
 export type Json = null | boolean | number | string | Json[] | { [key: string]: Json };
 
 export interface GamePackage {
-  manifest: { id: string; title: string; description: string; version: string; schemaVersion: string; isNew?: boolean; setting?: string; categoryRu?: string; background?: string; music?: string; durationMinutes?: number[] };
+  manifest: { id: string; title: string; description: string; version: string; schemaVersion: string; isNew?: boolean; setting?: string; categoryRu?: string; background?: string; music?: string; durationMinutes?: number[]; allowNewCharacters?: boolean };
   state: { initial: Record<string, Json> };
   actions: Record<string, { label: string; input?: boolean; icon?: string }>;
   rules?: { transitions: Record<string, { event: string; value?: Json; effects?: Record<string, Json>; narrative: string }> };

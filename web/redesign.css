@@ -48,7 +48,9 @@ body[data-time='day'].game-page #actionForm input{background:#f3f7fd;color:#1823
 
 .generation-form{display:grid;gap:8px;margin-top:10px}
 .generation-form label{display:grid;gap:4px}
-.generation-form select,.generation-form input{width:100%;min-width:0}
+.generation-form select,.generation-form input,.generation-form textarea{width:100%;min-width:0}
+.generation-form .player-profile{display:grid;gap:8px;min-width:0;margin:0;padding:8px;border:1px solid var(--line);border-radius:8px}
+.generation-form textarea{resize:vertical}
 #generationSampling{display:grid;gap:8px}
 #generationUsage{font-size:.85rem;overflow-wrap:anywhere}
 #liveNarrative{white-space:pre-wrap}

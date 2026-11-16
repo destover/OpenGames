@@ -2,6 +2,9 @@ import type { GamePackage } from './types.ts';
 
 export function validateGamePackage(game: GamePackage) {
   if (!game?.manifest?.id || !game.manifest.title || !game.manifest.version || !game.manifest.schemaVersion) throw new Error('Игровой пакет: отсутствует манифест');
+  if (game.manifest.allowNewCharacters !== undefined && typeof game.manifest.allowNewCharacters !== 'boolean') {
+    throw new Error('Игровой пакет: allowNewCharacters должен быть логическим значением');
+  }
   if (game.manifest.music && (!game.manifest.music.startsWith('/assets/music/') || !/\.(wav|ogg|mp3|m4a)$/i.test(game.manifest.music))) throw new Error(`${game.manifest.id}: некорректный путь музыкального фона`);
   if (!game.state?.initial || typeof game.state.initial !== 'object') throw new Error(`${game.manifest.id}: отсутствует initial state`);
   if (!game.actions || Object.keys(game.actions).length === 0) throw new Error(`${game.manifest.id}: отсутствуют actions`);

@@ -121,7 +121,12 @@ export class AccountStore {
   setScenarioSettings(userId: string, gameId: string, settings: GenerationSettings) {
     const user = this.db.users.find(item => item.id === userId)!;
     user.scenarioGeneration ??= {};
-    user.scenarioGeneration[gameId] = settings;
+    const previous = user.scenarioGeneration[gameId];
+    user.scenarioGeneration[gameId] = {
+      ...settings,
+      playerProfile: settings.playerProfile ?? previous?.playerProfile,
+      narration: settings.narration ?? previous?.narration
+    };
     this.persist();
   }
   getOpenRouterKey(userId: string) { const record = this.db.users.find(item => item.id === userId)?.openRouterKey; return record ? this.decrypt(record) : undefined; }

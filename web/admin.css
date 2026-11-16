@@ -161,3 +161,8 @@
 }
 .model-limit-form{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
 .model-limit-form input{width:7rem;max-width:100%}
+.oauth-admin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));gap:16px}
+.oauth-admin-form{display:grid;align-content:start;gap:12px;padding:16px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.oauth-admin-form h2{margin:0;font-size:18px}
+.oauth-admin-form .field input{min-width:0;width:100%}
+.oauth-admin-form button{justify-self:start}

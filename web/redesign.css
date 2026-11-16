@@ -54,3 +54,6 @@ body[data-time='day'].game-page #actionForm input{background:#f3f7fd;color:#1823
 #generationSampling{display:grid;gap:8px}
 #generationUsage{font-size:.85rem;overflow-wrap:anywhere}
 #liveNarrative{white-space:pre-wrap}
+.oauth-options{display:grid;gap:8px;margin-top:16px}
+.oauth-options a{padding:9px 12px;border:1px solid var(--line);border-radius:10px;color:var(--ink);text-align:center;text-decoration:none}
+.oauth-options a:hover{border-color:var(--accent)}

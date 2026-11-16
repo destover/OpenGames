@@ -11,6 +11,7 @@ import { GameRuntime } from './core/runtime.ts';
 import { type AIProvider, RemoteAIProvider, AnthropicProvider, FallbackAIProvider, LocalAIProvider, OllamaAIProvider, OpenAIProvider, OpenRouterProvider } from './core/ai.ts';
 import { modelInfo, pilotModel, playerProfileLimits, type GenerationSettings } from './core/generation.ts';
 import { ModelUsageStore } from './core/model-usage.ts';
+import { OAuthLogin, type OAuthProvider } from './core/oauth.ts';
 import { AccountStore, DailyLimitError } from './core/accounts.ts';
 import { LocalSaveSystem } from './core/save.ts';
 import { DonorAIProvider } from './core/donor.ts';
@@ -84,6 +85,7 @@ const baseProvider = aiMode === 'donor' ? new DonorAIProvider(donorPool!.first) 
 const provider = aiMode === 'donor' ? baseProvider : new FallbackAIProvider(baseProvider, new LocalAIProvider());
 const runtime = new GameRuntime(games, provider, new LocalSaveSystem(join(root, '..', 'data', 'saves')), join(root,'..','data','game-publication.json'));
 const accounts = new AccountStore(join(root, '..', 'data', 'accounts.json'));
+const oauth = new OAuthLogin(accounts, publicOrigin);
 const pilotKey = process.env.OPENGAME_PILOT_OPENROUTER_KEY;
 const modelUsage = new ModelUsageStore(join(root, '..', 'data', 'model-usage.sqlite'));
 const ollamaModel = process.env.OLLAMA_MODEL || 'qwen3.5:9b';
@@ -195,6 +197,16 @@ const server = createServer(async (req, res) => {
       return send(res,200,{ok:true,...result})}
     if(url.pathname.startsWith('/api/admin/')){const actor=authId(req);if(!actor)return send(res,401,{error:'Требуется вход'});if(!accounts.isAdmin(actor))return send(res,403,{error:'Недостаточно прав'});if(!['GET','HEAD'].includes(req.method||'')&&req.headers['x-admin-confirm']!=='confirmed')return send(res,403,{error:'Требуется подтверждение действия'});
       if(req.method==='GET'&&url.pathname==='/api/admin/overview')return send(res,200,{...accounts.adminSummary(),games:runtime.listGames().length,sessions:runtime.adminSessions().length,turns:runtime.adminSessions().reduce((n,s)=>n+s.turns.length,0),provider:aiMode,health:'ok',updatedAt:new Date().toISOString()});
+      if (req.method === 'GET' && url.pathname === '/api/admin/oauth') {
+        return send(res,200,oauth.adminView(),{'Cache-Control':'no-store'});
+      }
+      const oauthAdmin = url.pathname.match(/^\/api\/admin\/oauth\/(google|yandex|vk)$/);
+      if (req.method === 'PUT' && oauthAdmin) {
+        const provider = oauthAdmin[1] as OAuthProvider;
+        oauth.update(provider,await body(req));
+        audit(actor,'oauth.update',provider,{enabled:oauth.available().includes(provider)});
+        return send(res,200,oauth.adminView(),{'Cache-Control':'no-store'});
+      }
       if(url.pathname==='/api/admin/model-limits'){
         if(req.method==='GET'){
           const models=Object.entries(providers).flatMap(([provider,spec])=>spec.models.map(model=>({
@@ -274,6 +286,29 @@ const server = createServer(async (req, res) => {
     if (req.method === 'GET' && url.pathname === '/api/ai/limits') { const userId=authId(req);if(!userId)return send(res,401,{error:'Требуется вход'});if(aiMode==='donor'){const limits=accounts.dailyLimits(userId);return send(res,200,{provider:'donor',available:true,limit:limits.daily_allowance,remaining:limits.remaining_today,resetAt:limits.resetAt})}const config=accounts.getProvider(userId); if(!config)return send(res,401,{error:'Требуется вход'}); if(config.provider==='openrouter'){try{const response=await fetch('https://openrouter.ai/api/v1/key',{headers:{Authorization:'Bearer '+config.key},signal:AbortSignal.timeout(8000)}); const data=await response.json() as any; return send(res,response.ok?200:502,{provider:config.provider,limit:data.data?.limit??null,usage:data.data?.usage??null,remaining:data.data?.limit_remaining??null,reset:data.data?.limit_reset??null,available:response.ok});}catch{return send(res,200,{provider:config.provider,available:false})}} return send(res,200,{provider:config.provider,available:false,message:'Лимиты доступны в кабинете провайдера'}); }
     if (req.method === 'GET' && url.pathname === '/api/ai/status') {const donorStatus=donorPool?await donorPool.health():undefined;return send(res, 200, { provider: aiMode, pilotAvailable: !!pilotKey, availableProviders: [...Object.keys(providers), 'local', 'ollama', 'donor'], model: aiMode === 'donor' ? donorPool!.model : pilotKey ? pilotModel : aiMode === 'ollama' ? (process.env.OLLAMA_MODEL || 'qwen3.5:9b') : aiMode === 'openrouter' ? (process.env.OPENROUTER_MODEL || 'openrouter/free') : aiMode === 'openai' ? (process.env.OPENAI_MODEL || 'gpt-4o-mini') : aiMode === 'anthropic' ? (process.env.ANTHROPIC_MODEL || 'claude-3-5-haiku-latest') : 'Локальный сценарист', connected: donorStatus?donorStatus.connected:!!pilotKey||aiMode!=='local', coauthors:donorStatus?.donors, donors:donorStatus?.donors, fallback: aiMode === 'donor' || aiMode === 'ollama' ? undefined : 'Локальный сценарист' });}
     if (url.pathname.startsWith('/api/auth/') && ['POST','PUT'].includes(req.method || '') && req.headers['x-storage-consent'] !== 'accepted') return send(res,403,{error:'Требуется согласие на хранение данных'});
+    if (req.method === 'GET' && url.pathname === '/api/auth/oauth') {
+      return send(res,200,{providers:oauth.available()},{'Cache-Control':'no-store'});
+    }
+    const oauthRoute = url.pathname.match(/^\/api\/auth\/oauth\/(google|yandex|vk)\/(start|callback)$/);
+    if (req.method === 'GET' && oauthRoute) {
+      const provider = oauthRoute[1] as OAuthProvider;
+      const redirect = (location: string, cookies?: string[]) => {
+        res.writeHead(303,{...securityHeaders, Location:location,'Cache-Control':'no-store','Referrer-Policy':'no-referrer',
+          ...(cookies ? {'Set-Cookie':cookies} : {})});
+        res.end();
+      };
+      if (oauthRoute[2] === 'start') {
+        const flow = oauth.start(provider);
+        return flow ? redirect(flow.url,[flow.cookie]) : redirect('/?oauth=failed');
+      }
+      try {
+        const identity = await oauth.finish(provider,url.searchParams,cookie(req,'opengame_oauth'));
+        if (identity) return redirect('/#/games',[oauth.cookie(''),sessionHeader(accounts.loginOAuth(identity))]);
+      } catch {
+        // Provider responses can contain credentials.
+      }
+      return redirect('/?oauth=failed');
+    }
     if (req.method === 'POST' && url.pathname === '/api/auth/register') { const data=await body(req),result=accounts.register(data.email,data.password);return send(res,201,{user:result.user},{'Set-Cookie':sessionHeader(result.token)}); }
     if (req.method === 'POST' && url.pathname === '/api/auth/login') { const data=await body(req),key=rateKey(req);if(loginBlocked(key))return send(res,429,{error:'Слишком много попыток. Повторите через 15 минут'});try{const result=accounts.login(data.email,data.password,data.timezone);loginAttempts.delete(key);return send(res,200,{user:result.user},{'Set-Cookie':sessionHeader(result.token)})}catch{loginFailed(key);return send(res,401,{error:'Неверный email или пароль'})} }
     if (req.method === 'POST' && url.pathname === '/api/auth/logout') { const token=sessionToken(req);accounts.revoke(token);return send(res,200,{ok:true},{'Set-Cookie':sessionHeader('',0)}); }

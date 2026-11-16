@@ -119,7 +119,8 @@ function renderGeneration() {
     +'<fieldset class="player-profile"><legend>'+t('playerProfile')+'</legend>'
     +'<label>'+t('playerName')+'<input name="playerName" maxlength="80" value="'+esc(settings.playerProfile?.name||'')+'"></label>'
     +'<label>'+t('playerRole')+'<input name="playerRole" maxlength="120" value="'+esc(settings.playerProfile?.role||'')+'"></label>'
-    +'<label>'+t('playerBio')+'<textarea name="playerBio" maxlength="600" rows="3">'+esc(settings.playerProfile?.bio||'')+'</textarea></label></fieldset>'
+    +'<label>'+t('playerBio')+'<textarea name="playerBio" maxlength="600" rows="3">'+esc(settings.playerProfile?.bio||'')+'</textarea></label>'
+    +'<button type="button" name="randomizePlayer">'+t('playerRandomize')+'</button></fieldset>'
     +select('narration','generationNarration',choices(['characters','shared']),settings.narration||'characters')
     +select('length','generationLength',choices(['short','standard','long']),settings.length||'standard')
     +select('initiative','generationInitiative',choices(['low','normal','high']),settings.initiative||'normal')
@@ -132,6 +133,16 @@ function renderGeneration() {
     const visible=provider ? !!providers[provider]?.models.find(model=>model.id===id)?.sampling : !!defaultWriter?.sampling;
     $('generationSampling').hidden=!visible;
     for(const input of $('generationSampling').querySelectorAll('input'))input.required=visible;
+  };
+  form.elements.randomizePlayer.onclick=()=>{
+    const {playerName,playerRole,playerBio}=form.elements;
+    const {names,backgrounds}=ui[lang].playerPresets;
+    const otherNames=names.filter(name=>name!==playerName.value);
+    const otherBackgrounds=backgrounds.filter(([role])=>role!==playerRole.value);
+    const [role,bio]=otherBackgrounds[Math.floor(Math.random()*otherBackgrounds.length)];
+    playerName.value=otherNames[Math.floor(Math.random()*otherNames.length)];
+    playerRole.value=role;
+    playerBio.value=bio;
   };
   form.elements.writer.onchange=syncSampling;
   syncSampling();

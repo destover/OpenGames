@@ -246,6 +246,16 @@
     "playerName": "Имя героя",
     "playerRole": "Роль в истории",
     "playerBio": "Краткая биография",
+    "playerRandomize": "Заполнить случайно",
+    "playerPresets": {
+      "names": ["Алекс", "Саша", "Мика", "Кай", "Рен", "Ника"],
+      "backgrounds": [
+        ["Наблюдатель", "Замечает мелочи и запоминает, кто что сказал. Предпочитает сначала осмотреться."],
+        ["Переговорщик", "Умеет выслушать обе стороны и найти точку согласия. Старается выполнять обещания."],
+        ["Следопыт", "Хорошо ориентируется на местности и умеет находить дорогу по приметам."],
+        ["Хранитель историй", "Собирает рассказы очевидцев и сопоставляет детали, когда их версии расходятся."]
+      ]
+    },
     "generationNarration": "За кого пишет ИИ",
     "generation_characters": "За других персонажей",
     "generation_shared": "Также за героя игрока",
@@ -515,6 +525,16 @@
     "playerName": "Character name",
     "playerRole": "Role in the story",
     "playerBio": "Short biography",
+    "playerRandomize": "Randomize profile",
+    "playerPresets": {
+      "names": ["Alex", "Sasha", "Mika", "Kai", "Ren", "Nika"],
+      "backgrounds": [
+        ["Observer", "Notices small details and remembers who said what. Prefers to look around first."],
+        ["Negotiator", "Listens to both sides and finds common ground. Tries to keep every promise."],
+        ["Tracker", "Has a good sense of direction and finds the way by looking for landmarks."],
+        ["Story keeper", "Collects eyewitness accounts and compares details when their stories differ."]
+      ]
+    },
     "generationNarration": "AI narration",
     "generation_characters": "Other characters",
     "generation_shared": "Include the player character",

@@ -1,8 +1,9 @@
 const providers=await fetch('/api/ai/providers').then(r=>r.json());
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c])),stored=k=>{try{return localStorage.getItem(k)}catch{return null}};
 let consent=stored('opengame-cookie-consent')==='1',lang=stored('opengame-language')==='en'?'en':'ru',layout=stored('opengame-flow-layout')||'horizontal',themeMode=stored('opengame-theme')||'auto',aiMode='local',aiModel='',aiInfo={},user,games=[],popular=[],saves=[],session,game,category='all',pending=false,queueStatus='',queuePosition=0,lastSource=null,idleTimer,carouselTimer,carouselIndex=0,musicAudio,musicTrack=null;
+let activeTurn, failedTurn, generationView, generationFetch=0;
 const ui=await fetch('/ui.json').then(r=>r.json()),t=k=>ui[lang][k]||ui.ru[k]||k,loc=(g,s,k)=>g?.i18n?.[lang]?.[s]?.[k]||g?.i18n?.ru?.[s]?.[k]||'';
-function remember(k,v){if(consent)localStorage.setItem(k,v)}function api(path,o={}){let h={'Content-Type':'application/json','X-Storage-Consent':consent?'accepted':'declined'};return fetch(path,{...o,headers:h,credentials:'same-origin'}).then(async r=>{let d=await r.json(),error;if(!r.ok){error=Error(d.error||t('unavailable'));error.status=r.status;error.resetAt=d.resetAt;throw error}return d})}function note(v=''){$('notice').textContent=v}function eligible(){return consent&&!!user&&(aiMode==='ollama'||aiMode==='donor'&&user.aiSource!=='personal'||!!user.hasKey)}function gate(){return !consent?t('needConsent'):!user?t('needLogin'):!eligible()?t('needKey'):''}function icon(a){return a?.icon||game?.actions?.[a?.type]?.icon||'✦'}function actionName(type){return loc(game,'actions',type)||type}
+function remember(k,v){if(consent)localStorage.setItem(k,v)}function api(path,o={}){let h={'Content-Type':'application/json','X-Storage-Consent':consent?'accepted':'declined'};return fetch(path,{...o,headers:h,credentials:'same-origin'}).then(async r=>{let d=await r.json(),error;if(!r.ok){error=Error(d.error||t('unavailable'));error.status=r.status;error.resetAt=d.resetAt;throw error}return d})}function note(v=''){$('notice').textContent=v}function eligible(){return consent&&!!user&&(aiMode==='ollama'||aiMode==='donor'&&user.aiSource!=='personal'||!!user.hasKey||aiInfo.pilotAvailable)}function gate(){return !consent?t('needConsent'):!user?t('needLogin'):!eligible()?t('needKey'):''}function icon(a){return a?.icon||game?.actions?.[a?.type]?.icon||'✦'}function actionName(type){return loc(game,'actions',type)||type}
 function currentRoute(){let r=location.hash.replace(/^#/,'')||'/games';return r.startsWith('/')?r:'/'+r}function go(route){location.hash=route}function setTime(){let h=new Date().getHours(),time=themeMode==='day'?'day':themeMode==='night'?'night':h>=8&&h<20?'day':'night';document.body.dataset.time=time;$('themeIndicator').textContent=themeMode==='auto'?'A':time==='day'?'☀':'☾';$('themeIndicator').title=(themeMode==='auto'?t('themeAuto'):themeMode==='day'?t('themeDay'):t('themeNight'))+' · '+t('themeSwitch');$('themeIndicator').setAttribute('aria-label',$('themeIndicator').title)}function cycleTheme(){themeMode=themeMode==='auto'?'day':themeMode==='day'?'night':'auto';if(consent)localStorage.setItem('opengame-theme',themeMode);setTime()}setTime();setInterval(setTime,60000);
 function labels(){document.documentElement.lang=lang;document.querySelectorAll('[data-label]').forEach(e=>e.textContent=t(e.dataset.label));document.querySelectorAll('[data-lang]').forEach(b=>{b.classList.toggle('active',b.dataset.lang===lang);b.setAttribute('aria-pressed',String(b.dataset.lang===lang))});$('input').placeholder=t('input');$('send').textContent=t('send');$('back').textContent='← '+t('back');$('restart').textContent=t('restart');$('share').textContent=t('share');$('cookieText').textContent=t('cookieText');$('accept').textContent=t('accept');$('deny').textContent=t('deny');if(game)renderMusic();setTime()}
 async function refresh(){saves=user?await api('/api/sessions'):[]}
@@ -37,13 +38,34 @@ async function renderDonors(){
   await listDonors();let donorList=$('donorDeviceList');let refreshDonors=()=>{if($('donorDeviceList')===donorList)listDonors().finally(()=>setTimeout(refreshDonors,15000))};setTimeout(refreshDonors,15000)
 }
 function resetTime(value){return new Date(value).toLocaleString(lang==='ru'?'ru-RU':'en-US',{dateStyle:'medium',timeStyle:'short'})}
-async function loadLimits(){let box=document.getElementById('aiLimits');if(!box){box=document.createElement('p');box.id='aiLimits';box.className='muted';$('productInfo').before(box)}box.textContent=t('limitsLoading');try{let data=await api('/api/ai/limits');if(data.available&&['openrouter','donor'].includes(data.provider)){let parts=[];if(data.remaining!=null)parts.push(t('limitsRemaining')+': '+data.remaining);if(data.limit!=null)parts.push(t('limitsDaily')+': '+data.limit);if(data.usage!=null)parts.push(t('limitsUsed')+': '+data.usage);if(data.provider==='donor')parts.push(t('limitsReset')+': '+resetTime(data.resetAt));box.textContent=parts.join(' · ')||t('limitsUnavailable')}else box.textContent=data.message||t('limitsUnavailable')}catch{box.textContent=t('limitsUnavailable')}}
-async function showGameLimit(){let box=$('dailyLimit');box.hidden=aiMode!=='donor'||!user;if(box.hidden)return;if(user.aiSource==='personal'){box.textContent=t('personalActive')+': '+(providers[user.provider]?.name||user.provider);return}try{let data=await api('/api/ai/limits');box.textContent=t('dailyMoves')+': '+data.remaining+' / '+data.limit+' · '+t('limitsReset')+': '+resetTime(data.resetAt)}catch{box.hidden=true}}
+function modelUsageText(usage){
+  return t('generationRemaining')+' '+usage.remaining+'/'+usage.limit+' · '+t('limitsReset')+' '+resetTime(usage.resetAt)
+    +' · '+t('generationTokens')+' '+(usage.inputTokens??'—')+'/'+(usage.outputTokens??'—')
+    +' · '+t('generationCost')+' '+(usage.costUsd===null?'—':'$'+usage.costUsd.toFixed(6))
+    +(usage.unpriced ? ' · '+t('generationUnpriced')+' '+usage.unpriced : '');
+}
+async function loadLimits(){
+  const box=document.createElement('p');
+  box.id='aiLimits';box.className='muted';box.textContent=t('limitsLoading');
+  if($('aiLimits'))$('aiLimits').replaceWith(box);
+  else $('productInfo').before(box);
+  try{
+    const data=await api('/api/ai/model-usage');
+    if(data.usage){
+      const name=providers[data.provider]?.models.find(model=>model.id===data.model)?.name||data.model;
+      box.textContent=name+' · '+modelUsageText(data.usage);
+    }else if(data.provider==='donor'){
+      const limits=await api('/api/ai/limits');
+      box.textContent=t('dailyMoves')+' '+limits.remaining+'/'+limits.limit+' · '+t('limitsReset')+' '+resetTime(limits.resetAt);
+    }else box.textContent=t('limitsUnavailable');
+  }catch{box.textContent=t('limitsUnavailable')}
+}
+async function showGameLimit(){let box=$('dailyLimit');box.hidden=generationView?.active?.provider!=='donor'||!user;if(box.hidden)return;if(user.aiSource==='personal'){box.textContent=t('personalActive')+': '+(providers[user.provider]?.name||user.provider);return}try{let data=await api('/api/ai/limits');box.textContent=t('dailyMoves')+': '+data.remaining+' / '+data.limit+' · '+t('limitsReset')+': '+resetTime(data.resetAt)}catch{box.hidden=true}}
 function showLimitDialog(resetAt){let d=document.getElementById('limitDialog');if(!d){d=document.createElement('dialog');d.id='limitDialog';d.className='access-dialog';document.body.append(d)}d.innerHTML='<button class="modal-close" aria-label="'+t('close')+'">×</button><h2>'+t('dailyLimitTitle')+'</h2><p>'+t('dailyLimitMessage').replace('{time}',resetTime(resetAt))+'</p><button class="access-action">'+t('close')+'</button>';d.querySelectorAll('button').forEach(b=>b.onclick=()=>d.close());d.showModal()}
 function modelOptions(provider,selected=''){let spec=providers[provider],models=spec?.models||[],value=selected||spec?.defaultModel,groups=[['free',t('freeModels')],['quota',t('quotaModels')],['paid',t('paidModels')]];return groups.map(([tier,label])=>{let items=models.filter(m=>m.tier===tier);return items.length?'<optgroup label="'+esc(label)+'">'+items.map(m=>'<option value="'+esc(m.id)+'" '+(m.id===value?'selected':'')+'>'+esc(m.name)+'</option>').join('')+'</optgroup>':''}).join('')+(selected&&!models.some(m=>m.id===selected)?'<option selected value="'+esc(selected)+'">'+esc(selected)+'</option>':'')}
 
 function renderHowTo(){let details=document.createElement('details');details.className='setup-guide';let summary=document.createElement('summary');summary.textContent=t('howToAdd');details.append(summary);let list=document.createElement('ol');for(let i=1;i<=7;i++){let step=document.createElement('li');step.textContent=t('howToStep'+i);if(i===3){let links=document.createElement('div');links.className='provider-links';for(let [name,url] of Object.values(providers).map(p=>[p.name,p.keyUrl])){let a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=name+' ↗';links.append(a)}step.append(links)}list.append(step)}details.append(list);for(let [id,spec] of Object.entries(providers)){let section=document.createElement('section'),title=document.createElement('h3'),steps=document.createElement('ol');title.textContent=spec.name;section.append(title);for(let text of (ui[lang].providerSetup[id]||ui.ru.providerSetup[id]||[])){let item=document.createElement('li');item.textContent=text;steps.append(item)}let link=document.createElement('a');link.href=spec.keyUrl;link.target='_blank';link.rel='noopener noreferrer';link.textContent=t('openProvider')+' ↗';section.append(steps,link);details.append(section)}let safety=document.createElement('p');safety.className='muted';safety.textContent=t('howToSafety');details.append(safety);return details}
-function renderWriter(){if(aiMode==='ollama'){$('aiStatus').textContent=t('ollamaMode')+': '+aiModel;$('auth').textContent=t('ollamaLocalNote');$('productInfo').replaceChildren();return}loadLimits();$('aiStatus').textContent=aiMode==='donor'?t('donorMode')+': '+aiModel:t('writer')+': '+(lastSource==='local'?t('local'):user.hasKey?(user.provider+' · '+t('configured')):t('needKey'));$('auth').innerHTML='<form id="keyForm" class="controls"><label>'+t('provider')+'<select id="provider">'+Object.keys(providers).map(p=>'<option value="'+p+'" '+(user.provider===p?'selected':'')+'>'+esc(providers[p].name)+'</option>').join('')+'</select></label><label>'+t('model')+'<select id="model">'+modelOptions(user.provider,user.model)+'</select></label><label>'+t('key')+'<input id="userKey" type="password" autocomplete="off" placeholder="'+t('keyOptional')+'"></label><button>'+t('addKey')+'</button><button id="saveModel" type="button">'+t('saveModel')+'</button><button id="checkProvider" type="button">'+t('checkProvider')+'</button></form><p id="keyStatus" class="muted">'+t(user.hasKey?'keySaved':'needKey')+'</p>';$('keyForm').onsubmit=saveKey;let syncProvider=()=>{let provider=$('provider').value,hasKey=Boolean(user.keyLabelsByProvider?.[provider]?.length);$('model').innerHTML=modelOptions(provider,user.modelsByProvider?.[provider]||'');$('saveModel').hidden=!hasKey;$('checkProvider').hidden=!hasKey;$('keyStatus').textContent=t(hasKey?'keySaved':'needKey')+' '+t('modelQuotaNote')};$('provider').onchange=syncProvider;$('saveModel').onclick=saveModel;$('checkProvider').onclick=async()=>{if($('provider').value!==user.provider){$('keyStatus').textContent=t('saveBeforeCheck');return}let button=$('checkProvider');button.disabled=true;$('keyStatus').textContent=t('checkingProvider');try{let r=await api('/api/ai/check',{method:'POST'});$('keyStatus').textContent=r.ok?t('providerChecked'):t('providerCheckFailed')+' '+(r.status||t('unavailable'))}catch(e){$('keyStatus').textContent=e.message}finally{button.disabled=false}};syncProvider();let names=Object.fromEntries(Object.entries(providers).map(([id,p])=>[id,p.name])),groups=Object.entries(user.keyLabelsByProvider||{}).filter(([,keys])=>keys.length).map(([provider,keys])=>'<section><b>'+esc(names[provider]||provider)+'</b>'+keys.map((label,i)=>'<div>'+(i+1)+'. '+esc(label)+'</div>').join('')+'</section>').join(''),keyList=document.createElement('div');keyList.className='provider-keys';keyList.innerHTML='<strong>'+t('keysOrder')+'</strong>'+(groups||'<span>'+t('noKeys')+'</span>');$('auth').append(keyList);if(aiMode==='donor'){let chooser=document.createElement('div');chooser.className='writer-source';chooser.innerHTML='<label>'+t('writerSource')+'<select id="aiSource"><option value="donor">'+t('sharedDonor')+'</option><option value="personal" '+(!user.hasKey?'disabled':'')+'>'+t('personalKey')+'</option></select></label><p class="muted">'+t(user.aiSource==='personal'?'personalNoCharge':'donorNote')+'</p>'; $('auth').prepend(chooser);$('aiSource').value=user.aiSource||'donor';$('aiSource').onchange=async()=>{let select=$('aiSource');select.disabled=true;try{user=(await api('/api/auth/ai-source',{method:'PUT',body:JSON.stringify({source:select.value})})).user;note('');renderProfile('writer');renderCatalog();setPending()}catch(e){note(e.message);select.disabled=false}}} $('productInfo').append(renderHowTo())}
+function renderWriter(){loadLimits();$('aiStatus').textContent=aiMode==='donor'?t('donorMode')+': '+aiModel:t('writer')+': '+(lastSource==='local'?t('local'):user.hasKey?(user.provider+' · '+t('configured')):aiInfo.pilotAvailable?aiModel:aiMode==='ollama'?t('ollamaMode')+' · '+aiModel:t('needKey'));$('auth').innerHTML='<form id="keyForm" class="controls"><label>'+t('provider')+'<select id="provider">'+Object.keys(providers).map(p=>'<option value="'+p+'" '+(user.provider===p?'selected':'')+'>'+esc(providers[p].name)+'</option>').join('')+'</select></label><label>'+t('model')+'<select id="model">'+modelOptions(user.provider,user.model)+'</select></label><label>'+t('key')+'<input id="userKey" type="password" autocomplete="off" placeholder="'+t('keyOptional')+'"></label><button>'+t('addKey')+'</button><button id="saveModel" type="button">'+t('saveModel')+'</button><button id="checkProvider" type="button">'+t('checkProvider')+'</button></form><p id="keyStatus" class="muted">'+t(user.hasKey?'keySaved':'needKey')+'</p>';$('keyForm').onsubmit=saveKey;let syncProvider=()=>{let provider=$('provider').value,hasKey=Boolean(user.keyLabelsByProvider?.[provider]?.length);$('model').innerHTML=modelOptions(provider,user.modelsByProvider?.[provider]||'');$('saveModel').hidden=!hasKey;$('checkProvider').hidden=!hasKey;$('keyStatus').textContent=t(hasKey?'keySaved':'needKey')+' '+t('modelQuotaNote')};$('provider').onchange=syncProvider;$('saveModel').onclick=saveModel;$('checkProvider').onclick=async()=>{if($('provider').value!==user.provider){$('keyStatus').textContent=t('saveBeforeCheck');return}let button=$('checkProvider');button.disabled=true;$('keyStatus').textContent=t('checkingProvider');try{let r=await api('/api/ai/check',{method:'POST'});$('keyStatus').textContent=r.ok?t('providerChecked'):t('providerCheckFailed')+' '+(r.status||t('unavailable'))}catch(e){$('keyStatus').textContent=e.message}finally{button.disabled=false}};syncProvider();let names=Object.fromEntries(Object.entries(providers).map(([id,p])=>[id,p.name])),groups=Object.entries(user.keyLabelsByProvider||{}).filter(([,keys])=>keys.length).map(([provider,keys])=>'<section><b>'+esc(names[provider]||provider)+'</b>'+keys.map((label,i)=>'<div>'+(i+1)+'. '+esc(label)+'</div>').join('')+'</section>').join(''),keyList=document.createElement('div');keyList.className='provider-keys';keyList.innerHTML='<strong>'+t('keysOrder')+'</strong>'+(groups||'<span>'+t('noKeys')+'</span>');$('auth').append(keyList);if(aiMode==='donor'||aiMode==='ollama'){let chooser=document.createElement('div');chooser.className='writer-source';chooser.innerHTML='<label>'+t('writerSource')+'<select id="aiSource"><option value="donor">'+t(aiMode==='donor'?'sharedDonor':aiInfo.pilotAvailable?'generationDefault':'ollamaMode')+'</option><option value="personal" '+(!user.hasKey?'disabled':'')+'>'+t('personalKey')+'</option></select></label><p class="muted">'+t(user.aiSource==='personal'?'personalNoCharge':aiMode==='donor'?'donorNote':aiInfo.pilotAvailable?'generationSettings':'ollamaLocalNote')+'</p>'; $('auth').prepend(chooser);$('aiSource').value=user.aiSource||'donor';$('aiSource').onchange=async()=>{let select=$('aiSource');select.disabled=true;try{user=(await api('/api/auth/ai-source',{method:'PUT',body:JSON.stringify({source:select.value})})).user;note('');renderProfile('writer');renderCatalog();setPending()}catch(e){note(e.message);select.disabled=false}}} $('productInfo').append(renderHowTo())}
 function renderHistory(){if(!saves.length){$('auth').textContent=t('noHistory');return}saves.forEach(s=>{let g=games.find(x=>x.manifest.id===s.gameId),b=document.createElement('button');b.className='history-row';b.textContent=(g?loc(g,'manifest','title'):s.gameId)+' · '+s.turns+(s.completed?' ✓':'');b.onclick=()=>go('/game/'+s.gameId);$('auth').append(b)})}
 async function auth(mode){try{let d=await api('/api/auth/'+mode,{method:'POST',body:JSON.stringify({email:$('authEmail').value,password:$('authPassword').value})});user=d.user;await refresh();go('/profile/writer');renderCatalog()}catch(e){note(e.message)}}
 async function requestPasswordReset(e){e.preventDefault();try{await api('/api/auth/password/forgot',{method:'POST',body:JSON.stringify({email:$('authEmail').value})});note(t('resetSent'));$('authEmail').value=''}catch(e){note(e.message)}}
@@ -53,7 +75,7 @@ async function saveKey(e){e.preventDefault();if(!$('userKey').value.trim()){note
 async function saveModel(){try{user=(await api('/api/auth/provider-model',{method:'PUT',body:JSON.stringify({provider:$('provider').value,model:$('model').value})})).user;renderProfile('writer');$('keyStatus').textContent=t('modelSaved')}catch(e){note(e.message)}}
 document.addEventListener('change',e=>{if(e.target?.id==='model'&&!$('saveModel')?.hidden)saveModel()});
 async function logout(){clearIdle();try{await api('/api/auth/logout',{method:'POST'})}catch{}localStorage.removeItem('opengame-token');user=session=game=undefined;saves=[];go('/games');renderCatalog()}
-async function open(gameId,restart=false){if(!eligible()||pending){if(!eligible()){go('/games');showGate()}return}try{await refresh();let last=restart?null:saves.find(s=>s.gameId===gameId);session=last?await api('/api/sessions/'+last.id):await api('/api/sessions',{method:'POST',body:JSON.stringify({gameId})});game=games.find(g=>g.manifest.id===session.gameId)||await api('/api/sessions/'+session.id+'/package');lastSource=session.turns.at(-1)?.source||null;note('');renderGame();if(aiMode==='donor')resumePending(session.id)}catch(e){note(e.message);go('/games')}}
+async function open(gameId,restart=false){if(!eligible()||pending){if(!eligible()){go('/games');showGate()}return}try{await refresh();let last=restart?null:saves.find(s=>s.gameId===gameId);session=last?await api('/api/sessions/'+last.id):await api('/api/sessions',{method:'POST',body:JSON.stringify({gameId})});game=games.find(g=>g.manifest.id===session.gameId)||await api('/api/sessions/'+session.id+'/package');lastSource=session.turns.at(-1)?.source||null;failedTurn=generationView=undefined;note('');renderGame();loadGeneration();if(aiMode==='donor')resumePending(session.id)}catch(e){note(e.message);go('/games')}}
 function pauseMusic(){if(musicAudio){musicAudio.pause();musicAudio.currentTime=0}musicAudio=null;musicTrack=null;let host=$('musicControls');if(host)host.hidden=true}
 function renderMusic(){pauseMusic()}
 function openingScenes(){return (game?.opening?.[lang]||game?.opening?.ru||'').split(/\n\s*\n/).map(s=>s.trim()).filter(Boolean).reduce((scenes,p,i)=>{if(i%2)scenes[scenes.length-1].push(p);else scenes.push([p]);return scenes},[])}
@@ -67,14 +89,139 @@ function renderActions(){$('actions').replaceChildren();if(session.state.ended)r
 function graphTurns(){let seen=new Map(),out=[];session.turns.forEach((turn,i)=>{let key=turn.action.type==='free_text'?'text-'+i:turn.action.type,count=(seen.get(key)||0)+1;seen.set(key,count);out.push({turn,index:i,key,count,label:turn.action.type==='free_text'?turn.action.text:actionName(turn.action.type),icon:icon(turn.action),again:count>1})});return out}
 function renderJourney(){let turns=graphTurns(),rail=document.createElement('div');rail.className='journey-rail '+layout;let start=document.createElement('button');start.className='journey-stop start';start.innerHTML='<span class="chapter">'+t('storyStartText')+'</span><b>'+t('storyStart')+'</b>';rail.append(start);turns.forEach((item,i)=>{let link=document.createElement('span');link.className='journey-link';rail.append(link);let stop=document.createElement('button');stop.className='journey-stop '+(i===turns.length-1?'current':'');stop.dataset.turn=item.index;stop.innerHTML='<span class="chapter">'+t('chapter')+' '+(i+1)+(item.again?' · '+t('again'):'')+'</span><b>'+esc(item.icon)+' '+esc(item.label)+'</b><small>'+esc(item.turn.narrative.slice(0,54))+(item.turn.narrative.length>54?'…':'')+'</small>';stop.onclick=()=>document.querySelector('.turn[data-turn="'+item.turn.index+'"]')?.scrollIntoView({behavior:'smooth',block:'center'});rail.append(stop)});$('flowTrack').replaceChildren(rail);$('flowToggle').textContent=layout==='horizontal'?'↕':'↔';$('flowToggle').title=t(layout==='horizontal'?'vertical':'horizontal');$('flowCurrent').textContent=turns.length?'◉ '+t('current')+': '+turns.at(-1).label:''}
 function renderMap(){let host=$('researchMap');host.replaceChildren();if(!game?.map){host.parentElement.hidden=true;return}host.parentElement.hidden=false;let map=document.createElement('div');map.className='research-map';map.innerHTML='<h3 class="map-title">'+t('map')+'</h3><p class="map-hint">'+t('mapHint')+'</p>';let visited=new Set([game.map.start]),current=session.state.location||game.map.start;session.turns.forEach(turn=>{let d=!game.map.destinations?turn.location:game.map.destinations?.[turn.action.type];if(d&&game.map.locations[d])visited.add(d)});if(game.map.locations[current])visited.add(current);let positions=[[22,63],[43,31],[67,60],[80,29],[49,80],[87,74],[27,22]];Object.keys(game.map.locations||{}).forEach((name,i)=>{let point=document.createElement('span'),known=visited.has(name),label=game.map.locations[name]?.[lang]||game.map.locations[name]?.ru||name;point.className='map-point '+(known?'':'unknown')+(name===current?' current':'');point.style.left=positions[i%positions.length][0]+'%';point.style.top=positions[i%positions.length][1]+'%';point.innerHTML='<b>'+((name===current)?'✦':known?'●':'?')+'</b><small>'+esc(known?label:t('unknown'))+'</small>';map.append(point)});host.append(map)}
-function setPending(){$('thinking').hidden=!pending;$('thinking').textContent=queueStatus==='waiting_in_queue'?t('queueWaiting').replace('{position}',String(queuePosition)):queueStatus==='generating'?t('queueGenerating'):t('thinking');let disabled=pending||!eligible()||!!session?.state?.ended||inPrologue();$('input').disabled=disabled;$('send').disabled=disabled;document.querySelectorAll('#actions button').forEach(b=>b.disabled=disabled);$('restart').disabled=pending;$('share').disabled=pending}
-async function waitForJob(jobId,id){while(true){let job=await api('/api/turn-jobs/'+jobId);queueStatus=job.status;queuePosition=job.position||0;setPending();if(job.status==='completed'){if(!job.result)throw Error(t('queueResultMissing'));return job.result}if(job.status==='failed'||job.status==='cancelled')throw Error(job.error||t('unavailable'));await new Promise(resolve=>setTimeout(resolve,2000))}}
-async function finishTurn(r,id){if(session?.id!==id)return;session=r.session;lastSource=r.source;await refresh();renderGame(true)}
-async function resumePending(id){try{let job=await api('/api/sessions/'+id+'/pending-turn');if(job.status==='idle'||pending||session?.id!==id)return;pending=true;queueStatus=job.status;queuePosition=job.position||0;setPending();await finishTurn(await waitForJob(job.jobId,id),id)}catch(e){note(e.message)}finally{pending=false;queueStatus='';setPending();resetIdle()}}
-async function turn(action){if(pending||!eligible()||session.state.ended||inPrologue())return;let id=session.id;pending=true;queueStatus='';clearIdle();setPending();try{let r=await api('/api/sessions/'+id+'/turns',{method:'POST',body:JSON.stringify({...action,language:lang,requestId:crypto.randomUUID()})});if(r.jobId)r=await waitForJob(r.jobId,id);await finishTurn(r,id)}catch(e){if(e.status===402)showLimitDialog(e.resetAt);else note(e.message);showGameLimit()}finally{pending=false;queueStatus='';setPending();resetIdle()}}
+function setPending(){$('stopTurn').hidden=!activeTurn||activeTurn.stopping;$('retryTurn').hidden=pending||failedTurn?.id!==session?.id||!failedTurn;$('generationForm').querySelectorAll('select,input,button').forEach(control=>control.disabled=pending);$('thinking').hidden=!pending;$('thinking').textContent=queueStatus==='waiting_in_queue'?t('queueWaiting').replace('{position}',String(queuePosition)):queueStatus==='generating'?t('queueGenerating'):t('thinking');let disabled=pending||!eligible()||!!session?.state?.ended||inPrologue();$('input').disabled=disabled;$('send').disabled=disabled;document.querySelectorAll('#actions button').forEach(b=>b.disabled=disabled);$('restart').disabled=pending;$('share').disabled=pending}
+async function waitForJob(jobId,id){if(activeTurn?.id===id)activeTurn.jobId=jobId;while(true){let job=await api('/api/turn-jobs/'+jobId);queueStatus=job.status;queuePosition=job.position||0;setPending();previewTurn(job.preview||'');if(job.status==='completed'){if(!job.result)throw Error(t('queueResultMissing'));return job.result}if(job.status==='failed'||job.status==='cancelled'){if(activeTurn?.id===id)delete activeTurn.action.requestId;throw Error(job.error||t('unavailable'))}await new Promise(resolve=>setTimeout(resolve,job.status==='generating'?500:2000))}}
+async function finishTurn(r,id){if(session?.id!==id)return;session=r.session;lastSource=r.source;renderGame(true);refresh().catch(()=>{})}
+async function resumePending(id){
+  let resumed=false;
+  try{
+    const job=await api('/api/sessions/'+id+'/pending-turn');
+    if(job.status==='idle'||pending||session?.id!==id)return;
+    activeTurn={id,jobId:job.jobId,action:{}};
+    resumed=pending=true;queueStatus=job.status;queuePosition=job.position||0;setPending();
+    await finishTurn(await waitForJob(job.jobId,id),id);
+  }catch(e){note(e.message)}
+  finally{
+    if(resumed){$('liveNarrative')?.remove();activeTurn=undefined;pending=false;queueStatus='';setPending();resetIdle()}
+  }
+}
+function renderGeneration() {
+  const form=$('generationForm'), data=generationView;
+  if(!data){form.replaceChildren();$('generationUsage').textContent='';return}
+  const {settings,defaultWriter,usage}=data;
+  const label=providers[defaultWriter?.provider]?.models.find(model=>model.id===defaultWriter.model)?.name||defaultWriter?.model||'';
+  const models=Object.entries(providers).flatMap(([provider,spec])=>user.keyLabelsByProvider?.[provider]?.length
+    ? spec.models.map(model=>[`${provider}|${model.id}`,model.name]) : []);
+  const select=(name,caption,choices,value)=>'<label>'+t(caption)+'<select name="'+name+'">'+choices.map(([id,text])=>
+    '<option value="'+esc(id)+'" '+(id===value?'selected':'')+'>'+esc(text)+'</option>').join('')+'</select></label>';
+  const choices=ids=>ids.map(id=>[id,t('generation_'+id)]);
+  form.innerHTML=select('writer','model',[['',t('generationDefault')+(label?' · '+label:'')],...models],settings.provider+'|'+settings.model)
+    +select('length','generationLength',choices(['short','standard','long']),settings.length||'standard')
+    +select('initiative','generationInitiative',choices(['low','normal','high']),settings.initiative||'normal')
+    +select('pace','pace',['slow','normal','fast'].map(id=>[id,t(id)]),settings.pace||'normal')
+    +'<div id="generationSampling">'+[['temperature','generationTemperature',0.7],['topP','generationTopP',0.9]].map(([key,caption,value])=>
+      '<label>'+t(caption)+'<input type="number" min="0" max="1" step="0.05" name="'+key+'" value="'+(settings[key]??value)+'" required></label>').join('')+'</div>'
+    +'<button type="submit">'+t('generationSave')+'</button>';
+  const syncSampling=()=>{
+    const [provider,id]=form.elements.writer.value.split('|');
+    const visible=provider ? !!providers[provider]?.models.find(model=>model.id===id)?.sampling : !!defaultWriter?.sampling;
+    $('generationSampling').hidden=!visible;
+    for(const input of $('generationSampling').querySelectorAll('input'))input.required=visible;
+  };
+  form.elements.writer.onchange=syncSampling;
+  syncSampling();
+  $('generationUsage').textContent=usage ? modelUsageText(usage) : '';
+  setPending();
+}
+async function loadGeneration(method='GET',settings){
+  const id=session.id, request=++generationFetch;
+  try{
+    const result=await api('/api/sessions/'+id+'/generation',{method,body:settings&&JSON.stringify(settings)});
+    if(session?.id===id&&request===generationFetch){generationView=result;renderGeneration();showGameLimit()}
+  }catch(e){if(session?.id===id&&request===generationFetch)note(e.message)}
+}
+$('generationForm').onsubmit=event=>{
+  event.preventDefault();
+  const fields=event.currentTarget.elements,[provider,model]=fields.writer.value.split('|');
+  const settings={provider,model,length:fields.namedItem('length').value,initiative:fields.initiative.value,pace:fields.pace.value};
+  if(!$('generationSampling').hidden){settings.temperature=fields.temperature.valueAsNumber;settings.topP=fields.topP.valueAsNumber}
+  loadGeneration('PUT',settings);
+};
+function previewTurn(text){
+  if(!currentRoute().startsWith('/game/')||session?.id!==activeTurn?.id)return;
+  let node=$('liveNarrative');
+  if(!text){node?.remove();return}
+  if(!node){node=document.createElement('div');node.id='liveNarrative';node.className='turn narrative';$('log').append(node)}
+  node.textContent=text;
+  $('log').scrollTop=$('log').scrollHeight;
+}
+async function requestTurn(job){
+  const response=await fetch('/api/sessions/'+job.id+'/turns',{
+    method:'POST',signal:job.controller.signal,headers:{'Content-Type':'application/json','X-Storage-Consent':'accepted',Accept:'application/x-ndjson'},
+    body:JSON.stringify(job.action)
+  });
+  const fail=data=>{throw Object.assign(Error(data.error||t('unavailable')),{status:data.status||response.status,resetAt:data.resetAt})};
+  if(!response.headers.get('content-type')?.startsWith('application/x-ndjson')){
+    const data=await response.json();
+    if(!response.ok)fail(data);
+    if(!data.jobId)return data;
+    job.jobId=data.jobId;
+    if(job.stopping)await stopQueuedTurn(job);
+    return await waitForJob(data.jobId,job.id);
+  }
+  const reader=response.body.pipeThrough(new TextDecoderStream()).getReader();
+  let buffer='';
+  try{
+    for(;;){
+      const {value,done}=await reader.read();
+      if(done)break;
+      const lines=(buffer+value).split('\n');
+      buffer=lines.pop();
+      for(const line of lines){
+        if(!line)continue;
+        const event=JSON.parse(line);
+        if(event.type==='preview')previewTurn(event.text);
+        if(event.type==='result')return event.result;
+        if(event.type==='error')fail(event);
+      }
+    }
+    throw Error(t('unavailable'));
+  }finally{await reader.cancel().catch(()=>{});reader.releaseLock()}
+}
+async function turn(action){
+  if(pending||!eligible()||session.state.ended||inPrologue())return;
+  const id=session.id, controller=new AbortController();
+  const queued=generationView?.active ? generationView.active.provider==='donor' : aiMode==='donor'&&user.aiSource!=='personal';
+  activeTurn={id,controller,queued,action:{language:lang,...action,requestId:action.requestId||crypto.randomUUID()}};
+  const job=activeTurn;
+  failedTurn=undefined;pending=true;queueStatus='';clearIdle();note('');setPending();
+  try{
+    await finishTurn(await requestTurn(job),id);
+    if(session?.id===id && job.action.type==='free_text' && $('input').value.trim()===job.action.text) $('input').value='';
+  }catch(e){
+    failedTurn=job;
+    if(e.status===402)showLimitDialog(e.resetAt);
+    else note(job.stopping?t('generationStopped'):e.message);
+  }finally{
+    $('liveNarrative')?.remove();activeTurn=undefined;pending=false;queueStatus='';setPending();resetIdle();
+    if(session?.id===id)loadGeneration();
+  }
+}
+async function stopQueuedTurn(job){
+  try{await api('/api/turn-jobs/'+job.jobId,{method:'DELETE'})}
+  catch(e){job.stopping=false;note(e.message);setPending()}
+}
+$('stopTurn').onclick=async()=>{
+  const job=activeTurn;
+  if(!job)return;
+  job.stopping=true;setPending();
+  if(job.jobId)await stopQueuedTurn(job);
+  else if(!job.queued)job.controller.abort();
+};
+$('retryTurn').onclick=()=>{if(failedTurn?.id===session?.id)turn(failedTurn.action)};
 function clearIdle(){clearTimeout(idleTimer)}function resetIdle(){clearIdle();if(!session||session.state.ended||inPrologue())return;let pace=session.state.pacing,wait=pace==='fast'?30000:pace==='slow'?90000:60000;idleTimer=setTimeout(()=>{let first=$('log .turn:last-child .narrative');first?.animate([{backgroundColor:'transparent'},{backgroundColor:'#f7dc8a99'},{backgroundColor:'transparent'}],{duration:1800,iterations:3});$('actions').animate([{opacity:1},{opacity:.58},{opacity:1}],{duration:1800,iterations:3})},wait)}
 async function restart(){if(game)await open(game.manifest.id,true)}async function share(){let url=location.origin+'/#/game/'+game.manifest.id;try{if(navigator.share)await navigator.share({title:loc(game,'manifest','title'),url});else await navigator.clipboard.writeText(url);$('saveStatus').textContent=t('copied')}catch{}}
 function accept(){consent=true;localStorage.setItem('opengame-cookie-consent','1');$('cookieNotice').hidden=true;labels();renderCatalog();showPage()}function deny(){consent=false;localStorage.removeItem('opengame-cookie-consent');clearIdle();$('cookieNotice').hidden=true;session=game=undefined;go('/games');labels();renderCatalog()}
-document.querySelectorAll('[data-lang]').forEach(b=>b.onclick=()=>{lang=b.dataset.lang;remember('opengame-language',lang);labels();renderCatalog();showPage();if(session)renderGame()});$('actionForm').onsubmit=e=>{e.preventDefault();let text=$('input').value.trim();if(text)turn({type:'free_text',text,icon:'✦'})};$('back').onclick=()=>go('/games');$('restart').onclick=restart;$('share').onclick=share;$('flowToggle').onclick=()=>{layout=layout==='vertical'?'horizontal':'vertical';remember('opengame-flow-layout',layout);renderJourney()};$('accept').onclick=accept;$('deny').onclick=deny;$('footerStorage').onclick=()=>{$('cookieNotice').hidden=false};addEventListener('hashchange',showPage);
+document.querySelectorAll('[data-lang]').forEach(b=>b.onclick=()=>{lang=b.dataset.lang;remember('opengame-language',lang);labels();renderCatalog();showPage();if(session){renderGame();renderGeneration()}});$('actionForm').onsubmit=e=>{e.preventDefault();let text=$('input').value.trim();if(text)turn({type:'free_text',text,icon:'✦'})};$('back').onclick=()=>go('/games');$('restart').onclick=restart;$('share').onclick=share;$('flowToggle').onclick=()=>{layout=layout==='vertical'?'horizontal':'vertical';remember('opengame-flow-layout',layout);renderJourney()};$('accept').onclick=accept;$('deny').onclick=deny;$('footerStorage').onclick=()=>{$('cookieNotice').hidden=false};addEventListener('hashchange',showPage);
 function selectChapter(turnIndex){document.querySelectorAll('#log .turn').forEach(turn=>{turn.hidden=String(turn.dataset.turn)!==String(turnIndex)});document.querySelectorAll('.journey-stop').forEach(stop=>stop.classList.toggle('current',stop.dataset.turn===String(turnIndex)))}document.addEventListener('click',event=>{let stop=event.target.closest('.journey-stop');if(!stop)return;if(stop.dataset.turn)selectChapter(stop.dataset.turn);else document.querySelectorAll('#log .turn').forEach(turn=>turn.hidden=false)});
 async function init(){try{$('themeIndicator').onclick=cycleTheme;localStorage.removeItem('opengame-token');[games,popular,aiInfo]=await Promise.all([api('/api/games'),api('/api/games/popular'),api('/api/ai/status')]);aiMode=aiInfo.provider;aiModel=aiInfo.model;if(consent){try{user=(await api('/api/auth/me')).user}catch(e){if(e.status!==401)throw e}if(user)try{await refresh()}catch(e){note(e.message)}}labels();$('cookieNotice').hidden=!!consent;renderCatalog();showPage()}catch(e){note(e.message)}}init();

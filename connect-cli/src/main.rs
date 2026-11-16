@@ -1,3 +1,5 @@
+#[path = "../../connect/streaming.rs"]
+mod streaming;
 use std::{fs::{self,File,OpenOptions},net::TcpListener,path::{Path,PathBuf},process::{Child,Command,Stdio},sync::{Arc,atomic::{AtomicBool,Ordering}},time::{Duration,SystemTime,UNIX_EPOCH}};
 use fs2::FileExt;
 use futures_util::{SinkExt,StreamExt};
@@ -101,14 +103,13 @@ async fn ready(child:&mut Child,port:u16)->Result<(),String>{
     Err("Локальная модель не запустилась".into())
 }
 
-async fn inference(port:u16,key:String,job:&Job)->Result<Value,&'static str>{
+async fn inference(port:u16,key:String,job:&Job,sender:&mpsc::Sender<Message>)->Result<(Value,Option<Value>),&'static str>{
     let remaining=job.lease_until.saturating_sub(now_ms());if remaining<1000{return Err("timeout")}
     let client=reqwest::Client::builder().timeout(Duration::from_millis(remaining.min(300_000))).build().map_err(|_|"model")?;
     let response=client.post(format!("http://127.0.0.1:{port}/v1/chat/completions")).bearer_auth(key).json(&job.request).send().await.map_err(|_|"timeout")?;
     if !response.status().is_success(){return Err("model")}
-    let bytes=response.bytes().await.map_err(|_|"model")?;if bytes.len()>65_536{return Err("model")}
-    let value:Value=serde_json::from_slice(&bytes).map_err(|_|"model")?;
-    serde_json::from_str(value["choices"][0]["message"]["content"].as_str().ok_or("model")?).map_err(|_|"model")
+    let identity=json!({"version":1,"jobId":job.job_id,"requestId":job.request_id,"attempt":job.attempt});
+    Ok(streaming::read_result(response,sender,&identity).await?)
 }
 async fn connection(access:&str,port:u16,key:&str,busy:Arc<AtomicBool>)->Result<(),String>{
     let mut request=format!("{}/api/donor/connect",portal_ws()).into_client_request().map_err(|e|e.to_string())?;
@@ -116,7 +117,7 @@ async fn connection(access:&str,port:u16,key:&str,busy:Arc<AtomicBool>)->Result<
     let (socket,_)=connect_async(request).await.map_err(|e|match e{tokio_tungstenite::tungstenite::Error::Http(response) if response.status()==401=>"Доступ устройства отозван".to_string(),other=>other.to_string()})?;
     println!("В сети");let (mut writer,mut reader)=socket.split();let (tx,mut rx)=mpsc::channel::<Message>(16);
     let send=tokio::spawn(async move{while let Some(message)=rx.recv().await{if writer.send(message).await.is_err(){break}}});
-    let heart_tx=tx.clone();let heart_busy=busy.clone();let heartbeat=tokio::spawn(async move{let mut interval=tokio::time::interval(Duration::from_secs(15));loop{interval.tick().await;let event=json!({"version":1,"type":"heartbeat","model":MODEL,"quantization":"Q4_K_M","slots":1,"busy":if heart_busy.load(Ordering::SeqCst){1}else{0},"available":true});if heart_tx.send(Message::Text(event.to_string().into())).await.is_err(){break}}});
+    let heart_tx=tx.clone();let heart_busy=busy.clone();let heartbeat=tokio::spawn(async move{let mut interval=tokio::time::interval(Duration::from_secs(15));loop{interval.tick().await;let event=json!({"version":1,"type":"heartbeat","model":MODEL,"quantization":"Q4_K_M","slots":1,"busy":if heart_busy.load(Ordering::SeqCst){1}else{0},"available":true,"streaming":true});if heart_tx.send(Message::Text(event.to_string().into())).await.is_err(){break}}});
     let mut job_task:Option<(String,String,tokio::task::JoinHandle<()>)>=None;
     while let Some(Ok(message))=reader.next().await{
         if let Message::Text(text)=message{
@@ -141,7 +142,7 @@ async fn connection(access:&str,port:u16,key:&str,busy:Arc<AtomicBool>)->Result<
             if tx.send(Message::Text(accepted.to_string().into())).await.is_err(){busy.store(false,Ordering::SeqCst);break}
             let reply=tx.clone();let local_key=key.to_owned();let flag=busy.clone();
             let job_id=job.job_id.clone();let request_id=job.request_id.clone();
-            let task=tokio::spawn(async move{let event=match inference(port,local_key,&job).await{Ok(result)=>json!({"version":1,"type":"completed","jobId":job.job_id,"requestId":job.request_id,"attempt":job.attempt,"result":result}),Err(reason)=>json!({"version":1,"type":"failed","jobId":job.job_id,"requestId":job.request_id,"attempt":job.attempt,"reason":reason})};let _=reply.send(Message::Text(event.to_string().into())).await;flag.store(false,Ordering::SeqCst)});
+            let task=tokio::spawn(async move{let event=match inference(port,local_key,&job,&reply).await{Ok((result,usage))=>json!({"version":1,"type":"completed","jobId":job.job_id,"requestId":job.request_id,"attempt":job.attempt,"result":result,"usage":usage}),Err(reason)=>json!({"version":1,"type":"failed","jobId":job.job_id,"requestId":job.request_id,"attempt":job.attempt,"reason":reason})};let _=reply.send(Message::Text(event.to_string().into())).await;flag.store(false,Ordering::SeqCst)});
             job_task=Some((job_id,request_id,task));
         }
     }

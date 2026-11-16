@@ -158,9 +158,9 @@ export class GameRuntime {
     const session = this.get(id, ownerId); const game = this.games.get(session.gameId)!; const engine = this.engines.get(session.gameId)!;
     if (action.requestId) {
       const previous = session.turns.find(turn => turn.action.requestId === action.requestId);
-      if (previous) return { session, narrative: previous.narrative, suggestions: [] };
+      if (previous) return { session, narrative: previous.narrative, suggestions: session.suggestions ?? [], source: previous.source };
     }
-    if (this.pending.has(id)) throw new Error('Предыдущее действие ещё обрабатывается');
+    if (this.pending.has(id)) throw Object.assign(new Error('Предыдущее действие ещё обрабатывается'), {status:409});
     this.pending.add(id);
     try {
       engine.validateAction(action, session.state);
@@ -180,7 +180,16 @@ export class GameRuntime {
       }finally{if(timer)clearTimeout(timer)}
       if (response) {
         result = response;
-        next = engine.apply(session, action, result.events, result.narrative, result.stateMutation || [], aiResponseMs);
+        try {
+          next = engine.apply(session, action, result.events, result.narrative, result.stateMutation || [], aiResponseMs);
+        } catch (error) {
+          if (!game.boundaries || !options?.beginRequest || !(error instanceof Error)) throw error;
+          options.signal?.throwIfAborted();
+          correction = error.message;
+          options.onNarrative?.('');
+          result = await callAI(providerOptions);
+          next = engine.apply(session, action, result.events, result.narrative, result.stateMutation || [], aiResponseMs);
+        }
       } else {
         const language = languageOf(action);
         const repetitions = session.turns.filter(turn => turn.action.type === action.type).length;
@@ -191,6 +200,7 @@ export class GameRuntime {
       Object.assign(next.turns.at(-1)!, { source: result.source, stateMutation: result.stateMutation || [] });
       next.suggestions = distinctOptions(game, session, result.suggestions, action, languageOf(action));
       next.suggestionLanguage = action.language || 'ru';
+      options?.signal?.throwIfAborted();
       this.saves.save(next); this.sessions.set(id, next);
       return { session: next, narrative: result.narrative, suggestions: next.suggestions, source: result.source };
     } finally { this.pending.delete(id); }

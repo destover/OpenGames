@@ -159,3 +159,5 @@
   .admin-content .legal-field{grid-template-columns:1fr;gap:6px}
   .admin-toasts{right:10px;left:10px;bottom:10px;max-width:none}
 }
+.model-limit-form{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.model-limit-form input{width:7rem;max-width:100%}

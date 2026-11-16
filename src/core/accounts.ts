@@ -1,6 +1,7 @@
 import providers from './providers.json' with { type: 'json' };
 import { createCipheriv, createDecipheriv, createHash, randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
 import { chmodSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import type { GenerationSettings } from './generation.ts';
 import { dirname } from 'node:path';
 
 type EncryptedKey = { iv: string; tag: string; data: string };
@@ -42,6 +43,7 @@ type User = {
   ogcatHistory?: OgcatHistoryEntry[];
   providerLimits?: Record<string, ProviderLimitsCache>;
   timezone?: string;
+  scenarioGeneration?: Record<string, GenerationSettings>;
 };
 type SessionRecord = { userId: string; expiresAt: string };
 type ResetRecord = { userId: string; expiresAt: string };
@@ -112,7 +114,16 @@ export class AccountStore {
     if (!record) { const key = provider === 'openrouter' ? this.getOpenRouterKey(userId) : undefined; return key ? {provider,key} : undefined; }
     return {provider,key:this.decrypt(record)};
   }
-  getProviders(userId: string) { const user=this.db.users.find(u=>u.id===userId); if(!user)return; const provider=user.provider||'openrouter',raw=user.providerKeys?.[provider],records:Array<EncryptedKey>=Array.isArray(raw)?raw:raw?[raw]:[]; const keys=records.map(record=>this.decrypt(record)); if(!keys.length&&provider==='openrouter'){const legacy=this.getOpenRouterKey(userId);if(legacy)keys.push(legacy)} return keys.length?{provider,keys,model:currentModel(provider,user.providerModels?.[provider]||'')}:undefined; }
+  getProviders(userId: string, selectedProvider?: string) { const user=this.db.users.find(u=>u.id===userId); if(!user)return; const provider=selectedProvider||user.provider||'openrouter',raw=user.providerKeys?.[provider],records:Array<EncryptedKey>=Array.isArray(raw)?raw:raw?[raw]:[]; const keys=records.map(record=>this.decrypt(record)); if(!keys.length&&provider==='openrouter'){const legacy=this.getOpenRouterKey(userId);if(legacy)keys.push(legacy)} return keys.length?{provider,keys,model:currentModel(provider,user.providerModels?.[provider]||'')}:undefined; }
+  scenarioSettings(userId: string, gameId: string): GenerationSettings {
+    return this.db.users.find(user => user.id === userId)?.scenarioGeneration?.[gameId] ?? {};
+  }
+  setScenarioSettings(userId: string, gameId: string, settings: GenerationSettings) {
+    const user = this.db.users.find(item => item.id === userId)!;
+    user.scenarioGeneration ??= {};
+    user.scenarioGeneration[gameId] = settings;
+    this.persist();
+  }
   getOpenRouterKey(userId: string) { const record = this.db.users.find(item => item.id === userId)?.openRouterKey; return record ? this.decrypt(record) : undefined; }
 
   getOgcatBalance(userId: string) { const user=this.db.users.find(u=>u.id===userId); if(!user)throw new Error('Пользователь не найден'); return { balance: user.ogcatBalance||0, earnedTotal: user.ogcatEarnedTotal||0, spentTotal: user.ogcatSpentTotal||0, lastEarnedAt: user.ogcatLastEarnedAt }; }

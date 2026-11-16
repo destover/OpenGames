@@ -8,7 +8,9 @@ import { appendFileSync, copyFileSync, mkdirSync, readFileSync as readTextSync, 
 import { fileURLToPath } from 'node:url';
 import nodemailer from 'nodemailer';
 import { GameRuntime } from './core/runtime.ts';
-import { RemoteAIProvider, AnthropicProvider, FallbackAIProvider, LocalAIProvider, OllamaAIProvider, OpenAIProvider, OpenRouterProvider } from './core/ai.ts';
+import { type AIProvider, RemoteAIProvider, AnthropicProvider, FallbackAIProvider, LocalAIProvider, OllamaAIProvider, OpenAIProvider, OpenRouterProvider } from './core/ai.ts';
+import { modelInfo, pilotModel, type GenerationSettings } from './core/generation.ts';
+import { ModelUsageStore } from './core/model-usage.ts';
 import { AccountStore, DailyLimitError } from './core/accounts.ts';
 import { LocalSaveSystem } from './core/save.ts';
 import { DonorAIProvider } from './core/donor.ts';
@@ -82,6 +84,39 @@ const baseProvider = aiMode === 'donor' ? new DonorAIProvider(donorPool!.first) 
 const provider = aiMode === 'donor' ? baseProvider : new FallbackAIProvider(baseProvider, new LocalAIProvider());
 const runtime = new GameRuntime(games, provider, new LocalSaveSystem(join(root, '..', 'data', 'saves')), join(root,'..','data','game-publication.json'));
 const accounts = new AccountStore(join(root, '..', 'data', 'accounts.json'));
+const pilotKey = process.env.OPENGAME_PILOT_OPENROUTER_KEY;
+const modelUsage = new ModelUsageStore(join(root, '..', 'data', 'model-usage.sqlite'));
+const ollamaModel = process.env.OLLAMA_MODEL || 'qwen3.5:9b';
+
+function resolveWriter(userId: string, settings: GenerationSettings) {
+  if (settings.provider && settings.model) {
+    const config = accounts.getProviders(userId, settings.provider);
+    if (!config) throw Object.assign(new Error('Добавьте ключ выбранного провайдера'), {status:403});
+    return { ...config, model:settings.model };
+  }
+  if (aiMode === 'donor' && accounts.getAiSource(userId) === 'donor') return {provider:'donor',model:donorPool!.model,keys:[]};
+  if (aiMode === 'ollama' && accounts.getAiSource(userId) !== 'personal') {
+    return pilotKey ? {provider:'openrouter',model:pilotModel,keys:[pilotKey]} : {provider:'ollama',model:ollamaModel,keys:[]};
+  }
+  const config = accounts.getProviders(userId);
+  if (config) return { ...config, model: config.model || providers[config.provider as keyof typeof providers].defaultModel };
+  if (pilotKey) return {provider:'openrouter',model:pilotModel,keys:[pilotKey]};
+}
+
+function generationSettings(userId: string, value: any): GenerationSettings {
+  const bad = () => Object.assign(new Error('Некорректные настройки генерации'), {status:400});
+  if (!value || typeof value !== 'object' || Array.isArray(value)) throw bad();
+  const { provider, model, length, initiative, pace, temperature, topP } = value;
+  if (provider || model) {
+    if (typeof provider !== 'string' || typeof model !== 'string' || !Object.hasOwn(providers, provider) ||
+      !modelInfo(provider, model) || !accounts.getProviders(userId, provider)) throw bad();
+  }
+  if (length !== undefined && !['short','standard','long'].includes(length) ||
+      initiative !== undefined && !['low','normal','high'].includes(initiative) ||
+      pace !== undefined && !['slow','normal','fast'].includes(pace) ||
+      [temperature, topP].some(n => n !== undefined && (!Number.isFinite(n) || n < 0 || n > 1))) throw bad();
+  return { provider:provider || undefined, model:model || undefined, length, initiative, pace, temperature, topP };
+}
 accounts.initializeAdmin(process.env.OPENGAME_ADMIN_EMAIL);
 const adminData=join(root,'..','data','admin');mkdirSync(adminData,{recursive:true,mode:0o700});const adminAudit=join(adminData,'audit.jsonl');
 const coauthorUsage=new CoauthorUsageStore(join(root,'..','data','coauthor-usage.sqlite'));
@@ -148,6 +183,28 @@ const server = createServer(async (req, res) => {
       return send(res,200,{ok:true,...result})}
     if(url.pathname.startsWith('/api/admin/')){const actor=authId(req);if(!actor)return send(res,401,{error:'Требуется вход'});if(!accounts.isAdmin(actor))return send(res,403,{error:'Недостаточно прав'});if(!['GET','HEAD'].includes(req.method||'')&&req.headers['x-admin-confirm']!=='confirmed')return send(res,403,{error:'Требуется подтверждение действия'});
       if(req.method==='GET'&&url.pathname==='/api/admin/overview')return send(res,200,{...accounts.adminSummary(),games:runtime.listGames().length,sessions:runtime.adminSessions().length,turns:runtime.adminSessions().reduce((n,s)=>n+s.turns.length,0),provider:aiMode,health:'ok',updatedAt:new Date().toISOString()});
+      if(url.pathname==='/api/admin/model-limits'){
+        if(req.method==='GET'){
+          const models=Object.entries(providers).flatMap(([provider,spec])=>spec.models.map(model=>({
+            provider,model:model.id,name:model.name,...modelUsage.dailyLimit(provider,model.id)
+          })));
+          if(aiMode==='ollama')models.unshift({provider:'ollama',model:ollamaModel,name:ollamaModel,...modelUsage.dailyLimit('ollama',ollamaModel)});
+          const report=modelUsage.dailyReport();
+          return send(res,200,{resetAt:report.resetAt,models:models.map(item=>({
+            ...item,usage:report.byModel[item.provider+'/'+item.model]??null
+          }))});
+        }
+        if(req.method==='PUT'){
+          const {provider,model,limit}=await body(req);
+          const supported=typeof provider==='string'&&typeof model==='string'&&(
+            Object.hasOwn(providers,provider)&&modelInfo(provider,model)||provider==='ollama'&&aiMode==='ollama'&&model===ollamaModel
+          );
+          if(!supported||limit!==null&&(!Number.isSafeInteger(limit)||limit<0))return send(res,400,{error:'Укажите модель и целый неотрицательный лимит'});
+          const previous=modelUsage.dailyLimit(provider,model),updated=modelUsage.setDailyLimit(provider,model,limit);
+          audit(actor,'model.limit',provider+'/'+model,{previous:previous.limit,limit:updated.limit,override:updated.override});
+          return send(res,200,updated);
+        }
+      }
       if(req.method==='GET'&&url.pathname==='/api/admin/users')return send(res,200,accounts.adminUsers());
       if(req.method==='GET'&&url.pathname==='/api/admin/packages/popular')return send(res,200,runtime.listPopularGames(true));
       if(req.method==='PATCH'&&/^\/api\/admin\/packages\/[a-z0-9_-]+\/publication$/i.test(url.pathname)){const id=decodeURIComponent(url.pathname.split('/')[4]),data=await body(req),reason=String(data.reason||'').trim();if(typeof data.published!=='boolean'||!reason||reason.length>300)return send(res,400,{error:'Укажите статус публикации и причину (до 300 символов)'});const previous=runtime.isPublished(id),result=runtime.setPublished(id,data.published);audit(actor,data.published?'game.publish':'game.unpublish',id,{previous,published:result.published,reason});return send(res,200,result)}
@@ -193,8 +250,17 @@ const server = createServer(async (req, res) => {
       }catch{status=0}}
       return send(res,200,{ok:false,provider:config.provider,status});
     }
+    if (req.method === 'GET' && url.pathname === '/api/ai/model-usage') {
+      const userId = authId(req);
+      if (!userId) return send(res,401,{error:'Требуется вход'});
+      const writer = resolveWriter(userId,{});
+      if (!writer) return send(res,200,{});
+      const {provider,model} = writer;
+      const usage = provider === 'donor' ? undefined : modelUsage.today(userId,provider,model);
+      return send(res,200,{provider,model,usage});
+    }
     if (req.method === 'GET' && url.pathname === '/api/ai/limits') { const userId=authId(req);if(!userId)return send(res,401,{error:'Требуется вход'});if(aiMode==='donor'){const limits=accounts.dailyLimits(userId);return send(res,200,{provider:'donor',available:true,limit:limits.daily_allowance,remaining:limits.remaining_today,resetAt:limits.resetAt})}const config=accounts.getProvider(userId); if(!config)return send(res,401,{error:'Требуется вход'}); if(config.provider==='openrouter'){try{const response=await fetch('https://openrouter.ai/api/v1/key',{headers:{Authorization:'Bearer '+config.key},signal:AbortSignal.timeout(8000)}); const data=await response.json() as any; return send(res,response.ok?200:502,{provider:config.provider,limit:data.data?.limit??null,usage:data.data?.usage??null,remaining:data.data?.limit_remaining??null,reset:data.data?.limit_reset??null,available:response.ok});}catch{return send(res,200,{provider:config.provider,available:false})}} return send(res,200,{provider:config.provider,available:false,message:'Лимиты доступны в кабинете провайдера'}); }
-    if (req.method === 'GET' && url.pathname === '/api/ai/status') {const donorStatus=donorPool?await donorPool.health():undefined;return send(res, 200, { provider: aiMode, availableProviders: [...Object.keys(providers), 'local', 'ollama', 'donor'], model: aiMode === 'donor' ? donorPool!.model : aiMode === 'ollama' ? (process.env.OLLAMA_MODEL || 'qwen3.5:9b') : aiMode === 'openrouter' ? (process.env.OPENROUTER_MODEL || 'openrouter/free') : aiMode === 'openai' ? (process.env.OPENAI_MODEL || 'gpt-4o-mini') : aiMode === 'anthropic' ? (process.env.ANTHROPIC_MODEL || 'claude-3-5-haiku-latest') : 'Локальный сценарист', connected: donorStatus?donorStatus.connected:aiMode!=='local', coauthors:donorStatus?.donors, donors:donorStatus?.donors, fallback: aiMode === 'donor' || aiMode === 'ollama' ? undefined : 'Локальный сценарист' });}
+    if (req.method === 'GET' && url.pathname === '/api/ai/status') {const donorStatus=donorPool?await donorPool.health():undefined;return send(res, 200, { provider: aiMode, pilotAvailable: !!pilotKey, availableProviders: [...Object.keys(providers), 'local', 'ollama', 'donor'], model: aiMode === 'donor' ? donorPool!.model : pilotKey ? pilotModel : aiMode === 'ollama' ? (process.env.OLLAMA_MODEL || 'qwen3.5:9b') : aiMode === 'openrouter' ? (process.env.OPENROUTER_MODEL || 'openrouter/free') : aiMode === 'openai' ? (process.env.OPENAI_MODEL || 'gpt-4o-mini') : aiMode === 'anthropic' ? (process.env.ANTHROPIC_MODEL || 'claude-3-5-haiku-latest') : 'Локальный сценарист', connected: donorStatus?donorStatus.connected:!!pilotKey||aiMode!=='local', coauthors:donorStatus?.donors, donors:donorStatus?.donors, fallback: aiMode === 'donor' || aiMode === 'ollama' ? undefined : 'Локальный сценарист' });}
     if (url.pathname.startsWith('/api/auth/') && ['POST','PUT'].includes(req.method || '') && req.headers['x-storage-consent'] !== 'accepted') return send(res,403,{error:'Требуется согласие на хранение данных'});
     if (req.method === 'POST' && url.pathname === '/api/auth/register') { const data=await body(req),result=accounts.register(data.email,data.password);return send(res,201,{user:result.user},{'Set-Cookie':sessionHeader(result.token)}); }
     if (req.method === 'POST' && url.pathname === '/api/auth/login') { const data=await body(req),key=rateKey(req);if(loginBlocked(key))return send(res,429,{error:'Слишком много попыток. Повторите через 15 минут'});try{const result=accounts.login(data.email,data.password,data.timezone);loginAttempts.delete(key);return send(res,200,{user:result.user},{'Set-Cookie':sessionHeader(result.token)})}catch{loginFailed(key);return send(res,401,{error:'Неверный email или пароль'})} }
@@ -267,9 +333,25 @@ const server = createServer(async (req, res) => {
     if (req.method === 'GET' && url.pathname === '/api/games/popular') return send(res, 200, runtime.listPopularGames());
     if (req.method === 'GET' && url.pathname === '/api/games') return send(res, 200, runtime.listGames());
     if (url.pathname.startsWith('/api/sessions') && !authId(req)) return send(res,401,{error:'Требуется вход'});
-    if (url.pathname.startsWith('/api/sessions') && req.method === 'POST' && req.headers['x-storage-consent'] !== 'accepted') return send(res,403,{error:'Требуется согласие на хранение данных'});
+    if (url.pathname.startsWith('/api/sessions') && (req.method === 'POST' || req.method === 'PUT') && req.headers['x-storage-consent'] !== 'accepted') return send(res,403,{error:'Требуется согласие на хранение данных'});
     if (req.method === 'GET' && url.pathname === '/api/sessions') return send(res, 200, runtime.listSessions(authId(req)));
-    if (req.method === 'POST' && url.pathname === '/api/sessions') { const ownerId = authId(req); if (!ownerId || (aiMode!=='ollama' && !(aiMode==='donor'&&accounts.getAiSource(ownerId)==='donor') && !accounts.getProviders(ownerId))) return send(res, 403, { error: 'Добавьте ключ AI-сценариста в профиле' }); const data = await body(req); return send(res, 201, runtime.create(data.gameId, ownerId)); }
+    if (req.method === 'POST' && url.pathname === '/api/sessions') {
+      const ownerId = authId(req)!, data = await body(req);
+      if (!runtime.gamePackage(data.gameId)) return send(res,404,{error:'Игра не найдена'});
+      if (!resolveWriter(ownerId, accounts.scenarioSettings(ownerId, data.gameId))) return send(res,403,{error:'Добавьте ключ AI-сценариста в профиле'});
+      return send(res,201,runtime.create(data.gameId,ownerId));
+    }
+    const generationMatch = url.pathname.match(/^\/api\/sessions\/([^/]+)\/generation$/);
+    if (generationMatch && ['GET','PUT'].includes(req.method || '')) {
+      const userId = authId(req)!, { gameId } = runtime.get(generationMatch[1],userId);
+      if (req.method === 'PUT') accounts.setScenarioSettings(userId,gameId,generationSettings(userId,await body(req)));
+      const settings = accounts.scenarioSettings(userId,gameId), writer = resolveWriter(userId,settings);
+      const describe = (config: ReturnType<typeof resolveWriter>) => config ? { provider:config.provider, model:config.model,
+        sampling:config.provider === 'ollama' || !!modelInfo(config.provider,config.model)?.sampling } : undefined;
+      const active = describe(writer), defaultWriter = describe(resolveWriter(userId,{}));
+      const usage = writer && writer.provider !== 'donor' ? modelUsage.today(userId,writer.provider,writer.model) : undefined;
+      return send(res,200,{settings,active,defaultWriter,usage});
+    }
     const packageMatch=url.pathname.match(/^\/api\/sessions\/([^/]+)\/package$/);
     if(packageMatch&&req.method==='GET')return send(res,200,runtime.sessionPackage(packageMatch[1],authId(req)));
     const sessionMatch = url.pathname.match(/^\/api\/sessions\/([^/]+)$/); const turnMatch = url.pathname.match(/^\/api\/sessions\/([^/]+)\/turns$/);
@@ -278,7 +360,47 @@ const server = createServer(async (req, res) => {
     if (pendingMatch && req.method === 'GET' && queue) { const ownerId=authId(req)!; runtime.get(pendingMatch[1],ownerId); const pending=queue.pending(pendingMatch[1],ownerId); return send(res,200,pending?queue.view(pending.id,ownerId):{status:'idle'}); }
     const jobMatch = url.pathname.match(/^\/api\/turn-jobs\/([^/]+)$/);
     if (jobMatch && queue) { const ownerId=authId(req); if (!ownerId) return send(res,401,{error:'Требуется вход'}); if(req.method==='GET')return send(res,200,queue.view(jobMatch[1],ownerId)); if(req.method==='DELETE')return send(res,200,queue.cancel(jobMatch[1],ownerId)); }
-    if (turnMatch && req.method === 'POST') { const userId = authId(req); if (!userId) return send(res,401,{error:'Требуется вход'}); const action=await body(req) as Action; if(queue&&accounts.getAiSource(userId)==='donor')return send(res,202,queue.enqueue(turnMatch[1],userId,action)); if(queue?.pending(turnMatch[1],userId))return send(res,409,{error:'Предыдущий ход ещё обрабатывается'}); const config = aiMode !== 'ollama' ? accounts.getProviders(userId) : undefined; if (aiMode !== 'ollama' && !config) return send(res,403,{error:'Добавьте ключ AI-сценариста в профиле'}); const primary = aiMode === 'ollama' ? new OllamaAIProvider() : new RemoteAIProvider(config!.provider,config!.keys,config!.model); return send(res,200,await runtime.turn(turnMatch[1],action,primary,userId)); }
+    if (turnMatch && req.method === 'POST') {
+      const userId = authId(req)!, id = turnMatch[1], action = await body(req) as Action;
+      const session = runtime.get(id,userId), generation = accounts.scenarioSettings(userId,session.gameId);
+      const config = resolveWriter(userId,generation);
+      if (!config) return send(res,403,{error:'Добавьте ключ AI-сценариста в профиле'});
+      if (config.provider === 'donor') return send(res,202,queue!.enqueue(id,userId,action));
+      if (queue?.pending(id,userId)) return send(res,409,{error:'Предыдущий ход ещё обрабатывается'});
+      const stream = req.headers.accept === 'application/x-ndjson', controller = new AbortController();
+      const beginRequest = () => modelUsage.begin(userId,config.provider,config.model);
+      const primary = config.provider === 'ollama' ? new OllamaAIProvider() : new RemoteAIProvider(config.provider,config.keys,config.model);
+      const tracked: AIProvider = config.provider !== 'ollama' ? primary : {
+        generate: async (...args: Parameters<AIProvider['generate']>) => {
+          const record = beginRequest();
+          let usage;
+          try { const result = await primary.generate(args[0],args[1],args[2],args[3],args[4]); usage = result.usage; return result; }
+          finally { record(usage); }
+        }
+      };
+      let preview = '';
+      const emit = (value: unknown) => { if (!res.destroyed) res.write(json(value) + '\n'); };
+      res.once('close', () => { if (!res.writableEnded) controller.abort(); });
+      if (stream) {
+        res.writeHead(200,{...securityHeaders,'Content-Type':'application/x-ndjson; charset=utf-8','Cache-Control':'no-store','X-Accel-Buffering':'no'});
+        res.flushHeaders();
+      }
+      try {
+        const result = await runtime.turn(id,action,tracked,userId,{
+          signal:controller.signal, generation, beginRequest,
+          onNarrative:stream ? text => { if (text !== preview) { preview = text; emit({type:'preview',text}); } } : undefined
+        });
+        if (stream) emit({type:'result',result});
+        else return send(res,200,result);
+      } catch (error) {
+        if (controller.signal.aborted) return;
+        const detail = {error:error instanceof Error ? error.message : 'Ошибка генерации',
+          status:Number((error as {status?:number})?.status) || 502, resetAt:(error as {resetAt?:number})?.resetAt};
+        if (stream) emit({type:'error',...detail});
+        else return send(res,detail.status,detail);
+      } finally { if (stream && !res.destroyed) res.end(); }
+      return;
+    }
     send(res, 404, { error: 'Not found' });
   } catch (error) { if(error instanceof DailyLimitError)return send(res,402,{error:error.message,code:error.code,resetAt:error.resetAt});if(error instanceof PaymentError)return send(res,error.status,{error:error.message});const status=Number((error as Error&{status?:number})?.status);if(Number.isInteger(status)&&status>=400&&status<500)return send(res,status,{error:error instanceof Error?error.message:'Некорректный запрос'});console.error('Request failed:',error instanceof Error?error.message:'unknown error');return send(res,500,{error:'Внутренняя ошибка сервера'}); }
 });

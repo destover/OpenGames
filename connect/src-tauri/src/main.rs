@@ -1,4 +1,6 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+#[path = "../../streaming.rs"]
+mod streaming;
 
 use std::{fs::{self,File,OpenOptions}, net::TcpListener, path::PathBuf, sync::{Arc, Mutex, atomic::{AtomicBool, Ordering}}, time::{Duration, SystemTime, UNIX_EPOCH}};
 use fs2::FileExt;
@@ -123,15 +125,13 @@ struct Job {version:u8,#[serde(rename="type")] kind:String,job_id:String,request
 struct Cancel {version:u8,#[serde(rename="type")] kind:String,job_id:String,request_id:String}
 fn now_ms()->u64{SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_millis() as u64}
 
-async fn inference(port:u16,local_key:String,job:&Job)->Result<Value,String>{
+async fn inference(port:u16,local_key:String,job:&Job,sender:&mpsc::Sender<Message>)->Result<(Value,Option<Value>),String>{
     let remaining=job.lease_until.saturating_sub(now_ms());if remaining<1000{return Err("timeout".into())}
     let client=reqwest::Client::builder().timeout(Duration::from_millis(remaining.min(300_000))).build().map_err(|_|"model")?;
     let response=client.post(format!("http://127.0.0.1:{port}/v1/chat/completions")).bearer_auth(local_key).json(&job.request).send().await.map_err(|_|"timeout")?;
     if !response.status().is_success(){return Err("model".into())}
-    let bytes=response.bytes().await.map_err(|_|"model")?;if bytes.len()>65_536{return Err("model".into())}
-    let data:Value=serde_json::from_slice(&bytes).map_err(|_|"model")?;
-    let content=data["choices"][0]["message"]["content"].as_str().ok_or("model")?;
-    serde_json::from_str(content).map_err(|_|"model".into())
+    let identity=json!({"version":1,"jobId":job.job_id,"requestId":job.request_id,"attempt":job.attempt});
+    Ok(streaming::read_result(response,sender,&identity).await?)
 }
 
 async fn run_worker(device_token:String,port:u16,local_key:String,busy:Arc<AtomicBool>,active_job:Arc<Mutex<Option<(String,String,AbortHandle)>>>) ->Result<(),String>{
@@ -140,7 +140,7 @@ async fn run_worker(device_token:String,port:u16,local_key:String,busy:Arc<Atomi
     let (socket,_)=connect_async(request).await.map_err(|e|match e{tokio_tungstenite::tungstenite::Error::Http(response) if response.status()==401=>"revoked".to_string(),other=>other.to_string()})?;
     let (mut writer,mut reader)=socket.split();let (tx,mut rx)=mpsc::channel::<Message>(16);
     let send=tokio::spawn(async move{while let Some(message)=rx.recv().await{if writer.send(message).await.is_err(){break}}});
-    let heart_tx=tx.clone();let heart_busy=busy.clone();let heartbeat=tokio::spawn(async move{let mut interval=tokio::time::interval(Duration::from_secs(15));loop{interval.tick().await;let message=json!({"version":1,"type":"heartbeat","model":MODEL_NAME,"quantization":"Q4_K_M","slots":1,"busy":if heart_busy.load(Ordering::Relaxed){1}else{0},"available":true});if heart_tx.send(Message::Text(message.to_string().into())).await.is_err(){break}}});
+    let heart_tx=tx.clone();let heart_busy=busy.clone();let heartbeat=tokio::spawn(async move{let mut interval=tokio::time::interval(Duration::from_secs(15));loop{interval.tick().await;let message=json!({"version":1,"type":"heartbeat","model":MODEL_NAME,"quantization":"Q4_K_M","slots":1,"busy":if heart_busy.load(Ordering::Relaxed){1}else{0},"available":true,"streaming":true});if heart_tx.send(Message::Text(message.to_string().into())).await.is_err(){break}}});
     let mut job_task:Option<JoinHandle<()>>=None;
     while let Some(Ok(message))=reader.next().await{
         if let Message::Text(text)=message{
@@ -164,7 +164,7 @@ async fn run_worker(device_token:String,port:u16,local_key:String,busy:Arc<Atomi
             if tx.send(Message::Text(accepted.to_string().into())).await.is_err(){busy.store(false,Ordering::SeqCst);break}
             let job_tx=tx.clone();let job_busy=busy.clone();let key=local_key.clone();let job_slot=active_job.clone();let job_id_for_task=job.job_id.clone();let request_id_for_task=job.request_id.clone();
             let job_id=job.job_id.clone();let request_id=job.request_id.clone();
-            let task=tokio::spawn(async move{let result=inference(port,key,&job).await;let event=match result{Ok(value)=>json!({"version":1,"type":"completed","jobId":job.job_id,"requestId":job.request_id,"attempt":job.attempt,"result":value}),Err(reason)=>json!({"version":1,"type":"failed","jobId":job.job_id,"requestId":job.request_id,"attempt":job.attempt,"reason":reason})};let _=job_tx.send(Message::Text(event.to_string().into())).await;let mut active=job_slot.lock().unwrap();if active.as_ref().is_some_and(|(id,request,_)|id==&job_id_for_task&&request==&request_id_for_task){*active=None;job_busy.store(false,Ordering::SeqCst)}});
+            let task=tokio::spawn(async move{let result=inference(port,key,&job,&job_tx).await;let event=match result{Ok((value,usage))=>json!({"version":1,"type":"completed","jobId":job.job_id,"requestId":job.request_id,"attempt":job.attempt,"result":value,"usage":usage}),Err(reason)=>json!({"version":1,"type":"failed","jobId":job.job_id,"requestId":job.request_id,"attempt":job.attempt,"reason":reason})};let _=job_tx.send(Message::Text(event.to_string().into())).await;let mut active=job_slot.lock().unwrap();if active.as_ref().is_some_and(|(id,request,_)|id==&job_id_for_task&&request==&request_id_for_task){*active=None;job_busy.store(false,Ordering::SeqCst)}});
             *active_job.lock().unwrap()=Some((job_id,request_id,task.abort_handle()));job_task=Some(task);
         }
     }

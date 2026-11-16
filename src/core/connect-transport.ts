@@ -2,16 +2,18 @@ import { randomUUID } from 'node:crypto';
 import type { Server } from 'node:http';
 import type { Duplex } from 'node:stream';
 import WebSocket, { WebSocketServer } from 'ws';
+import { narrativePreview } from './generation.ts';
 import { parseResult } from './ai.ts';
 import type { AIProvider, AIRequestOptions } from './ai.ts';
 import { DonorUnavailableError } from './donor.ts';
-import { donorRequest, DONOR_HEARTBEAT_MS, DONOR_LEASE_MS, DONOR_MAX_MESSAGE_BYTES, parseDonorEvent, type DonorJob } from './donor-protocol.ts';
+import { donorRequest, DONOR_HEARTBEAT_MS, DONOR_LEASE_MS, DONOR_MAX_MESSAGE_BYTES, parseDonorEvent, DONOR_MAX_RESULT_BYTES, type DonorJob } from './donor-protocol.ts';
 import type { DeviceRegistry } from './device-registry.ts';
 import type { DonorPool } from './donor-pool.ts';
 import type { Action, GamePackage, Session } from './types.ts';
 
-type Pending={requestId:string;attempt:number;accepted:boolean;timer:ReturnType<typeof setTimeout>;ackTimer:ReturnType<typeof setTimeout>;signal?:AbortSignal;abort?:()=>void;resolve:(result:unknown)=>void;reject:(error:Error)=>void};
-type Peer={socket:WebSocket;lastSeen:number;lastHeartbeat:number;windowStart:number;messages:number;pending:Map<string,Pending>;active:boolean};
+type DonorResult = {result:unknown;usage?:{promptTokens:number;completionTokens:number}};
+type Pending={requestId:string;attempt:number;accepted:boolean;timer:ReturnType<typeof setTimeout>;ackTimer:ReturnType<typeof setTimeout>;signal?:AbortSignal;abort?:()=>void;resolve:(result:DonorResult)=>void;onDelta?:(content:string)=>void;reject:(error:Error)=>void};
+type Peer={socket:WebSocket;lastSeen:number;lastHeartbeat:number;windowStart:number;messages:number;pending:Map<string,Pending>;active:boolean;streaming?:boolean};
 
 export class ConnectTransport {
   private peers=new Map<string,Peer>();
@@ -41,16 +43,22 @@ export class ConnectTransport {
         if(event.type==='heartbeat'){
           if(now-peer.lastHeartbeat<5000)throw new Error('Слишком частый heartbeat');peer.lastHeartbeat=now;
           if(event.model!==this.pool.first.model||!event.available){peer.active=false;this.pool.disconnect('connect-'+id);return}
-          peer.active=true;this.registry.heartbeat(id,event.model,event.busy,event.slots);
+          peer.active=true;peer.streaming=event.streaming===true;this.registry.heartbeat(id,event.model,event.busy,event.slots);
           this.pool.connect('connect-'+id,event.model,event.slots,event.busy);return;
         }
-        if(event.type==='accepted'||event.type==='completed'||event.type==='failed'){
+        if(event.type==='accepted'||event.type==='delta'||event.type==='completed'||event.type==='failed'){
           const pending=peer.pending.get(event.jobId);
           if(!pending||pending.requestId!==event.requestId||pending.attempt!==event.attempt)return;
           if(event.type==='accepted'){pending.accepted=true;clearTimeout(pending.ackTimer);return}
           if(!pending.accepted)return;
+          if(event.type==='delta'){pending.onDelta?.(event.content);return}
           clearTimeout(pending.timer);clearTimeout(pending.ackTimer);peer.pending.delete(event.jobId);
-          if(event.type==='completed')pending.resolve(event.result);
+          if(event.type==='completed'){
+            const usage=event.usage;
+            const validUsage=Number.isSafeInteger(usage?.promptTokens)&&usage!.promptTokens>=0&&
+              Number.isSafeInteger(usage?.completionTokens)&&usage!.completionTokens>=0;
+            pending.resolve({result:event.result,usage:validUsage?usage:undefined});
+          }
           else pending.reject(new DonorUnavailableError('Устройство не выполнило задание'));
         }
       }catch{socket.close(1008,'Invalid donor message')}
@@ -67,16 +75,16 @@ export class ConnectTransport {
   connected(id:string){const peer=this.peers.get(id);return Boolean(peer?.active&&peer.socket.readyState===WebSocket.OPEN)}
   close(){for(const id of [...this.peers.keys()])this.disconnect(id)}
   private sweep(){for(const [id,peer] of this.peers)if(Date.now()-peer.lastSeen>DONOR_HEARTBEAT_MS*3)this.disconnect(id)}
-  request(id:string,requestId:string,attempt:number,request:ReturnType<typeof donorRequest>,deadline:number,signal?:AbortSignal){
+  request(id:string,requestId:string,attempt:number,request:ReturnType<typeof donorRequest>,deadline:number,signal?:AbortSignal,onDelta?:(content:string)=>void){
     const peer=this.peers.get(id);if(!peer||!peer.active||peer.socket.readyState!==WebSocket.OPEN)throw new DonorUnavailableError('Соавтор не подключён');
     const remaining=deadline-Date.now();if(remaining<=0)throw new DonorUnavailableError('Время ответа сценариста истекло');
-    const jobId=randomUUID(),message:DonorJob={version:1,type:'job',jobId,requestId,attempt,leaseUntil:deadline,model:this.pool.first.model,request};
-    return new Promise<unknown>((resolve,reject)=>{
+    const jobId=randomUUID(),message:DonorJob={version:1,type:'job',jobId,requestId,attempt,leaseUntil:deadline,model:this.pool.first.model,request:peer.streaming&&onDelta?{...request,stream:true}:request};
+    return new Promise<DonorResult>((resolve,reject)=>{
       if(signal?.aborted){reject(new DonorUnavailableError('Задание донора отменено'));return}
       const cleanup=(pending:Pending)=>{clearTimeout(pending.timer);clearTimeout(pending.ackTimer);if(pending.abort&&pending.signal)pending.signal.removeEventListener('abort',pending.abort);peer.pending.delete(jobId)};
       const timer=setTimeout(()=>{const pending=peer.pending.get(jobId);if(!pending)return;cleanup(pending);peer.socket.send(JSON.stringify({version:1,type:'cancel',jobId,requestId}));reject(new DonorUnavailableError('Соавтор не ответил в установленный срок'))},remaining);
       const ackTimer=setTimeout(()=>{const pending=peer.pending.get(jobId);if(!pending)return;cleanup(pending);peer.socket.send(JSON.stringify({version:1,type:'cancel',jobId,requestId}));reject(new DonorUnavailableError('Соавтор не принял задание'))},Math.min(10_000,remaining));
-      const pending:Pending={requestId,attempt,accepted:false,timer,ackTimer,signal,resolve:value=>{cleanup(pending);resolve(value)},reject:error=>{cleanup(pending);reject(error)}};
+      const pending:Pending={requestId,attempt,accepted:false,timer,ackTimer,signal,onDelta:peer.streaming?onDelta:undefined,resolve:value=>{cleanup(pending);resolve(value)},reject:error=>{cleanup(pending);reject(error)}};
       if(signal){pending.abort=()=>{if(!peer.pending.has(jobId))return;cleanup(pending);if(peer.socket.readyState===WebSocket.OPEN)peer.socket.send(JSON.stringify({version:1,type:'cancel',jobId,requestId}));reject(new DonorUnavailableError('Задание донора отменено'))};signal.addEventListener('abort',pending.abort,{once:true})}
       peer.pending.set(jobId,pending);
       peer.socket.send(JSON.stringify(message),error=>{if(error&&peer.pending.has(jobId))pending.reject(new DonorUnavailableError('Не удалось отправить задание'))});
@@ -93,8 +101,14 @@ export class ConnectAIProvider implements AIProvider {
   constructor(transport:ConnectTransport,deviceId:string,model:string,requestId:string,attempt:number){this.transport=transport;this.deviceId=deviceId;this.model=model;this.requestId=requestId;this.attempt=attempt}
   async generate(game:GamePackage,session:Session,action:Action,correction?:string,options?:AIRequestOptions){
     const deadline=options?.deadline||Date.now()+DONOR_LEASE_MS;if(deadline<=Date.now())throw new DonorUnavailableError('Время ответа сценариста истекло');
-    const request=donorRequest(game,session,action,this.model,correction);
-    const result=await this.transport.request(this.deviceId,this.requestId,this.attempt++,request,deadline,options?.signal);
-    return parseResult(result,game,action,'donor',session);
+    const request=donorRequest(game,session,action,this.model,correction,options?.generation);
+    let partial='';
+    const onDelta=options?.onNarrative ? (content:string)=>{
+      partial+=content;
+      if(Buffer.byteLength(partial)>DONOR_MAX_RESULT_BYTES)throw new DonorUnavailableError('Ответ соавтора превышает допустимый размер');
+      options.onNarrative!(narrativePreview(partial));
+    } : undefined;
+    const {result,usage}=await this.transport.request(this.deviceId,this.requestId,this.attempt++,request,deadline,options?.signal,onDelta);
+    return {...parseResult(result,game,action,'donor',session),usage};
   }
 }

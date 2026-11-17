@@ -80,7 +80,7 @@ export class TurnQueue {
     }}finally{this.pumping=false}
   }
   private async execute(job:Job,first:DonorLease){
-    let lease=first;const tried=new Set<string>(),deadline=Date.now()+DONOR_LEASE_MS,controller=new AbortController();
+    let lease=first, attempt=0;const tried=new Set<string>(),deadline=Date.now()+DONOR_LEASE_MS,controller=new AbortController();
     this.controllers.set(job.id,controller);
     const deadlineTimer=setTimeout(()=>controller.abort(new DonorUnavailableError('Истёк общий срок генерации хода')),DONOR_LEASE_MS);
     try{
@@ -89,9 +89,11 @@ export class TurnQueue {
       let usageCall:string|undefined,usageFinished=false,tokens:TokenUsage|undefined,ogcatEarned=0;
       const finishUsage=(status:'responded'|'failed',reason?:string)=>{if(!usageCall||usageFinished)return;usageFinished=true;try{this.usage!.finish(usageCall,status,reason,tokens,ogcatEarned)}catch{}};
       try{
-        const provider=lease.node.kind==='connect'?new ConnectAIProvider(this.transport!,lease.node.id.slice(8),lease.node.model,job.action.requestId!,tried.size+1):new DonorAIProvider(lease.node);
         const coauthorId=lease.node.kind==='connect'?lease.node.id.slice(8):lease.node.id,name=lease.node.kind==='connect'?'OpenGames Connect':'Соавтор OpenGames';
         const tracked:AIProvider={generate:async(game,session,action,correction,options)=>{
+          if(correction)finishUsage('failed',correction);
+          usageCall=undefined;usageFinished=false;tokens=undefined;
+          const provider=lease.node.kind==='connect'?new ConnectAIProvider(this.transport!,lease.node.id.slice(8),lease.node.model,job.action.requestId!,++attempt):new DonorAIProvider(lease.node);
           try{usageCall=this.usage?.begin({coauthorId,name,model:lease.node.model,gameId:game.manifest.id})}catch{}
           try{const result=await provider.generate(game,session,action,correction,{...options,signal:controller.signal,deadline});if(result.usage)tokens=result.usage;return result}
           catch(error){const unavailable=error instanceof DonorUnavailableError?error:new DonorUnavailableError(error instanceof Error?error.message:'Сценарист не выполнил ход');finishUsage('failed',unavailable.message);throw unavailable}

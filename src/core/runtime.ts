@@ -183,7 +183,7 @@ export class GameRuntime {
         try {
           next = engine.apply(session, action, result.events, result.narrative, result.stateMutation || [], aiResponseMs);
         } catch (error) {
-          if (!game.boundaries || !options?.beginRequest || !(error instanceof Error)) throw error;
+          if (!game.boundaries || !(options?.signal || options?.beginRequest) || !(error instanceof Error)) throw error;
           options.signal?.throwIfAborted();
           correction = error.message;
           options.onNarrative?.('');

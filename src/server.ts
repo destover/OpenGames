@@ -1,7 +1,7 @@
 import providers from './core/providers.json' with { type: 'json' };
 import { createServer } from 'node:http';
 import { isIP } from 'node:net';
-import { readFile, stat } from 'node:fs/promises';
+import { readFile, realpath, stat } from 'node:fs/promises';
 import { createReadStream, existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { appendFileSync, copyFileSync, mkdirSync, readFileSync as readTextSync, writeFileSync, renameSync } from 'node:fs';
@@ -23,7 +23,7 @@ import { DeviceRegistry } from './core/device-registry.ts';
 import { ConnectTransport } from './core/connect-transport.ts';
 import { CoauthorUsageStore } from './core/coauthor-usage.ts';
 import { BillingStore, packageById } from './core/billing.ts';
-import { paymentRegistry, PaymentError, type ProviderEvent } from './core/payments.ts';
+import { paymentRegistry, PaymentError, type PaymentProviderId } from './core/payments.ts';
 import { SharedKeyStore, ROUTE_LABELS, SHARED_ROUTES } from './core/shared-key.ts';
 import { balanceState, fetchBalance } from './core/provider-balance.ts';
 import { LegalStore, LEGAL_DOCUMENTS } from './core/legal.ts';
@@ -154,7 +154,7 @@ const billing=new BillingStore(join(root,'..','data','billing.sqlite'));
 const sharedKeys=new SharedKeyStore(join(root,'..','data','shared-keys.sqlite'));
 const legal=new LegalStore(join(root,'..','data','legal.json'));
 const infrastructure=new InfrastructureMonitor({releasesDir:join(root,'..','..','releases'),dataDir:join(root,'..','data'),port:Number(process.env.PORT||3000),publicUrl:configuredPublicUrl,units:String(process.env.OPENGAME_ADMIN_UNITS||'opengames,nginx').split(',').map(item=>item.trim()).filter(Boolean),games:runtime.listGames().length,donor:async()=>{const health=donorPool?await donorPool.health():undefined;return {connected:Boolean(health?.connected),devices:donorPool?.size||0}},legal:()=>({terms:legal.complete('terms'),privacy:legal.complete('privacy')}),journalLines:200});
-const payments=paymentRegistry(process.env);
+const payments=paymentRegistry(process.env,id=>accounts.getPaymentCredentials(id));
 function audit(actor:string,action:string,target:string,details:Record<string,unknown>={}){appendFileSync(adminAudit,JSON.stringify({at:new Date().toISOString(),actor,action,target,details})+'\n',{mode:0o600});}
 const deviceRegistry=aiMode==='donor'?new DeviceRegistry(join(root,'..','data','donor-devices.sqlite')):undefined;
 let queue:TurnQueue|undefined,connectTransport:ConnectTransport|undefined;
@@ -181,6 +181,17 @@ function sessionToken(req:import('node:http').IncomingMessage){return cookie(req
 function authId(req: import('node:http').IncomingMessage) { return accounts.idByToken(sessionToken(req)); }
 function sessionHeader(token:string,maxAge=604800){return `${sessionCookie}=${token}; HttpOnly; SameSite=Strict; Path=/; Max-Age=${maxAge}${process.env.OPENGAME_SECURE_COOKIE==='1'?'; Secure':''}`}
 function rateKey(req:import('node:http').IncomingMessage){const peer=req.socket.remoteAddress||'local';if(!['127.0.0.1','::1','::ffff:127.0.0.1'].includes(peer))return peer;const real=String(req.headers['x-real-ip']||'').trim(),forwarded=String(req.headers['x-forwarded-for']||'').split(',').at(-1)?.trim();return isIP(real)?real:forwarded&&isIP(forwarded)?forwarded:peer}
+const registrationWindow=15*60_000;
+const registrationAttempts:{ip:string;at:number}[]=[];
+function registrationRetryAfter(ip:string){
+  const now=Date.now();
+  while(registrationAttempts.length&&registrationAttempts[0].at<=now-registrationWindow)registrationAttempts.shift();
+  const personal=registrationAttempts.filter(attempt=>attempt.ip===ip);
+  const blockedSince=Math.max(personal.length>=5?personal[0].at:0,registrationAttempts.length>=60?registrationAttempts[0].at:0);
+  if(blockedSince)return Math.max(1,Math.ceil((blockedSince+registrationWindow-now)/1000));
+  registrationAttempts.push({ip,at:now});
+  return 0;
+}
 function loginBlocked(key:string){const item=loginAttempts.get(key);if(!item)return false;if(item.resetAt<=Date.now()){loginAttempts.delete(key);return false}return item.count>=5}
 function loginFailed(key:string){const item=loginAttempts.get(key),now=Date.now();loginAttempts.set(key,!item||item.resetAt<=now?{count:1,resetAt:now+15*60_000}:{count:item.count+1,resetAt:item.resetAt})}
 function resetAllowed(key:string){const now=Date.now(),item=resetAttempts.get(key);if(!item||item.resetAt<=now){resetAttempts.set(key,{count:1,resetAt:now+15*60_000});return true}if(item.count>=3)return false;item.count++;return true}
@@ -201,7 +212,20 @@ const server = createServer(async (req, res) => {
     if(req.method==='GET'&&url.pathname==='/admin'){const actor=authId(req);if(!actor)return send(res,401,{error:'Требуется вход'});if(!accounts.isAdmin(actor))return send(res,403,{error:'Недостаточно прав'});const html=await readFile(join(root,'..','web','admin.html'));res.writeHead(200,{...securityHeaders,'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store'});res.end(html);return}
     if(req.method==='GET'&&url.pathname==='/admin.js'){const data=await readFile(join(root,'..','web','admin.js'));res.writeHead(200,{...securityHeaders,'Content-Type':'text/javascript; charset=utf-8','Cache-Control':'no-store'});res.end(data);return}
     if(req.method==='GET'&&url.pathname==='/admin.css'){const data=await readFile(join(root,'..','web','admin.css'));res.writeHead(200,{...securityHeaders,'Content-Type':'text/css; charset=utf-8','Cache-Control':'no-store'});res.end(data);return}
-    if (req.method === 'GET' && url.pathname.startsWith('/assets/')) { const asset = url.pathname.slice('/assets/'.length); if (!/^[a-zA-Z0-9._/-]+$/.test(asset) || asset.split('/').some(part => !part || part === '.' || part === '..')) return send(res, 404, { error: 'Файл не найден' }); const file = join(root, '..', 'web', 'assets', asset); const data = await readFile(file); res.writeHead(200, { ...securityHeaders,'Content-Type': asset.endsWith('.svg') ? 'image/svg+xml' : asset.endsWith('.png') ? 'image/png' : /\.jpe?g$/i.test(asset) ? 'image/jpeg' : asset.endsWith('.wav') ? 'audio/wav' : asset.endsWith('.ogg') ? 'audio/ogg' : asset.endsWith('.mp3') ? 'audio/mpeg' : asset.endsWith('.m4a') ? 'audio/mp4' : 'application/octet-stream', 'Cache-Control': 'public, max-age=86400' }); res.end(data); return; }
+    if (req.method === 'GET' && url.pathname.startsWith('/assets/')) {
+      const asset=url.pathname.slice('/assets/'.length);
+      const types:Record<string,string>={svg:'image/svg+xml',png:'image/png',jpg:'image/jpeg',jpeg:'image/jpeg',wav:'audio/wav',ogg:'audio/ogg',mp3:'audio/mpeg',m4a:'audio/mp4',webp:'image/webp'};
+      const extension=asset.split('.').at(-1)?.toLowerCase()||'';
+      const type=Object.hasOwn(types,extension)?types[extension]:undefined;
+      const missing=()=>send(res,404,{error:'Файл не найден'});
+      if(!type||!(/^[a-zA-Z0-9._/-]+$/).test(asset)||asset.split('/').some(part=>!part||part.startsWith('.')))return missing();
+      const directory=await realpath(join(root,'..','web','assets'));
+      const requested=join(directory,asset);
+      const file=await realpath(requested).catch(()=>null);
+      if(file!==requested||!(await stat(file)).isFile())return missing();
+      const data=await readFile(file);
+      res.writeHead(200,{...securityHeaders,'Content-Type':type,'Cache-Control':'public, max-age=86400'});res.end(data);return;
+    }
     if (req.method==='GET'&&url.pathname==='/api/donor/downloads'){const platform=browserPlatform(req);return send(res,200,{platform,downloads:connectDownloads.map(({file,...item})=>({...item,url:'/downloads/'+file,recommended:item.platform===platform}))},{'Cache-Control':'no-store','Vary':'User-Agent, Sec-CH-UA-Platform'})}
     if ((req.method==='GET'||req.method==='HEAD')&&url.pathname.startsWith('/downloads/')){const file=url.pathname.slice('/downloads/'.length);if(!connectDownloads.some(item=>item.file===file))return send(res,404,{error:'Файл не найден'});const path=join(root,'..','web','downloads',file),size=(await stat(path)).size;res.writeHead(200,{...securityHeaders,'Content-Type':file.endsWith('.dmg')?'application/x-apple-diskimage':file.endsWith('.exe')?'application/vnd.microsoft.portable-executable':'application/zip','Content-Length':String(size),'Content-Disposition':`attachment; filename="${file}"`,'Cache-Control':'public, max-age=86400, immutable'});if(req.method==='HEAD')res.end();else createReadStream(path).pipe(res);return}
     if (req.method === 'GET' && ['/app.js','/style.css','/redesign.css','/ui.json'].includes(url.pathname)) { const data = await readFile(join(root, '..', 'web', url.pathname.slice(1))); res.writeHead(200, {...securityHeaders,'Content-Type': url.pathname.endsWith('.js') ? 'text/javascript' : url.pathname.endsWith('.css') ? 'text/css' : 'application/json', 'Cache-Control':'no-store'}); res.end(data); return; }
@@ -213,12 +237,26 @@ const server = createServer(async (req, res) => {
     if (req.method === 'GET' && url.pathname === '/') { const html = await readFile(join(root, '..', 'web', 'index.html'), 'utf8'); res.writeHead(200, { ...securityHeaders,'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' }); res.end(html); return; }
     if (req.method === 'GET' && url.pathname === '/api/ai/providers') return send(res,200,providers);
     if (req.method === 'GET' && url.pathname === '/api/health') {const donor=donorPool?await donorPool.health():undefined,ok=donor?donor.connected:true;return send(res,ok?200:503,{ok,games:runtime.listGames().length,provider:aiMode,aiConnected:ok})}
-    const webhookMatch=url.pathname.match(/^\/api\/payments\/webhook\/([a-z_]{2,16})$/);
-    if(webhookMatch&&(req.method==='POST'||req.method==='PUT')){const provider=payments.byId(webhookMatch[1]);if(!provider)return send(res,404,{error:'Неизвестный платёжный провайдер'});if(!provider.configured)return send(res,503,{error:provider.note});const raw=await rawBody(req);
-      if(!provider.verify({raw,ip:req.socket.remoteAddress||'local',headers:req.headers as Record<string,string|undefined>})){audit('payment:'+provider.id,'payment.webhook.rejected','-',{ip:rateKey(req),bytes:raw.length});return send(res,403,{error:'Уведомление не прошло проверку'})}
-      const event:ProviderEvent|null=provider.parse(raw);if(!event)return send(res,400,{error:'Уведомление не распознано'});
-      const result=billing.applyEvent(provider.id,event);audit('payment:'+provider.id,'payment.webhook',result.paymentId||'-',{status:result.status,externalId:event.externalId,amountRub:event.amountRub??null});
-      return send(res,200,{ok:true,...result})}
+    const webhookMatch=url.pathname.match(/^\/api\/payments\/webhook\/(yookassa|enot)$/);
+    if(webhookMatch&&req.method==='POST'){
+      const provider=payments.byId(webhookMatch[1])!;
+      if(!provider.configured)return send(res,503,{error:'Провайдер не настроен'});
+      const raw=await rawBody(req);
+      if(!provider.verify({raw,ip:rateKey(req),headers:req.headers as Record<string,string|undefined>})){
+        return send(res,403,{error:'Уведомление не прошло проверку'});
+      }
+      const id=provider.notificationId(raw);
+      if(!id)return send(res,400,{error:'Уведомление не распознано'});
+      const payment=billing.byExternal(provider.id,id);
+      if(!payment)return send(res,404,{error:'Платёж не найден'});
+      if(payment.status!=='pending')return send(res,200,{ok:true,status:'duplicate'});
+      const event=await provider.status(id);
+      if(event.externalId!==id)return send(res,409,{error:'Идентификатор платежа не совпадает'});
+      const result=billing.applyEvent(provider.id,event);
+      if(result.status==='mismatch')return send(res,409,{error:'Реквизиты платежа не совпадают'});
+      audit('payment:'+provider.id,'payment.webhook',payment.id,{status:result.status});
+      return send(res,200,{ok:true,status:result.status});
+    }
     if(url.pathname.startsWith('/api/admin/')){const actor=authId(req);if(!actor)return send(res,401,{error:'Требуется вход'});if(!accounts.isAdmin(actor))return send(res,403,{error:'Недостаточно прав'});if(!['GET','HEAD'].includes(req.method||'')&&req.headers['x-admin-confirm']!=='confirmed')return send(res,403,{error:'Требуется подтверждение действия'});
       if(req.method==='GET'&&url.pathname==='/api/admin/overview')return send(res,200,{...accounts.adminSummary(),games:runtime.listGames().length,sessions:runtime.adminSessions().length,turns:runtime.adminSessions().reduce((n,s)=>n+s.turns.length,0),provider:aiMode,health:'ok',updatedAt:new Date().toISOString()});
       if (req.method === 'GET' && url.pathname === '/api/admin/feedback') {
@@ -282,10 +320,28 @@ const server = createServer(async (req, res) => {
       if(req.method==='GET'&&url.pathname==='/api/admin/sessions'){const offset=Math.max(0,Math.min(100_000,Number(url.searchParams.get('offset')||0)||0)),limit=Math.max(1,Math.min(100,Number(url.searchParams.get('limit')||50)||50));return send(res,200,runtime.adminSessionsPage(offset,limit))}
       if(req.method==='PUT'&&/^\/api\/admin\/sessions\/[0-9a-f-]{36}$/i.test(url.pathname)){const id=decodeURIComponent(url.pathname.split('/')[4]),data=await body(req);copyFileSync(join(root,'..','data','saves',id+'.json'),join(adminData,`${id}-${Date.now()}.json`));const updated=runtime.adminReplaceSession(id,data.session);audit(actor,'session.edit',id,{reason:String(data.reason||'').slice(0,300)});return send(res,200,updated)}
       if(req.method==='GET'&&url.pathname==='/api/admin/audit')return send(res,200,existsSync(adminAudit)?readTextSync(adminAudit,'utf8').trim().split(/\r?\n/).slice(-500).filter(Boolean).map(line=>JSON.parse(line)).reverse():[]);
-      if(req.method==='GET'&&url.pathname==='/api/admin/billing'){const days=Math.max(1,Math.min(365,Number(url.searchParams.get('days')||30)||30)),overview=billing.adminOverview(days),status=url.searchParams.get('status')||undefined,userId=url.searchParams.get('userId')||undefined;return send(res,200,{...overview,providers:payments.describe(),records:billing.adminPayments({status,userId,limit:100})})}
+      const paymentConfig=url.pathname.match(/^\/api\/admin\/billing\/providers\/(yookassa|enot)$/);
+      if(req.method==='PUT'&&paymentConfig){
+        const id=paymentConfig[1] as PaymentProviderId,data=await body(req),current=payments.credentials(id);
+        if(!data||typeof data.shopId!=='string'||typeof data.apiKey!=='string'||
+          (id==='enot'&&typeof data.webhookSecret!=='string'))return send(res,400,{error:'Проверьте реквизиты провайдера'});
+        const shopId=data.shopId.trim(),apiKey=data.apiKey.trim(),webhookSecret=id==='enot'?data.webhookSecret.trim():'';
+        const validShop=id==='yookassa'?/^\d{1,32}$/:/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
+        if(!validShop.test(shopId)||!(/^[!-~]{0,512}$/).test(apiKey)||!(/^[!-~]{0,512}$/).test(webhookSecret)){
+          return send(res,400,{error:'Проверьте формат ID и ключей'});
+        }
+        const sameShop=shopId===current.shopId;
+        const next={shopId,apiKey:apiKey||(sameShop?current.apiKey:''),webhookSecret:webhookSecret||(sameShop?current.webhookSecret:'')};
+        if(!next.apiKey||(id==='enot'&&!next.webhookSecret))return send(res,400,{error:'Для этой кассы укажите все ключи'});
+        if(!sameShop&&billing.hasPendingProvider(id))return send(res,409,{error:'Дождитесь завершения платежей перед сменой кассы'});
+        accounts.setPaymentCredentials(id,next);
+        audit(actor,'payment.provider.configure',id,{shopChanged:!sameShop});
+        return send(res,200,payments.describe().find(item=>item.id===id),{'Cache-Control':'no-store'});
+      }
+      if(req.method==='GET'&&url.pathname==='/api/admin/billing'){const days=Math.max(1,Math.min(365,Number(url.searchParams.get('days')||30)||30)),overview=billing.adminOverview(days),status=url.searchParams.get('status')||undefined,userId=url.searchParams.get('userId')||undefined;return send(res,200,{...overview,providers:payments.describe(),records:billing.adminPayments({status,userId,limit:100})},{'Cache-Control':'no-store'})}
       if(req.method==='POST'&&/^\/api\/admin\/billing\/[0-9a-f-]{36}\/refund$/.test(url.pathname)){const id=url.pathname.split('/')[4],data=await body(req),reason=String(data.reason||'').trim();if(reason.length<3||reason.length>300)return send(res,400,{error:'Укажите причину возврата (3–300 символов)'});const payment=billing.payment(id);if(!payment)return send(res,404,{error:'Платёж не найден'});
         if(!payment.externalId)return send(res,409,{error:'У платежа нет идентификатора в провайдере: возврат невозможен'});
-        if(payment.status==='refunded')return send(res,409,{error:'Платёж уже возвращён'});
+        if(payment.status!=='succeeded')return send(res,409,{error:'Возврат доступен только для оплаченного платежа'});
         const provider=payments.byId(payment.provider);if(!provider)return send(res,503,{error:'Платёжный провайдер больше не поддерживается'});
         const refund=await provider.refund(payment.externalId,payment.amountRub),result=billing.refund(id,refund.refundId,reason,{provider:payment.provider,amountRub:payment.amountRub});audit(actor,'payment.refund',id,{...result.payment,reason,refundId:refund.refundId,uncoveredRub:result.uncoveredRub||0});return send(res,200,result)}
       if(req.method==='POST'&&url.pathname==='/api/admin/billing/adjustment'){const data=await body(req),reason=String(data.reason||'').trim(),target=accounts.adminUsers().find(item=>item.id===String(data.userId||''));if(!target)return send(res,404,{error:'Пользователь не найден'});if(reason.length<3||reason.length>300)return send(res,400,{error:'Укажите причину корректировки (3–300 символов)'});const result=billing.adminAdjust(target.id,Number(data.amountRub),reason);audit(actor,'billing.adjustment',target.id,{amountRub:Number(data.amountRub),reason,...result});return send(res,200,result)}
@@ -351,7 +407,22 @@ const server = createServer(async (req, res) => {
       }
       return redirect('/?oauth=failed');
     }
-    if (req.method === 'POST' && url.pathname === '/api/auth/register') { const data=await body(req),result=accounts.register(data.email,data.password);return send(res,201,{user:result.user},{'Set-Cookie':sessionHeader(result.token)}); }
+    if (req.method === 'POST' && url.pathname === '/api/auth/register') {
+      const retryAfter=registrationRetryAfter(rateKey(req));
+      if(retryAfter)return send(res,429,{error:'Слишком много попыток регистрации. Попробуйте позже'},{'Retry-After':String(retryAfter)});
+      const data=await body(req);
+      const email=typeof data?.email==='string'?data.email.trim():'', password=data?.password;
+      if(email.length>254||!(/^[^\s@]+@[^\s@]+\.[^\s@]+$/).test(email)||typeof password!=='string'||password.length<8||password.length>256){
+        return send(res,400,{error:'Укажите email и пароль длиной от 8 до 256 символов'});
+      }
+      try{
+        const result=accounts.register(email,password);
+        return send(res,201,{user:result.user},{'Set-Cookie':sessionHeader(result.token)});
+      }catch(error){
+        if(error instanceof Error&&error.message==='Пользователь уже зарегистрирован')return send(res,409,{error:error.message});
+        throw error;
+      }
+    }
     if (req.method === 'POST' && url.pathname === '/api/auth/login') { const data=await body(req),key=rateKey(req);if(loginBlocked(key))return send(res,429,{error:'Слишком много попыток. Повторите через 15 минут'});try{const result=accounts.login(data.email,data.password,data.timezone);loginAttempts.delete(key);return send(res,200,{user:result.user},{'Set-Cookie':sessionHeader(result.token)})}catch{loginFailed(key);return send(res,401,{error:'Неверный email или пароль'})} }
     if (req.method === 'POST' && url.pathname === '/api/auth/logout') { const token=sessionToken(req);accounts.revoke(token);return send(res,200,{ok:true},{'Set-Cookie':sessionHeader('',0)}); }
     if (req.method === 'POST' && url.pathname === '/api/auth/password/forgot') { if(!resetAllowed(rateKey(req)))return send(res,429,{error:'Слишком много запросов. Повторите через 15 минут'});const data=await body(req),token=smtp&&publicOrigin?accounts.createPasswordReset(data.email):undefined;if(token&&smtp&&publicOrigin){const link=`${publicOrigin}/#/auth/reset?token=${encodeURIComponent(token)}`;try{await smtp.sendMail({from:`OpenGames <${process.env.SMTP_USER}>`,to:String(data.email||'').trim(),subject:'Восстановление пароля OpenGames',text:`Ссылка для смены пароля действует 15 минут:\n${link}\n\nЕсли вы не запрашивали восстановление, проигнорируйте письмо.`,html:`<p>Ссылка для смены пароля действует 15 минут:</p><p><a href="${link}">Сменить пароль</a></p><p>Если вы не запрашивали восстановление, проигнорируйте письмо.</p>`})}catch(error){accounts.discardPasswordReset(token);console.error('Password reset mail failed:',error instanceof Error?error.message:'SMTP error')}}return send(res,200,{ok:true}); }
@@ -381,7 +452,7 @@ const server = createServer(async (req, res) => {
     if(paymentMatch&&req.method==='GET'){const userId=authId(req);if(!userId)return send(res,401,{error:'Требуется вход'});
       const payment=billing.paymentForUser(paymentMatch[1],userId);if(!payment)return send(res,404,{error:'Платёж не найден'});
       if(payment.status==='pending'&&payment.externalId){const provider=payments.byId(payment.provider);
-        if(provider?.configured){try{const event=await provider.status(payment.externalId);if(event&&event.status!=='pending')billing.applyEvent(provider.id,event)}catch{}}}
+        if(provider?.configured){try{const event=await provider.status(payment.externalId);if(event.externalId===payment.externalId&&event.status!=='pending')billing.applyEvent(provider.id,event)}catch{}}}
       const fresh=billing.paymentForUser(paymentMatch[1],userId)!;
       return send(res,200,{payment:fresh,balanceRub:billing.balanceRub(userId),totalRub:fresh.amountRub+fresh.bonusRub})}
     if (req.method === 'GET' && url.pathname === '/api/auth/provider-limits') { const userId=authId(req); if(!userId)return send(res,401,{error:'Требуется вход'}); const limits=accounts.getProviderLimits(userId); const result:Record<string,any>={}; for(const [provider,cache] of Object.entries(limits)){ result[provider]={...cache,estimatedTurns:0,confidence:'low',avgTokens:0}; try{ const est=accounts.estimateTurns(userId,provider,coauthorUsage); result[provider].estimatedTurns=est.estimatedTurns; result[provider].confidence=est.confidence; result[provider].avgTokens=est.avgTokens; result[provider].sampleSize=est.sampleSize; result[provider].isEstimate=est.isEstimate; }catch{} } return send(res,200,result); }

@@ -1,3 +1,4 @@
+import type { ProviderEvent } from './payments.ts';
 import { chmodSync, mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
@@ -16,7 +17,6 @@ export const packageById=(id:string)=>PACKAGES.find(item=>item.id===id);
 export type Payment={id:string;userId:string;provider:string;externalId:string|null;packId:string;amountRub:number;bonusRub:number;commission:number;status:PaymentStatus;confirmationUrl:string|null;receiptUrl:string|null;createdAt:number;paidAt:number|null;refundedAt:number|null;refundId:string|null;note:string|null};
 export type LedgerEntry={id:string;userId:string;ts:number;kind:LedgerKind;amountRub:number;balanceAfterRub:number;ref:string|null;meta:string|null};
 export type PaymentInput={userId:string;provider:string;packId:string;externalId?:string;confirmationUrl?:string;commission?:number;note?:string};
-export type ProviderEvent={externalId:string;status:'succeeded'|'pending'|'failed';amountRub?:number;receiptUrl?:string};
 
 const row=(record:Record<string,unknown>)=>({
   id:String(record.id),userId:String(record.user_id),provider:String(record.provider),externalId:record.external_id==null?null:String(record.external_id),
@@ -41,17 +41,22 @@ export class BillingStore {
   payment(id:string){const record=this.db.prepare('SELECT * FROM payments WHERE id=?').get(id) as Record<string,unknown>|undefined;return record?row(record):null}
   paymentForUser(id:string,userId:string){const record=this.payment(id);return record&&record.userId===userId?record:null}
   byExternal(provider:string,externalId:string){const record=this.db.prepare('SELECT * FROM payments WHERE provider=? AND external_id=?').get(provider,externalId) as Record<string,unknown>|undefined;return record?row(record):null}
+  hasPendingProvider(provider:string){return Boolean(this.db.prepare("SELECT 1 FROM payments WHERE provider=? AND status='pending' LIMIT 1").get(provider))}
   linkExternal(id:string,externalId:string,confirmationUrl?:string){this.db.prepare('UPDATE payments SET external_id=?,confirmation_url=COALESCE(?,confirmation_url) WHERE id=? AND status=\'pending\'').run(externalId,confirmationUrl??null,id);return this.payment(id)}
   fail(id:string,note:string){this.db.prepare("UPDATE payments SET status='failed',note=? WHERE id=? AND status='pending'").run(String(note).slice(0,300),id);return this.payment(id)}
   /** Зачисляет оплату ровно один раз: повторный вебхук того же платежа не меняет баланс. */
   applyEvent(provider:string,event:ProviderEvent){const payment=this.byExternal(provider,event.externalId);if(!payment)return {status:'unknown' as const,paymentId:null,credited:0};
-    if(payment.status==='succeeded'||payment.status==='refunded')return {status:'duplicate' as const,paymentId:payment.id,credited:0};
+    if(!Number.isFinite(event.amountRub)||event.amountRub<=0||Math.round(event.amountRub*100)!==Math.round(payment.amountRub*100))return {status:'mismatch' as const,paymentId:payment.id,credited:0};
+    if(event.orderId!==payment.id)return {status:'mismatch' as const,paymentId:payment.id,credited:0};
+    if(payment.status!=='pending')return {status:'duplicate' as const,paymentId:payment.id,credited:0};
     if(event.status!=='succeeded'){if(event.status==='failed')this.db.prepare("UPDATE payments SET status='failed' WHERE id=? AND status='pending'").run(payment.id);return {status:event.status,paymentId:payment.id,credited:0}}
-    const amountRub=typeof event.amountRub==='number'&&event.amountRub>0?event.amountRub:payment.amountRub;
-    if(Math.abs(amountRub-payment.amountRub)>0.009)return {status:'mismatch' as const,paymentId:payment.id,credited:0};
     this.db.exec('BEGIN IMMEDIATE');
     try{
-      this.db.prepare("UPDATE payments SET status='succeeded',paid_at=?,receipt_url=? WHERE id=? AND status='pending'").run(Date.now(),event.receiptUrl??null,payment.id);
+      const update=this.db.prepare("UPDATE payments SET status='succeeded',paid_at=? WHERE id=? AND status='pending'").run(Date.now(),payment.id);
+      if(!update.changes){
+        this.db.exec('ROLLBACK');
+        return {status:'duplicate' as const,paymentId:payment.id,credited:0};
+      }
       this.credit(payment.userId,'topup',toMicros(payment.amountRub),payment.id,{provider});
       if(payment.bonusRub>0)this.credit(payment.userId,'bonus',toMicros(payment.bonusRub),payment.id,{provider,pack:payment.packId});
       this.db.exec('COMMIT');

@@ -1,6 +1,7 @@
 import providers from './providers.json' with { type: 'json' };
 import { createCipheriv, createDecipheriv, createHash, randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
 import { chmodSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import type { PaymentCredentials, PaymentProviderId } from './payments.ts';
 import type { OAuthProvider } from './oauth.ts';
 import type { GenerationSettings } from './generation.ts';
 import { dirname } from 'node:path';
@@ -50,7 +51,8 @@ type User = {
 type SessionRecord = { userId: string; expiresAt: string };
 type ResetRecord = { userId: string; expiresAt: string };
 type OAuthClient = { clientId: string; enabled: boolean; secret?: EncryptedKey };
-type Database = { oauthClients?: Partial<Record<OAuthProvider, OAuthClient>>; users: User[]; tokens: Record<string, SessionRecord>; passwordResets?: Record<string, ResetRecord> };
+type StoredPaymentCredentials = {shopId:string; apiKey?:EncryptedKey; webhookSecret?:EncryptedKey};
+type Database = { paymentCredentials?: Partial<Record<PaymentProviderId,StoredPaymentCredentials>>; oauthClients?: Partial<Record<OAuthProvider, OAuthClient>>; users: User[]; tokens: Record<string, SessionRecord>; passwordResets?: Record<string, ResetRecord> };
 const currentModel = (provider:string, model:string) => provider==='groq'&&model==='llama-3.3-70b-versatile'?'openai/gpt-oss-120b':model;
 export class DailyLimitError extends Error { status=402; code='daily_limit_exhausted'; resetAt:number; constructor(resetAt:number){super('Суточный лимит ходов исчерпан');this.resetAt=resetAt} }
 const dayStart=(now:number)=>Math.floor(now/86_400_000)*86_400_000;
@@ -76,6 +78,19 @@ export class AccountStore {
     const iv = randomBytes(12), cipher = createCipheriv('aes-256-gcm', this.key, iv);
     const data = Buffer.concat([cipher.update(value, 'utf8'), cipher.final()]);
     return {iv:iv.toString('hex'),tag:cipher.getAuthTag().toString('hex'),data:data.toString('hex')};
+  }
+  getPaymentCredentials(id: PaymentProviderId): PaymentCredentials | undefined {
+    const stored=this.db.paymentCredentials?.[id];
+    if(stored)return {shopId:stored.shopId,apiKey:stored.apiKey?this.decrypt(stored.apiKey):'',
+      webhookSecret:stored.webhookSecret?this.decrypt(stored.webhookSecret):''};
+  }
+  setPaymentCredentials(id: PaymentProviderId, credentials: PaymentCredentials) {
+    this.db.paymentCredentials ??= {};
+    const previous=this.db.paymentCredentials[id];
+    this.db.paymentCredentials[id]={shopId:credentials.shopId,
+      apiKey:credentials.apiKey?this.encrypt(credentials.apiKey):undefined,
+      webhookSecret:credentials.webhookSecret?this.encrypt(credentials.webhookSecret):undefined};
+    try{this.persist()}catch(error){this.db.paymentCredentials[id]=previous;throw error}
   }
   getOAuthClient(provider: OAuthProvider) {
     const client = this.db.oauthClients?.[provider];

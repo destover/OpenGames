@@ -25,7 +25,7 @@ import { CoauthorUsageStore } from './core/coauthor-usage.ts';
 import { BillingStore, packageById } from './core/billing.ts';
 import { paymentRegistry, PaymentError, type PaymentProviderId } from './core/payments.ts';
 import { SharedKeyStore, ROUTE_LABELS, SHARED_ROUTES } from './core/shared-key.ts';
-import { balanceState, fetchBalance } from './core/provider-balance.ts';
+import { fetchBalance, inspectSharedProvider, sharedProvider } from './core/provider-balance.ts';
 import { LegalStore, LEGAL_DOCUMENTS } from './core/legal.ts';
 import { InfrastructureMonitor } from './core/infrastructure.ts';
 import type { Action, GamePackage } from './core/types.ts';
@@ -388,14 +388,47 @@ const server = createServer(async (req, res) => {
       if(req.method==='POST'&&url.pathname==='/api/admin/billing/adjustment'){const data=await body(req),reason=String(data.reason||'').trim(),target=accounts.adminUsers().find(item=>item.id===String(data.userId||''));if(!target)return send(res,404,{error:'Пользователь не найден'});if(reason.length<3||reason.length>300)return send(res,400,{error:'Укажите причину корректировки (3–300 символов)'});const result=billing.adminAdjust(target.id,Number(data.amountRub),reason);audit(actor,'billing.adjustment',target.id,{amountRub:Number(data.amountRub),reason,...result});return send(res,200,result)}
       if(req.method==='GET'&&url.pathname==='/api/admin/legal')return send(res,200,legal.adminView());
       if(req.method==='PUT'&&url.pathname==='/api/admin/legal'){const data=await body(req),result=legal.save((data.values||data) as Record<string,string>,String(data.reason||''));audit(actor,'legal.update','-',{changed:result.changed,reason:result.reason,documents:result.documents.map(item=>({id:item.id,published:item.published,missing:item.missing}))});return send(res,200,result)}
-      if(req.method==='GET'&&url.pathname==='/api/admin/shared-keys')return send(res,200,{...sharedKeys.summary(),routes:SHARED_ROUTES.map(route=>({route,label:ROUTE_LABELS[route]})),keys:sharedKeys.list()});
-      if(req.method==='POST'&&url.pathname==='/api/admin/shared-keys'){const data=await body(req),created=sharedKeys.add({label:data.label,route:String(data.route||''),model:data.model,key:data.key,monthlyCapRub:Number(data.monthlyCapRub||0),note:data.note});audit(actor,'sharedKey.create',created.id,{label:created.label,route:created.route,model:created.model,monthlyCapRub:created.monthlyCapRub});return send(res,201,created)}
-      const sharedMatch=url.pathname.match(/^\/api\/admin\/shared-keys\/([0-9a-f-]{36})(?:\/(balance))?$/);
+      if(req.method==='GET'&&url.pathname==='/api/admin/shared-keys')return send(res,200,{...sharedKeys.summary(),routes:SHARED_ROUTES.map(route=>({route,label:ROUTE_LABELS[route],keyUrl:sharedProvider(route)?.keyUrl,guide:sharedProvider(route)?.guide})),keys:sharedKeys.list()});
+      if(req.method==='POST'&&url.pathname==='/api/admin/shared-keys/inspect'){
+        const data=await body(req);
+        return send(res,200,await inspectSharedProvider(String(data.route||''),String(data.key||'').trim()));
+      }
+      if(req.method==='POST'&&url.pathname==='/api/admin/shared-keys'){
+        const data=await body(req),route=String(data.route||''),key=String(data.key||'').trim(),model=String(data.model||'').trim();
+        const {models,balance}=await inspectSharedProvider(route,key);
+        if(!models.some(item=>item.id===model))return send(res,400,{error:'Выберите модель из актуального каталога провайдера'});
+        const created=sharedKeys.add({label:data.label,route,model,key,note:data.note,balance});
+        audit(actor,'sharedKey.create',created.id,{label:created.label,route,model});
+        return send(res,201,created);
+      }
+      const sharedMatch=url.pathname.match(/^\/api\/admin\/shared-keys\/([0-9a-f-]{36})(?:\/(balance|models))?$/);
       if(sharedMatch){const id=sharedMatch[1],current=sharedKeys.get(id);if(!current)return send(res,404,{error:'Ключ не найден'});
-        if(req.method==='GET'&&!sharedMatch[2])return send(res,200,current);
-        if(req.method==='PATCH'&&!sharedMatch[2]){const data=await body(req),updated=sharedKeys.update(id,data);audit(actor,'sharedKey.update',id,{label:updated.label,route:updated.route,model:updated.model,status:updated.status,monthlyCapRub:updated.monthlyCapRub,reason:String(data.reason||'').slice(0,300)});return send(res,200,updated)}
-        if(req.method==='DELETE'&&!sharedMatch[2]){const data=await body(req).catch(()=>({}) as Record<string,unknown>);const reason=String(data.reason||'').trim();if(reason.length<3)return send(res,400,{error:'Укажите причину удаления (не менее 3 символов)'});sharedKeys.remove(id);audit(actor,'sharedKey.remove',id,{label:current.label,route:current.route,reason});return send(res,200,{ok:true})}
-        if(req.method==='POST'&&sharedMatch[2]){const secret=sharedKeys.secret(id,false);if(!secret)return send(res,503,{error:'Ключ недоступен для проверки'});const snapshot=await fetchBalance(current,secret),updated=sharedKeys.recordBalance(id,snapshot)!;audit(actor,'sharedKey.balance',id,{route:current.route,available:snapshot.available,remainingRub:snapshot.remainingRub??null,state:balanceState(updated)});return send(res,200,{...updated,state:balanceState(updated)})}
+        const action=sharedMatch[2];
+        if(req.method==='GET'&&!action)return send(res,200,current);
+        if(req.method==='PATCH'&&!action){
+          const data=await body(req),model=data.model===undefined?undefined:String(data.model).trim();
+          let balance;
+          if(model!==undefined&&model!==current.model){
+            const secret=sharedKeys.secret(id,false);if(!secret)return send(res,503,{error:'Ключ недоступен для проверки'});
+            const info=await inspectSharedProvider(current.route,secret);
+            if(!info.models.some(item=>item.id===model))return send(res,400,{error:'Выберите модель из актуального каталога провайдера'});
+            balance=info.balance;
+          }
+          const updated=sharedKeys.update(id,{label:data.label,model,status:data.status,note:data.note,balance});
+          audit(actor,'sharedKey.update',id,{label:updated.label,route:updated.route,model:updated.model,status:updated.status});
+          return send(res,200,updated);
+        }
+        if(req.method==='DELETE'&&!action){const data=await body(req).catch(()=>({}) as Record<string,unknown>);const reason=String(data.reason||'').trim();if(reason.length<3)return send(res,400,{error:'Укажите причину удаления (не менее 3 символов)'});sharedKeys.remove(id);audit(actor,'sharedKey.remove',id,{label:current.label,route:current.route,reason});return send(res,200,{ok:true})}
+        if(req.method==='POST'&&action){
+          const secret=sharedKeys.secret(id,false);if(!secret)return send(res,503,{error:'Ключ недоступен для проверки'});
+          if(action==='models')return send(res,200,await inspectSharedProvider(current.route,secret));
+          const snapshot=await fetchBalance(current.route,secret);
+          if(snapshot.error)return send(res,502,{error:snapshot.message});
+          const updated=sharedKeys.recordBalance(id,snapshot);
+          if(!updated)return send(res,404,{error:'Ключ не найден'});
+          audit(actor,'sharedKey.balance',id,{route:current.route,available:snapshot.available,remaining:snapshot.remaining??null,currency:snapshot.currency});
+          return send(res,200,updated);
+        }
         return send(res,405,{error:'Метод не поддерживается'})}
       if(req.method==='GET'&&url.pathname==='/api/admin/coauthors'){const stats=coauthorUsage.summary(Number(url.searchParams.get('days')||30)),devices=deviceRegistry?.adminCoauthors()||[],names=new Map(devices.map(device=>[device.id,device.name]));return send(res,200,{...stats,byCoauthor:stats.byCoauthor.map(item=>({...item,name:names.get(item.id)||item.name}))})}
       if(req.method==='GET'&&url.pathname==='/api/admin/infrastructure')return send(res,200,await infrastructure.report({fresh:url.searchParams.get('fresh')==='1'}));

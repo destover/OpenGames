@@ -243,18 +243,75 @@ for(const form of document.querySelectorAll('[data-payment-provider]'))form.onsu
   }catch(error){toast(error.message,'error')}
   finally{for(const input of fields)input.disabled=false}
 };
-$('#content').onclick=async e=>{let b=e.target.closest('[data-refund]');if(!b)return;let answer=await dialog({title:'Возврат '+rub(b.dataset.amount),text:'Средства вернутся на исходный способ оплаты. Действие необратимо.',reason:true,reasonLabel:'Причина возврата',confirmLabel:'Вернуть',danger:true});if(!answer.ok)return;try{await api('/api/admin/billing/'+b.dataset.refund+'/refund',{method:'POST',body:JSON.stringify({reason:answer.reason})});load()}catch(x){toast(x.message,'crit')}};break}case'shared':{let d=await api('/api/admin/shared-keys'),rub=n=>Number(n||0).toLocaleString('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2})+' ₽';
-let routeSelect='<select id="skRoute">'+d.routes.map(r=>'<option value="'+esc(r.route)+'">'+esc(r.label)+'</option>').join('')+'</select>';
-let fld=(id,label,hint,attrs='')=>'<div class="field"><label for="'+id+'">'+label+'</label><input id="'+id+'" '+attrs+'><span class="hint">'+hint+'</span></div>';
-let form='<div class="form-grid">'+fld('skLabel','Название ключа','например: Основной DeepSeek')+'<div class="field"><label for="skRoute">Маршрут провайдера</label>'+routeSelect+'<span class="hint">откуда берётся ключ</span></div>'+fld('skModel','Модель','например: deepseek-flash')+fld('skKey','API-ключ провайдера','хранится в зашифрованном виде, в интерфейсе не показывается','type="password" autocomplete="new-password"')+fld('skCap','Месячный лимит, ₽','0 — без лимита; при достижении 30% и 10% появится предупреждение','type="number" min="0" max="1000000" value="0"')+fld('skNote','Заметка','видна только в админ-портале')+'</div><div class="admin-actions" style="margin-top:14px"><button class="primary" id="skAdd">Добавить общий ключ</button></div>';
-let stateOf=k=>{if(!k.balance?.available||k.balance.remainingRub==null)return ['не проверено',''];if(!k.monthlyCapRub)return ['остаток '+rub(k.balance.remainingRub),''];const ratio=k.balance.remainingRub/k.monthlyCapRub;return [ratio<=0.1?'критический остаток':ratio<=0.3?'мало средств':'остаток в норме',ratio<=0.1?'danger':'']};
-let keys=d.keys.map(k=>{let [label,cls]=stateOf(k),route=d.routes.find(r=>r.route===k.route);return '<div class="row"><span><b>'+esc(k.label)+'</b> <span class="tag">'+esc(route?route.label:k.route)+'</span><br><small class="muted">'+esc(k.model)+' · '+esc(k.keyMask)+(k.monthlyCapRub?' · лимит '+rub(k.monthlyCapRub):'')+(k.note?'<br>'+esc(k.note):'')+'<br>'+(k.balance?'проверено '+new Date(k.balance.checkedAt).toISOString().slice(0,16).replace('T',' '):'остаток не проверялся')+(k.balance?.message?' · '+esc(k.balance.message):'')+'</small></span><span class="tag '+(cls||'')+'">'+esc(label)+'</span><span class="tag">'+(k.status==='active'?'активен':'приостановлен')+'</span><button data-check="'+k.id+'">Проверить остаток</button><button data-toggle="'+k.id+'" data-status="'+k.status+'">'+(k.status==='active'?'Приостановить':'Активировать')+'</button><button class="danger" data-remove="'+k.id+'">Удалить</button></div>'}).join('')||'<p class="muted">Общих ключей пока нет.</p>';
-draw('Общий ключ OpenGames','<p class="muted">Ключи хранятся в зашифрованном виде и никогда не показываются в интерфейсе игры. Активных: '+d.active+', приостановленных: '+d.paused+', с проверенным остатком: '+d.checked+(d.low?', критический остаток: '+d.low:'')+'.</p><h2>Добавить ключ</h2>'+form+'<h2>Зарегистрированные ключи</h2>'+keys);
-$('#skAdd').onclick=async()=>{try{await api('/api/admin/shared-keys',{method:'POST',body:JSON.stringify({label:$('#skLabel').value,route:$('#skRoute').value,model:$('#skModel').value,key:$('#skKey').value,monthlyCapRub:Number($('#skCap').value||0),note:$('#skNote').value})});load()}catch(x){toast(x.message,'crit')}};
-$('#content').onclick=async e=>{let b=e.target.closest('button[data-check],button[data-toggle],button[data-remove]');if(!b)return;
-if(b.dataset.check){b.disabled=true;b.textContent='Проверяем…';try{let r=await api('/api/admin/shared-keys/'+b.dataset.check+'/balance',{method:'POST',body:'{}'});toast('Остаток проверен',r.balance?.available&&r.balance.remainingRub!=null?'ok':'warn',r.balance?.available&&r.balance.remainingRub!=null?rub(r.balance.remainingRub):(r.balance?.message||'нет данных'))}catch(x){toast(x.message,'crit')}load();return}
-if(b.dataset.toggle){try{await api('/api/admin/shared-keys/'+b.dataset.toggle,{method:'PATCH',body:JSON.stringify({status:b.dataset.status==='active'?'paused':'active'})});load()}catch(x){toast(x.message,'crit')}return}
-if(b.dataset.remove){let answer=await dialog({title:'Удалить общий ключ',text:'Ключ будет стёрт из реестра без возможности восстановления.',reason:true,reasonLabel:'Причина удаления',confirmLabel:'Удалить',danger:true});if(!answer.ok)return;try{await api('/api/admin/shared-keys/'+b.dataset.remove,{method:'DELETE',body:JSON.stringify({reason})});load()}catch(x){toast(x.message,'crit')}}};break}case'infrastructure':{let d=await api('/api/admin/infrastructure'),bad=d.checks.filter(c=>c.status!=='ok'),crit=bad.filter(c=>c.status==='crit'),verdict=crit.length?'crit':bad.length?'warn':'ok';
+$('#content').onclick=async e=>{let b=e.target.closest('[data-refund]');if(!b)return;let answer=await dialog({title:'Возврат '+rub(b.dataset.amount),text:'Средства вернутся на исходный способ оплаты. Действие необратимо.',reason:true,reasonLabel:'Причина возврата',confirmLabel:'Вернуть',danger:true});if(!answer.ok)return;try{await api('/api/admin/billing/'+b.dataset.refund+'/refund',{method:'POST',body:JSON.stringify({reason:answer.reason})});load()}catch(x){toast(x.message,'crit')}};break}case'shared':{
+const endpoint='/api/admin/shared-keys',d=await api(endpoint);
+const routes=d.routes.filter(route=>route.keyUrl);
+const money=(amount,currency)=>Number(amount).toLocaleString('ru-RU',{style:'currency',currency,minimumFractionDigits:2,maximumFractionDigits:2});
+const balanceText=b=>b?.available
+  ?'Доступно на расходы: '+money(b.remaining,b.currency)+(b.monthlyRemaining==null?'':' · Остаток месячного лимита: '+money(b.monthlyRemaining,b.currency))
+  :b?.message||'Остаток ещё не проверен';
+const options=(models,selected)=>'<option value="">Выберите модель</option>'+models.map(m=>'<option value="'+esc(m.id)+'"'+(m.id===selected?' selected':'')+'>'+esc(m.name===m.id?m.id:m.name+' · '+m.id)+'</option>').join('');
+const keys=d.keys.map(k=>{
+  const route=d.routes.find(r=>r.route===k.route);
+  return '<div class="row"><span><b>'+esc(k.label)+'</b> <span class="tag">'+esc(route?.label||k.route)+'</span><br><small class="muted">'+esc(k.model)+' · '+esc(k.keyMask)+(k.note?'<br>'+esc(k.note):'')+'<br>'+esc(balanceText(k.balance))+(k.balance?' · '+esc(new Date(k.balance.checkedAt).toLocaleString('ru-RU')):'')+'</small></span><span class="tag">'+(k.status==='active'?'активен':'приостановлен')+'</span>'+(route?.keyUrl?'<button data-check="'+k.id+'">Обновить остаток</button><button data-model="'+k.id+'">Изменить модель</button>':'')+'<button data-toggle="'+k.id+'" data-status="'+k.status+'">'+(k.status==='active'?'Приостановить':'Активировать')+'</button><button class="danger" data-remove="'+k.id+'">Удалить</button></div>';
+}).join('')||'<p class="muted">Общих ключей пока нет.</p>';
+draw('Общий ключ OpenGames','<h2>Добавить ключ</h2><form id="skForm"><div class="form-grid"><div class="field"><label for="skLabel">Название ключа</label><input id="skLabel" required maxlength="60"></div><div class="field"><label for="skRoute">Провайдер</label><select id="skRoute">'+routes.map(r=>'<option value="'+esc(r.route)+'">'+esc(r.label)+'</option>').join('')+'</select><p id="skGuide" class="hint"></p></div><div class="field"><label for="skKey">API-ключ провайдера</label><input id="skKey" type="password" autocomplete="new-password" minlength="16" maxlength="1024" required><button type="button" id="skInspect">Загрузить модели</button></div><div class="field"><label for="skModel">Модель</label><select id="skModel" required disabled></select><p id="skBalance" class="hint" role="status"></p></div><div class="field"><label for="skNote">Заметка</label><input id="skNote" maxlength="300"></div></div><div class="admin-actions"><button class="primary" id="skAdd" disabled>Добавить общий ключ</button></div></form><h2>Зарегистрированные ключи</h2>'+keys);
+const form=$('#skForm'),route=$('#skRoute'),key=$('#skKey'),model=$('#skModel'),balance=$('#skBalance'),inspect=$('#skInspect'),add=$('#skAdd');
+let inspection=0;
+const clear=()=>{
+  inspection++;
+  const provider=routes.find(r=>r.route===route.value);
+  $('#skGuide').innerHTML=esc(provider.guide)+' <a href="'+esc(provider.keyUrl)+'" target="_blank" rel="noopener noreferrer">Открыть страницу провайдера</a>';
+  model.innerHTML=options([]);model.disabled=true;add.disabled=true;balance.textContent='';
+};
+route.onchange=()=>{key.value='';clear()};key.oninput=clear;model.onchange=()=>{add.disabled=!model.value};clear();
+inspect.onclick=async()=>{
+  if(!key.reportValidity())return;
+  const request=++inspection;
+  inspect.disabled=true;
+  balance.textContent='Запрашиваем каталог и остаток…';
+  try{
+    const result=await api(endpoint+'/inspect',{method:'POST',body:JSON.stringify({route:route.value,key:key.value})});
+    if(request!==inspection||!form.isConnected)return;
+    model.innerHTML=options(result.models);model.disabled=false;add.disabled=true;balance.textContent=balanceText(result.balance);
+  }catch(x){if(request===inspection&&form.isConnected)balance.textContent=x.message}
+  finally{inspect.disabled=false}
+};
+form.onsubmit=async e=>{
+  e.preventDefault();add.disabled=true;
+  try{await api(endpoint,{method:'POST',body:JSON.stringify({label:$('#skLabel').value,route:route.value,model:model.value,key:key.value,note:$('#skNote').value})});load()}
+  catch(x){toast(x.message,'crit');add.disabled=!model.value}
+};
+$('#content').onclick=async e=>{
+  const b=e.target.closest('button[data-check],button[data-model],button[data-save-model],button[data-toggle],button[data-remove]');
+  if(!b||b.disabled)return;
+  b.disabled=true;
+  try{
+    if(b.dataset.check){
+      const result=await api(endpoint+'/'+b.dataset.check+'/balance',{method:'POST',body:'{}'});
+      toast('Остаток обновлён',result.balance?.available?'ok':'warn',balanceText(result.balance));load();return;
+    }
+    if(b.dataset.model){
+      const current=d.keys.find(k=>k.id===b.dataset.model);
+      const result=await api(endpoint+'/'+current.id+'/models',{method:'POST',body:'{}'});
+      b.outerHTML='<label>Модель <select data-model-select>'+options(result.models,current.model)+'</select></label><button data-save-model="'+current.id+'">Сохранить модель</button>';
+      return;
+    }
+    if(b.dataset.saveModel){
+      const selected=b.closest('.row').querySelector('[data-model-select]').value;
+      if(!selected){toast('Выберите модель','warn');return}
+      await api(endpoint+'/'+b.dataset.saveModel,{method:'PATCH',body:JSON.stringify({model:selected})});load();return;
+    }
+    if(b.dataset.toggle){
+      await api(endpoint+'/'+b.dataset.toggle,{method:'PATCH',body:JSON.stringify({status:b.dataset.status==='active'?'paused':'active'})});load();return;
+    }
+    const answer=await dialog({title:'Удалить общий ключ',reason:true,reasonLabel:'Причина удаления',confirmLabel:'Удалить',danger:true});
+    if(answer.ok){await api(endpoint+'/'+b.dataset.remove,{method:'DELETE',body:JSON.stringify({reason:answer.reason})});load()}
+  }catch(x){toast(x.message,'crit')}
+  finally{b.disabled=false}
+};
+break}
+case'infrastructure':{let d=await api('/api/admin/infrastructure'),bad=d.checks.filter(c=>c.status!=='ok'),crit=bad.filter(c=>c.status==='crit'),verdict=crit.length?'crit':bad.length?'warn':'ok';
 let tagOf=c=>c.status==='ok'?'ok':c.status==='warn'?'warn':c.status==='crit'?'danger':'';
 let checkRow=c=>'<div class="row"><span><b>'+esc(c.label)+'</b><br><small class="muted">'+esc(c.detail)+(c.fix?'<br><small class="muted">'+esc(c.fix)+'</small>':'')+'</small></span><span class="tag '+tagOf(c)+'">'+esc(c.value)+'</span></div>';
 let h=d.host,mem=h.memory,cards={Загрузка:h.load.join(' / '),Ядра:String(h.cores),Аптайм:Math.round(h.uptimeSeconds/86400)+' дн.',Память:mem.usedPercent+'%','Память, доступно':mem.availableMb+' МБ',Диск:d.disk.usedPercent+'%'};

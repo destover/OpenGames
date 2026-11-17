@@ -268,6 +268,12 @@ const server = createServer(async (req, res) => {
       if(!rendered.published&&!isAdmin){res.writeHead(503,{...securityHeaders,...noIndexHeaders,'Content-Type':'text/html; charset=utf-8','Retry-After':'3600'});if(req.method==='HEAD')res.end();else res.end(legal.unpublishedPage(doc.title));return}
       const html=rendered.published?rendered.html.replace(/<div class="notice">[\s\S]*?<\/div>\s*/,''):rendered.html;
       res.writeHead(200,{...securityHeaders,...noIndexHeaders,'Content-Type':'text/html; charset=utf-8'});if(req.method==='HEAD')res.end();else res.end(html);return}
+    if((req.method==='GET'||req.method==='HEAD')&&url.pathname==='/enot_f6bf7ef6.html'){
+      const file=await readFile(join(root,'..','enot_f6bf7ef6.html'));
+      res.writeHead(200,{...securityHeaders,...noIndexHeaders,'Content-Type':'text/html; charset=utf-8','Content-Length':String(file.length)});
+      res.end(req.method==='HEAD'?undefined:file);
+      return;
+    }
     if((req.method==='GET'||req.method==='HEAD')&&url.pathname==='/robots.txt'){const text=await readFile(join(root,'..','web','robots.txt'),'utf8');res.writeHead(200,{...securityHeaders,'Content-Type':'text/plain; charset=utf-8','Cache-Control':'public, max-age=3600'});if(req.method==='HEAD')res.end();else res.end(text);return}
     if (req.method === 'GET' && url.pathname === '/') { const html = await readFile(join(root, '..', 'web', 'index.html'), 'utf8'); res.writeHead(200, { ...securityHeaders,'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' }); res.end(html); return; }
     if (req.method === 'GET' && url.pathname === '/api/ai/providers') return send(res,200,providers);

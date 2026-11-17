@@ -37,22 +37,14 @@ function table(columns,rows){if(!rows.length)return empty('Пока нет да�
 function card(title,body,actions){return '<section class="admin-card">'+(title?'<div class="card-head"><h2>'+esc(title)+'</h2><div class="spacer"></div>'+(actions||'')+'</div>':'')+body+'</section>'}
 function cardList(title,rows,actions){return card(title,rows.length?rows.join(''):empty('Пока нет данных'),actions)}
 const legalComments={
-  'terms.refund.period':'§ 8.1. Статья 32 позволяет потребителю отказаться от услуги в любое время с учётом подтверждённых расходов по его договору. Ограничение «с даты пополнения» убирается в шаблоне.',
-  'terms.refund.review':'§ 8.4. Для добровольного отказа предусмотрите возврат в течение 7 календарных дней. Для требований по ст. 31 в связи с нарушением сроков или недостатками услуги действует 10 календарных дней. Это сроки возврата, а не рассмотрения.',
-  'terms.claim.review':'§ 11.1. 7 календарных дней можно оставить сроком ответа. Обязательный претензионный порядок для потребителя нужно убрать из шаблона.',
-  'terms.outage.refund':'§ 8.5. Срок недоступности может давать дополнительную гарантию возврата, но не должен откладывать осуществление прав потребителя при недостатках услуги.',
-  'privacy.terms.retention':'30 дней неактивности — срок OpenGames. Применяйте его при наличии процедуры удаления и оснований дальнейшего хранения отдельных данных.',
-  'privacy.games.retention':'365 дней — срок OpenGames. Указывайте его, если удаление или обезличивание действительно выполняется и период нужен для цели хранения.',
-  'privacy.logs.retention':'365 дней — срок OpenGames. Сверьте настройки ротации и удаления технических журналов.',
-  'privacy.claims.response':'§ 8.1. Запросы субъекта о персональных данных — до 10 рабочих дней. Продление до 5 рабочих дней допускается с мотивированным уведомлением.',
-  'privacy.deletion':'До 30 дней с достижения цели или отзыва согласия, если нет другого законного основания хранить данные. Для требования прекратить обработку предусмотрен отдельный срок до 10 рабочих дней с возможным продлением до 5.',
-  'privacy.notice':'30 дней — добровольный срок OpenGames. Оставляйте его при наличии процесса уведомления пользователей.'
+  'terms.claim.review':'§ 11.1. Срок ответа на претензию. Сроки возврата 7 и 10 календарных дней указаны отдельно в § 8.4.',
+  'privacy.notice':'§ 11.2. Введите число и единицу срока без «за» или «до». Например: 7 календарных дней.'
 };
-const legalReviewNotes='<details class="panel"><summary>Комментарии к шаблонам и платежам</summary><ul>'+
-  '<li>Оферта §§ 5.2, 7.4, 8.5, 11.1. В шаблоне требуется убрать безусловное списание остатка, общее ограничение ответственности суммой за три месяца, ожидание 7 дней как условие возврата при сбое и обязательность претензии для потребителей. <a href="https://www.consultant.ru/document/cons_doc_LAW_305/9eb0f127ead4dc57e7d0a9d4954cf264c4b3cea8/">Ст. 16</a> · <a href="https://zpp.rospotrebnadzor.ru/news/federal/490717">Отказ от услуг</a></li>'+
-  '<li>Политика. Уточните фактическое удаление аккаунтов, сохранений и журналов. Платёжные документы храните по применимым срокам учёта. Для уведомления Роскомнадзора об инциденте — 24 часа на первичное уведомление и 72 часа на результаты расследования. <a href="https://www.consultant.ru/document/cons_doc_LAW_61801/d3fe43a7c415353b17faab255bc0de92bea127da/">Ст. 21 152-ФЗ</a></li>'+
-  '<li>ЮKassa. СБП — 3 года для запроса возврата с создания платежа. Зачисление покупателю указано на следующий день. <a href="https://yookassa.ru/developers/payment-acceptance/after-the-payment/refunds">Правила возврата</a> · <a href="https://yookassa.ru/developers/payment-acceptance/integration-scenarios/manual-integration/other/sbp">СБП</a></li>'+
-  '<li>ENOT. Правила возврата должны быть опубликованы. Срок проведения возврата по СБП уточняется в договоре кассы. <a href="https://enot.io/site-requirements">Требования ENOT</a></li></ul></details>';
+const legalReviewNotes='<details class="panel"><summary>Комментарии к срокам и платежам</summary><ul>'+
+  '<li>Отказ от услуг возможен в любое время. В оферте указаны сроки возврата по основанию обращения и сохранено право потребителя на выбор суда. <a href="https://zpp.rospotrebnadzor.ru/news/federal/490717">Ст. 32 и разъяснение</a> · <a href="https://www.consultant.ru/document/cons_doc_LAW_305/">Закон о защите прав потребителей</a></li>'+
+  '<li>Политика указывает сроки исполнения запросов субъектов и уничтожения данных. Фиксируйте дату запроса и результат исполнения. <a href="https://www.consultant.ru/document/cons_doc_LAW_61801/d3fe43a7c415353b17faab255bc0de92bea127da/">Ст. 21 152-ФЗ</a></li>'+
+  '<li>ЮKassa. СБП — 3 года для запроса возврата с даты создания платежа. <a href="https://yookassa.ru/developers/payment-acceptance/after-the-payment/refunds">Правила возврата</a></li>'+
+  '<li>ENOT. Срок возврата по СБП уточняется по договору кассы. <a href="https://enot.io/site-requirements">Требования ENOT</a></li></ul></details>';
 const feedbackStatus={open:'Открыто',answered:'Есть ответ',closed:'Закрыто'};
 const feedbackKind={issue:'Проблема',rating:'Оценка'};
 const feedbackQuery={status:'',kind:'',gameId:'',offset:0,limit:20};

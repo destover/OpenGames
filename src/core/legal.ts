@@ -36,27 +36,19 @@ export const TERMS_FIELDS:LegalFieldDef[]=[
   { key:'terms.date', document:'terms', label:'Дата редакции оферты', hint:'например: 3 октября 2026' },
   { key:'terms.tax.regime', document:'terms', label:'Налоговый режим', hint:'для самозанятого подставляется НПД автоматически', forms:COMPANY },
   { key:'terms.receipt.mode', document:'terms', label:'Как выдаются чеки', hint:'для самозанятого подставляется «в приложении „Мой налог“»', forms:COMPANY },
-  { key:'terms.refund.period', document:'terms', label:'Срок возврата', hint:'например: 14 календарных дней' },
-  { key:'terms.refund.review', document:'terms', label:'Срок рассмотрения обращения о возврате', hint:'например: 10 рабочих дней' },
   { key:'terms.claim.review', document:'terms', label:'Срок ответа на претензию' },
-  { key:'terms.outage.refund', document:'terms', label:'Срок недоступности сервиса без вычета' }
 ];
 /** Поля, которые нужны только политике конфиденциальности. */
 export const PRIVACY_FIELDS:LegalFieldDef[]=[
   { key:'privacy.date', document:'privacy', label:'Дата редакции политики' },
   { key:'privacy.location', document:'privacy', label:'Где размещаются базы данных', hint:'страна и оператор хранения' },
-  { key:'privacy.terms.retention', document:'privacy', label:'Срок хранения данных аккаунта' },
-  { key:'privacy.games.retention', document:'privacy', label:'Срок хранения игровых данных' },
-  { key:'privacy.logs.retention', document:'privacy', label:'Срок хранения технических журналов' },
-  { key:'privacy.claims.response', document:'privacy', label:'Срок ответа на обращение', hint:'например: 30 дней' },
-  { key:'privacy.deletion', document:'privacy', label:'Срок удаления данных после обращения' },
   { key:'privacy.notice', document:'privacy', label:'Срок уведомления об изменениях политики' }
 ];
 export const LEGAL_FIELDS:LegalFieldDef[]=[...EXECUTOR_FIELDS,...TERMS_FIELDS,...PRIVACY_FIELDS];
 
 const escape=(value:string)=>String(value).replace(/[&<>"']/g,char=>({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[char] as string));
 const AUTO_BY_FORM:Partial<Record<ExecutorForm,Record<string,string>>>={
-  selfemployed:{ 'terms.tax.regime':'налог на профессиональный доход (НПД)','terms.receipt.mode':'в приложении «Мой налог» без комиссии сервиса' }
+  selfemployed:{ 'terms.tax.regime':'налог на профессиональный доход (НПД)','terms.receipt.mode':'в приложении «Мой налог»' }
 };
 const FIELDS_BY_DOCUMENT:Record<LegalDocumentId,LegalFieldDef[]>={terms:TERMS_FIELDS,privacy:PRIVACY_FIELDS};
 

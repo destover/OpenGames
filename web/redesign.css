@@ -38,7 +38,8 @@ body[data-time='day'].game-page:before{background:linear-gradient(#f4f6f8a8,#f4f
 .game{padding:0}.game>.panel,.game aside .panel,.journey{border-radius:20px}.game>.panel,.game aside .panel{overflow:hidden}
 body[data-time='day'].game-page #actionForm input{background:#f3f7fd;color:#182335;border-color:#aebfda}body[data-time='day'].game-page #actionForm input::placeholder{color:#647084}
 
-.turn.is-new{animation:turn-in 1.3s cubic-bezier(.4,0,.2,1) both}
+.turn.is-new{animation:turn-in .25s ease-out both}
+@media(prefers-reduced-motion:reduce){.turn.is-new{animation:none}}
 
 .setup-guide{margin-top:18px;padding:18px 20px;border:1px solid var(--line);border-radius:16px;background:var(--surface)}.setup-guide summary{cursor:pointer;font-weight:700}.setup-guide ol{display:grid;gap:13px;margin:18px 0;padding-left:23px}.setup-guide li{padding-left:4px;line-height:1.5}.setup-guide li::marker{color:var(--accent);font-weight:800}.provider-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px}.provider-links a{padding:7px 10px;border:1px solid var(--line);border-radius:9px;color:var(--accent);font-weight:700}.provider-links a:hover,.provider-links a:focus-visible{background:var(--surface-soft)}.setup-guide>.muted{margin:15px 0 0}
 
@@ -53,7 +54,7 @@ body[data-time='day'].game-page #actionForm input{background:#f3f7fd;color:#1823
 .generation-form textarea{resize:vertical}
 #generationSampling{display:grid;gap:8px}
 #generationUsage{font-size:.85rem;overflow-wrap:anywhere}
-#liveNarrative{white-space:pre-wrap}
+.turn .narrative{white-space:pre-wrap;overflow-wrap:anywhere}
 .oauth-options{display:grid;gap:8px;margin-top:16px}
 .oauth-options a{padding:9px 12px;border:1px solid var(--line);border-radius:10px;color:var(--ink);text-align:center;text-decoration:none}
 .oauth-options a:hover{border-color:var(--accent)}

@@ -107,7 +107,13 @@ function renderJourney(){let turns=graphTurns(),rail=document.createElement('div
 function renderMap(){let host=$('researchMap');host.replaceChildren();if(!game?.map){host.parentElement.hidden=true;return}host.parentElement.hidden=false;let map=document.createElement('div');map.className='research-map';map.innerHTML='<h3 class="map-title">'+t('map')+'</h3><p class="map-hint">'+t('mapHint')+'</p>';let visited=new Set([game.map.start]),current=session.state.location||game.map.start;session.turns.forEach(turn=>{let d=!game.map.destinations?turn.location:game.map.destinations?.[turn.action.type];if(d&&game.map.locations[d])visited.add(d)});if(game.map.locations[current])visited.add(current);let positions=[[22,63],[43,31],[67,60],[80,29],[49,80],[87,74],[27,22]];Object.keys(game.map.locations||{}).forEach((name,i)=>{let point=document.createElement('span'),known=visited.has(name),label=game.map.locations[name]?.[lang]||game.map.locations[name]?.ru||name;point.className='map-point '+(known?'':'unknown')+(name===current?' current':'');point.style.left=positions[i%positions.length][0]+'%';point.style.top=positions[i%positions.length][1]+'%';point.innerHTML='<b>'+((name===current)?'✦':known?'●':'?')+'</b><small>'+esc(known?label:t('unknown'))+'</small>';map.append(point)});host.append(map)}
 function setPending(){$('stopTurn').hidden=!activeTurn||activeTurn.stopping;$('retryTurn').hidden=pending||failedTurn?.id!==session?.id||!failedTurn;$('generationForm').querySelectorAll('select,input,textarea,button').forEach(control=>control.disabled=pending);$('thinking').hidden=!pending;$('thinking').textContent=queueStatus==='waiting_in_queue'?t('queueWaiting').replace('{position}',String(queuePosition)):queueStatus==='generating'?t('queueGenerating'):t('thinking');let disabled=pending||!eligible()||!!session?.state?.ended||inPrologue();$('input').disabled=disabled;$('send').disabled=disabled;$('actionOptions').disabled=disabled;document.querySelectorAll('#actions button').forEach(b=>b.disabled=disabled);$('restart').disabled=pending;$('share').disabled=pending}
 async function waitForJob(jobId,id){if(activeTurn?.id===id)activeTurn.jobId=jobId;while(true){let job=await api('/api/turn-jobs/'+jobId);queueStatus=job.status;queuePosition=job.position||0;setPending();previewTurn(job.preview||'');if(job.status==='completed'){if(!job.result)throw Error(t('queueResultMissing'));return job.result}if(job.status==='failed'||job.status==='cancelled'){if(activeTurn?.id===id)delete activeTurn.action.requestId;throw Error(job.error||t('unavailable'))}await new Promise(resolve=>setTimeout(resolve,job.status==='generating'?500:2000))}}
-async function finishTurn(r,id){if(session?.id!==id)return;session=r.session;lastSource=r.source;renderGame(true);refresh().catch(()=>{})}
+async function finishTurn(r,id){
+  if(session?.id!==id)return;
+  const streamed=Boolean($('liveNarrative'));
+  session=r.session;lastSource=r.source;renderGame(!streamed);
+  if(streamed)$('log').scrollTop=$('log').scrollHeight;
+  refresh().catch(()=>{});
+}
 async function resumePending(id){
   let resumed=false;
   try{
@@ -182,12 +188,31 @@ $('generationForm').onsubmit=event=>{
   loadGeneration('PUT',settings);
 };
 function previewTurn(text){
-  if(!currentRoute().startsWith('/game/')||session?.id!==activeTurn?.id)return;
-  let node=$('liveNarrative');
-  if(!text){node?.remove();return}
-  if(!node){node=document.createElement('div');node.id='liveNarrative';node.className='turn narrative';$('log').append(node)}
-  node.textContent=text;
-  $('log').scrollTop=$('log').scrollHeight;
+  const job=activeTurn;
+  if(!job||!currentRoute().startsWith('/game/')||session?.id!==job.id)return;
+  job.preview=text.replace(/\S+$/u,'');
+  if(!job.preview){$('liveNarrative')?.remove();return}
+  if(job.previewFrame)return;
+  job.previewFrame=requestAnimationFrame(()=>{
+    job.previewFrame=undefined;
+    if(activeTurn!==job||session?.id!==job.id||!currentRoute().startsWith('/game/')||!job.preview)return;
+    const log=$('log');
+    let row=$('liveNarrative');
+    let narrative=row?.querySelector('.narrative');
+    if(narrative?.textContent===job.preview)return;
+    if(!row){
+      row=document.createElement('div');row.id='liveNarrative';row.className='turn';
+      if(job.action.type){
+        const label=document.createElement('div');label.className='you';
+        label.textContent=icon(job.action)+' '+(job.action.type==='free_text'?job.action.text:actionName(job.action.type));
+        row.append(label);
+      }
+      narrative=document.createElement('div');narrative.className='narrative';
+      row.append(narrative);log.append(row);
+    }
+    narrative.textContent=job.preview;
+    log.scrollTop=log.scrollHeight;
+  });
 }
 async function requestTurn(job){
   const response=await fetch('/api/sessions/'+job.id+'/turns',{

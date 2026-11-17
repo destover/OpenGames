@@ -76,3 +76,6 @@ body[data-time='day'].game-page #actionForm input{background:#f3f7fd;color:#1823
 .feedback-messages p{white-space:pre-wrap;overflow-wrap:anywhere;margin:4px 0}
 .feedback-status{margin-bottom:0}
 .feedback-status:empty{display:none}
+.profile-requests{display:grid;gap:8px;margin-top:16px}
+.profile-requests details{padding:10px 12px;border:1px solid var(--line);border-radius:10px}
+.profile-requests summary{cursor:pointer;font-weight:650}

@@ -10,7 +10,7 @@ import nodemailer from 'nodemailer';
 import { GameRuntime } from './core/runtime.ts';
 import { type AIProvider, RemoteAIProvider, AnthropicProvider, FallbackAIProvider, LocalAIProvider, OllamaAIProvider, OpenAIProvider, OpenRouterProvider } from './core/ai.ts';
 import { modelInfo, pilotModel, playerProfileLimits, type GenerationSettings } from './core/generation.ts';
-import { FeedbackStore, feedbackKinds, feedbackStatuses, type FeedbackFilter } from './core/feedback.ts';
+import { FeedbackStore, feedbackKinds, feedbackStatuses, feedbackRequestDays, feedbackRequestTypes, type FeedbackFilter, type FeedbackRequestType } from './core/feedback.ts';
 import { feedbackMcpAuthorized, serveFeedbackMcp } from './core/feedback-mcp.ts';
 import { ModelUsageStore } from './core/model-usage.ts';
 import { OAuthLogin, type OAuthProvider } from './core/oauth.ts';
@@ -140,6 +140,7 @@ const privateFeedback = {'Cache-Control':'no-store'};
 function feedbackFilters(query: URLSearchParams): FeedbackFilter {
   const status = query.get('status') as FeedbackFilter['status'] ?? undefined;
   const kind = query.get('kind') as FeedbackFilter['kind'] ?? undefined;
+  const requestType=query.get('requestType') as FeedbackRequestType|null;
   const gameId = query.get('gameId') || undefined;
   const number = (name: string, fallback: number, max: number) => {
     const value = Number(query.get(name) ?? fallback);
@@ -147,6 +148,7 @@ function feedbackFilters(query: URLSearchParams): FeedbackFilter {
   };
   return {status:status && feedbackStatuses.includes(status)?status:undefined,
     kind:kind && feedbackKinds.includes(kind)?kind:undefined,
+    requestType:requestType&&feedbackRequestTypes.includes(requestType)?requestType:undefined,
     gameId:gameId?.slice(0,80),offset:number('offset',0,1_000_000),limit:number('limit',20,100)};
 }
 const coauthorUsage=new CoauthorUsageStore(join(root,'..','data','coauthor-usage.sqlite'));
@@ -159,6 +161,39 @@ function audit(actor:string,action:string,target:string,details:Record<string,un
 const deviceRegistry=aiMode==='donor'?new DeviceRegistry(join(root,'..','data','donor-devices.sqlite')):undefined;
 let queue:TurnQueue|undefined,connectTransport:ConnectTransport|undefined;
 const smtp=process.env.SMTP_HOST&&process.env.SMTP_USER&&process.env.SMTP_PASSWORD?nodemailer.createTransport({host:process.env.SMTP_HOST,port:Number(process.env.SMTP_PORT||465),secure:process.env.SMTP_SECURE!=='0',auth:{user:process.env.SMTP_USER,pass:process.env.SMTP_PASSWORD}}):null;
+let sendingFeedbackEmails=false;
+async function notifyFeedbackAdministrator(){
+  if(!smtp||sendingFeedbackEmails)return;
+  const eligible=accounts.adminUsers().filter(user=>!user.disabled&&user.role==='admin'&&user.email);
+  const feedbackAdministrator=process.env.OPENGAME_ADMIN_EMAIL?.trim()||(eligible.length===1?eligible[0].email:undefined);
+  if(!feedbackAdministrator)return;
+  sendingFeedbackEmails=true;
+  try{
+    for(const request of feedback.pendingRequestEmails()){
+      const title=request.type==='account_deletion'?'Удаление аккаунта и данных':'Возврат средств';
+      const link=publicOrigin?publicOrigin+'/admin#feedback?ticket='+request.id:undefined;
+      let sent=false;
+      try{
+        const result=await smtp.sendMail({
+          from:`OpenGames <${process.env.SMTP_USER}>`,to:feedbackAdministrator,
+          subject:'OpenGames · '+title,
+          messageId:`<feedback-${request.id}@${publicOrigin?new URL(publicOrigin).hostname:'opengames.local'}>`,
+          text:[`Новая заявка: ${title}`,`Номер: ${request.id}`,link||'Откройте раздел «Обратная связь» в админ-панели.'].join('\n')
+        });
+        sent=result.accepted.length>0;
+      }catch{}
+      feedback.markRequestEmail(request.id,request.attempts,sent);
+    }
+  }catch{
+    console.error('Не удалось обработать очередь почты по обращениям');
+  }finally{
+    sendingFeedbackEmails=false;
+  }
+}
+if(smtp){
+  setInterval(()=>void notifyFeedbackAdministrator(),30_000).unref();
+  void notifyFeedbackAdministrator();
+}
 const json = (value: unknown) => JSON.stringify(value);
 const noIndexHeaders={'X-Robots-Tag':'noindex, nofollow, noarchive, nosnippet','Cache-Control':'no-store'};
 const legalDocs=new Map(LEGAL_DOCUMENTS.map(doc=>[doc.route,doc]));
@@ -492,6 +527,26 @@ const server = createServer(async (req, res) => {
     if (req.method === 'PUT' && ['/api/auth/profile','/api/auth/provider-key','/api/auth/provider-model','/api/auth/ai-source'].includes(url.pathname)) { const userId=authId(req); if (!userId) return send(res,401,{error:'Требуется вход'}); const data=await body(req); const user=url.pathname.endsWith('/profile')?accounts.updateProfile(userId,data.displayName):url.pathname.endsWith('/provider-model')?accounts.setProviderModel(userId,data.provider,data.model):url.pathname.endsWith('/ai-source')?accounts.setAiSource(userId,data.source):accounts.setProviderKey(userId,data.provider,data.key,data.model);return send(res,200,{user}); }
     if (req.method === 'GET' && url.pathname === '/api/games/popular') return send(res, 200, runtime.listPopularGames());
     if (req.method === 'GET' && url.pathname === '/api/games') return send(res, 200, runtime.listGames());
+    if(url.pathname==='/api/feedback/requests'&&(req.method==='GET'||req.method==='POST')){
+      const ownerId=authId(req);
+      if(!ownerId)return send(res,401,{error:'Требуется вход'},privateFeedback);
+      if(req.method==='GET')return send(res,200,feedbackRequestDays,privateFeedback);
+      if(req.headers['x-storage-consent']!=='accepted')return send(res,403,{error:'Требуется согласие на хранение данных'},privateFeedback);
+      const data=await body(req),type=data?.type as FeedbackRequestType;
+      if(!feedbackRequestTypes.includes(type))return send(res,400,{error:'Выберите тип заявления'},privateFeedback);
+      if(type==='account_deletion'&&data.confirm!==true)return send(res,400,{error:'Подтвердите запрос на удаление'},privateFeedback);
+      let paymentId:string|undefined;
+      if(type!=='account_deletion'&&data.paymentId){
+        if(typeof data.paymentId!=='string'||!billing.paymentForUser(data.paymentId,ownerId)){
+          return send(res,400,{error:'Платёж не найден в вашем аккаунте'},privateFeedback);
+        }
+        paymentId=data.paymentId;
+      }
+      const text=type==='account_deletion'&&typeof data.text==='string'&&!data.text.trim()?'Прошу удалить аккаунт и связанные персональные данные.':data.text;
+      const ticket=feedback.createRequest(ownerId,type,text,paymentId);
+      void notifyFeedbackAdministrator();
+      return send(res,201,ticket,privateFeedback);
+    }
     const playerFeedback = url.pathname.match(/^\/api\/feedback(?:\/([0-9a-f-]{36}))?$/);
     if (playerFeedback) {
       const ownerId = authId(req), id = playerFeedback[1];

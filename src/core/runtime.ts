@@ -197,7 +197,7 @@ export class GameRuntime {
         next = engine.apply(session, action, result.events, result.narrative, result.stateMutation, 8000);
       }
       if (!result || !next) throw new Error('Не удалось согласовать состояние с правилами мира');
-      Object.assign(next.turns.at(-1)!, { source: result.source, stateMutation: result.stateMutation || [] });
+      Object.assign(next.turns.at(-1)!, { source: result.source, model: result.model, stateMutation: result.stateMutation || [] });
       next.suggestions = distinctOptions(game, session, result.suggestions, action, languageOf(action));
       next.suggestionLanguage = action.language || 'ru';
       options?.signal?.throwIfAborted();

@@ -1,4 +1,4 @@
-const $=s=>document.querySelector(s), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const tabs=['overview','games','coauthors','models','users','sessions','audit','billing','shared','oauth','legal','infrastructure'];
+const $=s=>document.querySelector(s), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const tabs=['overview','games','coauthors','models','users','sessions','feedback','audit','billing','shared','oauth','legal','infrastructure'];
 let tab=tabs.includes(location.hash.slice(1))?location.hash.slice(1):'overview',themeMode=localStorage.getItem('opengame-theme')||'auto';
 if(['localhost','127.0.0.1','::1'].includes(location.hostname)){let notice=document.createElement('aside');notice.className='environment-warning';notice.innerHTML='Вы работаете с <b>локальной базой</b>. Изменения здесь не попадут на VDS. <a href="https://opengames.duckdns.org/admin">Открыть портал VDS</a>';document.querySelector('main').prepend(notice)}
 function setTheme(){let h=new Date().getHours(),time=themeMode==='auto'?(h>=8&&h<20?'day':'night'):themeMode;document.body.dataset.time=time;$('#themeIcon').textContent=themeMode==='auto'?'A':time==='day'?'☀':'☾';$('#themeIndicator').title='Тема: '+(themeMode==='auto'?'авто':time==='day'?'день':'ночь')+' · нажмите, чтобы сменить';$('#themeIndicator').setAttribute('aria-label',$('#themeIndicator').title)}
@@ -36,6 +36,77 @@ function table(columns,rows){if(!rows.length)return empty('Пока нет да�
   return '<div class="table-wrap"><table class="table"><thead><tr>'+columns.map(c=>'<th'+(c.num?' class="num"':'')+'>'+esc(c.title)+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+columns.map((c,i)=>'<td'+(c.num?' class="num"':'')+(c.actions?' class="actions"':'')+'>'+(c.render?c.render(row,i,row):esc(row[i]??''))+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>'}
 function card(title,body,actions){return '<section class="admin-card">'+(title?'<div class="card-head"><h2>'+esc(title)+'</h2><div class="spacer"></div>'+(actions||'')+'</div>':'')+body+'</section>'}
 function cardList(title,rows,actions){return card(title,rows.length?rows.join(''):empty('Пока нет данных'),actions)}
+const feedbackStatus={open:'Открыто',answered:'Есть ответ',closed:'Закрыто'};
+const feedbackKind={issue:'Проблема',rating:'Оценка'};
+const feedbackQuery={status:'',kind:'',gameId:'',offset:0,limit:20};
+const feedbackDate=value=>new Date(value).toLocaleString('ru');
+async function feedbackPage(){
+  const {items,nextOffset}=await api('/api/admin/feedback?'+new URLSearchParams(feedbackQuery));
+  if(tab!=='feedback')return;
+  const options=(values,selected)=>Object.entries(values).map(([key,label])=>'<option value="'+esc(key)+'" '+(key===selected?'selected':'')+'>'+esc(label)+'</option>').join('');
+  const filters='<form id="feedbackFilters" class="controls">'+
+    '<label>Тип<select name="kind">'+options({'':'Все',...feedbackKind},feedbackQuery.kind)+'</select></label>'+
+    '<label>Статус<select name="status">'+options({'':'Все',...feedbackStatus},feedbackQuery.status)+'</select></label>'+
+    '<label>ID сценария<input name="gameId" maxlength="80" value="'+esc(feedbackQuery.gameId)+'"></label><button type="submit">Применить</button></form>';
+  const rows=items.length?table([
+    {title:'Тип',render:r=>esc(feedbackKind[r.kind])+(r.rating?' · '+r.rating+'/5':'')},
+    {title:'Сценарий / ход',render:r=>esc(r.gameId)+(r.turnIndex?' · #'+r.turnIndex:'')},
+    {title:'Статус',render:r=>pill(feedbackStatus[r.status])},
+    {title:'Обновлено',render:r=>esc(feedbackDate(r.updatedAt))},
+    {title:'',render:r=>'<button type="button" data-feedback-open="'+esc(r.id)+'">Открыть</button>'}
+  ],items):empty('Обращений нет');
+  draw('Обратная связь',filters+rows+'<div class="toolbar">'+
+    (feedbackQuery.offset?'<button type="button" data-feedback-page="'+Math.max(0,feedbackQuery.offset-feedbackQuery.limit)+'">← Назад</button>':'')+
+    (nextOffset!=null?'<button type="button" data-feedback-page="'+nextOffset+'">Дальше →</button>':'')+'</div>');
+  const report=error=>toast(error.message,'error');
+  $('#feedbackFilters').onsubmit=event=>{
+    event.preventDefault();
+    const fields=new FormData(event.currentTarget);
+    Object.assign(feedbackQuery,Object.fromEntries(fields),{offset:0});
+    feedbackPage().catch(report);
+  };
+  for(const button of document.querySelectorAll('[data-feedback-page]'))button.onclick=()=>{
+    feedbackQuery.offset=Number(button.dataset.feedbackPage);feedbackPage().catch(report);
+  };
+  for(const button of document.querySelectorAll('[data-feedback-open]'))button.onclick=()=>feedbackTicket(button.dataset.feedbackOpen).catch(report);
+}
+async function feedbackTicket(id){
+  const endpoint='/api/admin/feedback/'+id, ticket=await api(endpoint);
+  if(tab!=='feedback')return;
+  const {context}=ticket;
+  const fields=[
+    ['Игрок',ticket.ownerId],['Сценарий',context.gameId],['Версия пакета',context.gameVersion],
+    ['Сессия',context.sessionId],['Ход',context.turnIndex],['Режим',context.source],
+    ['Модель',context.model],['Действие',context.action],['Ответ сценариста',context.narrative],['Ошибка',context.error]
+  ];
+  draw(feedbackKind[ticket.kind]+(ticket.rating?' · '+ticket.rating+'/5':''),
+    '<button type="button" class="text-button" id="feedbackBack">← Все обращения</button>'+
+    ' '+pill(feedbackStatus[ticket.status])+
+    '<dl class="admin-feedback-context">'+fields.filter(([,value])=>value!=null).map(([label,value])=>'<dt>'+esc(label)+'</dt><dd>'+esc(value)+'</dd>').join('')+'</dl>'+
+    '<div class="feedback-messages">'+ticket.messages.map(item=>'<div><strong>'+(item.author==='admin'?'Администратор':'Игрок')+'</strong> · <small>'+esc(feedbackDate(item.createdAt))+'</small><p>'+esc(item.text)+'</p></div>').join('')+'</div>'+
+    (ticket.status==='closed'?'':'<form id="feedbackReply" class="feedback-form"><label>Ответ игроку<textarea name="text" rows="3" maxlength="2000" required></textarea></label><button type="submit" class="primary">Отправить</button></form>')+
+    '<div class="toolbar"><button type="button" id="feedbackChangeStatus">'+(ticket.status==='closed'?'Открыть снова':'Закрыть обращение')+'</button>'+
+    '<button type="button" id="feedbackExport">Скачать JSON</button></div>');
+  const report=error=>toast(error.message,'error');
+  const submit=async (control,method,body)=>{
+    control.disabled=true;
+    try{await api(endpoint,{method,body:JSON.stringify(body)});toast('Изменения сохранены');await feedbackTicket(id)}
+    catch(error){report(error)}
+    finally{control.disabled=false}
+  };
+  $('#feedbackBack').onclick=()=>feedbackPage().catch(report);
+  $('#feedbackChangeStatus').onclick=event=>submit(event.currentTarget,'PUT',{status:ticket.status==='closed'?'open':'closed'});
+  const reply=$('#feedbackReply');
+  if(reply)reply.onsubmit=event=>{
+    event.preventDefault();
+    submit(reply.querySelector('button'),'POST',{text:new FormData(reply).get('text')});
+  };
+  $('#feedbackExport').onclick=()=>{
+    const link=document.createElement('a');
+    link.href=URL.createObjectURL(new Blob([JSON.stringify(ticket,null,2)],{type:'application/json'}));
+    link.download='feedback-'+id+'.json';link.click();setTimeout(()=>URL.revokeObjectURL(link.href),1000);
+  };
+}
 async function oauthSettings(){
   const providers=await api('/api/admin/oauth');
   if(tab!=='oauth')return;
@@ -88,7 +159,7 @@ async function modelLimits(){
     }catch(error){toast(error.message,'error');for(const control of form.elements)control.disabled=false}
   };
 }
-async function load(){document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));try{switch(tab){case'oauth':await oauthSettings();break;case'models':await modelLimits();break;case'overview':{let d=await api('/api/admin/overview');$('#identity').textContent='Администратор';draw('Состояние платформы','<div class="stats">'+Object.entries({Пользователи:d.users,Игры:d.games,Сессии:d.sessions,Ходы:d.turns,Провайдер:d.provider,Состояние:d.health}).map(([k,v])=>'<div class="stat"><span>'+k+'</span><b>'+esc(v)+'</b></div>').join('')+'</div><p class="muted">Обновлено: '+esc(d.updatedAt)+'</p>');break}case'games':{let [games,stats]=await Promise.all([api('/api/admin/packages'),api('/api/admin/packages/popular')]);draw('Каталог игр','<div class="toolbar"><input id="q" placeholder="Поиск по названию или ID"></div><div id="rows"></div><div id="editor" class="hidden"><p id="gameDiff" class="muted"></p><textarea id="package"></textarea><input id="reason" placeholder="Причина изменения"><button class="primary" id="save">Проверить и сохранить</button></div>');let render=()=>$('#rows').innerHTML=games.filter(g=>(g.manifest.title+' '+g.manifest.id).toLowerCase().includes($('#q').value.toLowerCase())).map(g=>{let m=stats.find(s=>s.gameId===g.manifest.id)||{};return '<div class="row"><span><b>'+esc(g.manifest.title)+'</b><br><small class="muted">'+esc(g.manifest.id)+' · '+esc(g.manifest.version)+'</small></span><span class="tag">'+(m.sessions||0)+' сессий · '+(m.turns||0)+' ходов</span><span class="tag">'+(g.published?'Опубликована':'Снята с публикации')+'</span><button data-publication="'+esc(g.manifest.id)+'">'+(g.published?'Снять с публикации':'Опубликовать')+'</button><button data-id="'+esc(g.manifest.id)+'">Редактировать</button></div>'}).join('');$('#q').oninput=render;render();$('#rows').onclick=async e=>{let b=e.target.closest('button');if(!b)return;if(b.dataset.publication){let g=games.find(x=>x.manifest.id===b.dataset.publication),answer=await dialog({title:(g.published?'Снять с публикации':'Опубликовать')+' · '+g.manifest.title,text:g.published?'Игра исчезнет из каталога для игроков.':'Игра появится в каталоге для игроков.',reason:true,reasonLabel:'Причина',confirmLabel:g.published?'Снять':'Опубликовать',danger:g.published});if(!answer.ok)return;b.disabled=true;try{await api('/api/admin/packages/'+encodeURIComponent(g.manifest.id)+'/publication',{method:'PATCH',body:JSON.stringify({published:!g.published,reason:answer.reason})});await load()}catch(x){toast(x.message,'crit');b.disabled=false}return}let id=b.dataset.id;if(!id)return;let g=games.find(x=>x.manifest.id===id);$('#rows').classList.add('hidden');$('#editor').classList.remove('hidden');$('#package').value=JSON.stringify(g.package,null,2);$('#package').oninput=()=>{try{let n=JSON.parse($('#package').value);$('#gameDiff').textContent='Версия: '+g.manifest.version+' → '+(n.manifest?.version||'ошибка')+' · '+(JSON.stringify(g.package)!==JSON.stringify(n)?'Есть изменения':'Без изменений')}catch{$('#gameDiff').textContent='JSON некорректен'}};$('#save').onclick=async()=>{try{let reason=$('#reason').value;if(!reason)throw Error('Укажите причину');await api('/api/admin/packages/'+id,{method:'PUT',body:JSON.stringify({package:JSON.parse($('#package').value),reason})});load()}catch(x){toast(x.message,'crit')}}};break}case'users':{let list=await api('/api/admin/users');draw('Пользователи','<p class="admin-hint">Поиск по email или идентификатору. Блокировка закрывает вход, начисление добавляет ходы сверх суточного лимита.</p><div class="toolbar"><input id="q" placeholder="Поиск: email или ID"></div><div id="rows"></div>');
+async function load(){document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));try{switch(tab){case'feedback':await feedbackPage();break;case'oauth':await oauthSettings();break;case'models':await modelLimits();break;case'overview':{let d=await api('/api/admin/overview');$('#identity').textContent='Администратор';draw('Состояние платформы','<div class="stats">'+Object.entries({Пользователи:d.users,Игры:d.games,Сессии:d.sessions,Ходы:d.turns,Провайдер:d.provider,Состояние:d.health}).map(([k,v])=>'<div class="stat"><span>'+k+'</span><b>'+esc(v)+'</b></div>').join('')+'</div><p class="muted">Обновлено: '+esc(d.updatedAt)+'</p>');break}case'games':{let [games,stats]=await Promise.all([api('/api/admin/packages'),api('/api/admin/packages/popular')]);draw('Каталог игр','<div class="toolbar"><input id="q" placeholder="Поиск по названию или ID"></div><div id="rows"></div><div id="editor" class="hidden"><p id="gameDiff" class="muted"></p><textarea id="package"></textarea><input id="reason" placeholder="Причина изменения"><button class="primary" id="save">Проверить и сохранить</button></div>');let render=()=>$('#rows').innerHTML=games.filter(g=>(g.manifest.title+' '+g.manifest.id).toLowerCase().includes($('#q').value.toLowerCase())).map(g=>{let m=stats.find(s=>s.gameId===g.manifest.id)||{};return '<div class="row"><span><b>'+esc(g.manifest.title)+'</b><br><small class="muted">'+esc(g.manifest.id)+' · '+esc(g.manifest.version)+'</small></span><span class="tag">'+(m.sessions||0)+' сессий · '+(m.turns||0)+' ходов</span><span class="tag">'+(g.published?'Опубликована':'Снята с публикации')+'</span><button data-publication="'+esc(g.manifest.id)+'">'+(g.published?'Снять с публикации':'Опубликовать')+'</button><button data-id="'+esc(g.manifest.id)+'">Редактировать</button></div>'}).join('');$('#q').oninput=render;render();$('#rows').onclick=async e=>{let b=e.target.closest('button');if(!b)return;if(b.dataset.publication){let g=games.find(x=>x.manifest.id===b.dataset.publication),answer=await dialog({title:(g.published?'Снять с публикации':'Опубликовать')+' · '+g.manifest.title,text:g.published?'Игра исчезнет из каталога для игроков.':'Игра появится в каталоге для игроков.',reason:true,reasonLabel:'Причина',confirmLabel:g.published?'Снять':'Опубликовать',danger:g.published});if(!answer.ok)return;b.disabled=true;try{await api('/api/admin/packages/'+encodeURIComponent(g.manifest.id)+'/publication',{method:'PATCH',body:JSON.stringify({published:!g.published,reason:answer.reason})});await load()}catch(x){toast(x.message,'crit');b.disabled=false}return}let id=b.dataset.id;if(!id)return;let g=games.find(x=>x.manifest.id===id);$('#rows').classList.add('hidden');$('#editor').classList.remove('hidden');$('#package').value=JSON.stringify(g.package,null,2);$('#package').oninput=()=>{try{let n=JSON.parse($('#package').value);$('#gameDiff').textContent='Версия: '+g.manifest.version+' → '+(n.manifest?.version||'ошибка')+' · '+(JSON.stringify(g.package)!==JSON.stringify(n)?'Есть изменения':'Без изменений')}catch{$('#gameDiff').textContent='JSON некорректен'}};$('#save').onclick=async()=>{try{let reason=$('#reason').value;if(!reason)throw Error('Укажите причину');await api('/api/admin/packages/'+id,{method:'PUT',body:JSON.stringify({package:JSON.parse($('#package').value),reason})});load()}catch(x){toast(x.message,'crit')}}};break}case'users':{let list=await api('/api/admin/users');draw('Пользователи','<p class="admin-hint">Поиск по email или идентификатору. Блокировка закрывает вход, начисление добавляет ходы сверх суточного лимита.</p><div class="toolbar"><input id="q" placeholder="Поиск: email или ID"></div><div id="rows"></div>');
 let render=()=>{let rows=list.filter(u=>(u.email+u.id).toLowerCase().includes($('#q').value.toLowerCase()));
   $('#rows').innerHTML=table([{title:'Пользователь',render:u=>'<span class="strong">'+esc(u.email)+'</span><br><small>'+esc(u.id)+'</small>'},
     {title:'Роль',render:u=>pill(u.role==='admin'?'администратор':'игрок',u.role==='admin'?'info':'')},

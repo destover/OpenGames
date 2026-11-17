@@ -21,7 +21,7 @@ export type StateMutationProposal =
   | { op: 'increment'; path: string; amount: number }
   | { op: 'append'; path: string; value: Json }
   | { op: 'remove'; path: string; value: Json };
-export interface TurnRecord { index: number; action: Action; events: Event[]; narrative: string; at: string; location?: string; source?: string; stateMutation?: StateMutationProposal[] }
+export interface TurnRecord { index: number; action: Action; events: Event[]; narrative: string; at: string; location?: string; source?: string; model?: string; stateMutation?: StateMutationProposal[] }
 export interface Session {
   id: string; gameId: string; ownerId?: string; packageVersion: string; schemaVersion: string;
   suggestions?: Action[]; suggestionLanguage?: string; state: Record<string, Json>; turns: TurnRecord[]; createdAt: string; updatedAt: string;

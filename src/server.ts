@@ -10,6 +10,8 @@ import nodemailer from 'nodemailer';
 import { GameRuntime } from './core/runtime.ts';
 import { type AIProvider, RemoteAIProvider, AnthropicProvider, FallbackAIProvider, LocalAIProvider, OllamaAIProvider, OpenAIProvider, OpenRouterProvider } from './core/ai.ts';
 import { modelInfo, pilotModel, playerProfileLimits, type GenerationSettings } from './core/generation.ts';
+import { FeedbackStore, feedbackKinds, feedbackStatuses, type FeedbackFilter } from './core/feedback.ts';
+import { feedbackMcpAuthorized, serveFeedbackMcp } from './core/feedback-mcp.ts';
 import { ModelUsageStore } from './core/model-usage.ts';
 import { OAuthLogin, type OAuthProvider } from './core/oauth.ts';
 import { AccountStore, DailyLimitError } from './core/accounts.ts';
@@ -133,6 +135,20 @@ function generationSettings(userId: string, value: any): GenerationSettings {
 }
 accounts.initializeAdmin(process.env.OPENGAME_ADMIN_EMAIL);
 const adminData=join(root,'..','data','admin');mkdirSync(adminData,{recursive:true,mode:0o700});const adminAudit=join(adminData,'audit.jsonl');
+const feedback = new FeedbackStore(join(root,'..','data','feedback.sqlite'));
+const privateFeedback = {'Cache-Control':'no-store'};
+function feedbackFilters(query: URLSearchParams): FeedbackFilter {
+  const status = query.get('status') as FeedbackFilter['status'] ?? undefined;
+  const kind = query.get('kind') as FeedbackFilter['kind'] ?? undefined;
+  const gameId = query.get('gameId') || undefined;
+  const number = (name: string, fallback: number, max: number) => {
+    const value = Number(query.get(name) ?? fallback);
+    return Number.isSafeInteger(value) && value>=0 ? Math.min(value,max) : fallback;
+  };
+  return {status:status && feedbackStatuses.includes(status)?status:undefined,
+    kind:kind && feedbackKinds.includes(kind)?kind:undefined,
+    gameId:gameId?.slice(0,80),offset:number('offset',0,1_000_000),limit:number('limit',20,100)};
+}
 const coauthorUsage=new CoauthorUsageStore(join(root,'..','data','coauthor-usage.sqlite'));
 const billing=new BillingStore(join(root,'..','data','billing.sqlite'));
 const sharedKeys=new SharedKeyStore(join(root,'..','data','shared-keys.sqlite'));
@@ -174,6 +190,14 @@ function send(res: import('node:http').ServerResponse, status: number, value: un
 const server = createServer(async (req, res) => {
   try {
     const url = new URL(req.url || '/', 'http://localhost');
+    if (url.pathname === '/mcp/feedback') {
+      if (req.headers.origin && req.headers.origin !== publicOrigin) return send(res,403,{error:'Origin forbidden'},privateFeedback);
+      if (!feedbackMcpAuthorized(req.headers.authorization)) {
+        return send(res,401,{error:'Bearer token required'},{...privateFeedback,'WWW-Authenticate':'Bearer'});
+      }
+      res.setHeader('Cache-Control','no-store');
+      return await serveFeedbackMcp(feedback,req,res,req.method==='POST'?await body(req):undefined);
+    }
     if(req.method==='GET'&&url.pathname==='/admin'){const actor=authId(req);if(!actor)return send(res,401,{error:'Требуется вход'});if(!accounts.isAdmin(actor))return send(res,403,{error:'Недостаточно прав'});const html=await readFile(join(root,'..','web','admin.html'));res.writeHead(200,{...securityHeaders,'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store'});res.end(html);return}
     if(req.method==='GET'&&url.pathname==='/admin.js'){const data=await readFile(join(root,'..','web','admin.js'));res.writeHead(200,{...securityHeaders,'Content-Type':'text/javascript; charset=utf-8','Cache-Control':'no-store'});res.end(data);return}
     if(req.method==='GET'&&url.pathname==='/admin.css'){const data=await readFile(join(root,'..','web','admin.css'));res.writeHead(200,{...securityHeaders,'Content-Type':'text/css; charset=utf-8','Cache-Control':'no-store'});res.end(data);return}
@@ -197,6 +221,24 @@ const server = createServer(async (req, res) => {
       return send(res,200,{ok:true,...result})}
     if(url.pathname.startsWith('/api/admin/')){const actor=authId(req);if(!actor)return send(res,401,{error:'Требуется вход'});if(!accounts.isAdmin(actor))return send(res,403,{error:'Недостаточно прав'});if(!['GET','HEAD'].includes(req.method||'')&&req.headers['x-admin-confirm']!=='confirmed')return send(res,403,{error:'Требуется подтверждение действия'});
       if(req.method==='GET'&&url.pathname==='/api/admin/overview')return send(res,200,{...accounts.adminSummary(),games:runtime.listGames().length,sessions:runtime.adminSessions().length,turns:runtime.adminSessions().reduce((n,s)=>n+s.turns.length,0),provider:aiMode,health:'ok',updatedAt:new Date().toISOString()});
+      if (req.method === 'GET' && url.pathname === '/api/admin/feedback') {
+        return send(res,200,feedback.list(feedbackFilters(url.searchParams)),privateFeedback);
+      }
+      const adminFeedback = url.pathname.match(/^\/api\/admin\/feedback\/([0-9a-f-]{36})$/);
+      if (adminFeedback) {
+        const id = adminFeedback[1];
+        if (req.method==='GET') return send(res,200,feedback.get(id),privateFeedback);
+        if (req.method==='POST') {
+          const ticket = feedback.reply(id,(await body(req)).text);
+          audit(actor,'feedback.reply',id);
+          return send(res,200,ticket,privateFeedback);
+        }
+        if (req.method==='PUT') {
+          const ticket = feedback.setStatus(id,(await body(req)).status);
+          audit(actor,'feedback.status',id,{status:ticket.status});
+          return send(res,200,ticket,privateFeedback);
+        }
+      }
       if (req.method === 'GET' && url.pathname === '/api/admin/oauth') {
         return send(res,200,oauth.adminView(),{'Cache-Control':'no-store'});
       }
@@ -379,6 +421,35 @@ const server = createServer(async (req, res) => {
     if (req.method === 'PUT' && ['/api/auth/profile','/api/auth/provider-key','/api/auth/provider-model','/api/auth/ai-source'].includes(url.pathname)) { const userId=authId(req); if (!userId) return send(res,401,{error:'Требуется вход'}); const data=await body(req); const user=url.pathname.endsWith('/profile')?accounts.updateProfile(userId,data.displayName):url.pathname.endsWith('/provider-model')?accounts.setProviderModel(userId,data.provider,data.model):url.pathname.endsWith('/ai-source')?accounts.setAiSource(userId,data.source):accounts.setProviderKey(userId,data.provider,data.key,data.model);return send(res,200,{user}); }
     if (req.method === 'GET' && url.pathname === '/api/games/popular') return send(res, 200, runtime.listPopularGames());
     if (req.method === 'GET' && url.pathname === '/api/games') return send(res, 200, runtime.listGames());
+    const playerFeedback = url.pathname.match(/^\/api\/feedback(?:\/([0-9a-f-]{36}))?$/);
+    if (playerFeedback) {
+      const ownerId = authId(req), id = playerFeedback[1];
+      if (!ownerId) return send(res,401,{error:'Требуется вход'},privateFeedback);
+      if (req.method==='GET') {
+        return send(res,200,id?feedback.get(id,ownerId):feedback.list(feedbackFilters(url.searchParams),ownerId),privateFeedback);
+      }
+      if (req.method==='POST') {
+        if (req.headers['x-storage-consent']!=='accepted') return send(res,403,{error:'Требуется согласие на хранение данных'},privateFeedback);
+        const data = await body(req);
+        if (!data || typeof data!=='object') return send(res,400,{error:'Некорректное обращение'},privateFeedback);
+        if (id) return send(res,200,feedback.reply(id,data.text,ownerId),privateFeedback);
+        if (typeof data.sessionId!=='string' || !feedbackKinds.includes(data.kind)) {
+          return send(res,400,{error:'Укажите игру и тип обращения'},privateFeedback);
+        }
+        let session;
+        try { session = runtime.get(data.sessionId,ownerId); }
+        catch { return send(res,404,{error:'Сессия не найдена'},privateFeedback); }
+        const turn = data.turnIndex == null ? undefined : session.turns.find(turn=>turn.index===data.turnIndex);
+        if (data.turnIndex != null && !turn) return send(res,400,{error:'Ход не найден'},privateFeedback);
+        const context = {
+          sessionId:session.id,gameId:session.gameId,gameVersion:session.packageVersion,turnIndex:turn?.index,
+          source:turn?.source,model:turn?.model,action:turn?.action.text?.slice(0,1000) || turn?.action.type,
+          narrative:turn?.narrative.slice(0,4000),
+          error:data.kind==='issue' && typeof data.error==='string' ? data.error.slice(0,500) : undefined
+        };
+        return send(res,201,feedback.create(ownerId,context,data.kind,data.kind==='rating'?data.rating:data.text),privateFeedback);
+      }
+    }
     if (url.pathname.startsWith('/api/sessions') && !authId(req)) return send(res,401,{error:'Требуется вход'});
     if (url.pathname.startsWith('/api/sessions') && (req.method === 'POST' || req.method === 'PUT') && req.headers['x-storage-consent'] !== 'accepted') return send(res,403,{error:'Требуется согласие на хранение данных'});
     if (req.method === 'GET' && url.pathname === '/api/sessions') return send(res, 200, runtime.listSessions(authId(req)));

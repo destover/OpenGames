@@ -61,3 +61,18 @@ body[data-time='day'].game-page #actionForm input{background:#f3f7fd;color:#1823
 
 #actionOptions{background:var(--surface);border-color:var(--line);color:var(--ink)}
 #actions{margin-top:8px}
+#gameFeedback{margin-top:12px}
+.feedback-dialog{width:min(560px,calc(100% - 24px));max-height:calc(100dvh - 24px);padding:20px;border:1px solid var(--line);border-radius:16px;background:var(--surface);color:var(--ink)}
+.feedback-dialog::backdrop{background:#0008}
+.feedback-dialog header{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.feedback-dialog h2,.feedback-dialog h3{margin:0}
+.feedback-form,.feedback-list,.feedback-messages{display:grid;gap:10px;margin:14px 0}
+.feedback-form label{display:grid;gap:4px}
+.feedback-form .feedback-check{display:flex;align-items:center;gap:6px}
+.feedback-form textarea,.feedback-form select,.feedback-list button{width:100%;background:var(--surface-soft);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:8px}
+.feedback-form textarea{resize:vertical}
+.feedback-form>button{justify-self:start}
+.feedback-list button{text-align:left}
+.feedback-messages p{white-space:pre-wrap;overflow-wrap:anywhere;margin:4px 0}
+.feedback-status{margin-bottom:0}
+.feedback-status:empty{display:none}

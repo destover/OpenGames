@@ -4,7 +4,7 @@ import { direction, generationInput, modelInfo, narrativePreview, responseLines,
 import { selectDistinctOptions } from './similarity.ts';
 import type { Action, Event, GamePackage, Session, StateMutationProposal } from './types.ts';
 
-export interface AIResult { narrative: string; suggestions: Action[]; events: Event[]; stateMutation: StateMutationProposal[]; source?: string; usage?: TokenUsage }
+export interface AIResult { narrative: string; suggestions: Action[]; events: Event[]; stateMutation: StateMutationProposal[]; source?: string; model?: string; usage?: TokenUsage }
 export interface TokenUsage { promptTokens: number; completionTokens: number; costUsd?: number }
 export interface AIRequestOptions { signal?: AbortSignal; deadline?: number; generation?: GenerationSettings; onNarrative?: (text: string) => void; beginRequest?: () => (usage?: TokenUsage) => void }
 export interface AIProvider { generate(game: GamePackage, session: Session, action: Action, correction?: string, options?: AIRequestOptions): Promise<AIResult> }
@@ -68,7 +68,7 @@ export class OllamaAIProvider implements AIProvider {
       data = await response.json();
       content = data.message?.content;
     }
-    return { ...parseResult(parseContent(content),game,action,'ollama',session),
+    return { ...parseResult(parseContent(content),game,action,'ollama',session), model:this.model,
       usage: readUsage(data, 'prompt_eval_count', 'eval_count') };
   }
 }
@@ -155,7 +155,7 @@ export class RemoteAIProvider implements AIProvider {
         }
         const result = parseResult(parseContent(content),game,action,this.provider,session);
         cooldowns.delete(id);
-        return { ...result, usage };
+        return { ...result, model:this.model, usage };
       } catch(error) {
         if(options?.signal?.aborted || shown)throw error;
         lastError=error instanceof Error&&['TimeoutError','AbortError'].includes(error.name)?'AI-сценарист отвечает слишком долго. Повторите действие.':error instanceof Error?error.message:'Ошибка подключения к AI-сценаристу';

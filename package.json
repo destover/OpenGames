@@ -10,8 +10,10 @@
     "compare-models": "node scripts/compare-models.mjs"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.2",
     "nodemailer": "^10.0.10",
-    "ws": "^8.21.3"
+    "ws": "^8.21.3",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@types/node": "^22.20.4",

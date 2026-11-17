@@ -53,7 +53,7 @@ export class DonorAIProvider implements AIProvider {
         content = data.choices?.[0]?.message?.content;
         usage = tokenUsage(data.usage);
       }
-      return { ...parseResult(JSON.parse(content),game,action,'donor',session), usage };
+      return { ...parseResult(JSON.parse(content),game,action,'donor',session), model:this.node.model, usage };
     } catch (error) {
       if (options?.signal?.aborted) throw error;
       throw new DonorUnavailableError('Сценарист вернул неполный или некорректный ответ. Повторите ход.');

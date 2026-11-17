@@ -33,7 +33,7 @@ function renderPopular(){let host=$('popularCarousel'),ranked=(popular.length?po
 function renderCatalog(){note('');renderPopular();$('loginButton').hidden=!!user;$('gameCount').textContent=String(games.length).padStart(2,'0');$('filters').replaceChildren();let cats=['all',...new Set(games.map(g=>g.manifest.id))];cats.forEach(id=>{let b=document.createElement('button');b.textContent=id==='all'?t('all'):loc(games.find(g=>g.manifest.id===id),'manifest','category');b.classList.toggle('active',category===id);b.disabled=!consent;b.onclick=()=>{category=id;renderCatalog()};$('filters').append(b)});$('games').replaceChildren();games.filter(g=>category==='all'||g.manifest.id===category).forEach(g=>{let saved=saves.find(s=>s.gameId===g.manifest.id),card=document.createElement('article');card.className='card';card.tabIndex=eligible()?0:-1;card.setAttribute('role','button');card.setAttribute('aria-disabled',String(!eligible()));card.style.setProperty('--image','url('+g.manifest.background+')');card.innerHTML='<div class="card-bg"></div><div class="card-shade"></div><div class="badges"><span class="pill">'+esc(loc(g,'manifest','category'))+'</span>'+(g.manifest.isNew&&!saved?'<span class="pill">'+t('new')+'</span>':'')+(saved?.completed?'<span class="pill">✓ '+t('completed')+'</span>':'')+'</div><h3>'+esc(loc(g,'manifest','title'))+'</h3><p>'+esc(loc(g,'manifest','description'))+'</p><small>'+t('version')+' '+esc(g.manifest.version)+(saved?' · '+t('turns')+': '+saved.turns:'')+'</small>';let openCard=()=>eligible()?go('/game/'+g.manifest.id):showGate();card.onclick=openCard;card.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openCard()}};$('games').append(card)})}
 function renderAuthPage(mode){let titles={login:'login',register:'register',forgot:'forgotTitle',reset:'resetTitle'},leads={login:'loginLead',register:'registerLead',forgot:'forgotLead',reset:'resetLead'};$('profilePage').classList.add('auth-page');$('profilePage').querySelector('.page-heading h1').textContent=t(titles[mode]);$('profilePage').querySelector('.page-heading p').textContent=t(leads[mode]);$('profilePage').querySelector('.profile-nav').hidden=true;$('profileIntro').textContent='';$('aiStatus').textContent='';$('productInfo').replaceChildren();if(mode==='forgot'){$('auth').innerHTML='<form id="resetRequestForm" class="controls auth-form"><label>'+t('email')+'<input id="authEmail" type="email" required autocomplete="email"></label><button>'+t('sendReset')+'</button><a class="auth-switch" href="#/auth/login">'+t('toLogin')+'</a></form>';$('resetRequestForm').onsubmit=requestPasswordReset;return}if(mode==='reset'){$('auth').innerHTML='<form id="passwordResetForm" class="controls auth-form"><label>'+t('newPassword')+'<input id="newPassword" type="password" minlength="8" required autocomplete="new-password"></label><label>'+t('confirmPassword')+'<input id="confirmPassword" type="password" minlength="8" required autocomplete="new-password"></label><button>'+t('resetPassword')+'</button></form>';$('passwordResetForm').onsubmit=finishPasswordReset;return}$('auth').innerHTML='<form id="loginForm" class="controls auth-form"><label>'+t('email')+'<input id="authEmail" type="email" required autocomplete="username"></label><label>'+t('password')+'<input id="authPassword" type="password" minlength="'+(mode==='register'?8:1)+'" required autocomplete="'+(mode==='register'?'new-password':'current-password')+'"></label><button>'+t(mode==='login'?'login':'register')+'</button>'+oauthButtons()+(mode==='login'?'<a class="auth-switch" href="#/auth/forgot">'+t('forgotPassword')+'</a>':'')+'<a class="auth-switch" href="#/auth/'+(mode==='login'?'register':'login')+'">'+t(mode==='login'?'toRegister':'toLogin')+'</a></form>';$('loginForm').onsubmit=e=>{e.preventDefault();auth(mode)}}
 function profileIntro(tab){return tab==='account'?t('profileLead'):tab==='writer'?t('writerLead'):tab==='donors'?t('donorsLead'):t('historyLead')}
-function renderProfile(tab){$('profilePage').classList.remove('auth-page');$('profilePage').querySelector('.profile-nav').hidden=false;$('profilePage').querySelector('.page-heading h1').textContent=t('navProfile');$('profilePage').querySelector('.page-heading p').textContent=t('profileLead');$('profileIntro').textContent=profileIntro(tab);document.querySelectorAll('.profile-nav a').forEach(a=>a.classList.toggle('active',a.dataset.page==='profile/'+tab));$('auth').replaceChildren();$('productInfo').replaceChildren();$('aiStatus').textContent='';if(tab==='donors')renderDonorDownloads();if(!consent){let message=document.createElement('p');message.textContent=t('needConsent');$('auth').append(message);return}if(!user){$('auth').insertAdjacentHTML('beforeend','<form id="loginForm" class="controls"><label>'+t('email')+'<input id="authEmail" type="email" required autocomplete="username"></label><label>'+t('password')+'<input id="authPassword" type="password" required autocomplete="current-password"></label><button>'+t('login')+'</button><button id="register" type="button">'+t('register')+'</button></form>');$('loginForm').onsubmit=e=>{e.preventDefault();auth('login')};$('register').onclick=()=>auth('register');return}if(tab==='account'){let form=document.createElement('form');form.className='controls';form.innerHTML='<label>'+t('name')+'<input id="displayName" maxlength="80" value="'+esc(user.displayName)+'"></label><button>'+t('saveProfile')+'</button><button id="logout" type="button">'+t('logout')+'</button>';form.onsubmit=saveProfile;$('auth').append(form);$('logout').onclick=logout;return}if(tab==='writer'){renderWriter();return}if(tab==='donors'){renderDonors();return}renderHistory()}
+function renderProfile(tab){$('profilePage').classList.remove('auth-page');$('profilePage').querySelector('.profile-nav').hidden=false;$('profilePage').querySelector('.page-heading h1').textContent=t('navProfile');$('profilePage').querySelector('.page-heading p').textContent=t('profileLead');$('profileIntro').textContent=profileIntro(tab);document.querySelectorAll('.profile-nav a').forEach(a=>a.classList.toggle('active',a.dataset.page==='profile/'+tab));$('auth').replaceChildren();$('productInfo').replaceChildren();$('aiStatus').textContent='';if(tab==='donors')renderDonorDownloads();if(!consent){let message=document.createElement('p');message.textContent=t('needConsent');$('auth').append(message);return}if(!user){$('auth').insertAdjacentHTML('beforeend','<form id="loginForm" class="controls"><label>'+t('email')+'<input id="authEmail" type="email" required autocomplete="username"></label><label>'+t('password')+'<input id="authPassword" type="password" required autocomplete="current-password"></label><button>'+t('login')+'</button><button id="register" type="button">'+t('register')+'</button></form>');$('loginForm').onsubmit=e=>{e.preventDefault();auth('login')};$('register').onclick=()=>auth('register');return}if(tab==='account'){let form=document.createElement('form');form.className='controls';form.innerHTML='<label>'+t('name')+'<input id="displayName" maxlength="80" value="'+esc(user.displayName)+'"></label><button>'+t('saveProfile')+'</button><button id="logout" type="button">'+t('logout')+'</button>';form.onsubmit=saveProfile;const feedbackButton=document.createElement('button');feedbackButton.type='button';feedbackButton.textContent=t('feedbackInbox');feedbackButton.onclick=()=>showFeedback();form.append(feedbackButton);$('auth').append(form);$('logout').onclick=logout;return}if(tab==='writer'){renderWriter();return}if(tab==='donors'){renderDonors();return}renderHistory()}
 async function renderDonorDownloads(){
   let box=$('auth'),section=document.createElement('section');section.className='donor-downloads';section.innerHTML='<div class="donor-download-heading"><h2>'+t('downloadTitle')+'</h2><p>'+t('downloadLead')+'</p></div><div class="donor-download-grid"></div>';box.append(section);
   let grid=section.querySelector('.donor-download-grid');
@@ -103,6 +103,76 @@ function inPrologue(){return !!session&&!session.turns.length&&openingScenes().l
 function renderOpening(){let scenes=openingScenes(),active=inPrologue(),progress=prologueProgress(),index=Math.min(Math.max(0,Number(progress.scene)||0),scenes.length-1),paragraphs=ps=>ps.map(p=>'<p>'+esc(p)+'</p>').join('');document.querySelector('.input-label').hidden=active;$('actionForm').hidden=active;$('log').classList.toggle('prologue-log',active);if(!scenes.length)return '';if(!active)return '<details class="opening opening-archive"><summary>'+t('prologue')+'</summary>'+paragraphs(scenes.flat())+'</details>';return '<section class="opening opening-scene" aria-label="'+t('prologue')+'"><header class="opening-heading"><span class="eyebrow">'+t('prologue')+'</span><span>'+t('prologueScene')+' '+(index+1)+' / '+scenes.length+'</span></header><div class="opening-progress" role="progressbar" aria-label="'+t('prologue')+'" aria-valuemin="0" aria-valuemax="'+scenes.length+'" aria-valuenow="'+(index+1)+'"><span style="width:'+((index+1)/scenes.length*100)+'%"></span></div><div class="opening-copy" aria-live="polite">'+paragraphs(scenes[index])+'</div><nav class="opening-controls" aria-label="'+t('prologueNavigation')+'"><button type="button" data-prologue="back" '+(!index?'disabled':'')+'>← '+t('prologueBack')+'</button><button type="button" class="opening-next" data-prologue="next">'+t(index===scenes.length-1?'prologueStart':'prologueContinue')+' →</button></nav></section>'}
 document.addEventListener('click',e=>{let button=e.target.closest('[data-prologue]');if(!button||!inPrologue())return;let progress=prologueProgress(),count=openingScenes().length,index=Math.min(Math.max(0,Number(progress.scene)||0),count-1);if(button.dataset.prologue==='back')index=Math.max(0,index-1);else if(index===count-1)progress.done=true;else index++;remember(prologueKey(),JSON.stringify({scene:index,done:progress.done}));renderGame();$('log').scrollTop=0;if(progress.done)$('actions button')?.focus();else document.querySelector('[data-prologue="next"]')?.focus()});
 function renderGame(animateLatest=false){if(!game||!session)return;document.body.style.setProperty('--game-background',"url('"+game.manifest.background+"')");$('title').textContent=loc(game,'manifest','title');$('description').textContent=loc(game,'manifest','description');$('version').textContent=t('version')+' '+game.manifest.version;$('infoTitle').textContent=t('info');let step=Number(session.state.goalProgress||0),next=game.goal?.actions?.[step],objective=game.goal?.description?.[lang]||game.goal?.label?.[lang]||'';$('goal').textContent=session.state.ended?t('done'):t('goal')+': '+objective+(game.goal?.actions? ' ('+step+'/'+game.goal.actions.length+')'+(next?' · '+t('next')+': '+actionName(next):''):'');$('historyNote').textContent=session.turns.some(x=>(x.action.language||'ru')!=='ru'&&lang==='ru'||(x.action.language||'ru')==='ru'&&lang==='en')?t('original'):'';$('log').innerHTML=renderOpening()+session.turns.map(turn=>'<div class="turn" data-turn="'+turn.index+'"><div class="you">'+esc(icon(turn.action))+' '+esc(turn.action.type==='free_text'?turn.action.text:actionName(turn.action.type))+'</div><div class="narrative">'+esc(turn.narrative)+'</div></div>').join('');if(animateLatest){$('log').lastElementChild?.classList.add('is-new');$('log').scrollTop=$('log').scrollHeight}let hidden=new Set(['ended','endedReason','lastEvent','goalProgress','location']);$('state').innerHTML=Object.entries(session.state).filter(([k])=>!hidden.has(k)).map(([k,v])=>{let label=k==='engagement'?t('engagement'):k==='pacing'?t('pace'):loc(game,'states',k);let value=k==='pacing'?(t(v)||v):k==='location'?(game.map?.locations?.[v]?.[lang]||v):Array.isArray(v)?v.map(x=>loc(game,'values',x)||x).join(', '):typeof v==='string'?(loc(game,'values',v)||v):v;return label?'<div><span>'+esc(label)+'</span><b>'+esc(value)+(k==='engagement'?'%':'')+'</b></div>':''}).join('');$('saveStatus').textContent=t('saved');renderMusic();renderActions();renderJourney();renderMap();setPending();resetIdle();showGameLimit()}
+function showFeedback(gameSession){
+  const dialog=document.createElement('dialog');
+  dialog.className='feedback-dialog';
+  dialog.setAttribute('aria-labelledby','feedbackTitle');
+  dialog.innerHTML='<header><h2 id="feedbackTitle">'+t('feedback')+'</h2><form method="dialog"><button class="text-button" aria-label="'+t('feedbackClose')+'">×</button></form></header>'+
+    '<div class="feedback-body"></div><p role="status" class="feedback-status"></p>';
+  document.body.append(dialog);
+  dialog.addEventListener('close',()=>dialog.remove(),{once:true});
+  const host=dialog.querySelector('.feedback-body'), status=dialog.querySelector('.feedback-status');
+  const message=(form,handler)=>form.onsubmit=async event=>{
+    event.preventDefault();
+    const submit=form.querySelector('[type=submit]');
+    submit.disabled=true;status.textContent='';
+    try{await handler(new FormData(form))}
+    catch(error){status.textContent=error.message}
+    finally{submit.disabled=false}
+  };
+  const label=ticket=>ticket.kind==='rating'?t('feedbackRating')+' '+ticket.rating+'/5':t('feedbackIssue');
+  const date=value=>new Date(value).toLocaleString(lang);
+  const gameTitle=id=>loc(games.find(entry=>entry.manifest.id===id),'manifest','title')||id;
+  async function openTicket(id){
+    const ticket=await api('/api/feedback/'+id);
+    if(!dialog.open)return;
+    host.innerHTML='<button type="button" class="text-button" data-feedback-back>← '+t('feedbackInbox')+'</button>'+
+      '<h3>'+esc(label(ticket))+' · '+esc(gameTitle(ticket.gameId))+'</h3><p class="muted">'+t('feedback_'+ticket.status)+'</p>'+
+      '<div class="feedback-messages">'+ticket.messages.map(item=>'<div><strong>'+t('feedback_'+item.author)+'</strong> · <small>'+esc(date(item.createdAt))+'</small><p>'+esc(item.text)+'</p></div>').join('')+'</div>'+
+      (ticket.status==='closed'?'':'<form class="feedback-form"><label>'+t('feedbackReply')+'<textarea name="text" rows="3" maxlength="2000" required></textarea></label><button type="submit">'+t('send')+'</button></form>');
+    host.querySelector('[data-feedback-back]').onclick=()=>showList().catch(error=>status.textContent=error.message);
+    const reply=host.querySelector('.feedback-form');
+    if(reply)message(reply,async fields=>{
+      await api('/api/feedback/'+id,{method:'POST',body:JSON.stringify({text:fields.get('text')})});
+      await openTicket(id);
+      status.textContent=t('feedbackSaved');
+    });
+  }
+  async function showList(offset=0){
+    const {items,nextOffset}=await api('/api/feedback?limit=10&offset='+offset);
+    if(!dialog.open)return;
+    status.textContent='';
+    const turns=gameSession?.turns||[], failed=failedTurn?.id===gameSession?.id?failedTurn:undefined;
+    const options=turns.slice().reverse().map(turn=>'<option value="'+turn.index+'">#'+turn.index+' · '+esc((turn.action.text||actionName(turn.action.type)).slice(0,80))+'</option>').join('');
+    const gameForms=!gameSession?'':(turns.length?'<form class="feedback-form" data-feedback-kind="rating"><h3>'+t('feedbackRate')+'</h3>'+
+      '<label>'+t('feedbackTurn')+'<select name="turnIndex">'+options+'</select></label>'+
+      '<label>'+t('feedbackRating')+'<select name="rating">'+[5,4,3,2,1].map(n=>'<option>'+n+'</option>').join('')+'</select></label>'+
+      '<button type="submit">'+t('feedbackSaveRating')+'</button></form>':'')+
+      '<form class="feedback-form" data-feedback-kind="issue"><h3>'+t('feedbackIssue')+'</h3>'+
+      '<label>'+t('feedbackTurn')+'<select name="turnIndex"><option value="">'+t('feedbackNoTurn')+'</option>'+options+'</select></label>'+
+      (failed?.error?'<label class="feedback-check"><input type="checkbox" name="error" checked> '+t('feedbackAttachError')+'</label>':'')+
+      '<label>'+t('feedbackDescription')+'<textarea name="text" rows="3" maxlength="2000" required></textarea></label><button type="submit">'+t('send')+'</button></form>';
+    host.innerHTML=gameForms+'<h3>'+t('feedbackInbox')+'</h3><div class="feedback-list">'+
+      (items.length?items.map(ticket=>'<button type="button" data-feedback-id="'+esc(ticket.id)+'"><strong>'+esc(label(ticket))+'</strong> · '+esc(gameTitle(ticket.gameId))+'<br><small>'+t('feedback_'+ticket.status)+' · '+esc(date(ticket.updatedAt))+'</small></button>').join(''):'<p class="muted">'+t('feedbackEmpty')+'</p>')+'</div>'+
+      '<div class="toolbar">'+(offset?'<button type="button" data-feedback-offset="'+Math.max(0,offset-10)+'">← '+t('prologueBack')+'</button>':'')+
+      (nextOffset!=null?'<button type="button" data-feedback-offset="'+nextOffset+'">'+t('next')+' →</button>':'')+'</div>';
+    for(const button of host.querySelectorAll('[data-feedback-id]'))button.onclick=()=>openTicket(button.dataset.feedbackId).catch(error=>status.textContent=error.message);
+    for(const button of host.querySelectorAll('[data-feedback-offset]'))button.onclick=()=>showList(Number(button.dataset.feedbackOffset)).catch(error=>status.textContent=error.message);
+    for(const form of host.querySelectorAll('[data-feedback-kind]'))message(form,async fields=>{
+      const index=fields.get('turnIndex'), kind=form.dataset.feedbackKind;
+      const ticket=await api('/api/feedback',{method:'POST',body:JSON.stringify({
+        sessionId:gameSession.id,kind,turnIndex:index?Number(index):undefined,
+        rating:kind==='rating'?Number(fields.get('rating')):undefined,text:fields.get('text'),
+        error:fields.has('error')?failed?.error:undefined
+      })});
+      await openTicket(ticket.id);
+      status.textContent=t('feedbackSaved');
+    });
+  }
+  dialog.showModal();
+  showList().catch(error=>status.textContent=error.message);
+}
+$('gameFeedback').onclick=()=>{if(session)showFeedback(session)};
 function setActionOptions(open){
   $('actionOptions').setAttribute('aria-expanded',String(open));
   $('actions').hidden=!open;
@@ -266,7 +336,7 @@ async function turn(action){
     await finishTurn(await requestTurn(job),id);
     if(session?.id===id && job.action.type==='free_text' && $('input').value.trim()===job.action.text) $('input').value='';
   }catch(e){
-    failedTurn=job;
+    job.error=e.message;failedTurn=job;
     if(e.status===402)showLimitDialog(e.resetAt);
     else note(job.stopping?t('generationStopped'):e.message);
   }finally{

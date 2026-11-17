@@ -166,3 +166,5 @@
 .oauth-admin-form h2{margin:0;font-size:18px}
 .oauth-admin-form .field input{min-width:0;width:100%}
 .oauth-admin-form button{justify-self:start}
+.admin-feedback-context{display:grid;grid-template-columns:minmax(90px,140px) minmax(0,1fr);gap:8px 12px}
+.admin-feedback-context dd{margin:0;overflow-wrap:anywhere;white-space:pre-wrap}

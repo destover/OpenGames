@@ -109,6 +109,6 @@ export class ConnectAIProvider implements AIProvider {
       options.onNarrative!(narrativePreview(partial));
     } : undefined;
     const {result,usage}=await this.transport.request(this.deviceId,this.requestId,this.attempt++,request,deadline,options?.signal,onDelta);
-    return {...parseResult(result,game,action,'donor',session),usage};
+    return {...parseResult(result,game,action,'donor',session),model:this.model,usage};
   }
 }

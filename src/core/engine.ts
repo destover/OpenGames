@@ -53,7 +53,10 @@ export class StateEngine {
       if (typeof before !== 'number' || typeof after !== 'number' || after <= before) continue;
       if (rule.increaseRequires) {
         const prerequisite = readPath(state, rule.increaseRequires.path);
-        if (!rule.increaseRequires.oneOf.some(value => JSON.stringify(value) === JSON.stringify(prerequisite))) throw new Error(`Увеличение ${rule.path} недоступно при текущем значении ${rule.increaseRequires.path}`);
+        if (!rule.increaseRequires.oneOf.some(value => JSON.stringify(value) === JSON.stringify(prerequisite))) {
+          const allowed = rule.increaseRequires.oneOf.map(value => JSON.stringify(value)).join(', ');
+          throw new Error(`Нельзя повысить ${rule.path} с ${before} до ${after}: после хода ${rule.increaseRequires.path} = ${JSON.stringify(prerequisite) ?? 'не задано'}, допустимо: ${allowed}. В описанном месте оставь ${rule.path} не выше ${before} и согласуй результат с повествованием.`);
+        }
       }
       if (rule.maxIncrease !== undefined && after - before > rule.maxIncrease) throw new Error(`Превышено допустимое увеличение ${rule.path}: максимум ${rule.maxIncrease} за ход`);
     }

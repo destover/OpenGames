@@ -3,7 +3,14 @@ const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,
 let consent=stored('opengame-cookie-consent')==='1',lang=stored('opengame-language')==='en'?'en':'ru',layout=stored('opengame-flow-layout')||'horizontal',themeMode=stored('opengame-theme')||'auto',aiMode='local',aiModel='',aiInfo={},user,games=[],popular=[],saves=[],session,game,category='all',pending=false,queueStatus='',queuePosition=0,lastSource=null,idleTimer,carouselTimer,carouselIndex=0,musicAudio,musicTrack=null;
 let activeTurn, failedTurn, generationView, generationFetch=0, oauthProviders=[];
 const ui=await fetch('/ui.json').then(r=>r.json()),t=k=>ui[lang][k]||ui.ru[k]||k,loc=(g,s,k)=>g?.i18n?.[lang]?.[s]?.[k]||g?.i18n?.ru?.[s]?.[k]||'';
-function remember(k,v){if(consent)localStorage.setItem(k,v)}function api(path,o={}){let h={'Content-Type':'application/json','X-Storage-Consent':consent?'accepted':'declined'};return fetch(path,{...o,headers:h,credentials:'same-origin'}).then(async r=>{let d=await r.json(),error;if(!r.ok){error=Error(d.error||t('unavailable'));error.status=r.status;error.resetAt=d.resetAt;throw error}return d})}function note(v=''){$('notice').textContent=v}function eligible(){return consent&&!!user&&(aiMode==='ollama'||aiMode==='donor'&&user.aiSource!=='personal'||!!user.hasKey||aiInfo.pilotAvailable)}function gate(){return !consent?t('needConsent'):!user?t('needLogin'):!eligible()?t('needKey'):''}function icon(a){return a?.icon||game?.actions?.[a?.type]?.icon||'✦'}function actionName(type){return loc(game,'actions',type)||type}
+async function responseJson(response){
+  try{return await response.json()}
+  catch(error){
+    if(error.name==='AbortError')throw error;
+    throw Object.assign(Error(t(response.status>=500?'serverUnavailable':'unavailable')),{status:response.status});
+  }
+}
+function remember(k,v){if(consent)localStorage.setItem(k,v)}function api(path,o={}){let h={'Content-Type':'application/json','X-Storage-Consent':consent?'accepted':'declined'};return fetch(path,{...o,headers:h,credentials:'same-origin'}).then(async r=>{let d=await responseJson(r),error;if(!r.ok){error=Error(d.error||t('unavailable'));error.status=r.status;error.resetAt=d.resetAt;throw error}return d})}function note(v=''){$('notice').textContent=v}function eligible(){return consent&&!!user&&(aiMode==='ollama'||aiMode==='donor'&&user.aiSource!=='personal'||!!user.hasKey||aiInfo.pilotAvailable)}function gate(){return !consent?t('needConsent'):!user?t('needLogin'):!eligible()?t('needKey'):''}function icon(a){return a?.icon||game?.actions?.[a?.type]?.icon||'✦'}function actionName(type){return loc(game,'actions',type)||type}
 function currentRoute(){let r=location.hash.replace(/^#/,'')||'/games';return r.startsWith('/')?r:'/'+r}function go(route){location.hash=route}function setTime(){let h=new Date().getHours(),time=themeMode==='day'?'day':themeMode==='night'?'night':h>=8&&h<20?'day':'night';document.body.dataset.time=time;$('themeIndicator').textContent=themeMode==='auto'?'A':time==='day'?'☀':'☾';$('themeIndicator').title=(themeMode==='auto'?t('themeAuto'):themeMode==='day'?t('themeDay'):t('themeNight'))+' · '+t('themeSwitch');$('themeIndicator').setAttribute('aria-label',$('themeIndicator').title)}function cycleTheme(){themeMode=themeMode==='auto'?'day':themeMode==='day'?'night':'auto';if(consent)localStorage.setItem('opengame-theme',themeMode);setTime()}setTime();setInterval(setTime,60000);
 function labels(){document.documentElement.lang=lang;document.querySelectorAll('[data-label]').forEach(e=>e.textContent=t(e.dataset.label));document.querySelectorAll('[data-lang]').forEach(b=>{b.classList.toggle('active',b.dataset.lang===lang);b.setAttribute('aria-pressed',String(b.dataset.lang===lang))});$('input').placeholder=t('input');$('send').textContent=t('send');$('back').textContent='← '+t('back');$('restart').textContent=t('restart');$('share').textContent=t('share');$('cookieText').textContent=t('cookieText');$('accept').textContent=t('accept');$('deny').textContent=t('deny');if(game)renderMusic();setTime()}
 async function refresh(){saves=user?await api('/api/sessions'):[]}
@@ -221,7 +228,7 @@ async function requestTurn(job){
   });
   const fail=data=>{throw Object.assign(Error(data.error||t('unavailable')),{status:data.status||response.status,resetAt:data.resetAt})};
   if(!response.headers.get('content-type')?.startsWith('application/x-ndjson')){
-    const data=await response.json();
+    const data=await responseJson(response);
     if(!response.ok)fail(data);
     if(!data.jobId)return data;
     job.jobId=data.jobId;

@@ -159,3 +159,12 @@ body.game-page #play #actionForm input::placeholder{color:var(--muted)}
   #play .opening-controls{flex-wrap:wrap}
   #play .chat-dialog .generation-form{grid-template-columns:1fr}
 }
+.wallet-panel{padding:20px;margin:20px 0;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+.wallet-panel h2{margin:0;font-size:20px}
+.wallet-amount{font-size:28px;font-weight:700;margin:10px 0}
+.wallet-history{display:grid;margin-top:16px}
+.wallet-history>div{display:flex;justify-content:space-between;align-items:start;gap:16px;padding:12px 0;border-top:1px solid var(--line)}
+.wallet-history span{min-width:0;overflow-wrap:anywhere}
+.wallet-history small{display:block;color:var(--muted);font-size:12px;margin-top:3px}
+.wallet-history strong{white-space:nowrap}
+#turnCost{font-variant-numeric:tabular-nums}

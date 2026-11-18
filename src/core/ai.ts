@@ -1,14 +1,16 @@
+import { GENERATION_MULTIPLIER, type GenerationCharge } from './billing.ts';
 import { createHash } from 'node:crypto';
 import providers from './providers.json' with { type: 'json' };
 import { direction, generationInput, modelInfo, narrativePreview, responseLines, type GenerationSettings } from './generation.ts';
 import { selectDistinctOptions } from './similarity.ts';
 import type { Action, Event, GamePackage, Session, StateMutationProposal } from './types.ts';
 
-export interface AIResult { narrative: string; suggestions: Action[]; events: Event[]; stateMutation: StateMutationProposal[]; source?: string; model?: string; usage?: TokenUsage }
-export interface TokenUsage { promptTokens: number; completionTokens: number; costUsd?: number; costRub?: number }
-export interface AIRequestOptions { signal?: AbortSignal; deadline?: number; generation?: GenerationSettings; onNarrative?: (text: string) => void; beginRequest?: () => (usage?: TokenUsage) => void }
+export interface AIResult { narrative: string; suggestions: Action[]; events: Event[]; stateMutation: StateMutationProposal[]; source?: string; model?: string; usage?: TokenUsage; billing?:GenerationCharge }
+export interface TokenUsage { promptTokens: number; completionTokens: number; costUsd?: number; costRub?: number; cachedPromptTokens?:number; reasoningTokens?:number }
+export interface AIRequestOptions { signal?: AbortSignal; deadline?: number; generation?: GenerationSettings; onNarrative?: (text: string) => void; beginRequest?: () => (usage?: TokenUsage) => void; maxTokens?:number; costBudgetRub?:number; tokenPrices?:{input:number;output:number}; beforeSave?:(next:Session,result:AIResult)=>void; afterSave?:(next:Session,result:AIResult)=>void }
 export interface AIProvider { generate(game: GamePackage, session: Session, action: Action, correction?: string, options?: AIRequestOptions): Promise<AIResult> }
 
+export class GenerationBudgetError extends Error {}
 class InvalidAIResponseError extends Error { constructor(detail = '') { super(`AI-сценарист вернул ответ не в формате игры${detail ? `: ${detail}` : ''}. Попробуйте ещё раз или выберите другую модель.`); } }
 function parseContent(content: unknown) {
   if (typeof content !== 'string') throw new InvalidAIResponseError();
@@ -75,7 +77,7 @@ export class OllamaAIProvider implements AIProvider {
 
 function readUsage(data: Record<string, any> | undefined, input: string, output: string): TokenUsage | undefined {
   if (!data || !Number.isFinite(data[input]) || !Number.isFinite(data[output])) return;
-  return { promptTokens:data[input]!, completionTokens:data[output]!, costUsd:data.currency!=='RUB'&&Number.isFinite(data.cost)?data.cost:undefined,costRub:data.currency==='RUB'&&Number.isFinite(data.cost)?data.cost:undefined };
+  return { promptTokens:data[input]!, completionTokens:data[output]!, costUsd:data.currency!=='RUB'&&data.cost_rub===undefined&&Number.isFinite(data.cost)?data.cost:undefined,costRub:data.cost_rub!==undefined&&data.cost_rub!==null&&Number.isFinite(Number(data.cost_rub))?Number(data.cost_rub):data.currency==='RUB'&&Number.isFinite(data.cost)?data.cost:undefined,cachedPromptTokens:data.prompt_tokens_details?.cached_tokens,reasoningTokens:data.completion_tokens_details?.reasoning_tokens };
 }
 
 const cooldowns = new Map<string, number>();
@@ -93,7 +95,7 @@ export class RemoteAIProvider implements AIProvider {
       if ((cooldowns.get(id) || 0) > Date.now()) break;
       const remaining = deadline - Date.now(); if (remaining <= 0) break;
       options?.signal?.throwIfAborted();
-      const record = options?.beginRequest?.();
+      let record:ReturnType<NonNullable<AIRequestOptions['beginRequest']>>|undefined;
       let usage: TokenUsage | undefined, shown = false;
       try {
         const anthropic = this.provider === 'anthropic';
@@ -104,7 +106,14 @@ export class RemoteAIProvider implements AIProvider {
         const generation = options?.generation;
         const system = prompt(game,session,action,correction,generation);
         const stream = !!options?.onNarrative;
-        const common = { model: this.model, max_tokens: generation?.length === 'long' ? 2400 : 1600, stream };
+        const common = { model: this.model, max_tokens:Math.min(options?.maxTokens??Infinity,generation?.length === 'long' ? 2400 : 1600), stream };
+        if(options?.costBudgetRub!==undefined&&options.tokenPrices){
+          const inputBound=Buffer.byteLength(system+JSON.stringify(messages),'utf8')+128;
+          const remainingRub=options.costBudgetRub/GENERATION_MULTIPLIER-inputBound*options.tokenPrices.input/1e6;
+          const affordable=options.tokenPrices.output>0?Math.floor(remainingRub*1e6/options.tokenPrices.output):common.max_tokens;
+          if(remainingRub<=0||affordable<128)throw new GenerationBudgetError('Недостаточно средств для выбранной модели');
+          common.max_tokens=Math.min(common.max_tokens,affordable);
+        }
         const sampling = modelInfo(this.provider, this.model)?.sampling ? { temperature: generation?.temperature, top_p: generation?.topP } : {};
         const body = anthropic ? { ...common, system, messages } : {
           ...common, ...sampling, response_format: { type:'json_object' },
@@ -115,6 +124,7 @@ export class RemoteAIProvider implements AIProvider {
             ? {provider:{require_parameters:true}} : {})
         };
         const timeoutSignal=AbortSignal.timeout(Math.min(60000,remaining)),signal=options?.signal?AbortSignal.any([options.signal,timeoutSignal]):timeoutSignal;
+        record=options?.beginRequest?.();
         const response = await fetch(spec.baseUrl+(anthropic?'/messages':'/chat/completions'),{method:'POST',headers,body:JSON.stringify(body),signal});
         if (!response.ok) {
           const status=response.status;
@@ -126,7 +136,7 @@ export class RemoteAIProvider implements AIProvider {
           }
           throw new Error(lastError);
         }
-        let content = '';
+        let content = '',actualModel=this.model;
         if (stream) {
           let finished = false, inputTokens: number | undefined;
           for await (const line of responseLines(response)) {
@@ -134,6 +144,7 @@ export class RemoteAIProvider implements AIProvider {
             const payload = line.slice(5).trim();
             if (payload === '[DONE]') { finished = true; break; }
             const data = JSON.parse(payload);
+            if(typeof data.model==='string'&&data.model.length<=160)actualModel=data.model;
             if (data.error || data.choices?.[0]?.finish_reason === 'error') throw new Error('Провайдер прервал генерацию');
             if (anthropic) {
               inputTokens = data.message?.usage?.input_tokens ?? inputTokens;
@@ -150,14 +161,16 @@ export class RemoteAIProvider implements AIProvider {
           if (!finished) throw new Error('Поток AI-сценариста прерван');
         } else {
           const data = await response.json() as any;
+          if(typeof data.model==='string'&&data.model.length<=160)actualModel=data.model;
           content = anthropic ? data.content?.filter((x:any)=>x.type==='text').map((x:any)=>x.text).join('') : data.choices?.[0]?.message?.content;
           usage = anthropic ? readUsage(data.usage,'input_tokens','output_tokens') : readUsage(data.usage,'prompt_tokens','completion_tokens');
         }
+        if(this.endpoint&&['provod','polza','aitunnel'].includes(this.provider)&&usage?.costRub===undefined&&usage?.costUsd!==undefined){usage.costRub=usage.costUsd;delete usage.costUsd}
         const result = parseResult(parseContent(content),game,action,this.provider,session);
         cooldowns.delete(id);
-        return { ...result, model:this.model, usage };
+        return { ...result, model:actualModel, usage };
       } catch(error) {
-        if(options?.signal?.aborted || shown)throw error;
+        if(options?.signal?.aborted || shown || error instanceof GenerationBudgetError)throw error;
         lastError=error instanceof Error&&['TimeoutError','AbortError'].includes(error.name)?'AI-сценарист отвечает слишком долго. Повторите действие.':error instanceof Error?error.message:'Ошибка подключения к AI-сценаристу';
         if (!(error instanceof InvalidAIResponseError) || attempt) break;
       } finally { record?.(usage); }

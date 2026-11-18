@@ -1,6 +1,7 @@
-import {RemoteAIProvider,type AIProvider,type AIRequestOptions,type AIResult} from './ai.ts';
+import {RemoteAIProvider,GenerationBudgetError,type AIProvider,type AIRequestOptions,type AIResult} from './ai.ts';
 import type {Action,GamePackage,Session} from './types.ts';
 import type {SharedKeyStore} from './shared-key.ts';
+import {sharedModelPrice,generationCharge} from './shared-pricing.ts';
 import {fetchBalance} from './provider-balance.ts';
 
 const endpoints:Record<string,string>={provod:'https://api.provod.ai/v1',polza:'https://polza.ai/api/v1',aitunnel:'https://api.aitunnel.ru/v1',openrouter:'https://openrouter.ai/api/v1',direct:'https://api.deepseek.com/v1'};
@@ -35,12 +36,22 @@ export class SharedAIProvider implements AIProvider{
       if(balance?.available&&balance.remaining!==undefined&&balance.remaining<=0)continue;
       const provider=new RemoteAIProvider(key.route,[secret],model,endpoints[key.route]);
       try{
+        const price=await sharedModelPrice(key.route,model);
+        if(!price)continue;
+        const budget=options?.costBudgetRub;
+        if(budget!==undefined&&(!Number.isFinite(budget)||budget<=0))continue;
         options?.onNarrative?.('');
-        const result=await provider.generate(game,session,action,correction,{...options,deadline:Math.min(deadline,Date.now()+35_000),beginRequest:()=>this.record(key.route,model)});
+        const result=await provider.generate(game,session,action,correction,{...options,tokenPrices:{input:price.input,output:Math.max(price.output,price.reasoning??0)},deadline:Math.min(deadline,Date.now()+35_000),beginRequest:()=>this.record(key.route,model)});
         cooldowns.delete(id);
-        return {...result,source:'shared:'+key.route};
+        const actualModel=result.model||model;
+        const actualPrice=actualModel===model?price:await sharedModelPrice(key.route,actualModel);
+        if(!actualPrice&&result.usage?.costRub===undefined)throw new Error('Тариф фактической модели не подтверждён');
+        const charge=generationCharge(key.route,actualModel,result.usage,actualPrice??price);
+        if(budget===undefined||charge.amountRub>budget)continue;
+        return {...result,source:'shared:'+key.route,billing:charge};
       }catch(error){
         if(options?.signal?.aborted)throw error;
+        if(error instanceof GenerationBudgetError)continue;
         cooldowns.set(id,Date.now()+60_000);
         const latest=await fetchBalance(key.route,secret);
         if(!latest.error)this.store.recordBalance(key.id,latest);

@@ -158,7 +158,7 @@ export class GameRuntime {
     const session = this.get(id, ownerId); const game = this.games.get(session.gameId)!; const engine = this.engines.get(session.gameId)!;
     if (action.requestId) {
       const previous = session.turns.find(turn => turn.action.requestId === action.requestId);
-      if (previous) return { session, narrative: previous.narrative, suggestions: session.suggestions ?? [], source: previous.source };
+      if (previous) return { session, narrative: previous.narrative, suggestions: session.suggestions ?? [], source: previous.source,billing:previous.billing };
     }
     if (this.pending.has(id)) throw Object.assign(new Error('Предыдущее действие ещё обрабатывается'), {status:409});
     this.pending.add(id);
@@ -197,12 +197,14 @@ export class GameRuntime {
         next = engine.apply(session, action, result.events, result.narrative, result.stateMutation, 8000);
       }
       if (!result || !next) throw new Error('Не удалось согласовать состояние с правилами мира');
-      Object.assign(next.turns.at(-1)!, { source: result.source, model: result.model, stateMutation: result.stateMutation || [] });
+      Object.assign(next.turns.at(-1)!, { source: result.source, model: result.model,billing:result.billing, stateMutation: result.stateMutation || [] });
       next.suggestions = distinctOptions(game, session, result.suggestions, action, languageOf(action));
       next.suggestionLanguage = action.language || 'ru';
       options?.signal?.throwIfAborted();
+      options?.beforeSave?.(next,result);
       this.saves.save(next); this.sessions.set(id, next);
-      return { session: next, narrative: result.narrative, suggestions: next.suggestions, source: result.source };
+      options?.afterSave?.(next,result);
+      return { session: next, narrative: result.narrative, suggestions: next.suggestions, source: result.source,billing:result.billing };
     } finally { this.pending.delete(id); }
   }
 

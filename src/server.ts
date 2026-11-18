@@ -158,9 +158,13 @@ function feedbackFilters(query: URLSearchParams): FeedbackFilter {
 }
 const coauthorUsage=new CoauthorUsageStore(join(root,'..','data','coauthor-usage.sqlite'));
 const billing=new BillingStore(join(root,'..','data','billing.sqlite'));
+billing.recoverGenerations((userId,sessionId,requestId)=>{
+  try{return runtime.get(sessionId,userId).turns.find(turn=>turn.action.requestId===requestId)?.billing}catch{return undefined}
+});
 const sharedKeys=new SharedKeyStore(join(root,'..','data','shared-keys.sqlite'));
 const legal=new LegalStore(join(root,'..','data','legal.json'));
 const infrastructure=new InfrastructureMonitor({releasesDir:join(root,'..','..','releases'),dataDir:join(root,'..','data'),port:Number(process.env.PORT||3000),publicUrl:configuredPublicUrl,units:String(process.env.OPENGAME_ADMIN_UNITS||'opengames,nginx').split(',').map(item=>item.trim()).filter(Boolean),games:runtime.listGames().length,donor:async()=>{const health=donorPool?await donorPool.health():undefined;return {connected:Boolean(health?.connected),devices:donorPool?.size||0}},legal:()=>({terms:legal.complete('terms'),privacy:legal.complete('privacy')}),journalLines:200});
+const walletRefunds=new Set<string>();
 const payments=paymentRegistry(process.env,id=>accounts.getPaymentCredentials(id));
 function audit(actor:string,action:string,target:string,details:Record<string,unknown>={}){appendFileSync(adminAudit,JSON.stringify({at:new Date().toISOString(),actor,action,target,details})+'\n',{mode:0o600});}
 const deviceRegistry=aiMode==='donor'?new DeviceRegistry(join(root,'..','data','donor-devices.sqlite')):undefined;
@@ -408,12 +412,17 @@ const server = createServer(async (req, res) => {
         audit(actor,'payment.provider.configure',id,{shopChanged:!sameShop});
         return send(res,200,payments.describe().find(item=>item.id===id),{'Cache-Control':'no-store'});
       }
-      if(req.method==='GET'&&url.pathname==='/api/admin/billing'){const days=Math.max(1,Math.min(365,Number(url.searchParams.get('days')||30)||30)),overview=billing.adminOverview(days),status=url.searchParams.get('status')||undefined,userId=url.searchParams.get('userId')||undefined;return send(res,200,{...overview,providers:payments.describe(),records:billing.adminPayments({status,userId,limit:100})},{'Cache-Control':'no-store'})}
+      if(req.method==='GET'&&url.pathname==='/api/admin/billing'){const days=Math.max(1,Math.min(365,Number(url.searchParams.get('days')||30)||30)),overview=billing.adminOverview(days),status=url.searchParams.get('status')||undefined,userId=url.searchParams.get('userId')||undefined;return send(res,200,{...overview,generation:billing.generationReport(days),providers:payments.describe(),records:billing.adminPayments({status,userId,limit:100})},{'Cache-Control':'no-store'})}
       if(req.method==='POST'&&/^\/api\/admin\/billing\/[0-9a-f-]{36}\/refund$/.test(url.pathname)){const id=url.pathname.split('/')[4],data=await body(req),reason=String(data.reason||'').trim();if(reason.length<3||reason.length>300)return send(res,400,{error:'Укажите причину возврата (3–300 символов)'});const payment=billing.payment(id);if(!payment)return send(res,404,{error:'Платёж не найден'});
         if(!payment.externalId)return send(res,409,{error:'У платежа нет идентификатора в провайдере: возврат невозможен'});
         if(payment.status!=='succeeded')return send(res,409,{error:'Возврат доступен только для оплаченного платежа'});
         const provider=payments.byId(payment.provider);if(!provider)return send(res,503,{error:'Платёжный провайдер больше не поддерживается'});
-        const refund=await provider.refund(payment.externalId,payment.amountRub),result=billing.refund(id,refund.refundId,reason,{provider:payment.provider,amountRub:payment.amountRub});audit(actor,'payment.refund',id,{...result.payment,reason,refundId:refund.refundId,uncoveredRub:result.uncoveredRub||0});return send(res,200,result)}
+        if(billing.reservedRub(payment.userId)>0||walletRefunds.has(payment.userId))return send(res,409,{error:'Дождитесь завершения текущей операции с балансом'});
+        walletRefunds.add(payment.userId);
+        try{
+          const refund=await provider.refund(payment.externalId,payment.amountRub),result=billing.refund(id,refund.refundId,reason,{provider:payment.provider,amountRub:payment.amountRub});
+          audit(actor,'payment.refund',id,{...result.payment,reason,refundId:refund.refundId,uncoveredRub:result.uncoveredRub||0});return send(res,200,result);
+        }finally{walletRefunds.delete(payment.userId)}}
       if(req.method==='POST'&&url.pathname==='/api/admin/billing/adjustment'){const data=await body(req),reason=String(data.reason||'').trim(),target=accounts.adminUsers().find(item=>item.id===String(data.userId||''));if(!target)return send(res,404,{error:'Пользователь не найден'});if(reason.length<3||reason.length>300)return send(res,400,{error:'Укажите причину корректировки (3–300 символов)'});const result=billing.adminAdjust(target.id,Number(data.amountRub),reason);audit(actor,'billing.adjustment',target.id,{amountRub:Number(data.amountRub),reason,...result});return send(res,200,result)}
       if(req.method==='GET'&&url.pathname==='/api/admin/legal')return send(res,200,legal.adminView());
       if(req.method==='PUT'&&url.pathname==='/api/admin/legal'){const data=await body(req),result=legal.save((data.values||data) as Record<string,string>,String(data.reason||''));audit(actor,'legal.update','-',{changed:result.changed,reason:result.reason,documents:result.documents.map(item=>({id:item.id,published:item.published,missing:item.missing}))});return send(res,200,result)}
@@ -676,10 +685,17 @@ const server = createServer(async (req, res) => {
     if (turnMatch && req.method === 'POST') {
       const userId = authId(req)!, id = turnMatch[1], action = await body(req) as Action;
       const session = runtime.get(id,userId), generation = accounts.scenarioSettings(userId,session.gameId);
+      const previous=action.requestId?session.turns.find(turn=>turn.action.requestId===action.requestId):undefined;
+      if(previous){
+        billing.settleGeneration(userId,id,action.requestId!,previous.billing);
+        return send(res,200,{session,narrative:previous.narrative,suggestions:session.suggestions??[],source:previous.source,billing:previous.billing});
+      }
       const config = resolveWriter(userId,generation);
       if (!config) return send(res,403,{error:'Добавьте ключ AI-сценариста в профиле'});
       if (config.provider === 'donor') return send(res,202,queue!.enqueue(id,userId,action));
       if (queue?.pending(id,userId)) return send(res,409,{error:'Предыдущий ход ещё обрабатывается'});
+      if(config.provider==='shared'&&walletRefunds.has(userId))return send(res,409,{error:'Дождитесь завершения возврата средств'});
+      const reservation=config.provider==='shared'?billing.reserveGeneration(userId,id,String(action.requestId||'')):undefined;
       const stream = req.headers.accept === 'application/x-ndjson', controller = new AbortController();
       const beginRequest = () => modelUsage.begin(userId,config.provider,config.model,true);
       const primary = config.provider==='shared'?new SharedAIProvider(sharedKeys,()=>billing.balanceRub(userId)>0,(provider,model)=>modelUsage.begin(userId,provider,model,true)):config.provider === 'ollama' ? new OllamaAIProvider() : new RemoteAIProvider(config.provider,config.keys,config.model);
@@ -700,12 +716,18 @@ const server = createServer(async (req, res) => {
       }
       try {
         const result = await runtime.turn(id,action,tracked,userId,{
-          signal:controller.signal, generation, beginRequest,
+          signal:controller.signal, generation, beginRequest,costBudgetRub:reservation?.budgetRub,
+          beforeSave:(_,result)=>{if(reservation){if(!result.billing)throw new Error('Стоимость генерации не подтверждена');billing.prepareGeneration(reservation.id,result.billing)}},
+          afterSave:(_,result)=>{if(reservation)billing.settleGeneration(userId,id,action.requestId!,result.billing)},
           onNarrative:stream ? text => { if (text !== preview) { preview = text; emit({type:'preview',text}); } } : undefined
         });
         if (stream) emit({type:'result',result});
         else return send(res,200,result);
       } catch (error) {
+        if(reservation){
+          const delivered=runtime.get(id,userId).turns.find(turn=>turn.action.requestId===action.requestId)?.billing;
+          billing.settleGeneration(userId,id,action.requestId!,delivered);
+        }
         if (controller.signal.aborted) return;
         if(error instanceof SharedProvidersUnavailable&&queue){
           try{

@@ -254,16 +254,28 @@ const keys=d.keys.map(k=>{
   const route=d.routes.find(r=>r.route===k.route);
   return '<div class="row"><span><b>'+esc(k.label)+'</b> <span class="tag">'+esc(route?.label||k.route)+'</span><br><small class="muted">'+esc(k.model)+' · '+esc(k.keyMask)+(k.note?'<br>'+esc(k.note):'')+'<br>'+esc(balanceText(k.balance))+(k.balance?' · '+esc(new Date(k.balance.checkedAt).toLocaleString('ru-RU')):'')+'</small></span><span class="tag">'+(k.status==='active'?'активен':'приостановлен')+'</span>'+(route?.keyUrl?'<button data-check="'+k.id+'">Обновить остаток</button><button data-model="'+k.id+'">Изменить модель</button>':'')+'<button data-toggle="'+k.id+'" data-status="'+k.status+'">'+(k.status==='active'?'Приостановить':'Активировать')+'</button><button class="danger" data-remove="'+k.id+'">Удалить</button></div>';
 }).join('')||'<p class="muted">Общих ключей пока нет.</p>';
-draw('Общий ключ OpenGames','<h2>Добавить ключ</h2><form id="skForm"><div class="form-grid"><div class="field"><label for="skLabel">Название ключа</label><input id="skLabel" required maxlength="60"></div><div class="field"><label for="skRoute">Провайдер</label><select id="skRoute">'+routes.map(r=>'<option value="'+esc(r.route)+'">'+esc(r.label)+'</option>').join('')+'</select><p id="skGuide" class="hint"></p></div><div class="field"><label for="skKey">API-ключ провайдера</label><input id="skKey" type="password" autocomplete="new-password" minlength="16" maxlength="1024" required><button type="button" id="skInspect">Загрузить модели</button></div><div class="field"><label for="skModel">Модель</label><select id="skModel" required disabled></select><p id="skBalance" class="hint" role="status"></p></div><div class="field"><label for="skNote">Заметка</label><input id="skNote" maxlength="300"></div></div><div class="admin-actions"><button class="primary" id="skAdd" disabled>Добавить общий ключ</button></div></form><h2>Зарегистрированные ключи</h2>'+keys);
+draw('Общий ключ OpenGames','<h2>Добавить ключ</h2><form id="skForm"><div class="form-grid"><div class="field"><label for="skLabel">Название ключа</label><input id="skLabel" required maxlength="60"></div><div class="field"><label for="skRoute">Провайдер</label><select id="skRoute">'+routes.map(r=>'<option value="'+esc(r.route)+'">'+esc(r.label)+'</option>').join('')+'</select></div><div class="field"><label for="skKey">API-ключ провайдера</label><input id="skKey" type="password" autocomplete="new-password" minlength="16" maxlength="1024" required><button type="button" id="skInspect">Загрузить модели</button></div><div class="field"><label for="skModel">Модель</label><select id="skModel" required disabled></select><p id="skBalance" class="hint" role="status" aria-live="polite"></p></div><div class="field"><label for="skNote">Заметка</label><input id="skNote" maxlength="300"></div></div><div class="shared-status"><p id="skGuide" class="hint"></p></div><details class="shared-guide" open><summary>Как подключить провайдера</summary><div id="skInstructions"></div></details><div class="admin-actions"><button class="primary" id="skAdd" disabled>Добавить общий ключ</button></div></form><h2>Зарегистрированные ключи</h2>'+keys);
 const form=$('#skForm'),route=$('#skRoute'),key=$('#skKey'),model=$('#skModel'),balance=$('#skBalance'),inspect=$('#skInspect'),add=$('#skAdd');
 let inspection=0;
+const instructions={
+  direct:['Откройте DeepSeek Platform и войдите в аккаунт.','В разделе API keys создайте ключ для OpenGames и скопируйте его.','Проверьте баланс в кабинете DeepSeek. Остаток отображается в валюте провайдера.'],
+  aitunnel:['Войдите в AITUNNEL и пополните баланс.','В панели управления откройте «Ключи», создайте ключ для OpenGames и скопируйте его.','При необходимости настройте бюджет ключа и список разрешённых моделей.'],
+  provod:['Войдите в PROVOD и выберите нужное рабочее пространство.','Создайте обычный API-ключ для генерации в разделе ключей.','Проверьте баланс выбранного пространства и ограничения расходов ключа.'],
+  polza:['Войдите в консоль Polza и выберите организацию.','Откройте API-ключи, создайте ключ для OpenGames и скопируйте его.','Проверьте баланс организации и ограничения расходов ключа.'],
+  openrouter:['Войдите в OpenRouter и откройте Settings → API Keys.','Создайте обычный API-ключ для OpenGames и скопируйте его.','Пополните баланс. Чтобы видеть остаток месячного лимита, задайте ключу бюджет с ежемесячным сбросом.']
+};
+const renderGuide=()=>{
+  const provider=routes.find(r=>r.route===route.value);
+  $('#skGuide').textContent='';
+  $('#skInstructions').innerHTML='<h3>'+esc(provider.label)+'</h3><ol>'+
+    (instructions[route.value]||[provider.guide]).concat(['Вставьте ключ в поле «API-ключ провайдера» и нажмите «Загрузить модели».','Выберите модель из полученного списка, задайте название и нажмите «Добавить общий ключ».']).map(step=>'<li>'+esc(step)+'</li>').join('')+
+    '</ol><a href="'+esc(provider.keyUrl)+'" target="_blank" rel="noopener noreferrer">Открыть '+esc(provider.label)+' ↗</a>';
+};
 const clear=()=>{
   inspection++;
-  const provider=routes.find(r=>r.route===route.value);
-  $('#skGuide').innerHTML=esc(provider.guide)+' <a href="'+esc(provider.keyUrl)+'" target="_blank" rel="noopener noreferrer">Открыть страницу провайдера</a>';
   model.innerHTML=options([]);model.disabled=true;add.disabled=true;balance.textContent='';
 };
-route.onchange=()=>{key.value='';clear()};key.oninput=clear;model.onchange=()=>{add.disabled=!model.value};clear();
+route.onchange=()=>{key.value='';clear();renderGuide()};key.oninput=clear;model.onchange=()=>{add.disabled=!model.value};clear();renderGuide();
 inspect.onclick=async()=>{
   if(!key.reportValidity())return;
   const request=++inspection;

@@ -45,7 +45,7 @@ const legalReviewNotes='<details class="panel"><summary>Комментарии �
   '<li>Отказ от услуг возможен в любое время. В оферте указаны сроки возврата по основанию обращения и сохранено право потребителя на выбор суда. <a href="https://zpp.rospotrebnadzor.ru/news/federal/490717">Ст. 32 и разъяснение</a> · <a href="https://www.consultant.ru/document/cons_doc_LAW_305/">Закон о защите прав потребителей</a></li>'+
   '<li>Политика указывает сроки исполнения запросов субъектов и уничтожения данных. Фиксируйте дату запроса и результат исполнения. <a href="https://www.consultant.ru/document/cons_doc_LAW_61801/d3fe43a7c415353b17faab255bc0de92bea127da/">Ст. 21 152-ФЗ</a></li>'+
   '<li>ЮKassa. СБП — 3 года для запроса возврата с даты создания платежа. <a href="https://yookassa.ru/developers/payment-acceptance/after-the-payment/refunds">Правила возврата</a></li>'+
-  '<li>ENOT. Срок возврата по СБП уточняется по договору кассы. <a href="https://enot.io/site-requirements">Требования ENOT</a></li></ul></details>';
+  '</ul></details>';
 const feedbackStatus={open:'Открыто',answered:'Есть ответ',closed:'Закрыто'};
 const feedbackKind={issue:'Проблема',rating:'Оценка'};
 const requestLabels={refund_voluntary:'Возврат · отказ от услуги',refund_service:'Возврат · срок или качество',account_deletion:'Удаление аккаунта и данных'};
@@ -217,13 +217,12 @@ draw('Правовые документы','<p class="muted">Реквизиты 
 $('#legalSave').onclick=async()=>{let values={},missing=[];document.querySelectorAll('[data-field]').forEach(el=>{values[el.dataset.field]=el.value;if(el.placeholder!=='не применяется'&&!el.value.trim())missing.push(el.closest('label').querySelector('span').childNodes[0].textContent.trim())});let select=document.querySelector('[data-form]');if(select)values['executor.form']=select.value;let reason=$('#legalReason').value.trim();if(!reason){toast('Укажите причину изменения','warn');$('#legalReason').focus();return}if(missing.length){let warn=await dialog({title:'Сохранить с незаполненными полями?',text:'Не заполнены: '+missing.join(', ')+'. Пока поля пусты, документы остаются неопубликованными.',confirmLabel:'Сохранить'});if(!warn.ok)return}try{let saved=await api('/api/admin/legal',{method:'PUT',body:JSON.stringify({values,reason})});toast('Сохранено',saved.documents.some(x=>x.published)?'ok':'warn','Изменено полей: '+saved.changed+(saved.documents.some(x=>x.published)?'':' · документы ещё не опубликованы'));load()}catch(x){toast(x.message,'crit')}};
 document.querySelectorAll('[data-form]').forEach(el=>el.onchange=()=>{let next={};document.querySelectorAll('[data-field]').forEach(i=>next[i.dataset.field]=i.value);next['executor.form']=el.value;api('/api/admin/legal',{method:'PUT',body:JSON.stringify({values:next,reason:'смена формы организации'})}).then(()=>load()).catch(x=>toast(x.message,'crit'))});break}case'billing':{let d=await api('/api/admin/billing'),rub=n=>Number(n||0).toLocaleString('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2})+' ₽',t=d.totals,stats={Зачислено:rub(t.topupsRub),Бонусы:rub(t.bonusRub),'Комиссия СБП':rub(t.commissionRub),Возвраты:rub(t.refundsRub),Итого:rub(t.netRub),'На балансах игроков':rub(d.wallets.balanceRub),Кошельков:d.wallets.users,Ожидают:t.pending,Ошибки:t.failed};
 const providers='<div class="oauth-admin-grid">'+d.providers.map(p=>{
-  const enot=p.id==='enot', webhook=location.origin+'/api/payments/webhook/'+p.id;
+  const webhook=location.origin+'/api/payments/webhook/'+p.id;
   return '<form class="oauth-admin-form" data-payment-provider="'+esc(p.id)+'"><h2>'+esc(p.label)+'</h2>'+
     '<p class="muted" data-provider-note>'+esc(p.note)+'</p>'+
     '<label class="field">URL уведомлений (POST)<input readonly value="'+esc(webhook)+'"></label>'+
-    '<label class="field">'+(enot?'ID кассы':'ID магазина')+'<input name="shopId" required maxlength="36" value="'+esc(p.shopId)+'"></label>'+
+    '<label class="field">ID магазина<input name="shopId" required maxlength="36" value="'+esc(p.shopId)+'"></label>'+
     '<label class="field">Секретный ключ<input name="apiKey" type="password" maxlength="512" autocomplete="new-password" placeholder="'+(p.hasApiKey?'Сохранён':'Введите ключ')+'"></label>'+
-    (enot?'<label class="field">Дополнительный ключ уведомлений<input name="webhookSecret" type="password" maxlength="512" autocomplete="new-password" placeholder="'+(p.hasWebhookSecret?'Сохранён':'Введите ключ')+'"></label>':'')+
     '<button type="submit" class="primary">Сохранить</button></form>';
 }).join('')+'</div>';
 let packs=d.byPack.map(p=>'<div class="row"><span><b>'+p.amountRub+' ₽'+(p.bonusRub?' + бонус '+p.bonusRub+' ₽':'')+'</b></span><span class="tag">'+p.count+' платежей · '+rub(p.amountRub)+'</span></div>').join('');
@@ -232,12 +231,12 @@ let records=d.records.map(p=>'<div class="row"><span><b>'+rub(p.amountRub+p.bonu
 draw('Платежи и возвраты','<div class="stats">'+Object.entries(stats).map(([k,v])=>'<div class="stat"><span>'+k+'</span><b>'+esc(v)+'</b></div>').join('')+'</div><h2>Провайдеры</h2>'+providers+'<h2>Пакеты пополнения</h2>'+packs+'<h2>Реестр платежей</h2>'+records);
 for(const form of document.querySelectorAll('[data-payment-provider]'))form.onsubmit=async event=>{
   event.preventDefault();
-  const fields=form.elements, data={shopId:fields.shopId.value,apiKey:fields.apiKey.value,webhookSecret:fields.webhookSecret?.value};
+  const fields=form.elements, data={shopId:fields.shopId.value,apiKey:fields.apiKey.value};
   for(const input of fields)input.disabled=true;
   try{
     const saved=await api('/api/admin/billing/providers/'+form.dataset.paymentProvider,{method:'PUT',body:JSON.stringify(data)});
     fields.shopId.value=saved.shopId;
-    for(const field of [fields.apiKey,fields.webhookSecret])if(field){field.value='';field.placeholder='Сохранён'}
+    for(const field of [fields.apiKey])if(field){field.value='';field.placeholder='Сохранён'}
     form.querySelector('[data-provider-note]').textContent=saved.note;
     toast('Реквизиты сохранены');
   }catch(error){toast(error.message,'error')}

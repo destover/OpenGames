@@ -51,7 +51,7 @@ type User = {
 type SessionRecord = { userId: string; expiresAt: string };
 type ResetRecord = { userId: string; expiresAt: string };
 type OAuthClient = { clientId: string; enabled: boolean; secret?: EncryptedKey };
-type StoredPaymentCredentials = {shopId:string; apiKey?:EncryptedKey; webhookSecret?:EncryptedKey};
+type StoredPaymentCredentials = {shopId:string; apiKey?:EncryptedKey};
 type Database = { paymentCredentials?: Partial<Record<PaymentProviderId,StoredPaymentCredentials>>; oauthClients?: Partial<Record<OAuthProvider, OAuthClient>>; users: User[]; tokens: Record<string, SessionRecord>; passwordResets?: Record<string, ResetRecord> };
 const currentModel = (provider:string, model:string) => provider==='groq'&&model==='llama-3.3-70b-versatile'?'openai/gpt-oss-120b':model;
 export class DailyLimitError extends Error { status=402; code='daily_limit_exhausted'; resetAt:number; constructor(resetAt:number){super('Суточный лимит ходов исчерпан');this.resetAt=resetAt} }
@@ -60,7 +60,7 @@ export class AccountStore {
   private db: Database;
   private readonly key: Buffer;
   private readonly path: string;
-  constructor(path: string, secret = process.env.OPENGAME_SECRET) { if(!secret||secret.length<32||/^(?:replace-with-|change-me|your-secret|example-secret|test-secret)/i.test(secret))throw new Error('OPENGAME_SECRET должен быть случайным значением длиной не менее 32 символов');this.path = path; mkdirSync(dirname(path), { recursive: true, mode:0o700 });chmodSync(dirname(path),0o700);this.key = scryptSync(secret, 'opengame-key', 32);this.db = existsSync(path) ? JSON.parse(readFileSync(path, 'utf8')) : { users: [], tokens: {}, passwordResets:{} };const now=Date.now();this.db.tokens=Object.fromEntries(Object.entries(this.db.tokens||{}).filter(([,record])=>typeof record==='object'&&record&&Date.parse(record.expiresAt)>now));this.db.passwordResets=Object.fromEntries(Object.entries(this.db.passwordResets||{}).filter(([,record])=>Date.parse(record.expiresAt)>now));this.persist(); }
+  constructor(path: string, secret = process.env.OPENGAME_SECRET) { if(!secret||secret.length<32||/^(?:replace-with-|change-me|your-secret|example-secret|test-secret)/i.test(secret))throw new Error('OPENGAME_SECRET должен быть случайным значением длиной не менее 32 символов');this.path = path; mkdirSync(dirname(path), { recursive: true, mode:0o700 });chmodSync(dirname(path),0o700);this.key = scryptSync(secret, 'opengame-key', 32);this.db = existsSync(path) ? JSON.parse(readFileSync(path, 'utf8')) : { users: [], tokens: {}, passwordResets:{} };const now=Date.now();this.db.tokens=Object.fromEntries(Object.entries(this.db.tokens||{}).filter(([,record])=>typeof record==='object'&&record&&Date.parse(record.expiresAt)>now));this.db.paymentCredentials=Object.fromEntries(Object.entries(this.db.paymentCredentials||{}).filter(([id])=>id==='yookassa').map(([id,credentials])=>[id,{shopId:credentials.shopId,apiKey:credentials.apiKey}]));this.db.passwordResets=Object.fromEntries(Object.entries(this.db.passwordResets||{}).filter(([,record])=>Date.parse(record.expiresAt)>now));this.persist(); }
   private persist() { writeFileSync(this.path, JSON.stringify(this.db, null, 2),{mode:0o600});chmodSync(this.path,0o600); }
   initializeAdmin(email?:string){const normalized=String(email||'').trim().toLowerCase();if(!normalized)return;const user=this.db.users.find(item=>item.email===normalized);if(user&&user.role!=='admin'){user.role='admin';this.persist()}}
   isAdmin(userId?:string){return !!userId&&this.db.users.some(user=>user.id===userId&&user.role==='admin'&&!user.disabled)}
@@ -81,15 +81,13 @@ export class AccountStore {
   }
   getPaymentCredentials(id: PaymentProviderId): PaymentCredentials | undefined {
     const stored=this.db.paymentCredentials?.[id];
-    if(stored)return {shopId:stored.shopId,apiKey:stored.apiKey?this.decrypt(stored.apiKey):'',
-      webhookSecret:stored.webhookSecret?this.decrypt(stored.webhookSecret):''};
+    if(stored)return {shopId:stored.shopId,apiKey:stored.apiKey?this.decrypt(stored.apiKey):''};
   }
   setPaymentCredentials(id: PaymentProviderId, credentials: PaymentCredentials) {
     this.db.paymentCredentials ??= {};
     const previous=this.db.paymentCredentials[id];
     this.db.paymentCredentials[id]={shopId:credentials.shopId,
-      apiKey:credentials.apiKey?this.encrypt(credentials.apiKey):undefined,
-      webhookSecret:credentials.webhookSecret?this.encrypt(credentials.webhookSecret):undefined};
+      apiKey:credentials.apiKey?this.encrypt(credentials.apiKey):undefined};
     try{this.persist()}catch(error){this.db.paymentCredentials[id]=previous;throw error}
   }
   getOAuthClient(provider: OAuthProvider) {

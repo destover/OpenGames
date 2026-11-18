@@ -488,7 +488,7 @@ Claude, GPT и Gemini не включены в список безусловно
 |---|---|---|
 | `src/core/pricing.ts` | загрузка и валидация `pricing.json`, расчёт списания, версия прайса | `providers.json` + `accounts.ts:49` (`currentModel`) |
 | `src/core/billing.ts` | кошелёк, ledger, холды, баланс, история, `InsufficientBalanceError` | `coauthor-usage.ts` (SQLite, WAL, `DatabaseSync`) |
-| `src/core/payments.ts` | интерфейс `PaymentProvider` + адаптеры `yookassa`, `enot`; создание платежа, проверка вебхука, сверка | `connect-transport.ts` (асинхронный внешний канал) |
+| `src/core/payments.ts` | интерфейс `PaymentProvider` + адаптер `yookassa`; создание платежа, проверка вебхука, сверка | `connect-transport.ts` (асинхронный внешний канал) |
 | `src/core/shared-key.ts` | пул платформенных ключей, метрированный `AIProvider`, лимиты расхода, маршрутизация по провайдерам | `donor.ts` + `donor-pool.ts` |
 | `src/core/provider-balance.ts` | адаптеры `ProviderBalance` для остатка и лимитов: openrouter, deepseek, groq, alibaba, ru-aggregator; пороги и алерты | `refreshProviderLimits` в `accounts.ts:132` |
 | `data/billing.sqlite` | `payments`, `ledger`, `usage`, `holds` | `data/donor-devices.sqlite` |

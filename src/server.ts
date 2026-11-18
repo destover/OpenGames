@@ -268,17 +268,11 @@ const server = createServer(async (req, res) => {
       if(!rendered.published&&!isAdmin){res.writeHead(503,{...securityHeaders,...noIndexHeaders,'Content-Type':'text/html; charset=utf-8','Retry-After':'3600'});if(req.method==='HEAD')res.end();else res.end(legal.unpublishedPage(doc.title));return}
       const html=rendered.published?rendered.html.replace(/<div class="notice">[\s\S]*?<\/div>\s*/,''):rendered.html;
       res.writeHead(200,{...securityHeaders,...noIndexHeaders,'Content-Type':'text/html; charset=utf-8'});if(req.method==='HEAD')res.end();else res.end(html);return}
-    if((req.method==='GET'||req.method==='HEAD')&&url.pathname==='/enot_f6bf7ef6.html'){
-      const file=await readFile(join(root,'..','enot_f6bf7ef6.html'));
-      res.writeHead(200,{...securityHeaders,...noIndexHeaders,'Content-Type':'text/html; charset=utf-8','Content-Length':String(file.length)});
-      res.end(req.method==='HEAD'?undefined:file);
-      return;
-    }
     if((req.method==='GET'||req.method==='HEAD')&&url.pathname==='/robots.txt'){const text=await readFile(join(root,'..','web','robots.txt'),'utf8');res.writeHead(200,{...securityHeaders,'Content-Type':'text/plain; charset=utf-8','Cache-Control':'public, max-age=3600'});if(req.method==='HEAD')res.end();else res.end(text);return}
     if (req.method === 'GET' && url.pathname === '/') { const html = await readFile(join(root, '..', 'web', 'index.html'), 'utf8'); res.writeHead(200, { ...securityHeaders,'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' }); res.end(html); return; }
     if (req.method === 'GET' && url.pathname === '/api/ai/providers') return send(res,200,providers);
     if (req.method === 'GET' && url.pathname === '/api/health') {const donor=donorPool?await donorPool.health():undefined,ok=donor?donor.connected:true;return send(res,ok?200:503,{ok,games:runtime.listGames().length,provider:aiMode,aiConnected:ok})}
-    const webhookMatch=url.pathname.match(/^\/api\/payments\/webhook\/(yookassa|enot)$/);
+    const webhookMatch=url.pathname.match(/^\/api\/payments\/webhook\/(yookassa)$/);
     if(webhookMatch&&req.method==='POST'){
       const provider=payments.byId(webhookMatch[1])!;
       if(!provider.configured)return send(res,503,{error:'Провайдер не настроен'});
@@ -361,19 +355,18 @@ const server = createServer(async (req, res) => {
       if(req.method==='GET'&&url.pathname==='/api/admin/sessions'){const offset=Math.max(0,Math.min(100_000,Number(url.searchParams.get('offset')||0)||0)),limit=Math.max(1,Math.min(100,Number(url.searchParams.get('limit')||50)||50));return send(res,200,runtime.adminSessionsPage(offset,limit))}
       if(req.method==='PUT'&&/^\/api\/admin\/sessions\/[0-9a-f-]{36}$/i.test(url.pathname)){const id=decodeURIComponent(url.pathname.split('/')[4]),data=await body(req);copyFileSync(join(root,'..','data','saves',id+'.json'),join(adminData,`${id}-${Date.now()}.json`));const updated=runtime.adminReplaceSession(id,data.session);audit(actor,'session.edit',id,{reason:String(data.reason||'').slice(0,300)});return send(res,200,updated)}
       if(req.method==='GET'&&url.pathname==='/api/admin/audit')return send(res,200,existsSync(adminAudit)?readTextSync(adminAudit,'utf8').trim().split(/\r?\n/).slice(-500).filter(Boolean).map(line=>JSON.parse(line)).reverse():[]);
-      const paymentConfig=url.pathname.match(/^\/api\/admin\/billing\/providers\/(yookassa|enot)$/);
+      const paymentConfig=url.pathname.match(/^\/api\/admin\/billing\/providers\/(yookassa)$/);
       if(req.method==='PUT'&&paymentConfig){
         const id=paymentConfig[1] as PaymentProviderId,data=await body(req),current=payments.credentials(id);
-        if(!data||typeof data.shopId!=='string'||typeof data.apiKey!=='string'||
-          (id==='enot'&&typeof data.webhookSecret!=='string'))return send(res,400,{error:'Проверьте реквизиты провайдера'});
-        const shopId=data.shopId.trim(),apiKey=data.apiKey.trim(),webhookSecret=id==='enot'?data.webhookSecret.trim():'';
-        const validShop=id==='yookassa'?/^\d{1,32}$/:/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
-        if(!validShop.test(shopId)||!(/^[!-~]{0,512}$/).test(apiKey)||!(/^[!-~]{0,512}$/).test(webhookSecret)){
+        if(!data||typeof data.shopId!=='string'||typeof data.apiKey!=='string')return send(res,400,{error:'Проверьте реквизиты провайдера'});
+        const shopId=data.shopId.trim(),apiKey=data.apiKey.trim();
+        const validShop=/^\d{1,32}$/;
+        if(!validShop.test(shopId)||!(/^[!-~]{0,512}$/).test(apiKey)){
           return send(res,400,{error:'Проверьте формат ID и ключей'});
         }
         const sameShop=shopId===current.shopId;
-        const next={shopId,apiKey:apiKey||(sameShop?current.apiKey:''),webhookSecret:webhookSecret||(sameShop?current.webhookSecret:'')};
-        if(!next.apiKey||(id==='enot'&&!next.webhookSecret))return send(res,400,{error:'Для этой кассы укажите все ключи'});
+        const next={shopId,apiKey:apiKey||(sameShop?current.apiKey:'')};
+        if(!next.apiKey)return send(res,400,{error:'Для этой кассы укажите все ключи'});
         if(!sameShop&&billing.hasPendingProvider(id))return send(res,409,{error:'Дождитесь завершения платежей перед сменой кассы'});
         accounts.setPaymentCredentials(id,next);
         audit(actor,'payment.provider.configure',id,{shopChanged:!sameShop});

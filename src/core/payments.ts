@@ -1,8 +1,8 @@
-import { createHmac, timingSafeEqual } from 'node:crypto';
+import { timingSafeEqual } from 'node:crypto';
 
-export type PaymentProviderId = 'yookassa' | 'enot';
-export const paymentProviderIds = ['yookassa','enot'] as const;
-export type PaymentCredentials = {shopId:string; apiKey:string; webhookSecret:string};
+export type PaymentProviderId = 'yookassa';
+export const paymentProviderIds = ['yookassa'] as const;
+export type PaymentCredentials = {shopId:string; apiKey:string};
 export type TopupRequest = {paymentId:string; amountRub:number; description:string; returnUrl?:string};
 export type CreatedTopup = {externalId:string; confirmationUrl:string};
 export type ProviderEvent = {externalId:string; orderId:string; status:'succeeded'|'pending'|'failed'; amountRub:number};
@@ -109,71 +109,15 @@ class YooKassaProvider implements PaymentProvider {
   }
 }
 
-function orderedJson(value:unknown):string{
-  if(Array.isArray(value))return '['+value.map(orderedJson).join(',')+']';
-  if(value&&typeof value==='object')return '{'+Object.entries(value).sort(([a],[b])=>a<b?-1:a>b?1:0)
-    .map(([key,item])=>JSON.stringify(key)+':'+orderedJson(item)).join(',')+'}';
-  return JSON.stringify(value);
-}
-
-class EnotProvider implements PaymentProvider {
-  id='enot' as const;
-  label='ENOT (СБП)';
-  private readonly credentials:PaymentCredentials;
-  constructor(credentials:PaymentCredentials){this.credentials=credentials}
-  get configured(){return Boolean(this.credentials.shopId&&this.credentials.apiKey&&this.credentials.webhookSecret)}
-  get note(){return this.configured?'Реквизиты заполнены. Подпись уведомлений и статус платежа проверяются.':'Укажите ID кассы, секретный и дополнительный ключи ENOT.'}
-  private async call(path:string,init:RequestInit={}){
-    const result=await providerJson('https://api.enot.io'+path,{
-      ...init,headers:{Accept:'application/json','Content-Type':'application/json','x-api-key':this.credentials.apiKey}
-    });
-    if(result?.status_check!==true||!result.data)throw new PaymentError('ENOT отклонил запрос');
-    return result.data;
-  }
-  async create(request:TopupRequest){
-    if(!this.configured)throw new PaymentError(this.note,503);
-    const data=await this.call('/invoice/create',{method:'POST',body:JSON.stringify({
-      amount:request.amountRub,currency:'RUB',order_id:request.paymentId,shop_id:this.credentials.shopId,
-      comment:request.description,include_service:['sbp'],
-      ...(request.returnUrl?.startsWith('https://')?{hook_url:new URL('/api/payments/webhook/enot',request.returnUrl).href}:{}),
-      success_url:returnPage(request.returnUrl),fail_url:returnPage(request.returnUrl)
-    })});
-    return topupLink(data.id,data.url,['enot.io']);
-  }
-  verify(context:VerifyContext){
-    const signature=context.headers['x-api-sha256-signature']||'';
-    const data=parseJson(context.raw);
-    if(!this.credentials.webhookSecret||!data||!/^[0-9a-f]{64}$/i.test(signature))return false;
-    try{return equal(createHmac('sha256',this.credentials.webhookSecret).update(orderedJson(data)).digest('hex'),signature.toLowerCase())}
-    catch{return false}
-  }
-  notificationId(raw:string){
-    const data=parseJson(raw);
-    if(data?.type===1&&['success','fail','expired'].includes(data.status)&&uuid(data.invoice_id))return data.invoice_id;
-  }
-  async status(externalId:string){
-    const data=await this.call('/invoice/info?'+new URLSearchParams({invoice_id:externalId,shop_id:this.credentials.shopId}));
-    if(data.shop_id!==this.credentials.shopId)throw new PaymentError('ENOT вернул платёж другой кассы');
-    const status=data.status==='success'?'succeeded':['fail','expired'].includes(data.status)?'failed':'pending';
-    return paymentEvent(data.invoice_id,data.order_id,status,data.invoice_amount,data.currency);
-  }
-  async refund():Promise<{refundId:string}>{
-    throw new PaymentError('Возврат ENOT выполняется в кабинете провайдера',501);
-  }
-}
-
 export function paymentRegistry(env:NodeJS.ProcessEnv, saved:(id:PaymentProviderId)=>PaymentCredentials|undefined){
-  const credentials=(id:PaymentProviderId)=>saved(id)??(id==='yookassa'
-    ? {shopId:env.YOOKASSA_SHOP_ID||'',apiKey:env.YOOKASSA_SECRET_KEY||'',webhookSecret:''}
-    : {shopId:env.ENOT_SHOP_ID||'',apiKey:env.ENOT_API_KEY||'',webhookSecret:env.ENOT_WEBHOOK_SECRET||''});
+  const credentials=(id:PaymentProviderId)=>saved(id)??{shopId:env.YOOKASSA_SHOP_ID||'',apiKey:env.YOOKASSA_SECRET_KEY||''};
   const byId=(value:string)=>{
     if(value==='yookassa')return new YooKassaProvider(credentials(value),env);
-    if(value==='enot')return new EnotProvider(credentials(value));
   };
   const describe=()=>paymentProviderIds.map(id=>{
-    const {shopId,apiKey,webhookSecret}=credentials(id);
+    const {shopId,apiKey}=credentials(id);
     const {label,configured,note}=byId(id)!;
-    return {id,label,configured,note,shopId,hasApiKey:!!apiKey,hasWebhookSecret:!!webhookSecret};
+    return {id,label,configured,note,shopId,hasApiKey:!!apiKey};
   });
   return {credentials,byId,describe};
 }

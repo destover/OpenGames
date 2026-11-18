@@ -74,11 +74,11 @@ async function loadLimits(){
       box.textContent=name+' · '+modelUsageText(data.usage);
     }else if(data.provider==='donor'){
       const limits=await api('/api/ai/limits');
-      box.textContent=t('dailyMoves')+' '+limits.remaining+'/'+limits.limit+' · '+t('limitsReset')+' '+resetTime(limits.resetAt);
+      if(limits.unlimited){box.textContent=lang==='ru'?'Свой соавтор · без лимита ходов':'Your co-author · unlimited turns';return}if(limits.provider==='shared'){box.textContent=lang==='ru'?'Общий ключ OpenGames':'OpenGames shared key';return}box.textContent=t('dailyMoves')+' '+limits.remaining+'/'+limits.limit+' · '+t('limitsReset')+' '+resetTime(limits.resetAt);
     }else box.textContent=t('limitsUnavailable');
   }catch{box.textContent=t('limitsUnavailable')}
 }
-async function showGameLimit(){let box=$('dailyLimit');box.hidden=generationView?.active?.provider!=='donor'||!user;if(box.hidden)return;if(user.aiSource==='personal'){box.textContent=t('personalActive')+': '+(providers[user.provider]?.name||user.provider);return}try{let data=await api('/api/ai/limits');box.textContent=t('dailyMoves')+': '+data.remaining+' / '+data.limit+' · '+t('limitsReset')+': '+resetTime(data.resetAt)}catch{box.hidden=true}}
+async function showGameLimit(){let box=$('dailyLimit');box.hidden=generationView?.active?.provider!=='donor'||!user;if(box.hidden)return;if(user.aiSource==='personal'){box.textContent=t('personalActive')+': '+(providers[user.provider]?.name||user.provider);return}try{let data=await api('/api/ai/limits');if(data.unlimited){box.textContent=lang==='ru'?'Свой соавтор · без лимита ходов':'Your co-author · unlimited turns';return}if(data.provider==='shared'){box.textContent=lang==='ru'?'Общий ключ OpenGames':'OpenGames shared key';return}box.textContent=t('dailyMoves')+': '+data.remaining+' / '+data.limit+' · '+t('limitsReset')+': '+resetTime(data.resetAt)}catch{box.hidden=true}}
 function showLimitDialog(resetAt){let d=document.getElementById('limitDialog');if(!d){d=document.createElement('dialog');d.id='limitDialog';d.className='access-dialog';document.body.append(d)}d.innerHTML='<button class="modal-close" aria-label="'+t('close')+'">×</button><h2>'+t('dailyLimitTitle')+'</h2><p>'+t('dailyLimitMessage').replace('{time}',resetTime(resetAt))+'</p><button class="access-action">'+t('close')+'</button>';d.querySelectorAll('button').forEach(b=>b.onclick=()=>d.close());d.showModal()}
 function modelOptions(provider,selected=''){let spec=providers[provider],models=spec?.models||[],value=selected||spec?.defaultModel,groups=[['free',t('freeModels')],['quota',t('quotaModels')],['paid',t('paidModels')]];return groups.map(([tier,label])=>{let items=models.filter(m=>m.tier===tier);return items.length?'<optgroup label="'+esc(label)+'">'+items.map(m=>'<option value="'+esc(m.id)+'" '+(m.id===value?'selected':'')+'>'+esc(m.name)+'</option>').join('')+'</optgroup>':''}).join('')+(selected&&!models.some(m=>m.id===selected)?'<option selected value="'+esc(selected)+'">'+esc(selected)+'</option>':'')}
 
@@ -378,6 +378,7 @@ async function requestTurn(job){
         const event=JSON.parse(line);
         if(event.type==='preview')previewTurn(event.text);
         if(event.type==='result')return event.result;
+        if(event.type==='queued'){job.jobId=event.jobId;if(job.stopping)await stopQueuedTurn(job);return await waitForJob(event.jobId,job.id)}
         if(event.type==='error')fail(event);
       }
     }

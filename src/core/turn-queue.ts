@@ -14,7 +14,7 @@ import type { DeviceRegistry } from './device-registry.ts';
 
 const cancelled = new Error('Генерация остановлена');
 
-type Job = {id:string;ownerId:string;sessionId:string;action:Action;status:'waiting_in_queue'|'generating'|'completed'|'failed'|'cancelled';createdAt:number;chargedDay?:number;finishedAt?:number;error?:string};
+type Job = {id:string;ownerId:string;sessionId:string;action:Action;status:'waiting_in_queue'|'generating'|'completed'|'failed'|'cancelled';createdAt:number;chargedDay?:number;ownDonors?:string[];finishedAt?:number;error?:string};
 export class TurnQueue {
   private jobs: Job[] = [];
   private controllers = new Map<string, AbortController>();
@@ -53,6 +53,10 @@ export class TurnQueue {
     const done=j.status==='completed'?this.completedTurn(j):undefined;
     return {jobId:j.id,status:j.status,position:j.status==='waiting_in_queue'?waiting.indexOf(j)+1:0,error:j.error,preview:j.status==='generating'?this.previews.get(j.id):undefined,...(done?{result:{session:this.runtime.get(j.sessionId,ownerId),narrative:done.narrative,source:done.source}}:{})};
   }
+  ownDonors(ownerId:string){
+    const connected=new Set(this.pool.connectedIds());
+    return (this.devices?.adminCoauthors()||[]).filter(device=>device.owner_id===ownerId&&!device.revokedAt).map(device=>'connect-'+device.id).filter(id=>connected.has(id));
+  }
   enqueue(sessionId:string,ownerId:string,action:Action){
     if(!action||typeof action.requestId!=='string'||!/^[a-zA-Z0-9-]{8,80}$/.test(action.requestId))throw new Error('Неверный идентификатор хода');
     const session=this.runtime.get(sessionId,ownerId);
@@ -64,8 +68,9 @@ export class TurnQueue {
     if(!done&&this.jobs.some(j=>j.ownerId===ownerId&&this.active(j)))throw new Error('Ваш предыдущий ход ещё обрабатывается');
     this.prune();
     if(!done&&this.jobs.filter(j=>this.active(j)).length>=10)throw new Error('Очередь заполнена. Повторите позже.');
-    const chargedDay=done?undefined:this.accounts.reserveTurn(ownerId);
-    const job:Job={id:randomUUID(),ownerId,sessionId,action:structuredClone(action),status:done?'completed':'waiting_in_queue',createdAt:Date.now(),chargedDay};
+    const ownDonors=this.ownDonors(ownerId);
+    const chargedDay=done||ownDonors.length?undefined:this.accounts.reserveTurn(ownerId);
+    const job:Job={id:randomUUID(),ownerId,sessionId,action:structuredClone(action),status:done?'completed':'waiting_in_queue',createdAt:Date.now(),chargedDay,ownDonors:ownDonors.length?ownDonors:undefined};
     if(done)this.forgetAction(job);
     try{this.jobs.push(job);this.persist()}catch(error){this.jobs.pop();this.refund(job);throw error}this.schedule();return this.view(job.id,ownerId);
   }
@@ -75,7 +80,7 @@ export class TurnQueue {
     if(this.pumping)return;this.pumping=true;
     try{for(const job of this.jobs.filter(j=>j.status==='waiting_in_queue')){
       if(Date.now()-job.createdAt>20*60_000){job.status='failed';job.error='Время ожидания истекло. Повторите ход.';job.finishedAt=Date.now();this.refund(job);this.forgetAction(job);this.persist();continue}
-      const lease=this.pool.acquire();if(!lease){this.schedule(this.pool.nextRetryDelay());break}
+      const lease=this.pool.acquire(new Set(),job.ownDonors);if(!lease){this.schedule(this.pool.nextRetryDelay());if(job.ownDonors)continue;break}
       job.status='generating';this.persist();void this.execute(job,lease);
     }}finally{this.pumping=false}
   }
@@ -123,7 +128,7 @@ export class TurnQueue {
         if(!(error instanceof DonorUnavailableError)){finishUsage('failed',error instanceof Error?error.message:'Ход не применён');throw error}
         finishUsage('failed',error.message);this.previews.delete(job.id);this.pool.failed(lease.node.id);tried.add(lease.node.id);lease.release();
         const remaining=deadline-Date.now();if(remaining<=0)throw error;
-        const next=await this.pool.acquireNext(tried,remaining,controller.signal);if(!next)throw error;lease=next;
+        const next=await this.pool.acquireNext(tried,remaining,controller.signal,job.ownDonors);if(!next)throw error;lease=next;
       }
     }}catch(error){job.status=error===cancelled?'cancelled':'failed';job.error=error instanceof Error?error.message:'Не удалось выполнить ход';this.refund(job)}
     finally{this.controllers.delete(job.id);this.previews.delete(job.id);clearTimeout(deadlineTimer);controller.abort();lease.release();job.finishedAt=Date.now();this.forgetAction(job);this.persist();this.schedule()}

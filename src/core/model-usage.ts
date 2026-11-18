@@ -64,11 +64,11 @@ export class ModelUsageStore {
     return { resetAt:day + dayMs, byModel:Object.fromEntries(rows.map(({model,...usage})=>[model,usage])) };
   }
 
-  begin(userId: string, provider: string, model: string) {
+  begin(userId: string, provider: string, model: string, unlimited=false) {
     const id = randomUUID(), day = dayStart(), key = provider + '/' + model;
     const result = this.db.prepare(`INSERT INTO model_calls(id, user_id, model, day)
       SELECT ?, ?, ?, ? WHERE (SELECT count(*) FROM model_calls WHERE user_id=? AND model=? AND day=?) < ?`)
-      .run(id, userId, key, day, userId, key, day, this.dailyLimit(provider, model).limit);
+      .run(id, userId, key, day, userId, key, day, unlimited?Number.MAX_SAFE_INTEGER:this.dailyLimit(provider, model).limit);
     if (!result.changes) throw Object.assign(new Error('Суточный лимит запросов к модели исчерпан'), { status: 429, resetAt: day + dayMs });
     return (usage?: TokenUsage) => {
       const price = prices[key];

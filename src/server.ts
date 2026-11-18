@@ -7,6 +7,7 @@ import { dirname, join } from 'node:path';
 import { appendFileSync, copyFileSync, mkdirSync, readFileSync as readTextSync, writeFileSync, renameSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import nodemailer from 'nodemailer';
+import { SharedAIProvider, SharedProvidersUnavailable, sharedCandidates } from './core/shared-ai.ts';
 import { GameRuntime } from './core/runtime.ts';
 import { type AIProvider, RemoteAIProvider, AnthropicProvider, FallbackAIProvider, LocalAIProvider, OllamaAIProvider, OpenAIProvider, OpenRouterProvider } from './core/ai.ts';
 import { modelInfo, pilotModel, playerProfileLimits, type GenerationSettings } from './core/generation.ts';
@@ -92,19 +93,23 @@ const pilotKey = process.env.OPENGAME_PILOT_OPENROUTER_KEY;
 const modelUsage = new ModelUsageStore(join(root, '..', 'data', 'model-usage.sqlite'));
 const ollamaModel = process.env.OLLAMA_MODEL || 'qwen3.5:9b';
 
-function resolveWriter(userId: string, settings: GenerationSettings) {
-  if (settings.provider && settings.model) {
-    const config = accounts.getProviders(userId, settings.provider);
-    if (!config) throw Object.assign(new Error('Добавьте ключ выбранного провайдера'), {status:403});
-    return { ...config, model:settings.model };
+type WriterConfig={provider:string;model:string;keys:string[];ownDonor?:boolean};
+function resolveWriter(userId:string,settings:GenerationSettings):WriterConfig|undefined{
+  if(settings.provider&&settings.model){
+    const config=accounts.getProviders(userId,settings.provider);
+    if(!config)throw Object.assign(new Error('Добавьте ключ выбранного провайдера'),{status:403});
+    return {...config,model:settings.model};
   }
-  if (aiMode === 'donor' && accounts.getAiSource(userId) === 'donor') return {provider:'donor',model:donorPool!.model,keys:[]};
-  if (aiMode === 'ollama' && accounts.getAiSource(userId) !== 'personal') {
-    return pilotKey ? {provider:'openrouter',model:pilotModel,keys:[pilotKey]} : {provider:'ollama',model:ollamaModel,keys:[]};
+  if(accounts.getAiSource(userId)==='personal'){
+    const config=accounts.getProviders(userId);
+    if(config)return config;
   }
-  const config = accounts.getProviders(userId);
-  if (config) return { ...config, model: config.model || providers[config.provider as keyof typeof providers].defaultModel };
-  if (pilotKey) return {provider:'openrouter',model:pilotModel,keys:[pilotKey]};
+  if(queue?.ownDonors(userId).length)return {provider:'donor',model:'Свой соавтор',keys:[],ownDonor:true};
+  const shared=sharedCandidates(sharedKeys);
+  if(billing.balanceRub(userId)>0&&shared.length)return {provider:'shared',model:shared[0].model,keys:[]};
+  if(aiMode==='donor')return {provider:'donor',model:donorPool!.model,keys:[]};
+  if(aiMode==='ollama')return {provider:'ollama',model:ollamaModel,keys:[]};
+  return accounts.getProviders(userId);
 }
 
 function generationSettings(userId: string, value: any): GenerationSettings {
@@ -160,7 +165,7 @@ const payments=paymentRegistry(process.env,id=>accounts.getPaymentCredentials(id
 function audit(actor:string,action:string,target:string,details:Record<string,unknown>={}){appendFileSync(adminAudit,JSON.stringify({at:new Date().toISOString(),actor,action,target,details})+'\n',{mode:0o600});}
 const deviceRegistry=aiMode==='donor'?new DeviceRegistry(join(root,'..','data','donor-devices.sqlite')):undefined;
 let queue:TurnQueue|undefined,connectTransport:ConnectTransport|undefined;
-const smtp=process.env.SMTP_HOST&&process.env.SMTP_USER&&process.env.SMTP_PASSWORD?nodemailer.createTransport({host:process.env.SMTP_HOST,port:Number(process.env.SMTP_PORT||465),secure:process.env.SMTP_SECURE!=='0',auth:{user:process.env.SMTP_USER,pass:process.env.SMTP_PASSWORD}}):null;
+const smtp=process.env.SMTP_HOST&&process.env.SMTP_USER&&process.env.SMTP_PASSWORD?nodemailer.createTransport({connectionTimeout:10_000,greetingTimeout:10_000,socketTimeout:20_000,host:process.env.SMTP_HOST,port:Number(process.env.SMTP_PORT||465),secure:process.env.SMTP_SECURE!=='0',auth:{user:process.env.SMTP_USER,pass:process.env.SMTP_PASSWORD}}):null;
 let sendingFeedbackEmails=false;
 async function notifyFeedbackAdministrator(){
   if(!smtp||sendingFeedbackEmails)return;
@@ -194,6 +199,37 @@ if(smtp){
   setInterval(()=>void notifyFeedbackAdministrator(),30_000).unref();
   void notifyFeedbackAdministrator();
 }
+let checkingSharedFinances=false;
+async function checkSharedFinances(){
+  if(checkingSharedFinances)return;
+  checkingSharedFinances=true;
+  try{
+    for(const key of sharedKeys.list().filter(item=>item.status==='active')){
+      const secret=sharedKeys.secret(key.id);if(!secret)continue;
+      const balance=await fetchBalance(key.route,secret);
+      if(!balance.error)sharedKeys.recordBalance(key.id,balance);
+    }
+    const recipients=accounts.adminUsers().filter(user=>user.role==='admin'&&!user.disabled).map(user=>user.email);
+    const administrator=process.env.OPENGAME_ADMIN_EMAIL?.trim();
+    if(administrator&&!recipients.includes(administrator))recipients.push(administrator);
+    for(const alert of sharedKeys.financialAlerts()){
+      const details={provider:alert.route,keyId:alert.id,label:alert.label,remaining:alert.remaining,currency:alert.currency,level:alert.level};
+      let sent=false;
+      if(smtp&&recipients.length){
+        try{
+          const result=await smtp.sendMail({from:`OpenGames <${process.env.SMTP_USER}>`,to:recipients,subject:'OpenGames · '+(alert.level===3?'Средства провайдера закончились':'Низкий остаток средств провайдера'),
+            text:[`Провайдер: ${ROUTE_LABELS[alert.route]}`,`Ключ: ${alert.label}`,`Доступно: ${alert.remaining} ${alert.currency}`,`Порог: ${alert.level===3?'0':alert.level===2?'10%':'20%'} от наблюдавшегося максимума ${alert.baseline} ${alert.currency}`,publicOrigin?publicOrigin+'/admin#shared':'Откройте раздел «Общий ключ OpenGames».'].join('\n')});
+          sent=result.accepted.length>0;
+        }catch{console.error('Не удалось отправить финансовое уведомление')}
+      }
+      audit('system','sharedKey.finance',alert.id,{...details,emailSent:sent});
+      sharedKeys.markFinancialAlert(alert.id,alert.level,sent);
+    }
+  }catch{console.error('Не удалось проверить остатки общих провайдеров')}
+  finally{checkingSharedFinances=false}
+}
+setInterval(()=>void checkSharedFinances(),300_000).unref();
+setTimeout(()=>void checkSharedFinances(),1000).unref();
 const json = (value: unknown) => JSON.stringify(value);
 const noIndexHeaders={'X-Robots-Tag':'noindex, nofollow, noarchive, nosnippet','Cache-Control':'no-store'};
 const legalDocs=new Map(LEGAL_DOCUMENTS.map(doc=>[doc.route,doc]));
@@ -446,10 +482,10 @@ const server = createServer(async (req, res) => {
       const writer = resolveWriter(userId,{});
       if (!writer) return send(res,200,{});
       const {provider,model} = writer;
-      const usage = provider === 'donor' ? undefined : modelUsage.today(userId,provider,model);
+      const usage = provider === 'donor'||provider==='shared' ? undefined : modelUsage.today(userId,provider,model);
       return send(res,200,{provider,model,usage});
     }
-    if (req.method === 'GET' && url.pathname === '/api/ai/limits') { const userId=authId(req);if(!userId)return send(res,401,{error:'Требуется вход'});if(aiMode==='donor'){const limits=accounts.dailyLimits(userId);return send(res,200,{provider:'donor',available:true,limit:limits.daily_allowance,remaining:limits.remaining_today,resetAt:limits.resetAt})}const config=accounts.getProvider(userId); if(!config)return send(res,401,{error:'Требуется вход'}); if(config.provider==='openrouter'){try{const response=await fetch('https://openrouter.ai/api/v1/key',{headers:{Authorization:'Bearer '+config.key},signal:AbortSignal.timeout(8000)}); const data=await response.json() as any; return send(res,response.ok?200:502,{provider:config.provider,limit:data.data?.limit??null,usage:data.data?.usage??null,remaining:data.data?.limit_remaining??null,reset:data.data?.limit_reset??null,available:response.ok});}catch{return send(res,200,{provider:config.provider,available:false})}} return send(res,200,{provider:config.provider,available:false,message:'Лимиты доступны в кабинете провайдера'}); }
+    if (req.method === 'GET' && url.pathname === '/api/ai/limits') { const userId=authId(req);if(!userId)return send(res,401,{error:'Требуется вход'});if(queue?.ownDonors(userId).length)return send(res,200,{provider:'donor',available:true,unlimited:true,ownDonor:true});if(resolveWriter(userId,{})?.provider==='shared')return send(res,200,{provider:'shared',available:true,balanceRub:billing.balanceRub(userId)});if(aiMode==='donor'){const limits=accounts.dailyLimits(userId);return send(res,200,{provider:'donor',available:true,limit:limits.daily_allowance,remaining:limits.remaining_today,resetAt:limits.resetAt})}const config=accounts.getProvider(userId); if(!config)return send(res,401,{error:'Требуется вход'}); if(config.provider==='openrouter'){try{const response=await fetch('https://openrouter.ai/api/v1/key',{headers:{Authorization:'Bearer '+config.key},signal:AbortSignal.timeout(8000)}); const data=await response.json() as any; return send(res,response.ok?200:502,{provider:config.provider,limit:data.data?.limit??null,usage:data.data?.usage??null,remaining:data.data?.limit_remaining??null,reset:data.data?.limit_reset??null,available:response.ok});}catch{return send(res,200,{provider:config.provider,available:false})}} return send(res,200,{provider:config.provider,available:false,message:'Лимиты доступны в кабинете провайдера'}); }
     if (req.method === 'GET' && url.pathname === '/api/ai/status') {const donorStatus=donorPool?await donorPool.health():undefined;return send(res, 200, { provider: aiMode, pilotAvailable: !!pilotKey, availableProviders: [...Object.keys(providers), 'local', 'ollama', 'donor'], model: aiMode === 'donor' ? donorPool!.model : pilotKey ? pilotModel : aiMode === 'ollama' ? (process.env.OLLAMA_MODEL || 'qwen3.5:9b') : aiMode === 'openrouter' ? (process.env.OPENROUTER_MODEL || 'openrouter/free') : aiMode === 'openai' ? (process.env.OPENAI_MODEL || 'gpt-4o-mini') : aiMode === 'anthropic' ? (process.env.ANTHROPIC_MODEL || 'claude-3-5-haiku-latest') : 'Локальный сценарист', connected: donorStatus?donorStatus.connected:!!pilotKey||aiMode!=='local', coauthors:donorStatus?.donors, donors:donorStatus?.donors, fallback: aiMode === 'donor' || aiMode === 'ollama' ? undefined : 'Локальный сценарист' });}
     if (url.pathname.startsWith('/api/auth/') && ['POST','PUT'].includes(req.method || '') && req.headers['x-storage-consent'] !== 'accepted') return send(res,403,{error:'Требуется согласие на хранение данных'});
     if (req.method === 'GET' && url.pathname === '/api/auth/oauth') {
@@ -624,9 +660,9 @@ const server = createServer(async (req, res) => {
       if (req.method === 'PUT') accounts.setScenarioSettings(userId,gameId,generationSettings(userId,await body(req)));
       const settings = accounts.scenarioSettings(userId,gameId), writer = resolveWriter(userId,settings);
       const describe = (config: ReturnType<typeof resolveWriter>) => config ? { provider:config.provider, model:config.model,
-        sampling:config.provider === 'ollama' || !!modelInfo(config.provider,config.model)?.sampling } : undefined;
+        ownDonor:!!config.ownDonor,shared:config.provider==='shared',sampling:config.provider === 'ollama' || !!modelInfo(config.provider,config.model)?.sampling } : undefined;
       const active = describe(writer), defaultWriter = describe(resolveWriter(userId,{}));
-      const usage = writer && writer.provider !== 'donor' ? modelUsage.today(userId,writer.provider,writer.model) : undefined;
+      const usage = writer && !['donor','shared'].includes(writer.provider) ? modelUsage.today(userId,writer.provider,writer.model) : undefined;
       return send(res,200,{settings,active,defaultWriter,usage});
     }
     const packageMatch=url.pathname.match(/^\/api\/sessions\/([^/]+)\/package$/);
@@ -645,8 +681,8 @@ const server = createServer(async (req, res) => {
       if (config.provider === 'donor') return send(res,202,queue!.enqueue(id,userId,action));
       if (queue?.pending(id,userId)) return send(res,409,{error:'Предыдущий ход ещё обрабатывается'});
       const stream = req.headers.accept === 'application/x-ndjson', controller = new AbortController();
-      const beginRequest = () => modelUsage.begin(userId,config.provider,config.model);
-      const primary = config.provider === 'ollama' ? new OllamaAIProvider() : new RemoteAIProvider(config.provider,config.keys,config.model);
+      const beginRequest = () => modelUsage.begin(userId,config.provider,config.model,true);
+      const primary = config.provider==='shared'?new SharedAIProvider(sharedKeys,()=>billing.balanceRub(userId)>0,(provider,model)=>modelUsage.begin(userId,provider,model,true)):config.provider === 'ollama' ? new OllamaAIProvider() : new RemoteAIProvider(config.provider,config.keys,config.model);
       const tracked: AIProvider = config.provider !== 'ollama' ? primary : {
         generate: async (...args: Parameters<AIProvider['generate']>) => {
           const record = beginRequest();
@@ -671,6 +707,13 @@ const server = createServer(async (req, res) => {
         else return send(res,200,result);
       } catch (error) {
         if (controller.signal.aborted) return;
+        if(error instanceof SharedProvidersUnavailable&&queue){
+          try{
+            const job=queue.enqueue(id,userId,action);
+            if(stream){emit({type:'queued',jobId:job.jobId});return}
+            return send(res,202,job);
+          }catch(fallbackError){error=fallbackError}
+        }
         const detail = {error:error instanceof Error ? error.message : 'Ошибка генерации',
           status:Number((error as {status?:number})?.status) || 502, resetAt:(error as {resetAt?:number})?.resetAt};
         if (stream) emit({type:'error',...detail});

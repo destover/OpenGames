@@ -17,8 +17,10 @@ export class SharedKeyStore {
   constructor(file:string,secret=process.env.OPENGAME_SECRET){if(!secret||secret.length<32||/^(?:replace-with-|change-me|your-secret|example-secret|test-secret)/i.test(secret))throw new Error('OPENGAME_SECRET должен быть случайным значением длиной не менее 32 символов');mkdirSync(dirname(file),{recursive:true,mode:0o700});this.key=scryptSync(secret,'opengame-shared-key',32);this.db=new DatabaseSync(file);chmodSync(file,0o600);this.db.exec(`PRAGMA journal_mode=WAL;
     CREATE TABLE IF NOT EXISTS shared_keys(id TEXT PRIMARY KEY,label TEXT NOT NULL,route TEXT NOT NULL,model TEXT NOT NULL,iv TEXT NOT NULL,tag TEXT NOT NULL,data TEXT NOT NULL,digest TEXT NOT NULL UNIQUE,monthly_cap_rub REAL NOT NULL DEFAULT 0,status TEXT NOT NULL DEFAULT 'active',note TEXT NOT NULL DEFAULT '',created_at INTEGER NOT NULL,updated_at INTEGER NOT NULL,balance TEXT,balance_at INTEGER);
     CREATE INDEX IF NOT EXISTS shared_keys_status ON shared_keys(status,created_at);`);
+    this.db.exec('CREATE TABLE IF NOT EXISTS shared_finance_state(key_id TEXT PRIMARY KEY,baseline REAL NOT NULL,currency TEXT NOT NULL,level INTEGER NOT NULL DEFAULT 0,notified_level INTEGER NOT NULL DEFAULT 0,next_attempt INTEGER NOT NULL DEFAULT 0)');
     const columns=this.db.prepare('PRAGMA table_info(shared_keys)').all() as {name:string}[];
     if(!columns.some(column=>column.name==='models'))this.db.exec('ALTER TABLE shared_keys ADD COLUMN models TEXT');
+    for(const key of this.list())if(key.balance)this.updateFinancialState(key.id,key.balance);
   }
   private encrypt(value:string){const iv=randomBytes(12),cipher=createCipheriv('aes-256-gcm',this.key,iv);const data=Buffer.concat([cipher.update(value,'utf8'),cipher.final()]);return {iv:iv.toString('hex'),tag:cipher.getAuthTag().toString('hex'),data:data.toString('hex')}}
   private decrypt(record:Encrypted){const decipher=createDecipheriv('aes-256-gcm',this.key,Buffer.from(record.iv,'hex'));decipher.setAuthTag(Buffer.from(record.tag,'hex'));return Buffer.concat([decipher.update(Buffer.from(record.data,'hex')),decipher.final()]).toString('utf8')}
@@ -52,6 +54,28 @@ export class SharedKeyStore {
     this.db.prepare('UPDATE shared_keys SET label=?,model=?,models=?,status=?,note=?,updated_at=?,balance=COALESCE(?,balance),balance_at=COALESCE(?,balance_at) WHERE id=?').run(label,model,JSON.stringify(models),status,(patch.note===undefined?current.note:String(patch.note).slice(0,300)),now,patch.balance?JSON.stringify(patch.balance):null,patch.balance?now:null,id);
     return this.get(id)!}
   remove(id:string){const result=this.db.prepare('DELETE FROM shared_keys WHERE id=?').run(id);return Number(result.changes)>0}
-  recordBalance(id:string,snapshot:BalanceSnapshot){this.db.prepare('UPDATE shared_keys SET balance=?,balance_at=? WHERE id=?').run(JSON.stringify(snapshot),Date.now(),id);return this.get(id)}
+  private updateFinancialState(id:string,balance:BalanceSnapshot){
+    if(!balance.available||balance.remaining===undefined||!balance.currency||!Number.isFinite(balance.remaining))return;
+    const previous=this.db.prepare('SELECT * FROM shared_finance_state WHERE key_id=?').get(id) as {baseline:number;currency:string;level:number;notified_level:number;next_attempt:number}|undefined;
+    const baseline=previous?.currency===balance.currency?Math.max(previous.baseline,balance.remaining):Math.max(0,balance.remaining);
+    const ratio=baseline>0?balance.remaining/baseline:0;
+    const level=balance.remaining<=0?3:ratio<=0.1?2:ratio<=0.2?1:0;
+    const same=previous?.currency===balance.currency;
+    this.db.prepare('INSERT INTO shared_finance_state(key_id,baseline,currency,level,notified_level,next_attempt) VALUES(?,?,?,?,?,?) ON CONFLICT(key_id) DO UPDATE SET baseline=excluded.baseline,currency=excluded.currency,level=excluded.level,notified_level=excluded.notified_level,next_attempt=excluded.next_attempt')
+      .run(id,baseline,balance.currency,level,same?Math.min(level,previous.notified_level):0,previous?.level===level?previous.next_attempt:0);
+  }
+  financialAlerts(){
+    const states=this.db.prepare('SELECT key_id,level,baseline,currency FROM shared_finance_state WHERE level>notified_level AND next_attempt<=?').all(Date.now()) as {key_id:string;level:number;baseline:number;currency:string}[];
+    return states.flatMap(state=>{const key=this.get(state.key_id);return key&&key.status==='active'?[{id:key.id,label:key.label,route:key.route,remaining:key.balance?.remaining,currency:state.currency,baseline:state.baseline,level:state.level}]:[]});
+  }
+  markFinancialAlert(id:string,level:number,sent:boolean){
+    if(sent)this.db.prepare('UPDATE shared_finance_state SET notified_level=?,next_attempt=0 WHERE key_id=? AND level=?').run(level,id,level);
+    else this.db.prepare('UPDATE shared_finance_state SET next_attempt=? WHERE key_id=?').run(Date.now()+300_000,id);
+  }
+  recordBalance(id:string,snapshot:BalanceSnapshot){
+    this.db.prepare('UPDATE shared_keys SET balance=?,balance_at=? WHERE id=?').run(JSON.stringify(snapshot),Date.now(),id);
+    this.updateFinancialState(id,snapshot);
+    return this.get(id);
+  }
   summary(){const list=this.list();return {total:list.length,active:list.filter(item=>item.status==='active').length,paused:list.filter(item=>item.status==='paused').length,checked:list.filter(item=>item.balance?.available).length,low:list.filter(item=>item.balance?.remaining!==undefined&&item.balance.remaining<=0).length}}
 }

@@ -5,7 +5,7 @@ import { selectDistinctOptions } from './similarity.ts';
 import type { Action, Event, GamePackage, Session, StateMutationProposal } from './types.ts';
 
 export interface AIResult { narrative: string; suggestions: Action[]; events: Event[]; stateMutation: StateMutationProposal[]; source?: string; model?: string; usage?: TokenUsage }
-export interface TokenUsage { promptTokens: number; completionTokens: number; costUsd?: number }
+export interface TokenUsage { promptTokens: number; completionTokens: number; costUsd?: number; costRub?: number }
 export interface AIRequestOptions { signal?: AbortSignal; deadline?: number; generation?: GenerationSettings; onNarrative?: (text: string) => void; beginRequest?: () => (usage?: TokenUsage) => void }
 export interface AIProvider { generate(game: GamePackage, session: Session, action: Action, correction?: string, options?: AIRequestOptions): Promise<AIResult> }
 
@@ -73,20 +73,20 @@ export class OllamaAIProvider implements AIProvider {
   }
 }
 
-function readUsage(data: Record<string, number | undefined> | undefined, input: string, output: string): TokenUsage | undefined {
+function readUsage(data: Record<string, any> | undefined, input: string, output: string): TokenUsage | undefined {
   if (!data || !Number.isFinite(data[input]) || !Number.isFinite(data[output])) return;
-  return { promptTokens:data[input]!, completionTokens:data[output]!, costUsd:Number.isFinite(data.cost) ? data.cost : undefined };
+  return { promptTokens:data[input]!, completionTokens:data[output]!, costUsd:data.currency!=='RUB'&&Number.isFinite(data.cost)?data.cost:undefined,costRub:data.currency==='RUB'&&Number.isFinite(data.cost)?data.cost:undefined };
 }
 
 const cooldowns = new Map<string, number>();
 export class RemoteAIProvider implements AIProvider {
-  private provider: string; private keys: string[]; private model: string;
-  constructor(provider: string, keys: string[], model?: string) {
-    if (!Object.hasOwn(providers, provider)) throw new Error('Провайдер не поддерживается');
-    this.provider = provider; this.keys = keys; this.model = model || providers[provider as keyof typeof providers].defaultModel;
+  private provider: string; private keys: string[]; private model: string; private endpoint?:string;
+  constructor(provider: string, keys: string[], model?: string, endpoint?:string) {
+    if (!endpoint&&!Object.hasOwn(providers, provider)) throw new Error('Провайдер не поддерживается');
+    this.provider = provider; this.keys = keys;this.endpoint=endpoint; this.model = model || providers[provider as keyof typeof providers].defaultModel;
   }
   async generate(game: GamePackage, session: Session, action: Action, correction?: string, options?: AIRequestOptions): Promise<AIResult> {
-    const spec = providers[this.provider as keyof typeof providers], deadline = Date.now() + 110000;
+    const spec = this.endpoint?{name:this.provider,baseUrl:this.endpoint}:providers[this.provider as keyof typeof providers], deadline = Math.min(options?.deadline??Infinity,Date.now() + 110000);
     let lastError = 'Все ключи временно недоступны. Повторите позже.';
     for (const key of this.keys) for (let attempt = 0; attempt < 2; attempt++) {
       const id = createHash('sha256').update(this.provider + key + this.model).digest('hex');
@@ -109,7 +109,7 @@ export class RemoteAIProvider implements AIProvider {
         const body = anthropic ? { ...common, system, messages } : {
           ...common, ...sampling, response_format: { type:'json_object' },
           messages: [{role:'system',content:system}, ...messages],
-          ...(stream && ['openrouter','openai','gemini','groq','deepseek'].includes(this.provider) ? {stream_options:{include_usage:true}} : {}),
+          ...(stream && (this.endpoint||['openrouter','openai','gemini','groq','deepseek'].includes(this.provider)) ? {stream_options:{include_usage:true}} : {}),
           ...(this.provider==='qwen' ? {enable_thinking:false} : {}),
           ...(this.provider==='openrouter' && (sampling.temperature !== undefined || sampling.top_p !== undefined)
             ? {provider:{require_parameters:true}} : {})

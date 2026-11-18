@@ -38,8 +38,9 @@ export class DonorPool {
     this.notify();
   }
   disconnect(id:string){const node=this.nodes.find(item=>item.id===id&&item.kind==='connect');if(node){node.connected=false;node.checkedAt=Date.now();this.notify()}}
-  acquire(excluded=new Set<string>()):DonorLease|undefined{
-    const now=Date.now(),available=this.nodes.filter(node=>!excluded.has(node.id)&&Math.max(node.busy,node.reportedBusy)<node.capacity&&node.cooldownUntil<=now&&(node.kind!=='connect'||node.connected));
+  connectedIds(){return this.nodes.filter(node=>node.connected).map(node=>node.id)}
+  acquire(excluded=new Set<string>(),allowed?:string[]):DonorLease|undefined{
+    const now=Date.now(),available=this.nodes.filter(node=>!excluded.has(node.id)&&(!allowed||allowed.includes(node.id))&&Math.max(node.busy,node.reportedBusy)<node.capacity&&node.cooldownUntil<=now&&(node.kind!=='connect'||node.connected));
     if(!available.length)return;
     available.sort((a,b)=>Math.max(a.busy,a.reportedBusy)/a.capacity-Math.max(b.busy,b.reportedBusy)/b.capacity||((this.nodes.indexOf(a)-this.cursor+this.nodes.length)%this.nodes.length)-((this.nodes.indexOf(b)-this.cursor+this.nodes.length)%this.nodes.length));
     const state=available[0];state.busy++;this.cursor=(this.nodes.indexOf(state)+1)%this.nodes.length;
@@ -49,10 +50,10 @@ export class DonorPool {
   failed(id:string){const state=this.nodes.find(node=>node.id===id);if(!state)return;state.connected=false;state.checkedAt=Date.now();state.cooldownUntil=Date.now()+20_000;this.notify()}
   succeeded(id:string){const state=this.nodes.find(node=>node.id===id);if(!state)return;if(state.kind!=='connect')state.connected=true;state.checkedAt=Date.now();state.cooldownUntil=0}
   private notify(){for(const listener of this.listeners)listener();this.onFree?.()}
-  async acquireNext(excluded:Set<string>,timeoutMs=180_000,signal?:AbortSignal):Promise<DonorLease|undefined>{
+  async acquireNext(excluded:Set<string>,timeoutMs=180_000,signal?:AbortSignal,allowed?:string[]):Promise<DonorLease|undefined>{
     if(excluded.size>=this.nodes.length)return;
     const deadline=Date.now()+timeoutMs;
-    while(Date.now()<deadline&&!signal?.aborted){const lease=this.acquire(excluded);if(lease)return lease;await new Promise<void>(resolve=>{let settled=false;const finish=()=>{if(settled)return;settled=true;clearTimeout(timer);this.listeners.delete(wake);signal?.removeEventListener('abort',finish);resolve()};const wake=()=>finish();const timer=setTimeout(finish,Math.min(2000,deadline-Date.now()));this.listeners.add(wake);signal?.addEventListener('abort',finish,{once:true});if(signal?.aborted)finish()})}
+    while(Date.now()<deadline&&!signal?.aborted){const lease=this.acquire(excluded,allowed);if(lease)return lease;await new Promise<void>(resolve=>{let settled=false;const finish=()=>{if(settled)return;settled=true;clearTimeout(timer);this.listeners.delete(wake);signal?.removeEventListener('abort',finish);resolve()};const wake=()=>finish();const timer=setTimeout(finish,Math.min(2000,deadline-Date.now()));this.listeners.add(wake);signal?.addEventListener('abort',finish,{once:true});if(signal?.aborted)finish()})}
   }
   nextRetryDelay(){const now=Date.now(),times=this.nodes.filter(node=>node.busy<node.capacity).map(node=>node.cooldownUntil-now).filter(time=>time>0);return Math.max(1000,Math.min(20_000,...times))}
   async health(){

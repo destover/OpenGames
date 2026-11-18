@@ -254,7 +254,7 @@ const keys=d.keys.map(k=>{
   const route=d.routes.find(r=>r.route===k.route);
   return '<div class="row"><span><b>'+esc(k.label)+'</b> <span class="tag">'+esc(route?.label||k.route)+'</span><br><small class="muted">'+esc(k.model)+' · '+esc(k.keyMask)+(k.note?'<br>'+esc(k.note):'')+'<br>'+esc(balanceText(k.balance))+(k.balance?' · '+esc(new Date(k.balance.checkedAt).toLocaleString('ru-RU')):'')+'</small></span><span class="tag">'+(k.status==='active'?'активен':'приостановлен')+'</span>'+(route?.keyUrl?'<button data-check="'+k.id+'">Обновить остаток</button><button data-model="'+k.id+'">Изменить модель</button>':'')+'<button data-toggle="'+k.id+'" data-status="'+k.status+'">'+(k.status==='active'?'Приостановить':'Активировать')+'</button><button class="danger" data-remove="'+k.id+'">Удалить</button></div>';
 }).join('')||'<p class="muted">Общих ключей пока нет.</p>';
-draw('Общий ключ OpenGames','<h2>Добавить ключ</h2><form id="skForm"><div class="form-grid"><div class="field"><label for="skLabel">Название ключа</label><input id="skLabel" required maxlength="60"></div><div class="field"><label for="skRoute">Провайдер</label><select id="skRoute">'+routes.map(r=>'<option value="'+esc(r.route)+'">'+esc(r.label)+'</option>').join('')+'</select></div><div class="field"><label for="skKey">API-ключ провайдера</label><input id="skKey" type="password" autocomplete="new-password" minlength="16" maxlength="1024" required><button type="button" id="skInspect">Загрузить модели</button></div><div class="field"><label for="skModel">Модель</label><select id="skModel" required disabled></select><p id="skBalance" class="hint" role="status" aria-live="polite"></p></div><div class="field"><label for="skNote">Заметка</label><input id="skNote" maxlength="300"></div></div><div class="shared-status"><p id="skGuide" class="hint"></p></div><details class="shared-guide" open><summary>Как подключить провайдера</summary><div id="skInstructions"></div></details><div class="admin-actions"><button class="primary" id="skAdd" disabled>Добавить общий ключ</button></div></form><h2>Зарегистрированные ключи</h2>'+keys);
+draw('Общий ключ OpenGames','<h2>Добавить ключ</h2><form id="skForm"><div class="form-grid"><div class="field"><label for="skLabel">Название ключа</label><input id="skLabel" required maxlength="60"></div><div class="field"><label for="skRoute">Провайдер</label><select id="skRoute">'+routes.map(r=>'<option value="'+esc(r.route)+'">'+esc(r.label)+'</option>').join('')+'</select></div><div class="field"><label for="skKey">API-ключ провайдера</label><input id="skKey" type="password" autocomplete="new-password" minlength="16" maxlength="1024" required><button type="button" id="skInspect">Загрузить модели</button></div><div class="field"><label for="skModel">Модель</label><select id="skModel" required disabled></select><p id="skBalance" class="hint" role="status" aria-live="polite"></p></div><div class="field"><label for="skNote">Заметка</label><input id="skNote" maxlength="300"></div></div><div class="shared-status"><p id="skGuide" class="hint"></p></div><details class="shared-guide" open><summary>Как подключить провайдера</summary><div id="skInstructions"></div></details><div class="admin-actions"><button class="primary" id="skAdd">Добавить общий ключ</button></div></form><h2>Зарегистрированные ключи</h2>'+keys);
 const form=$('#skForm'),route=$('#skRoute'),key=$('#skKey'),model=$('#skModel'),balance=$('#skBalance'),inspect=$('#skInspect'),add=$('#skAdd');
 let inspection=0;
 const instructions={
@@ -273,9 +273,9 @@ const renderGuide=()=>{
 };
 const clear=()=>{
   inspection++;
-  model.innerHTML=options([]);model.disabled=true;add.disabled=true;balance.textContent='';
+  model.innerHTML=options([]);model.disabled=true;balance.textContent='';
 };
-route.onchange=()=>{key.value='';clear();renderGuide()};key.oninput=clear;model.onchange=()=>{add.disabled=!model.value};clear();renderGuide();
+route.onchange=()=>{key.value='';clear();renderGuide()};key.oninput=clear;clear();renderGuide();
 inspect.onclick=async()=>{
   if(!key.reportValidity())return;
   const request=++inspection;
@@ -284,14 +284,20 @@ inspect.onclick=async()=>{
   try{
     const result=await api(endpoint+'/inspect',{method:'POST',body:JSON.stringify({route:route.value,key:key.value})});
     if(request!==inspection||!form.isConnected)return;
-    model.innerHTML=options(result.models);model.disabled=false;add.disabled=true;balance.textContent=balanceText(result.balance);
+    model.innerHTML=options(result.models);model.disabled=false;balance.textContent=balanceText(result.balance);
   }catch(x){if(request===inspection&&form.isConnected)balance.textContent=x.message}
   finally{inspect.disabled=false}
 };
 form.onsubmit=async e=>{
-  e.preventDefault();add.disabled=true;
+  e.preventDefault();
+  if(model.disabled||!model.value){
+    balance.textContent=model.disabled?'Сначала загрузите модели провайдера.':'Выберите модель из списка.';
+    (model.disabled?inspect:model).focus();
+    return;
+  }
+  add.disabled=true;add.textContent='Добавляем…';
   try{await api(endpoint,{method:'POST',body:JSON.stringify({label:$('#skLabel').value,route:route.value,model:model.value,key:key.value,note:$('#skNote').value})});load()}
-  catch(x){toast(x.message,'crit');add.disabled=!model.value}
+  catch(x){toast(x.message,'crit');balance.textContent=x.message;add.disabled=false;add.textContent='Добавить общий ключ'}
 };
 $('#content').onclick=async e=>{
   const b=e.target.closest('button[data-check],button[data-model],button[data-save-model],button[data-toggle],button[data-remove]');

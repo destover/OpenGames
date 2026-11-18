@@ -250,13 +250,36 @@ const balanceText=b=>b?.available
   ?'Доступно на расходы: '+money(b.remaining,b.currency)+(b.monthlyRemaining==null?'':' · Остаток месячного лимита: '+money(b.monthlyRemaining,b.currency))
   :b?.message||'Остаток ещё не проверен';
 const options=(models,selected)=>'<option value="">Выберите модель</option>'+models.map(m=>'<option value="'+esc(m.id)+'"'+(m.id===selected?' selected':'')+'>'+esc(m.name===m.id?m.id:m.name+' · '+m.id)+'</option>').join('');
+const mountModelPicker=(host,catalog,selected,onChange)=>{
+  const chosen=new Set(selected),known=new Set(catalog.map(item=>item.id));
+  for(const id of chosen)if(!known.has(id))catalog.push({id,name:id});
+  host.innerHTML='<label class="model-search-label">Поиск моделей<input type="search" data-model-search placeholder="Название или ID модели" autocomplete="off"></label><div class="model-picker-actions"><button type="button" data-model-visible>Выбрать найденные</button><button type="button" data-model-clear>Снять выбор</button><span data-model-count role="status"></span></div><div class="model-picker-list"></div>';
+  const search=host.querySelector('[data-model-search]'),list=host.querySelector('.model-picker-list'),count=host.querySelector('[data-model-count]');
+  const filtered=()=>catalog.filter(item=>(item.name+' '+item.id).toLocaleLowerCase().includes(search.value.trim().toLocaleLowerCase()));
+  const sync=()=>{count.textContent='Выбрано: '+chosen.size+' / 50';onChange(catalog.filter(item=>chosen.has(item.id)))};
+  const render=()=>{
+    const matches=filtered();
+    list.innerHTML=matches.length?matches.map(item=>'<label class="model-picker-option"><input type="checkbox" value="'+esc(item.id)+'"'+(chosen.has(item.id)?' checked':'')+'><span>'+esc(item.name)+'<small>'+esc(item.id)+'</small></span></label>').join(''):'<p class="muted">Модели не найдены</p>';
+  };
+  search.oninput=render;
+  list.onchange=e=>{
+    const box=e.target.closest('input[type="checkbox"]');if(!box)return;
+    if(box.checked&&chosen.size>=50){box.checked=false;toast('Можно подключить до 50 моделей','warn');return}
+    if(box.checked)chosen.add(box.value);else chosen.delete(box.value);
+    sync();
+  };
+  host.querySelector('[data-model-visible]').onclick=()=>{for(const item of filtered()){if(chosen.size>=50)break;chosen.add(item.id)}render();sync()};
+  host.querySelector('[data-model-clear]').onclick=()=>{chosen.clear();render();sync()};
+  render();sync();
+  return ()=>[...chosen];
+};
 const keys=d.keys.map(k=>{
   const route=d.routes.find(r=>r.route===k.route);
   return '<div class="row"><span><b>'+esc(k.label)+'</b> <span class="tag">'+esc(route?.label||k.route)+'</span><br><small class="muted">'+esc(k.model)+' (основная) · '+esc(k.keyMask)+'<br>Модели: '+esc((k.models||[k.model]).join(', '))+(k.note?'<br>'+esc(k.note):'')+'<br>'+esc(balanceText(k.balance))+(k.balance?' · '+esc(new Date(k.balance.checkedAt).toLocaleString('ru-RU')):'')+'</small></span><span class="tag">'+(k.status==='active'?'активен':'приостановлен')+'</span>'+(route?.keyUrl?'<button data-check="'+k.id+'">Обновить остаток</button><button data-model="'+k.id+'">Настроить модели</button>':'')+'<button data-toggle="'+k.id+'" data-status="'+k.status+'">'+(k.status==='active'?'Приостановить':'Активировать')+'</button><button class="danger" data-remove="'+k.id+'">Удалить</button></div>';
 }).join('')||'<p class="muted">Общих ключей пока нет.</p>';
-draw('Общий ключ OpenGames','<h2>Добавить ключ</h2><form id="skForm"><div class="form-grid"><div class="field"><label for="skLabel">Название ключа</label><input id="skLabel" required maxlength="60"></div><div class="field"><label for="skRoute">Провайдер</label><select id="skRoute">'+routes.map(r=>'<option value="'+esc(r.route)+'">'+esc(r.label)+'</option>').join('')+'</select></div><div class="field"><label for="skKey">API-ключ провайдера</label><input id="skKey" type="password" autocomplete="new-password" minlength="16" maxlength="1024" required><button type="button" id="skInspect">Загрузить модели</button></div><div class="field"><label for="skModel">Модель</label><select id="skModel" required disabled></select><p id="skBalance" class="hint" role="status" aria-live="polite"></p></div><div class="field"><label for="skNote">Заметка</label><input id="skNote" maxlength="300"></div></div><div class="shared-status"><p id="skGuide" class="hint"></p></div><details class="shared-guide" open><summary>Как подключить провайдера</summary><div id="skInstructions"></div></details><div class="admin-actions"><button class="primary" id="skAdd">Добавить общий ключ</button></div></form><h2>Зарегистрированные ключи</h2>'+keys);
+draw('Общий ключ OpenGames','<h2>Добавить ключ</h2><form id="skForm"><div class="form-grid"><div class="field"><label for="skLabel">Название ключа</label><input id="skLabel" required maxlength="60"></div><div class="field"><label for="skRoute">Провайдер</label><select id="skRoute">'+routes.map(r=>'<option value="'+esc(r.route)+'">'+esc(r.label)+'</option>').join('')+'</select></div><div class="field"><label for="skKey">API-ключ провайдера</label><input id="skKey" type="password" autocomplete="new-password" minlength="16" maxlength="1024" required><button type="button" id="skInspect">Загрузить модели</button></div><div class="field"><label for="skModel">Основная модель</label><select id="skModel" required disabled></select><p id="skBalance" class="hint" role="status" aria-live="polite"></p></div><div class="field"><label for="skNote">Заметка</label><input id="skNote" maxlength="300"></div></div><section id="skModels" class="model-picker" hidden aria-label="Подключаемые модели"></section><div class="shared-status"><p id="skGuide" class="hint"></p></div><details class="shared-guide" open><summary>Как подключить провайдера</summary><div id="skInstructions"></div></details><div class="admin-actions"><button class="primary" id="skAdd">Добавить общий ключ</button></div></form><h2>Зарегистрированные ключи</h2>'+keys);
 const form=$('#skForm'),route=$('#skRoute'),key=$('#skKey'),model=$('#skModel'),balance=$('#skBalance'),inspect=$('#skInspect'),add=$('#skAdd');
-let inspection=0;
+let inspection=0,selectedModels=()=>[];
 const instructions={
   direct:['Откройте DeepSeek Platform и войдите в аккаунт.','В разделе API keys создайте ключ для OpenGames и скопируйте его.','Проверьте баланс в кабинете DeepSeek. Остаток отображается в валюте провайдера.'],
   aitunnel:['Войдите в AITUNNEL и пополните баланс.','В панели управления откройте «Ключи», создайте ключ для OpenGames и скопируйте его.','При необходимости настройте бюджет ключа и список разрешённых моделей.'],
@@ -268,12 +291,12 @@ const renderGuide=()=>{
   const provider=routes.find(r=>r.route===route.value);
   $('#skGuide').textContent='';
   $('#skInstructions').innerHTML='<h3>'+esc(provider.label)+'</h3><ol>'+
-    (instructions[route.value]||[provider.guide]).concat(['Вставьте ключ в поле «API-ключ провайдера» и нажмите «Загрузить модели».','Выберите модель из полученного списка, задайте название и нажмите «Добавить общий ключ».']).map(step=>'<li>'+esc(step)+'</li>').join('')+
+    (instructions[route.value]||[provider.guide]).concat(['Вставьте ключ в поле «API-ключ провайдера» и нажмите «Загрузить модели».','Отметьте нужные модели, выберите основную, задайте название и нажмите «Добавить общий ключ».']).map(step=>'<li>'+esc(step)+'</li>').join('')+
     '</ol><a href="'+esc(provider.keyUrl)+'" target="_blank" rel="noopener noreferrer">Открыть '+esc(provider.label)+' ↗</a>';
 };
 const clear=()=>{
   inspection++;
-  model.innerHTML=options([]);model.disabled=true;balance.textContent='';
+  model.innerHTML=options([]);model.disabled=true;balance.textContent='';$('#skModels').hidden=true;$('#skModels').replaceChildren();selectedModels=()=>[];
 };
 route.onchange=()=>{key.value='';clear();renderGuide()};key.oninput=clear;clear();renderGuide();
 inspect.onclick=async()=>{
@@ -284,19 +307,26 @@ inspect.onclick=async()=>{
   try{
     const result=await api(endpoint+'/inspect',{method:'POST',body:JSON.stringify({route:route.value,key:key.value})});
     if(request!==inspection||!form.isConnected)return;
-    model.innerHTML=options(result.models);model.disabled=false;balance.textContent=balanceText(result.balance);
+    const host=$('#skModels');host.hidden=false;
+    selectedModels=mountModelPicker(host,result.models,[],chosen=>{
+      const previous=model.value;
+      model.innerHTML=options(chosen,previous);
+      if(!chosen.some(item=>item.id===previous)&&chosen.length)model.value=chosen[0].id;
+      model.disabled=!chosen.length;
+    });
+    balance.textContent=balanceText(result.balance);
   }catch(x){if(request===inspection&&form.isConnected)balance.textContent=x.message}
   finally{inspect.disabled=false}
 };
 form.onsubmit=async e=>{
   e.preventDefault();
   if(model.disabled||!model.value){
-    balance.textContent=model.disabled?'Сначала загрузите модели провайдера.':'Выберите модель из списка.';
+    balance.textContent=$('#skModels').hidden?'Сначала загрузите модели провайдера.':'Отметьте модели и выберите основную.';
     (model.disabled?inspect:model).focus();
     return;
   }
   add.disabled=true;add.textContent='Добавляем…';
-  try{await api(endpoint,{method:'POST',body:JSON.stringify({label:$('#skLabel').value,route:route.value,model:model.value,key:key.value,note:$('#skNote').value})});load()}
+  try{await api(endpoint,{method:'POST',body:JSON.stringify({label:$('#skLabel').value,route:route.value,model:model.value,models:selectedModels(),key:key.value,note:$('#skNote').value})});load()}
   catch(x){toast(x.message,'crit');balance.textContent=x.message;add.disabled=false;add.textContent='Добавить общий ключ'}
 };
 $('#content').onclick=async e=>{
@@ -312,12 +342,20 @@ $('#content').onclick=async e=>{
       const current=d.keys.find(k=>k.id===b.dataset.model);
       const result=await api(endpoint+'/'+current.id+'/models',{method:'POST',body:'{}'});
       const selected=current.models||[current.model];
-      b.outerHTML='<div class="shared-model-editor"><label>Подключённые модели<select data-model-list multiple size="8">'+result.models.map(m=>'<option value="'+esc(m.id)+'"'+(selected.includes(m.id)?' selected':'')+'>'+esc(m.name)+' · '+esc(m.id)+'</option>').join('')+'</select></label><label>Основная модель<select data-model-select>'+options(result.models,current.model)+'</select></label><button data-save-model="'+current.id+'">Сохранить модели</button></div>';
-
+      const editor=document.createElement('div');editor.className='shared-model-editor';
+      editor.innerHTML='<div class="model-picker"></div><label>Основная модель<select data-model-select></select></label><button type="button" data-save-model="'+current.id+'">Сохранить модели</button>';
+      b.replaceWith(editor);
+      const primary=editor.querySelector('[data-model-select]');
+      primary.innerHTML=options(result.models,current.model);
+      editor.getSelectedModels=mountModelPicker(editor.querySelector('.model-picker'),result.models,selected,chosen=>{
+        const previous=primary.value;
+        primary.innerHTML=options(chosen,previous);
+        if(!chosen.some(item=>item.id===previous)&&chosen.length)primary.value=chosen[0].id;
+      });
       return;
     }
     if(b.dataset.saveModel){
-      const editor=b.closest('.shared-model-editor'),selected=editor.querySelector('[data-model-select]').value,models=[...editor.querySelector('[data-model-list]').selectedOptions].map(option=>option.value);
+      const editor=b.closest('.shared-model-editor'),selected=editor.querySelector('[data-model-select]').value,models=editor.getSelectedModels();
       if(!selected||!models.includes(selected)){toast('Включите основную модель в список подключённых','warn');return}
       await api(endpoint+'/'+b.dataset.saveModel,{method:'PATCH',body:JSON.stringify({model:selected,models})});load();return;
     }

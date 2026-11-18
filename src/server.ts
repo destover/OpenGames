@@ -389,9 +389,10 @@ const server = createServer(async (req, res) => {
       if(req.method==='POST'&&url.pathname==='/api/admin/shared-keys'){
         const data=await body(req),route=String(data.route||''),key=String(data.key||'').trim(),model=String(data.model||'').trim();
         const {models,balance}=await inspectSharedProvider(route,key);
-        if(!models.some(item=>item.id===model))return send(res,400,{error:'Выберите модель из актуального каталога провайдера'});
-        const created=sharedKeys.add({label:data.label,route,model,key,note:data.note,balance});
-        audit(actor,'sharedKey.create',created.id,{label:created.label,route,model});
+        const selected=data.models??[model];
+        if(!Array.isArray(selected)||!selected.length||selected.length>50||!selected.includes(model)||selected.some((id:unknown)=>!models.some(item=>item.id===id)))return send(res,400,{error:'Выберите модели и основную модель из актуального каталога провайдера'});
+        const created=sharedKeys.add({label:data.label,route,model,models:selected,key,note:data.note,balance});
+        audit(actor,'sharedKey.create',created.id,{label:created.label,route,model,models:created.models});
         return send(res,201,created);
       }
       const sharedMatch=url.pathname.match(/^\/api\/admin\/shared-keys\/([0-9a-f-]{36})(?:\/(balance|models))?$/);

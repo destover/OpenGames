@@ -28,15 +28,17 @@ export class SharedKeyStore {
     const snapshot=JSON.parse(String(value||'null')) as BalanceSnapshot|null;
     return snapshot&&(snapshot.currency||!snapshot.available)?snapshot:null;
   }
-  add(input:{label:string;route:string;model:string;key:string;note?:string;balance:BalanceSnapshot}){const label=String(input.label||'').trim(),model=String(input.model||'').trim(),key=String(input.key||'').trim();
+  add(input:{label:string;route:string;model:string;models?:string[];key:string;note?:string;balance:BalanceSnapshot}){const label=String(input.label||'').trim(),model=String(input.model||'').trim(),key=String(input.key||'').trim();
     if(!label||label.length>60)throw Object.assign(new Error('Укажите название ключа до 60 символов'),{status:400});
     if(!(SHARED_ROUTES as readonly string[]).includes(input.route))throw Object.assign(new Error('Неизвестный маршрут провайдера'),{status:400});
     if(!model||model.length>120)throw Object.assign(new Error('Укажите модель до 120 символов'),{status:400});
+    const models=input.models??[model];
+    if(!Array.isArray(models)||!models.length||models.length>50||models.some(item=>typeof item!=='string'||!item.trim()||item.length>120)||new Set(models).size!==models.length||!models.includes(model))throw Object.assign(new Error('Выберите от 1 до 50 моделей и основную модель из списка'),{status:400});
     if(key.length<16)throw Object.assign(new Error('Ключ выглядит некорректно: ожидается не менее 16 символов'),{status:400});
     const digest=createHash('sha256').update(key).digest('hex');
     if(this.db.prepare('SELECT id FROM shared_keys WHERE digest=?').get(digest))throw Object.assign(new Error('Такой ключ уже добавлен'),{status:409});
     const {iv,tag,data}=this.encrypt(key),id=randomUUID(),now=Date.now();
-    this.db.prepare('INSERT INTO shared_keys(id,label,route,model,iv,tag,data,digest,status,note,created_at,updated_at,balance,balance_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)').run(id,label,input.route,model,iv,tag,data,digest,'active',String(input.note||'').slice(0,300),now,now,JSON.stringify(input.balance),now);
+    this.db.prepare('INSERT INTO shared_keys(id,label,route,model,iv,tag,data,digest,status,note,created_at,updated_at,balance,balance_at,models) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)').run(id,label,input.route,model,iv,tag,data,digest,'active',String(input.note||'').slice(0,300),now,now,JSON.stringify(input.balance),now,JSON.stringify(models));
     return this.get(id)!}
   get(id:string){const record=this.db.prepare('SELECT * FROM shared_keys WHERE id=?').get(id) as Record<string,any>|undefined;return record?this.view(record):null}
   list(){return (this.db.prepare('SELECT * FROM shared_keys ORDER BY status=\'active\' DESC, created_at DESC').all() as Record<string,any>[]).map(record=>this.view(record))}

@@ -195,3 +195,14 @@
 .shared-model-editor{display:grid;gap:12px;width:100%;min-width:0}
 .shared-model-editor label{display:grid;gap:6px;min-width:0}
 .shared-model-editor select{width:100%;max-width:100%;min-width:0}
+.model-picker{margin:18px 0;padding:16px;border:1px solid var(--line);border-radius:12px;min-width:0}
+.model-search-label{display:grid;gap:6px;font-size:13px;font-weight:600}
+.model-search-label input{width:100%;min-width:0}
+.model-picker-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.model-picker-actions [data-model-count]{margin-left:auto;font-size:13px;color:var(--muted)}
+.model-picker-list{max-height:320px;overflow-y:auto;overscroll-behavior:contain}
+.model-picker-option{display:flex;align-items:flex-start;gap:10px;padding:10px 8px;border-bottom:1px solid var(--line);cursor:pointer}
+#skForm .model-picker-option input,.model-picker-option input{flex:none;width:18px;height:18px;padding:0;margin:2px 0;accent-color:var(--accent)}
+.model-picker-option span{min-width:0;overflow-wrap:anywhere}
+.model-picker-option small{display:block;color:var(--muted);font-size:12px;margin-top:3px}
+.model-picker-option:has(input:checked){background:var(--surface-soft)}

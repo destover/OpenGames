@@ -192,3 +192,6 @@
 }
 .admin-shell>*{min-width:0}
 @media(max-width:1000px){.admin-sidebar{max-width:100%;overflow:hidden}.admin-nav{min-width:0;max-width:100%;overflow-x:auto}}
+.shared-model-editor{display:grid;gap:12px;width:100%;min-width:0}
+.shared-model-editor label{display:grid;gap:6px;min-width:0}
+.shared-model-editor select{width:100%;max-width:100%;min-width:0}

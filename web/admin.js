@@ -252,7 +252,7 @@ const balanceText=b=>b?.available
 const options=(models,selected)=>'<option value="">Выберите модель</option>'+models.map(m=>'<option value="'+esc(m.id)+'"'+(m.id===selected?' selected':'')+'>'+esc(m.name===m.id?m.id:m.name+' · '+m.id)+'</option>').join('');
 const keys=d.keys.map(k=>{
   const route=d.routes.find(r=>r.route===k.route);
-  return '<div class="row"><span><b>'+esc(k.label)+'</b> <span class="tag">'+esc(route?.label||k.route)+'</span><br><small class="muted">'+esc(k.model)+' · '+esc(k.keyMask)+(k.note?'<br>'+esc(k.note):'')+'<br>'+esc(balanceText(k.balance))+(k.balance?' · '+esc(new Date(k.balance.checkedAt).toLocaleString('ru-RU')):'')+'</small></span><span class="tag">'+(k.status==='active'?'активен':'приостановлен')+'</span>'+(route?.keyUrl?'<button data-check="'+k.id+'">Обновить остаток</button><button data-model="'+k.id+'">Изменить модель</button>':'')+'<button data-toggle="'+k.id+'" data-status="'+k.status+'">'+(k.status==='active'?'Приостановить':'Активировать')+'</button><button class="danger" data-remove="'+k.id+'">Удалить</button></div>';
+  return '<div class="row"><span><b>'+esc(k.label)+'</b> <span class="tag">'+esc(route?.label||k.route)+'</span><br><small class="muted">'+esc(k.model)+' (основная) · '+esc(k.keyMask)+'<br>Модели: '+esc((k.models||[k.model]).join(', '))+(k.note?'<br>'+esc(k.note):'')+'<br>'+esc(balanceText(k.balance))+(k.balance?' · '+esc(new Date(k.balance.checkedAt).toLocaleString('ru-RU')):'')+'</small></span><span class="tag">'+(k.status==='active'?'активен':'приостановлен')+'</span>'+(route?.keyUrl?'<button data-check="'+k.id+'">Обновить остаток</button><button data-model="'+k.id+'">Настроить модели</button>':'')+'<button data-toggle="'+k.id+'" data-status="'+k.status+'">'+(k.status==='active'?'Приостановить':'Активировать')+'</button><button class="danger" data-remove="'+k.id+'">Удалить</button></div>';
 }).join('')||'<p class="muted">Общих ключей пока нет.</p>';
 draw('Общий ключ OpenGames','<h2>Добавить ключ</h2><form id="skForm"><div class="form-grid"><div class="field"><label for="skLabel">Название ключа</label><input id="skLabel" required maxlength="60"></div><div class="field"><label for="skRoute">Провайдер</label><select id="skRoute">'+routes.map(r=>'<option value="'+esc(r.route)+'">'+esc(r.label)+'</option>').join('')+'</select></div><div class="field"><label for="skKey">API-ключ провайдера</label><input id="skKey" type="password" autocomplete="new-password" minlength="16" maxlength="1024" required><button type="button" id="skInspect">Загрузить модели</button></div><div class="field"><label for="skModel">Модель</label><select id="skModel" required disabled></select><p id="skBalance" class="hint" role="status" aria-live="polite"></p></div><div class="field"><label for="skNote">Заметка</label><input id="skNote" maxlength="300"></div></div><div class="shared-status"><p id="skGuide" class="hint"></p></div><details class="shared-guide" open><summary>Как подключить провайдера</summary><div id="skInstructions"></div></details><div class="admin-actions"><button class="primary" id="skAdd">Добавить общий ключ</button></div></form><h2>Зарегистрированные ключи</h2>'+keys);
 const form=$('#skForm'),route=$('#skRoute'),key=$('#skKey'),model=$('#skModel'),balance=$('#skBalance'),inspect=$('#skInspect'),add=$('#skAdd');
@@ -311,13 +311,15 @@ $('#content').onclick=async e=>{
     if(b.dataset.model){
       const current=d.keys.find(k=>k.id===b.dataset.model);
       const result=await api(endpoint+'/'+current.id+'/models',{method:'POST',body:'{}'});
-      b.outerHTML='<label>Модель <select data-model-select>'+options(result.models,current.model)+'</select></label><button data-save-model="'+current.id+'">Сохранить модель</button>';
+      const selected=current.models||[current.model];
+      b.outerHTML='<div class="shared-model-editor"><label>Подключённые модели<select data-model-list multiple size="8">'+result.models.map(m=>'<option value="'+esc(m.id)+'"'+(selected.includes(m.id)?' selected':'')+'>'+esc(m.name)+' · '+esc(m.id)+'</option>').join('')+'</select></label><label>Основная модель<select data-model-select>'+options(result.models,current.model)+'</select></label><button data-save-model="'+current.id+'">Сохранить модели</button></div>';
+
       return;
     }
     if(b.dataset.saveModel){
-      const selected=b.closest('.row').querySelector('[data-model-select]').value;
-      if(!selected){toast('Выберите модель','warn');return}
-      await api(endpoint+'/'+b.dataset.saveModel,{method:'PATCH',body:JSON.stringify({model:selected})});load();return;
+      const editor=b.closest('.shared-model-editor'),selected=editor.querySelector('[data-model-select]').value,models=[...editor.querySelector('[data-model-list]').selectedOptions].map(option=>option.value);
+      if(!selected||!models.includes(selected)){toast('Включите основную модель в список подключённых','warn');return}
+      await api(endpoint+'/'+b.dataset.saveModel,{method:'PATCH',body:JSON.stringify({model:selected,models})});load();return;
     }
     if(b.dataset.toggle){
       await api(endpoint+'/'+b.dataset.toggle,{method:'PATCH',body:JSON.stringify({status:b.dataset.status==='active'?'paused':'active'})});load();return;

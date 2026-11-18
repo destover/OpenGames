@@ -399,16 +399,16 @@ const server = createServer(async (req, res) => {
         const action=sharedMatch[2];
         if(req.method==='GET'&&!action)return send(res,200,current);
         if(req.method==='PATCH'&&!action){
-          const data=await body(req),model=data.model===undefined?undefined:String(data.model).trim();
+          const data=await body(req),model=data.model===undefined?undefined:String(data.model).trim(),models=data.models;
           let balance;
-          if(model!==undefined&&model!==current.model){
+          if(models!==undefined||(model!==undefined&&model!==current.model)){
             const secret=sharedKeys.secret(id,false);if(!secret)return send(res,503,{error:'Ключ недоступен для проверки'});
             const info=await inspectSharedProvider(current.route,secret);
-            if(!info.models.some(item=>item.id===model))return send(res,400,{error:'Выберите модель из актуального каталога провайдера'});
+            if(!Array.isArray(models??[model])||(models??[model]).some((id:unknown)=>!info.models.some(item=>item.id===id)))return send(res,400,{error:'Выберите модели из актуального каталога провайдера'});
             balance=info.balance;
           }
-          const updated=sharedKeys.update(id,{label:data.label,model,status:data.status,note:data.note,balance});
-          audit(actor,'sharedKey.update',id,{label:updated.label,route:updated.route,model:updated.model,status:updated.status});
+          const updated=sharedKeys.update(id,{label:data.label,model,models:models??(model&&model!==current.model?[...new Set([...current.models,model])]:undefined),status:data.status,note:data.note,balance});
+          audit(actor,'sharedKey.update',id,{label:updated.label,route:updated.route,model:updated.model,models:updated.models,status:updated.status});
           return send(res,200,updated);
         }
         if(req.method==='DELETE'&&!action){const data=await body(req).catch(()=>({}) as Record<string,unknown>);const reason=String(data.reason||'').trim();if(reason.length<3)return send(res,400,{error:'Укажите причину удаления (не менее 3 символов)'});sharedKeys.remove(id);audit(actor,'sharedKey.remove',id,{label:current.label,route:current.route,reason});return send(res,200,{ok:true})}

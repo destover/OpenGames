@@ -29,3 +29,5 @@ work/
 .kilo/
 .vscode/
 .idea/
+
+/web/downloads

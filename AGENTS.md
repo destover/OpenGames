@@ -8,4 +8,3 @@
 Публичный сайт использует /opt/opengames/current. Общие данные и секреты сайта находятся в /opt/opengames/shared.
 Исходники, инструкции и package-lock.json версионируются Git. .env, данные пользователей и ключи хранятся вне Git.
 Публикация текущего коммита — sudo /usr/local/sbin/opengames-deploy. После публикации проверяй публичный сайт и /api/health.
-Windows и подключение ChatGPT описаны в docs/windows-remote.md.

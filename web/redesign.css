@@ -88,3 +88,28 @@ body[data-time='day'].game-page #actionForm input{background:#f3f7fd;color:#1823
 .wallet-history small{display:block;color:var(--muted);font-size:12px;margin-top:3px}
 .wallet-history strong{white-space:nowrap}
 #turnCost{font-variant-numeric:tabular-nums}
+
+.map-points{display:contents}
+.map-legend{display:none}
+@media(max-width:980px){
+  body.game-page{min-width:0}
+  .game,.game>.panel,.game aside,.game aside>.panel{min-width:0}
+  .game-heading h1,.game .goal,.game .you,.game .state b,#flowCurrent{overflow-wrap:anywhere}
+  .game .state span,.game .state b{min-width:0}
+  .game .state span{flex:0 0 38%}
+  .game .state b{flex:1}
+  .game .controls input,.game .generation-form input,.game .generation-form select,.game .generation-form textarea{font-size:16px;min-height:44px}
+  .game .generation-form textarea{min-height:88px}
+  .game button,.game summary{min-height:44px}
+  .game summary{padding:10px 0}
+  .game .opening-controls{flex-wrap:wrap}
+  .game .opening-controls button{flex:1 1 130px}
+  .game .map-points{display:block;position:absolute;inset:80px 0 12px}
+  .game .map-point{width:36px;height:36px}
+  .game .map-point small{width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+  .game .map-point:not(.unknown) b{font-size:0}
+  .game .map-point:not(.unknown) b::after{content:attr(data-index);font-size:16px}
+  .game .map-legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:12px 0 0;padding:0;list-style:none}
+  .game .map-legend li{padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--surface-soft);font-size:12px;overflow-wrap:anywhere}
+  .game .map-legend .current{border-color:var(--accent);color:var(--accent);font-weight:700}
+}

@@ -1,4 +1,4 @@
-param([string]$ContainerAddress = "192.168.1.138")
+﻿param([string]$ContainerAddress = "192.168.1.138")
 $ErrorActionPreference = "Stop"
 if (-not (Get-Command ssh -ErrorAction SilentlyContinue) -or -not (Get-Command ssh-keygen -ErrorAction SilentlyContinue)) {
     throw "Установите компонент OpenSSH Client в дополнительных компонентах Windows."
